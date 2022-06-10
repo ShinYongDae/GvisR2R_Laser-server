@@ -107,8 +107,8 @@ void CDlgMenu05::OnShowWindow(BOOL bShow, UINT nStatus)
 		m_pRect = new CRect;
 		
 		this->GetClientRect(m_pRect);
-		m_pRect->top = 75;
-		m_pRect->bottom += 75;
+		m_pRect->top = 75 + 2;
+		m_pRect->bottom += 75 + 2;
 		m_pRect->left = 3;
 		m_pRect->right += 3;
 		this->MoveWindow(m_pRect, TRUE);
@@ -1519,7 +1519,7 @@ void CDlgMenu05::DisplayReelMapUser()
 	if (0 >= ::GetPrivateProfileString(_T("Info"), _T("Marked Shot"), NULL, szData, sizeof(szData), sReelmapSrc))
 	{
 		pView->MsgBox(_T("릴맵에 Marked Shot 정보가 없습니다."));
-		AfxMessageBox(_T("릴맵에 Marked Shot 정보가 없습니다."));
+		//AfxMessageBox(_T("릴맵에 Marked Shot 정보가 없습니다."));
 		return;
 	}
 
@@ -1908,7 +1908,7 @@ void CDlgMenu05::OnBtnSave()
 	// File Save......
 	CString strDestPath;
 	strDestPath.Format(_T("%s%s\\%s\\%s.txt"), pDoc->WorkingInfo.System.sPathOldFile, 
-												   m_sModel, m_sLot, "Result");
+												   m_sModel, m_sLot, _T("Result"));
 // 	strDestPath.Format(_T("%s%s\\%s\\%s.txt"), pDoc->WorkingInfo.System.sPathOldFile, 
 // 												   m_sModel, m_sLot, m_sLot);
 // 	strDestPath.Format(_T("%s%s\\%s\\%s\\%s.txt"), pDoc->WorkingInfo.System.sPathOldFile, 
@@ -1942,7 +1942,7 @@ void CDlgMenu05::OnBtnSave()
 	}
 	//버퍼의 내용을 file에 복사한다.
 	file.SeekToBegin();
-	file.Write(strData, strData.GetLength()+2);
+	file.Write(StringToChar(strData), strData.GetLength());
 	file.Close();	
 	return;
 }
@@ -1951,10 +1951,12 @@ CString CDlgMenu05::TxtDataMDS()
 {
 	CString strFileData, strData;
 	int nTot;
+	nTot = m_nDefPerStrip[0][DEF_LIGHT] + m_nDefPerStrip[1][DEF_LIGHT] + m_nDefPerStrip[2][DEF_LIGHT] + m_nDefPerStrip[3][DEF_LIGHT];
 
 	//리포트 작성. =====================================================================
 
-	strFileData = _T("\r\n\r\n");
+	//strFileData = _T("\r\n\r\n");
+	strFileData = _T("");
 	strFileData += _T("1. 일반 정보\r\n");
 	strData.Format(_T("    모 델 명 :  %s\r\n"), m_sModel);
 	strFileData += strData;
@@ -2047,10 +2049,12 @@ CString CDlgMenu05::TxtDataMDS()
 	strFileData += strData;
 	strData.Format(_T("    18        VH결함 %10d%10d%10d%10d%20d\r\n"), m_nDefPerStrip[0][DEF_VH_DEF], m_nDefPerStrip[1][DEF_VH_DEF], m_nDefPerStrip[2][DEF_VH_DEF], m_nDefPerStrip[3][DEF_VH_DEF], m_nEntireAddedDefect[DEF_VH_DEF]);
 	strFileData += strData;
-	nTot = m_nDefPerStrip[0][DEF_LIGHT]+m_nDefPerStrip[1][DEF_LIGHT]+m_nDefPerStrip[2][DEF_LIGHT]+m_nDefPerStrip[3][DEF_LIGHT];
 	strData.Format(_T("    19         노광  %10d%10d%10d%10d%20d\r\n"), m_nDefPerStrip[0][DEF_LIGHT], m_nDefPerStrip[1][DEF_LIGHT], m_nDefPerStrip[2][DEF_LIGHT], m_nDefPerStrip[3][DEF_LIGHT], nTot);
 	strFileData += strData;
 	strFileData += _T("    -----------------------------------------------------------------------------\r\n");
+	strFileData += _T("                                                                                 \r\n");
+	strFileData += _T("                                                                                 \r\n");
+	strFileData += _T("                                                                                 \r\n");
 	strFileData += _T("\r\n");
 
 	return strFileData;
@@ -2709,12 +2713,12 @@ void CDlgMenu05::MakeSapp3()
 	sPath.Format(_T("%s%9s_%4s_%5s.txt"), pDoc->WorkingInfo.System.sPathSapp3, m_sLot, m_sProcessNum, pDoc->WorkingInfo.System.sMcName);
 	//strcpy(FileName, sPath);
 	_stprintf(FileName, _T("%s"), sPath);
-	char* pRtn;
+	char* pRtn = NULL;
 	fp = fopen(pRtn=TCHARToChar(FileName), "w+");
 
 	if (fp != NULL)
 	{
-		fprintf(fp, "%s\n", StringToChar(Sapp3Data()));			        
+		fprintf(fp, "%s\n", pRtn = StringToChar(Sapp3Data()));
 	}
 	else
 	{
@@ -2722,7 +2726,8 @@ void CDlgMenu05::MakeSapp3()
 		strMsg.Format(_T("It is trouble to open file.\r\n%s"), sPath);
 		AfxMessageBox(strMsg,MB_ICONWARNING|MB_OK);
 	}
-	delete pRtn;
+	if(pRtn)
+		delete pRtn;
 	fclose(fp);
 }
 

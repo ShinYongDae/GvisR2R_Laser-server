@@ -35,10 +35,16 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <gl\gl.h>
-#include <gl\glu.h>
+//#include <gl\gl.h>
+//#include <gl\glu.h>
 //#include <gl\glut.h>
+//glu32.lib, glut32.lib, opengl32.lib
+
 #include <gl\freeglut_std.h>
+//#pragma comment (lib, "glut32.lib")
+#pragma comment (lib, "freeglut.lib")
+//#pragma comment (lib, "C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\glut32.lib")
+//#pragma comment (lib, "C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\freeglut.lib")
 
 #define GVFONT_ROMAN 1
 #define GVFONT_MONOROMAN 2

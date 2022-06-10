@@ -53,22 +53,10 @@ void CDataMarking::FreeMem()
 		m_pDefPos = NULL;
 	}
 
-	if(m_pDefType)
+	if(m_pMk)
 	{
-		delete[] m_pDefType;
-		m_pDefType = NULL;
-	}
-
-	if(m_pCell)
-	{
-		delete[] m_pCell;
-		m_pCell = NULL;
-	}
-
-	if(m_pImgSz)
-	{
-		delete[] m_pImgSz;
-		m_pImgSz = NULL;
+		delete[] m_pMk;
+		m_pMk = NULL;
 	}
 
 	if(m_pImg)
@@ -77,10 +65,22 @@ void CDataMarking::FreeMem()
 		m_pImg = NULL;
 	}
 
-	if(m_pMk)
+	if(m_pImgSz)
 	{
-		delete[] m_pMk;
-		m_pMk = NULL;
+		delete[] m_pImgSz;
+		m_pImgSz = NULL;
+	}
+
+	if(m_pCell)
+	{
+		delete[] m_pCell;
+		m_pCell = NULL;
+	}
+
+	if (m_pDefType)
+	{
+		delete[] m_pDefType;
+		m_pDefType = NULL;
 	}
 }
 
@@ -114,6 +114,7 @@ void CDataMarking::Init(int nSerial, int nTot) // m_nIdx : From 0 to nTot.....
 		m_pLayer = new int[nTot];
 		m_pDefPcs = new int[nTot];
 		m_pDefPos = new CPoint[nTot];
+
 		m_pDefType = new int[nTot];
 		m_pCell = new int[nTot];
 		m_pImgSz = new int[nTot];
@@ -126,11 +127,12 @@ void CDataMarking::Init(int nSerial, int nTot) // m_nIdx : From 0 to nTot.....
 		m_pLayer[i] = -1;
 		m_pDefPcs[i] = -1;
 		m_pDefPos[i] = CPoint(0,0);
-		m_pDefType[nTot] = -1;
-		m_pCell[nTot] = -1;
-		m_pImgSz[nTot] = -1;
-		m_pImg[nTot] = -1;
-		m_pMk[nTot] = -1;
+
+		m_pDefType[i] = -1;
+		m_pCell[i] = -1;
+		m_pImgSz[i] = -1;
+		m_pImg[i] = -1;
+		m_pMk[i] = -1;
 	}
 
 	m_MkOffset.x = 0;

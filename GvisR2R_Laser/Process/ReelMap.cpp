@@ -402,7 +402,7 @@ BOOL CReelMap::Open(CString sPath)
 // 	}
 
 	//_tcscpy(FileName, sPath);
-	StringToChar(sPath, FileName);
+	StrToChar(sPath, FileName);
 
 	fp = fopen(FileName, "a+");
 	if (fp == NULL)
@@ -420,21 +420,21 @@ BOOL CReelMap::Open(CString sPath)
 
 	return TRUE;
 #endif
-	char* pRtn;
+	char* pRtn = NULL;
 	if(!bExist)
 	{
 		InitRst();
 		InitPcs();
 
 		fprintf(fp, "[Info]\r\n");
-		fprintf(fp, "설  비  명 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.System.sMcName)); delete pRtn;
-		fprintf(fp, "운  용  자 = %s\r\n", pRtn=StringToChar(pDoc->WorkingInfo.LastJob.sSelUserName)); delete pRtn;
-		fprintf(fp, "모      델 = %s\r\n", pRtn=StringToChar(pDoc->WorkingInfo.LastJob.sModelUp)); delete pRtn;
-		fprintf(fp, "로      트 = %s\r\n", pRtn=StringToChar(pDoc->WorkingInfo.LastJob.sLotUp)); delete pRtn;
-		fprintf(fp, "상면레이어 = %s\r\n", pRtn=StringToChar(pDoc->WorkingInfo.LastJob.sLayerUp)); delete pRtn;
+		fprintf(fp, "설  비  명 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.System.sMcName)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "운  용  자 = %s\r\n", pRtn= StrToChar(pDoc->WorkingInfo.LastJob.sSelUserName)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "모      델 = %s\r\n", pRtn= StrToChar(pDoc->WorkingInfo.LastJob.sModelUp)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "로      트 = %s\r\n", pRtn= StrToChar(pDoc->WorkingInfo.LastJob.sLotUp)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "상면레이어 = %s\r\n", pRtn= StrToChar(pDoc->WorkingInfo.LastJob.sLayerUp)); if (pRtn) delete pRtn; pRtn = NULL;
 		if (bDualTest)
 		{
-			fprintf(fp, "하면레이어 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.LastJob.sLayerDn)); delete pRtn;
+			fprintf(fp, "하면레이어 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sLayerDn)); if (pRtn) delete pRtn; pRtn = NULL;
 		}
 		fprintf(fp, "\r\n");
 		fprintf(fp, "Process Code = \r\n");
@@ -448,7 +448,7 @@ BOOL CReelMap::Open(CString sPath)
 		fprintf(fp, "0 -> 양품\r\n");
 		for (i = 1; i < MAX_DEF; i++)
 		{
-			fprintf(fp, "%d -> %s\r\n", i, pRtn = StringToChar(m_sKorDef[i])); delete pRtn; // m_cBigDef[i]
+			fprintf(fp, "%d -> %s\r\n", i, pRtn = StrToChar(m_sKorDef[i])); if (pRtn) delete pRtn; pRtn = NULL; // m_cBigDef[i]
 		}
 		fprintf(fp, "? - Missed Align Panel(i.e 노광불량)\r\n");
 		fprintf(fp, "\r\n");
@@ -537,7 +537,7 @@ BOOL CReelMap::OpenUser(CString sPath)
 
 	sPath = sUserRmapPath + _T("\\Reelmap\\") + sFile;
 	//_tcscpy(FileName, sPath);
-	StringToChar(sPath, FileName);
+	StrToChar(sPath, FileName);
 
 
 	fp = fopen(FileName, "a+");
@@ -546,21 +546,21 @@ BOOL CReelMap::OpenUser(CString sPath)
 		pView->MsgBox(_T("It is trouble to open ReelMap.txt"));
 		return FALSE; 
 	}
-	char* pRtn;
+	char* pRtn = NULL;
 	if(!bExist)
 	{
 		InitRst();
 		InitPcs();
 
 		fprintf(fp, "[Info]\r\n");
-		fprintf(fp, "설  비  명 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.System.sMcName)); delete pRtn;
-		fprintf(fp, "운  용  자 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.LastJob.sSelUserName)); delete pRtn;
-		fprintf(fp, "모      델 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.LastJob.sModelUp)); delete pRtn;
-		fprintf(fp, "로      트 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.LastJob.sLotUp)); delete pRtn;
-		fprintf(fp, "상면레이어 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.LastJob.sLayerUp)); delete pRtn;
+		fprintf(fp, "설  비  명 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.System.sMcName)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "운  용  자 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sSelUserName)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "모      델 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sModelUp)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "로      트 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sLotUp)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "상면레이어 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sLayerUp)); if (pRtn) delete pRtn; pRtn = NULL;
 		if (bDualTest)
 		{
-			fprintf(fp, "하면레이어 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.LastJob.sLayerDn)); delete pRtn;
+			fprintf(fp, "하면레이어 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sLayerDn)); delete pRtn;
 		}
 		fprintf(fp, "\r\n");
 		fprintf(fp, "Process Code = \r\n");
@@ -575,7 +575,7 @@ BOOL CReelMap::OpenUser(CString sPath)
 		fprintf(fp, "0 -> 양품\r\n");
 		for (i = 1; i < MAX_DEF; i++)
 		{
-			fprintf(fp, "%c -> %s\r\n", pDoc->m_cBigDefCode[i], pRtn = StringToChar(m_sKorDef[i])); delete pRtn; // m_cBigDef[i]
+			fprintf(fp, "%c -> %s\r\n", pDoc->m_cBigDefCode[i], pRtn = StrToChar(m_sKorDef[i])); if (pRtn) delete pRtn; pRtn = NULL; // m_cBigDef[i]
 		}
 		fprintf(fp, "? - Missed Align Panel(i.e 노광불량)\r\n");
 		fprintf(fp, "\r\n");
@@ -644,7 +644,7 @@ BOOL CReelMap::Open(CString sPath, CString sModel, CString sLayer, CString sLot)
 // 	}
 
 	//_tcscpy(FileName, sPath);
-	StringToChar(sPath, FileName);
+	StrToChar(sPath, FileName);
 
 	fp = fopen(FileName, "a+");
 	if (fp == NULL)
@@ -655,21 +655,21 @@ BOOL CReelMap::Open(CString sPath, CString sModel, CString sLayer, CString sLot)
 	}
 
 	m_sPathShare = sPath;
-	char* pRtn;
+	char* pRtn = NULL;
 	if(!bExist)
 	{
 		InitRst();
 		InitPcs();
 
 		fprintf(fp, "[Info]\r\n");
-		fprintf(fp, "설  비  명 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.System.sMcName)); delete pRtn;
-		fprintf(fp, "운  용  자 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.LastJob.sSelUserName)); delete pRtn;
-		fprintf(fp, "모      델 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.LastJob.sModelUp)); delete pRtn;
-		fprintf(fp, "로      트 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.LastJob.sLotUp)); delete pRtn;
-		fprintf(fp, "상면레이어 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.LastJob.sLayerUp)); delete pRtn;
+		fprintf(fp, "설  비  명 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.System.sMcName)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "운  용  자 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sSelUserName)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "모      델 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sModelUp)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "로      트 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sLotUp)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "상면레이어 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sLayerUp)); if (pRtn) delete pRtn; pRtn = NULL;
 		if (bDualTest)
 		{
-			fprintf(fp, "하면레이어 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.LastJob.sLayerDn)); delete pRtn;
+			fprintf(fp, "하면레이어 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sLayerDn)); if (pRtn) delete pRtn; pRtn = NULL;
 		}
 		fprintf(fp, "\r\n");
 		fprintf(fp, "Process Code = \r\n");
@@ -683,7 +683,7 @@ BOOL CReelMap::Open(CString sPath, CString sModel, CString sLayer, CString sLot)
 		fprintf(fp, "0 -> 양품\r\n");
 		for (i = 1; i < MAX_DEF; i++)
 		{
-			fprintf(fp, "%d -> %s\r\n", i, pRtn = StringToChar(m_sKorDef[i])); delete pRtn; // m_cBigDef[i]
+			fprintf(fp, "%d -> %s\r\n", i, pRtn = StrToChar(m_sKorDef[i])); if (pRtn) delete pRtn; pRtn = NULL; // m_cBigDef[i]
 		}
 		fprintf(fp, "? - Missed Align Panel(i.e 노광불량)\r\n");
 		fprintf(fp, "\r\n");
@@ -768,7 +768,7 @@ BOOL CReelMap::OpenUser(CString sPath, CString sModel, CString sLayer, CString s
 
 	sPath = sUserRmapPath + _T("\\Reelmap\\") + sFile;
 	//_tcscpy(FileName, sPath);
-	StringToChar(sPath, FileName);
+	StrToChar(sPath, FileName);
 
 	fp = fopen(FileName, "a+");
 	if (fp == NULL)
@@ -776,21 +776,21 @@ BOOL CReelMap::OpenUser(CString sPath, CString sModel, CString sLayer, CString s
 		pView->MsgBox(_T("It is trouble to open ReelMap.txt"));
 		return FALSE; 
 	}
-	char* pRtn;
+	char* pRtn = NULL;
 	if(!bExist)
 	{
 		InitRst();
 		InitPcs();
 
 		fprintf(fp, "[Info]\r\n");
-		fprintf(fp, "설  비  명 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.System.sMcName)); delete pRtn;
-		fprintf(fp, "운  용  자 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.LastJob.sSelUserName)); delete pRtn;
-		fprintf(fp, "모      델 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.LastJob.sModelUp)); delete pRtn;
-		fprintf(fp, "로      트 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.LastJob.sLotUp)); delete pRtn;
-		fprintf(fp, "상면레이어 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.LastJob.sLayerUp)); delete pRtn;
+		fprintf(fp, "설  비  명 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.System.sMcName)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "운  용  자 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sSelUserName)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "모      델 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sModelUp)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "로      트 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sLotUp)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "상면레이어 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sLayerUp)); if (pRtn) delete pRtn; pRtn = NULL;
 		if (bDualTest)
 		{
-			fprintf(fp, "하면레이어 = %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.LastJob.sLayerDn)); delete pRtn;
+			fprintf(fp, "하면레이어 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sLayerDn)); if (pRtn) delete pRtn; pRtn = NULL;
 		}
 		fprintf(fp, "\r\n");
 		fprintf(fp, "Process Code = \r\n");
@@ -805,7 +805,7 @@ BOOL CReelMap::OpenUser(CString sPath, CString sModel, CString sLayer, CString s
 		fprintf(fp, "0 -> 양품\r\n");
 		for (i = 1; i < MAX_DEF; i++)
 		{
-			fprintf(fp, "%c -> %s\r\n", pDoc->m_cBigDefCode[i], pRtn = StringToChar(m_sKorDef[i])); delete pRtn; // m_cBigDef[i]
+			fprintf(fp, "%c -> %s\r\n", pDoc->m_cBigDefCode[i], pRtn = StrToChar(m_sKorDef[i])); if (pRtn) delete pRtn; pRtn = NULL; // m_cBigDef[i]
 		}
 		fprintf(fp, "? - Missed Align Panel(i.e 노광불량)\r\n");
 		fprintf(fp, "\r\n");
@@ -857,7 +857,7 @@ int CReelMap::Read(CString &sRead)
 	CString sMsg;
 
 	//_tcscpy(FileD, m_sPathShare);
-	StringToChar(m_sPathShare, FileD);
+	StrToChar(m_sPathShare, FileD);
 
 	if((fp = fopen(FileD, "r")) != NULL)
 	{
@@ -915,9 +915,12 @@ BOOL CReelMap::Write(int nSerial, int nLayer)
 	short **pPnlBuf;
 	int i, nC, nR, nPcsId, nDefCode;//, nTot, nDef, nGood;
 	pPnlBuf = new short*[nNodeY];
-	for(i=0; i<nNodeY; i++)
+	for (i = 0; i < nNodeY; i++)
+	{
 		pPnlBuf[i] = new short[nNodeX];
-//	memset(pPnlBuf, 0, sizeof(short)*nNodeX*nNodeY);
+		memset(pPnlBuf[i], 0, sizeof(short)*nNodeX);
+		memset(m_pPnlBuf[nSerial - 1][i], 0, sizeof(short)*nNodeX);
+	}
 
 	CString strData, strTemp;
 
@@ -1022,8 +1025,11 @@ BOOL CReelMap::Write(int nSerial, int nLayer, CString sPath)
 	int i, nC, nR, nPcsId, nDefCode;//, nTot, nDef, nGood;
 	pPnlBuf = new short*[nNodeY];
 	for(i=0; i<nNodeY; i++)
+	{ 
 		pPnlBuf[i] = new short[nNodeX];
-//	memset(pPnlBuf, 0, sizeof(short)*nNodeX*nNodeY);
+		memset(pPnlBuf[i], 0, sizeof(short)*nNodeX);
+		memset(m_pPnlBuf[nSerial - 1][i], 0, sizeof(short)*nNodeX);
+	}
 
 	CString strData, strTemp;
 
@@ -2114,15 +2120,18 @@ BOOL CReelMap::MakeDir()
 	}
 
 	sPath.Format(_T("%s%s"), Path[0], Path[1]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s"), Path[0], Path[1], Path[2]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s\\%s"), Path[0], Path[1], Path[2], Path[3]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 #endif
 	return TRUE;
@@ -2180,19 +2189,23 @@ BOOL CReelMap::MakeDirUser()
 	}
 
 	sPath.Format(_T("%s%s"), Path[0], Path[1]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s"), Path[0], Path[1], Path[2]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s\\%s"), Path[0], Path[1], Path[2], Path[3]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s\\%s\\Reelmap"), Path[0], Path[1], Path[2], Path[3]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 #endif
 	return TRUE;
@@ -2251,23 +2264,28 @@ CString CReelMap::MakeDirUserRestore()
 	}
 
 	sPath.Format(_T("%s%s"), Path[0], Path[1]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s"), Path[0], Path[1], Path[2]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s\\%s"), Path[0], Path[1], Path[2], Path[3]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s\\%s\\Reelmap"), Path[0], Path[1], Path[2], Path[3]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s\\%s\\Reelmap\\Restore"), Path[0], Path[1], Path[2], Path[3]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 #endif
 	return sPath;
@@ -2308,15 +2326,18 @@ BOOL CReelMap::MakeDir(CString sModel, CString sLayer, CString sLot)
 	Path[3] = sLayer;
 
 	sPath.Format(_T("%s%s"), Path[0], Path[1]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s"), Path[0], Path[1], Path[2]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s\\%s"), Path[0], Path[1], Path[2], Path[3]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 #endif
 	return TRUE;
@@ -2357,19 +2378,23 @@ BOOL CReelMap::MakeDirUser(CString sModel, CString sLayer, CString sLot)
 	Path[3] = sLayer;
 
 	sPath.Format(_T("%s%s"), Path[0], Path[1]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s"), Path[0], Path[1], Path[2]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s\\%s"), Path[0], Path[1], Path[2], Path[3]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s\\%s\\Reelmap"), Path[0], Path[1], Path[2], Path[3]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 #endif
 	return TRUE;
@@ -2410,23 +2435,28 @@ CString CReelMap::MakeDirUserRestore(CString sModel, CString sLayer, CString sLo
 	Path[3] = sLayer;
 
 	sPath.Format(_T("%s%s"), Path[0], Path[1]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s"), Path[0], Path[1], Path[2]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s\\%s"), Path[0], Path[1], Path[2], Path[3]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s\\%s\\Reelmap"), Path[0], Path[1], Path[2], Path[3]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s\\%s\\Reelmap\\Restore"), Path[0], Path[1], Path[2], Path[3]);
-	if(!finder.FindFile(sPath))
+	//if(!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 #endif
 	return sPath;
@@ -2777,23 +2807,23 @@ BOOL CReelMap::RemakeReelmap()
 	StringToChar(strPathName, FileName);
 
 	fp = fopen(FileName, "a+");
-	char* pRtn;
+	char* pRtn = NULL;
 	if (fp != NULL)
 	{
-		fprintf(fp, "장비호기명 : %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.System.sMcName)); delete pRtn;
-		fprintf(fp, "운  용  자 : %s\r\n", pRtn = StringToChar(pDoc->WorkingInfo.LastJob.sSelUserName)); delete pRtn;
-		fprintf(fp, "모      델 : %s\r\n", pRtn = StringToChar(sModel)); delete pRtn;
-		fprintf(fp, "로      트 : %s\r\n", pRtn = StringToChar(sLot)); delete pRtn;
-		fprintf(fp, "상면레이어 : %s\r\n", pRtn = StringToChar(sLayer[0])); delete pRtn;
+		fprintf(fp, "장비호기명 : %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.System.sMcName)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "운  용  자 : %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sSelUserName)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "모      델 : %s\r\n", pRtn = StrToChar(sModel)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "로      트 : %s\r\n", pRtn = StrToChar(sLot)); if (pRtn) delete pRtn; pRtn = NULL;
+		fprintf(fp, "상면레이어 : %s\r\n", pRtn = StrToChar(sLayer[0])); if (pRtn) delete pRtn; pRtn = NULL;
 		if(bDualTest)
 		{
-			fprintf(fp, "하면레이어 : %s\r\n", pRtn = StringToChar(sLayer[1])); delete pRtn; 
+			fprintf(fp, "하면레이어 : %s\r\n", pRtn = StrToChar(sLayer[1])); if (pRtn) delete pRtn; pRtn = NULL;
 		}
-		fprintf(fp, "양폐 스트립 수율[%%] : %.1f\r\n", _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio)); delete pRtn;//atof
+		fprintf(fp, "양폐 스트립 수율[%%] : %.1f\r\n", _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio)); if (pRtn) delete pRtn; pRtn = NULL;//atof
 		
 		for(i=1; i<DEF_UPPER; i++)
 		{
-			fprintf(fp, "%c - %s\r\n", pDoc->m_cBigDefCode[i], pRtn = StringToChar(m_sKorDef[i])); delete pRtn; 
+			fprintf(fp, "%c - %s\r\n", pDoc->m_cBigDefCode[i], pRtn = StrToChar(m_sKorDef[i])); if (pRtn) delete pRtn; pRtn = NULL;
 		}
 		fprintf(fp, "? - Missed Align Panel(i.e 노광불량)\r\n\r\n");
 
@@ -2856,7 +2886,8 @@ void CReelMap::RestoreReelmap()
 	sUserRestoreDir.Format(_T("%s\\%d"), sPath, nLastDir+1);
 	
 	CFileFind finder;
-	if(!finder.FindFile(sUserRestoreDir))
+	//if(!finder.FindFile(sUserRestoreDir))
+	if (!pDoc->DirectoryExists(sUserRestoreDir))
 		CreateDirectory(sUserRestoreDir, NULL);
 
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
@@ -3175,4 +3206,41 @@ BOOL CReelMap::ReloadRst(int nTo)
 
 	m_bDoneReloadRst = TRUE;
 	return TRUE;
+}
+
+
+char* CReelMap::StrToChar(CString str) // char* returned must be deleted... 
+{
+	char*		szStr = NULL;
+	wchar_t*	wszStr;
+	int				nLenth;
+
+	USES_CONVERSION;
+	//1. CString to wchar_t* conversion
+	wszStr = T2W(str.GetBuffer(str.GetLength()));
+
+	//2. wchar_t* to char* conversion
+	nLenth = WideCharToMultiByte(CP_ACP, 0, wszStr, -1, NULL, 0, NULL, NULL); //char* 형에 대한길이를 구함 
+	szStr = new char[nLenth];  //메모리 할당 
+
+							   //3. wchar_t* to char* conversion
+	WideCharToMultiByte(CP_ACP, 0, wszStr, -1, szStr, nLenth, 0, 0);
+	return szStr;
+}
+
+void CReelMap::StrToChar(CString str, char* pCh) // char* returned must be deleted... 
+{
+	wchar_t*	wszStr;
+	int				nLenth;
+
+	USES_CONVERSION;
+	//1. CString to wchar_t* conversion
+	wszStr = T2W(str.GetBuffer(str.GetLength()));
+
+	//2. wchar_t* to char* conversion
+	nLenth = WideCharToMultiByte(CP_ACP, 0, wszStr, -1, NULL, 0, NULL, NULL); //char* 형에 대한길이를 구함 
+
+																			  //3. wchar_t* to char* conversion
+	WideCharToMultiByte(CP_ACP, 0, wszStr, -1, pCh, nLenth, 0, 0);
+	return;
 }

@@ -29,6 +29,9 @@ protected: // serialization에서만 만들어집니다.
 
 // 특성입니다.
 public:
+	BOOL m_bBufEmpty[2]; // [0]: Up, [1]: Dn
+	BOOL m_bBufEmptyF[2]; // [0]: Up, [1]: Dn
+
 	// R2R Y Meander Adjusting....
 	BOOL m_bUseRTRYShiftAdjust;
 	double m_dRTRShiftVal;
@@ -44,7 +47,7 @@ public:
 
 	CReelMap* m_pReelMap;
 	CReelMap *m_pReelMapUp, *m_pReelMapDn, *m_pReelMapAllUp, *m_pReelMapAllDn;
-	CDataMarking** m_pPcr[MAX_PCR];					// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
+	CDataMarking* m_pPcr[MAX_PCR][MAX_PCR_PNL];					// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
 	CString *pMkInfo;
 
 	stMpeIoWrite m_pIo[TOT_M_IO];
@@ -354,6 +357,7 @@ public:
 	void SetEngraveBufInitPos(double dPos);
 	double GetEngraveBuffInitPos();
 
+	BOOL DirectoryExists(LPCTSTR szPath);
 
 // 재정의입니다.
 public:

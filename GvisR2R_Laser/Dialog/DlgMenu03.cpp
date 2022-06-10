@@ -1036,43 +1036,43 @@ void CDlgMenu03::Disp()
 
 
 	// [Marking]
-	bOn = pDoc->m_pMpeIo[nInSeg + 4] & (0x01<<1) ? TRUE : FALSE;	// 마킹부 연동 온/오프 스위치 램프
+	bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<1) ? TRUE : FALSE;	// 마킹부 연동 온/오프 스위치 램프
 	if(myBtn[9].GetImageBk() != bOn)
 		myBtn[9].SetCheck(bOn);
 
-	bOn = pDoc->m_pMpeIo[nInSeg + 4] & (0x01<<2) ? TRUE : FALSE;	// 마킹부 테이블 브로워 스위치 램프
+	bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<2) ? TRUE : FALSE;	// 마킹부 테이블 브로워 스위치 램프
 	if(myBtn[14].GetImageBk() != bOn)
 		myBtn[14].SetCheck(bOn);
 
-	bOn = pDoc->m_pMpeIo[nInSeg + 4] & (0x01<<3) ? TRUE : FALSE;	// 마킹부 피딩 정회전 스위치 램프
+	bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<3) ? TRUE : FALSE;	// 마킹부 피딩 정회전 스위치 램프
 	if(myBtn[10].GetImageBk() != bOn)
 		myBtn[10].SetCheck(bOn);
 
-	bOn = pDoc->m_pMpeIo[nInSeg + 4] & (0x01<<4) ? TRUE : FALSE;	// 마킹부 피딩 역회전 스위치 램프
+	bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<4) ? TRUE : FALSE;	// 마킹부 피딩 역회전 스위치 램프
 	if(myBtn[11].GetImageBk() != bOn)
 		myBtn[11].SetCheck(bOn);
 
-	bOn = pDoc->m_pMpeIo[nInSeg + 4] & (0x01<<5) ? TRUE : FALSE;	// 마킹부 피딩 진공 스위치 램프
+	bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<5) ? TRUE : FALSE;	// 마킹부 피딩 진공 스위치 램프
 	if(myBtn[12].GetImageBk() != bOn)
 		myBtn[12].SetCheck(bOn);
 
-	bOn = pDoc->m_pMpeIo[nInSeg + 4] & (0x01<<6) ? TRUE : FALSE;	// 마킹부 토크 진공 스위치 램프
+	bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<6) ? TRUE : FALSE;	// 마킹부 토크 진공 스위치 램프
 	if(myBtn[13].GetImageBk() != bOn)
 		myBtn[13].SetCheck(bOn);
 
-	bOn = pDoc->m_pMpeIo[nInSeg + 4] & (0x01<<7) ? TRUE : FALSE;	// 마킹부 테이블 진공 스위치 램프
+	bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<7) ? TRUE : FALSE;	// 마킹부 테이블 진공 스위치 램프
 	if(myBtn[15].GetImageBk() != bOn)
 		myBtn[15].SetCheck(bOn);
 
-	bOn = pDoc->m_pMpeIo[nInSeg + 4] & (0x01<<8) ? TRUE : FALSE;	// 마킹부 레이져 포인터 스위치 램프
+	bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<8) ? TRUE : FALSE;	// 마킹부 레이져 포인터 스위치 램프
 	if(myBtn[49].GetImageBk() != bOn)
 		myBtn[49].SetCheck(bOn);
 
-	bOn = pDoc->m_pMpeIo[nInSeg + 4] & (0x01<<9) ? TRUE : FALSE;	// 마킹부 피딩 클램프 스위치 램프
+	bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<9) ? TRUE : FALSE;	// 마킹부 피딩 클램프 스위치 램프
 	if(myBtn[51].GetImageBk() != bOn)
 		myBtn[51].SetCheck(bOn);
 
-	bOn = pDoc->m_pMpeIo[nInSeg + 4] & (0x01<<10) ? TRUE : FALSE;	// 마킹부 토크 클램프 스위치 램프
+	bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<10) ? TRUE : FALSE;	// 마킹부 토크 클램프 스위치 램프
 	if(myBtn[52].GetImageBk() != bOn)
 		myBtn[52].SetCheck(bOn);
 
@@ -1387,22 +1387,22 @@ void CDlgMenu03::Disp()
 	if(bOn)	
 	{
 		sCap = myStcTitle[75].GetText();
-		if(sCap != _T("Uncoiler\r정방향 CCW"))
+		if(sCap != _T("Uncoiler\r역방향"))
 		{
 			myStcTitle[75].ShowWindow(SW_HIDE);
 			myStcTitle[75].SetTextColor(RGB_RED);
-			myStcTitle[75].SetText(_T("Uncoiler\r정방향 CCW"));
+			myStcTitle[75].SetText(_T("Uncoiler\r역방향"));
 			myStcTitle[75].ShowWindow(SW_SHOW);
 		}
 	}
 	else
 	{
 		sCap = myStcTitle[75].GetText();
-		if(sCap != _T("Uncoiler\r정방향 CW"))
+		if(sCap != _T("Uncoiler\r정방향"))
 		{
 			myStcTitle[75].ShowWindow(SW_HIDE);
 			myStcTitle[75].SetTextColor(RGB_NAVY);
-			myStcTitle[75].SetText(_T("Uncoiler\r정방향 CW"));
+			myStcTitle[75].SetText(_T("Uncoiler\r정방향"));
 			myStcTitle[75].ShowWindow(SW_SHOW);
 		}
 	}
@@ -2461,6 +2461,8 @@ void CDlgMenu03::SetAoiOnePnl(BOOL bOn)
 
 BOOL CDlgMenu03::DoReset()
 {
+/*	pView->DispThreadTick();
+
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
 	if(pDoc->Status.bManual)
@@ -2483,6 +2485,7 @@ BOOL CDlgMenu03::DoReset()
 		else
 		{
 			pDoc->m_bDoneChgLot = FALSE;
+			pView->m_nNewLot = 0;
 		}
 
 		if(!bInit)
@@ -2557,7 +2560,7 @@ BOOL CDlgMenu03::DoReset()
 		
 		return TRUE;
 	}
-
+*/
 	return FALSE;		
 }
 

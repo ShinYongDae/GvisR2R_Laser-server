@@ -235,8 +235,17 @@ void CMyGL::SetPnlNum()
 		return;
 
 	int k;
-	for(k=0; k<m_nTotPnl; k++)
-		m_pPnlNum[k]=pDoc->m_pReelMap->m_pPnlNum[k];
+	for (k = 0; k < m_nTotPnl; k++)
+	{
+		if (pDoc->WorkingInfo.System.bSaveLog)
+		{
+			CString strData;
+			strData.Format(_T("SetPnlNum: m_pPnlNum[%d] = %d"), k, pDoc->m_pReelMap->m_pPnlNum[k]);
+			SaveLog(strData);
+		}
+
+		m_pPnlNum[k] = pDoc->m_pReelMap->m_pPnlNum[k];
+	}
 }
 
 void CMyGL::SetPnlDefNum()
@@ -560,7 +569,7 @@ void CMyGL::DrawPnlNum()
 {
  	int k;
 	//char cPnlNum[MAX_PATH];
-	TCHAR cPnlNum[MAX_PATH];
+	//TCHAR cPnlNum[MAX_PATH];
 	CString sPnlNum;
 // 	for(k=0; k<m_nTotPnl; k++)
 	for(k=m_nTotPnl-1; k>=0; k--)
@@ -571,9 +580,18 @@ void CMyGL::DrawPnlNum()
 		if(m_pPnlNum[k] <= 0)
 			sPnlNum.Format(_T(""));
 		else
+		{
 			sPnlNum.Format(_T("%d"), m_pPnlNum[k]);
+
+			if (pDoc->WorkingInfo.System.bSaveLog)
+			{
+				CString strData;
+				strData.Format(_T("DrawPnlNum: m_pPnlNum[%d] = %d"), k, m_pPnlNum[k]);
+				SaveLog(strData);
+			}
+		}
 		//strcpy(cPnlNum, sPnlNum);
-		_stprintf(cPnlNum, _T("%s"), sPnlNum);
+		//_stprintf(cPnlNum, _T("%s"), sPnlNum);
 
 		double dScale = pDoc->m_pReelMap->GetAdjRatio();
 		double fPosX = (pDoc->m_pReelMap->pFrmRgn[k].left+pDoc->m_pReelMap->pFrmRgn[k].right-sPnlNum.GetLength()*(MYGL_GAP_NUM + MYGL_SIZE_CHAR)*dScale)/2.0;	
@@ -582,17 +600,20 @@ void CMyGL::DrawPnlNum()
 		if(k==pDoc->m_pReelMap->m_nSelMarkingPnl)
 		{
 			if(fPosX > 0.0 && fPosY > 0.0)
-				GVGLFont(TCHARToString(cPnlNum), 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_MONOROMAN, 1.0, 0.0, 0.0);
+				GVGLFont(sPnlNum, 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_MONOROMAN, 1.0, 0.0, 0.0);
+				//GVGLFont(TCHARToString(cPnlNum), 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_MONOROMAN, 1.0, 0.0, 0.0);
 		}
 		else if(k==pDoc->m_pReelMap->m_nSelMarkingPnl+1)
 		{
 			if(fPosX > 0.0 && fPosY > 0.0)
-				GVGLFont(TCHARToString(cPnlNum), 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_MONOROMAN, 1.0, 0.0, 0.0);
+				GVGLFont(sPnlNum, 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_MONOROMAN, 1.0, 0.0, 0.0);
+				//GVGLFont(TCHARToString(cPnlNum), 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_MONOROMAN, 1.0, 0.0, 0.0);
 		}
 		else
 		{
 			if(fPosX > 0.0 && fPosY > 0.0)
-				GVGLFont(TCHARToString(cPnlNum), 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_ROMAN);
+				GVGLFont(sPnlNum, 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_ROMAN);
+				//GVGLFont(TCHARToString(cPnlNum), 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_ROMAN);
 		}
 	}
 }
@@ -604,7 +625,7 @@ void CMyGL::DrawPnlDefNum()
 
  	int k;
 	//char cPnlDefNum[MAX_PATH];
-	TCHAR cPnlDefNum[MAX_PATH];
+	//TCHAR cPnlDefNum[MAX_PATH];
 	CString sPnlDefNum;
 // 	for(k=0; k<m_nTotPnl; k++)
 	for(k=m_nTotPnl-1; k>=0; k--)
@@ -614,7 +635,7 @@ void CMyGL::DrawPnlDefNum()
 		else
 			sPnlDefNum.Format(_T("Total: %d"), m_pPnlDefNum[k]);
 		//strcpy(cPnlDefNum, sPnlDefNum);
-		_stprintf(cPnlDefNum, _T("%s"), sPnlDefNum);
+		//_stprintf(cPnlDefNum, _T("%s"), sPnlDefNum);
 
 		double dScale = pDoc->m_pReelMap->GetAdjRatio();
 		double fPosX = (pDoc->m_pReelMap->pFrmRgn[k].left+pDoc->m_pReelMap->pFrmRgn[k].right-sPnlDefNum.GetLength()*(MYGL_GAP_NUM + MYGL_SIZE_CHAR)*dScale)/2.0;	
@@ -623,17 +644,20 @@ void CMyGL::DrawPnlDefNum()
 		if(k==pDoc->m_pReelMap->m_nSelMarkingPnl)
 		{
 			if(fPosX > -100.0 && fPosY > -100.0)
-				GVGLFont(TCHARToString(cPnlDefNum), 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_MONOROMAN, 1.0, 0.0, 0.0);
+				GVGLFont(sPnlDefNum, 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_MONOROMAN, 1.0, 0.0, 0.0);
+				//GVGLFont(TCHARToString(cPnlDefNum), 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_MONOROMAN, 1.0, 0.0, 0.0);
 		}
 		else if(k==pDoc->m_pReelMap->m_nSelMarkingPnl+1)
 		{
 			if(fPosX > -100.0 && fPosY > -100.0)
-				GVGLFont(TCHARToString(cPnlDefNum), 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_MONOROMAN, 1.0, 0.0, 0.0);
+				GVGLFont(sPnlDefNum, 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_MONOROMAN, 1.0, 0.0, 0.0);
+				//GVGLFont(TCHARToString(cPnlDefNum), 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_MONOROMAN, 1.0, 0.0, 0.0);
 		}
 		else
 		{
 			if(fPosX > -100.0 && fPosY > -100.0)
-				GVGLFont(TCHARToString(cPnlDefNum), 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_ROMAN);
+				GVGLFont(sPnlDefNum, 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_ROMAN);
+				//GVGLFont(TCHARToString(cPnlDefNum), 1, fPosX, fPosY, 0.0, fFontSize, GVFONT_ROMAN);
 		}
 	}
 }

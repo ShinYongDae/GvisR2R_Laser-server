@@ -40,6 +40,7 @@ public:
 	BOOL GetMkMatrix(int nPcsId, int &nC, int &nR);
 	BOOL GetMkMatrix(int nPcsId, int &nStrip, int &nC, int &nR);
 
+	void GetPcsRgn(int nC, int nR, int &nPcsId, CRect &ptRect);
 
 // Overrides
 	// ClassWizard generated virtual function overrides

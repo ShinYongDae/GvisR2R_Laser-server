@@ -26,6 +26,7 @@ IMPLEMENT_DYNCREATE(CMainFrame, CFrameWnd)
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	ON_COMMAND(ID_DATABASE_CONNECTION, &CMainFrame::OnDatabaseConnection)
 	ON_WM_CLOSE()
 	ON_COMMAND(ID_APP_MINIMIZE, &CMainFrame::OnAppMinimize)
 END_MESSAGE_MAP()
@@ -190,17 +191,17 @@ void CMainFrame::OnDestroy()
 
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
 #ifdef USE_VISION
-	if (pView->m_pVision[1])
-	{
-		delete pView->m_pVision[1];
-		pView->m_pVision[1] = NULL;
-	}
+	//if (pView->m_pVision[1])
+	//{
+	//	delete pView->m_pVision[1];
+	//	pView->m_pVision[1] = NULL;
+	//}
 
-	if (pView->m_pVision[0])
-	{
-		delete pView->m_pVision[0];
-		pView->m_pVision[0] = NULL;
-	}
+	//if (pView->m_pVision[0])
+	//{
+	//	delete pView->m_pVision[0];
+	//	pView->m_pVision[0] = NULL;
+	//}
 #endif
 }
 
@@ -209,18 +210,20 @@ BOOL CMainFrame::DestroyWindow()
 {
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 #ifdef USE_VISION
-	if (pView->m_pVision[1])
-	{
-		delete pView->m_pVision[1];
-		pView->m_pVision[1] = NULL;
-	}
+	//if (pView->m_pVision[1])
+	//{
+	//	delete pView->m_pVision[1];
+	//	pView->m_pVision[1] = NULL;
+	//}
 
-	if (pView->m_pVision[0])
-	{
-		delete pView->m_pVision[0];
-		pView->m_pVision[0] = NULL;
-	}
+	//if (pView->m_pVision[0])
+	//{
+	//	delete pView->m_pVision[0];
+	//	pView->m_pVision[0] = NULL;
+	//}
 #endif
+	pView->DestroyView();
+
 	return CFrameWnd::DestroyWindow();
 }
 
@@ -229,21 +232,27 @@ void CMainFrame::OnClose()
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 #ifdef USE_VISION
-	if (pView->m_pVision[1])
-	{
-		delete pView->m_pVision[1];
-		pView->m_pVision[1] = NULL;
-	}
+	//if (pView->m_pVision[1])
+	//{
+	//	delete pView->m_pVision[1];
+	//	pView->m_pVision[1] = NULL;
+	//}
 
-	if (pView->m_pVision[0])
-	{
-		delete pView->m_pVision[0];
-		pView->m_pVision[0] = NULL;
-	}
+	//if (pView->m_pVision[0])
+	//{
+	//	delete pView->m_pVision[0];
+	//	pView->m_pVision[0] = NULL;
+	//}
 #endif
 	CFrameWnd::OnClose();
 }
 
+
+void CMainFrame::OnDatabaseConnection()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	pView->DispDatabaseConnection();
+}
 
 void CMainFrame::OnAppMinimize()
 {

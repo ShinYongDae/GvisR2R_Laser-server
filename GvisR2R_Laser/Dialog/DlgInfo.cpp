@@ -35,7 +35,8 @@ CDlgInfo::CDlgInfo(CWnd* pParent /*=NULL*/)
 
 CDlgInfo::~CDlgInfo()
 {
-
+	if (pView->m_pDlgMenu01)
+		pView->m_pDlgMenu01->UpdateInfo();
 }
 
 void CDlgInfo::DoDataExchange(CDataExchange* pDX)
@@ -82,8 +83,10 @@ BEGIN_MESSAGE_MAP(CDlgInfo, CDialog)
 	ON_BN_CLICKED(IDC_CHK_TWO_METAL, OnChkTwoMetal)
 	ON_BN_CLICKED(IDC_STC_181, OnStc181)
 	//}}AFX_MSG_MAP
-	ON_BN_CLICKED(IDC_CHK_2_POINT_ALIGN, &CDlgInfo::OnBnClickedChk2PointAlign)
 	ON_BN_CLICKED(IDC_CHK_4_POINT_ALIGN, &CDlgInfo::OnBnClickedChk4PointAlign)
+	ON_BN_CLICKED(IDC_CHK_2_POINT_ALIGN, &CDlgInfo::OnBnClickedChk2PointAlign)
+	ON_BN_CLICKED(IDC_CHK_1186, &CDlgInfo::OnBnClickedChk1186)
+	ON_BN_CLICKED(IDC_CHK_1185, &CDlgInfo::OnBnClickedChk1185)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -168,8 +171,8 @@ BOOL CDlgInfo::OnInitDialog()
 // 
 // 	GetDlgItem(IDC_STC_0043)->ShowWindow(SW_HIDE);
 // 	GetDlgItem(IDC_CHK_008)->ShowWindow(SW_HIDE);
-// 	GetDlgItem(IDC_STC_0044)->ShowWindow(SW_HIDE);
-// 	GetDlgItem(IDC_CHK_009)->ShowWindow(SW_HIDE);
+ 	GetDlgItem(IDC_STC_0044)->ShowWindow(SW_HIDE);
+ 	GetDlgItem(IDC_CHK_009)->ShowWindow(SW_HIDE);
 // 	GetDlgItem(IDC_STC_0046)->ShowWindow(SW_HIDE);
 // 	GetDlgItem(IDC_CHK_011)->ShowWindow(SW_HIDE);
 	
@@ -181,42 +184,88 @@ void CDlgInfo::InitBtn()
 {
 	myBtn[0].SubclassDlgItem(IDC_CHK_000, this);
 	myBtn[0].SetHwnd(this->GetSafeHwnd(), IDC_CHK_000);
+	myBtn[0].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[1].SubclassDlgItem(IDC_CHK_001, this);
 	myBtn[1].SetHwnd(this->GetSafeHwnd(), IDC_CHK_001);
+	myBtn[1].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[2].SubclassDlgItem(IDC_CHK_002, this);
 	myBtn[2].SetHwnd(this->GetSafeHwnd(), IDC_CHK_002);	
+	myBtn[2].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[3].SubclassDlgItem(IDC_CHK_003, this);
 	myBtn[3].SetHwnd(this->GetSafeHwnd(), IDC_CHK_003);
+	myBtn[3].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[4].SubclassDlgItem(IDC_CHK_004, this);
 	myBtn[4].SetHwnd(this->GetSafeHwnd(), IDC_CHK_004);
+	myBtn[4].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[5].SubclassDlgItem(IDC_CHK_005, this);
 	myBtn[5].SetHwnd(this->GetSafeHwnd(), IDC_CHK_005);
+	myBtn[5].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[6].SubclassDlgItem(IDC_CHK_006, this);
 	myBtn[6].SetHwnd(this->GetSafeHwnd(), IDC_CHK_006);
+	myBtn[6].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[7].SubclassDlgItem(IDC_CHK_007, this);
 	myBtn[7].SetHwnd(this->GetSafeHwnd(), IDC_CHK_007);	
+	myBtn[7].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[8].SubclassDlgItem(IDC_CHK_008, this);
 	myBtn[8].SetHwnd(this->GetSafeHwnd(), IDC_CHK_008);
+	myBtn[8].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[9].SubclassDlgItem(IDC_CHK_009, this);
 	myBtn[9].SetHwnd(this->GetSafeHwnd(), IDC_CHK_009);
+	myBtn[9].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[10].SubclassDlgItem(IDC_CHK_010, this);
 	myBtn[10].SetHwnd(this->GetSafeHwnd(), IDC_CHK_010);
+	myBtn[10].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[11].SubclassDlgItem(IDC_CHK_011, this);
 	myBtn[11].SetHwnd(this->GetSafeHwnd(), IDC_CHK_011);
+	myBtn[11].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[12].SubclassDlgItem(IDC_CHK_USE_AOI_DUAL, this);
 	myBtn[12].SetHwnd(this->GetSafeHwnd(), IDC_CHK_USE_AOI_DUAL);
+	myBtn[12].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[13].SubclassDlgItem(IDC_CHK_USE_AOI_SINGLE, this);
 	myBtn[13].SetHwnd(this->GetSafeHwnd(), IDC_CHK_USE_AOI_SINGLE);
+	myBtn[13].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[14].SubclassDlgItem(IDC_CHK_SAMPLE_TEST, this);
 	myBtn[14].SetHwnd(this->GetSafeHwnd(), IDC_CHK_SAMPLE_TEST);
+	myBtn[14].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[15].SubclassDlgItem(IDC_CHK_ONE_METAL, this);
 	myBtn[15].SetHwnd(this->GetSafeHwnd(), IDC_CHK_ONE_METAL);
+	myBtn[15].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[16].SubclassDlgItem(IDC_CHK_TWO_METAL, this);
 	myBtn[16].SetHwnd(this->GetSafeHwnd(), IDC_CHK_TWO_METAL);
+	myBtn[16].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[17].SubclassDlgItem(IDC_CHK_2_POINT_ALIGN, this);
 	myBtn[17].SetHwnd(this->GetSafeHwnd(), IDC_CHK_2_POINT_ALIGN);
+	myBtn[17].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[18].SubclassDlgItem(IDC_CHK_4_POINT_ALIGN, this);
 	myBtn[18].SetHwnd(this->GetSafeHwnd(), IDC_CHK_4_POINT_ALIGN);
+	myBtn[18].SetBtnType(BTN_TYPE_CHECK);
+
+	myBtn[19].SubclassDlgItem(IDC_CHK_1185, this); //하면AOI 클린롤러 
+	myBtn[19].SetHwnd(this->GetSafeHwnd(), IDC_CHK_1185);
+	myBtn[19].SetBtnType(BTN_TYPE_CHECK);
+
+	myBtn[20].SubclassDlgItem(IDC_CHK_1186, this); //상면AOI 클린롤러 
+	myBtn[20].SetHwnd(this->GetSafeHwnd(), IDC_CHK_1186);
+	myBtn[20].SetBtnType(BTN_TYPE_CHECK);
+
 
 	int i;
 	for(i=0; i<MAX_INFO_BTN; i++)
@@ -225,13 +274,13 @@ void CDlgInfo::InitBtn()
 		{
 			myBtn[i].SetFont(_T("굴림체"),16,TRUE);
 			myBtn[i].SetTextColor(RGB_BLACK);
-			myBtn[i].SetBtnType(BTN_TYPE_CHECK);
+			//myBtn[i].SetBtnType(BTN_TYPE_CHECK);
 		}
 
 		if(15 == i || 16 == i)
 		{
 			myBtn[i].SetFont(_T("돋움체"),22,TRUE);
-			myBtn[i].SetBtnType(BTN_TYPE_CHECK);
+			//myBtn[i].SetBtnType(BTN_TYPE_CHECK);
 		}
 
 		if(0 != i && 12 != i && 13 != i && 14 != i && 15 != i && 16 != i)
@@ -306,6 +355,8 @@ void CDlgInfo::InitStcTitle()
 	myStcTitle[46].SubclassDlgItem(IDC_STC_63, this);
 	myStcTitle[47].SubclassDlgItem(IDC_STC_64, this);
 	myStcTitle[48].SubclassDlgItem(IDC_STC_65, this);
+	myStcTitle[49].SubclassDlgItem(IDC_STC_1145, this); //하면AOI 클린롤러
+	myStcTitle[50].SubclassDlgItem(IDC_STC_1146, this); //상면AOI 클린롤러
 
 	for(int i=0; i<MAX_INFO_STC; i++)
 	{
@@ -460,7 +511,7 @@ void CDlgInfo::Disp()
 	else
 		myBtn[4].SetCheck(FALSE);
 
-	if(pDoc->WorkingInfo.LastJob.bAoiDrSen)
+	if(pDoc->WorkingInfo.LastJob.bAoiUpDrSen)
 		myBtn[5].SetCheck(TRUE);
 	else
 		myBtn[5].SetCheck(FALSE);
@@ -490,7 +541,8 @@ void CDlgInfo::Disp()
 	else
 		myBtn[10].SetCheck(FALSE);
 
-	if(pDoc->WorkingInfo.LastJob.bAoiSftySen)
+	//if(pDoc->WorkingInfo.LastJob.bAoiSftySen)
+	if (pDoc->WorkingInfo.LastJob.bAoiDnDrSen)
 		myBtn[11].SetCheck(TRUE);
 	else
 		myBtn[11].SetCheck(FALSE);
@@ -514,28 +566,38 @@ void CDlgInfo::Disp()
 	if(pDoc->WorkingInfo.LastJob.bOneMetal)
 	{
 		myBtn[15].SetCheck(TRUE);
-		myBtn[15].SetWindowText(_T("Recoiler\r정방향 CCW"));	
+		myBtn[15].SetWindowText(_T("Recoiler\r역방향"));	
 		myBtn[15].SetTextColor(RGB_DARKRED);
 	}
 	else
 	{
 		myBtn[15].SetCheck(FALSE);
-		myBtn[15].SetWindowText(_T("Recoiler\r정방향 CW"));
+		myBtn[15].SetWindowText(_T("Recoiler\r정방향"));
 		myBtn[15].SetTextColor(RGB_BLUE);
 	}
 
 	if(pDoc->WorkingInfo.LastJob.bTwoMetal)
 	{
 		myBtn[16].SetCheck(TRUE);
-		myBtn[16].SetWindowText(_T("Uncoiler\r정방향 CCW"));
+		myBtn[16].SetWindowText(_T("Uncoiler\r역방향"));
 		myBtn[16].SetTextColor(RGB_DARKRED);
 	}
 	else
 	{
 		myBtn[16].SetCheck(FALSE);
-		myBtn[16].SetWindowText(_T("Uncoiler\r정방향 CW"));
+		myBtn[16].SetWindowText(_T("Uncoiler\r정방향"));
 		myBtn[16].SetTextColor(RGB_BLUE);
 	}
+
+	if (pDoc->WorkingInfo.LastJob.bAoiDnCleanRoler)
+		myBtn[19].SetCheck(TRUE);
+	else
+		myBtn[19].SetCheck(FALSE);
+
+	if (pDoc->WorkingInfo.LastJob.bAoiUpCleanRoler)
+		myBtn[20].SetCheck(TRUE);
+	else
+		myBtn[20].SetCheck(FALSE);
 }
 
 void CDlgInfo::OnStc0008() 
@@ -762,20 +824,30 @@ void CDlgInfo::OnChk001()
 void CDlgInfo::OnChk002() 
 {
 	// TODO: Add your control notification handler code here
-	BOOL bUse;
-	if(myBtn[2].GetCheck())
+	BOOL bUse = !pDoc->WorkingInfo.LastJob.bTempPause;
+	Sleep(100);
+	if (bUse)
 	{
-		bUse = TRUE;
-		//pView->IoWrite(_T("MB440183", 1);	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
 		pView->m_pMpe->Write(_T("MB440183"), 1);
 		pView->ChkTempStop(TRUE);
+		if (!myBtn[2].GetCheck())
+		{
+			myBtn[2].SetCheck(TRUE);
+			//bUse = TRUE;
+			//pView->IoWrite(_T("MB440183", 1);	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
+		}
 	}
 	else
 	{
-		bUse = FALSE;
-		//pView->IoWrite(_T("MB440183", 0);	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
 		pView->m_pMpe->Write(_T("MB440183"), 0);
 		pView->ChkTempStop(FALSE);
+
+		if (myBtn[2].GetCheck())
+		{
+			myBtn[2].SetCheck(FALSE);
+			//bUse = FALSE;
+			//pView->IoWrite(_T("MB440183", 0);	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
+		}
 	}
 
 	pDoc->WorkingInfo.LastJob.bTempPause = bUse;
@@ -819,21 +891,21 @@ void CDlgInfo::OnChk004()
 void CDlgInfo::OnChk005() 
 {
 	// TODO: Add your control notification handler code here
-	if(myBtn[5].GetCheck())
+	if(myBtn[5].GetCheck())		// 상면 AOI DOOR SENSOR
 	{
-		pDoc->WorkingInfo.LastJob.bAoiDrSen = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_FM_AOI] = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_FL_AOI] = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_FR_AOI] = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_BM_AOI] = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_BL_AOI] = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_BR_AOI] = TRUE;
+		pDoc->WorkingInfo.LastJob.bAoiUpDrSen = TRUE;
+		pDoc->Status.bDoorAoiF[DOOR_FM_AOI_UP] = TRUE;
+		pDoc->Status.bDoorAoiF[DOOR_FL_AOI_UP] = TRUE;
+		pDoc->Status.bDoorAoiF[DOOR_FR_AOI_UP] = TRUE;
+		pDoc->Status.bDoorAoiF[DOOR_BM_AOI_UP] = TRUE;
+		pDoc->Status.bDoorAoiF[DOOR_BL_AOI_UP] = TRUE;
+		pDoc->Status.bDoorAoiF[DOOR_BR_AOI_UP] = TRUE;
 	}
 	else
-		pDoc->WorkingInfo.LastJob.bAoiDrSen = FALSE;
+		pDoc->WorkingInfo.LastJob.bAoiUpDrSen = FALSE;
 
-	CString sData = pDoc->WorkingInfo.LastJob.bAoiDrSen ? _T("1") : _T("0");
-	::WritePrivateProfileString(_T("Last Job"), _T("Use Aoi Door Sensor"), sData, PATH_WORKING_INFO);	
+	CString sData = pDoc->WorkingInfo.LastJob.bAoiUpDrSen ? _T("1") : _T("0");
+	::WritePrivateProfileString(_T("Last Job"), _T("Use AoiUp Door Sensor"), sData, PATH_WORKING_INFO);	
 }
 
 void CDlgInfo::OnChk006() 
@@ -885,26 +957,40 @@ void CDlgInfo::OnChk007()
 // }
 void CDlgInfo::OnChk008() 
 {
-	if(myBtn[8].GetCheck())
-		pDoc->WorkingInfo.LastJob.bBufDrSen = TRUE;
-	else
-		pDoc->WorkingInfo.LastJob.bBufDrSen = FALSE;
+	//if(myBtn[8].GetCheck())
+	//	pDoc->WorkingInfo.LastJob.bBufDrSen = TRUE;
+	//else
+	//	pDoc->WorkingInfo.LastJob.bBufDrSen = FALSE;
 
-	CString sData = pDoc->WorkingInfo.LastJob.bBufDrSen ? _T("1") : _T("0");
-	::WritePrivateProfileString(_T("Last Job"), _T("Use Buffer Door Sensor"), sData, PATH_WORKING_INFO);	
+	//CString sData = pDoc->WorkingInfo.LastJob.bBufDrSen ? _T("1") : _T("0");
+	//::WritePrivateProfileString(_T("Last Job"), _T("Use Buffer Door Sensor"), sData, PATH_WORKING_INFO);	
 
 }
 
 void CDlgInfo::OnChk009() 
 {
 	// TODO: Add your control notification handler code here
-	if(myBtn[9].GetCheck())
-		pDoc->WorkingInfo.LastJob.bStopFixDef = TRUE;
+	if (myBtn[9].GetCheck())
+	{
+		pDoc->WorkingInfo.LastJob.bEngvDrSen = TRUE;
+		pDoc->Status.bDoorEngvF[DOOR_FL_ENGV] = TRUE;
+		pDoc->Status.bDoorEngvF[DOOR_FR_ENGV] = TRUE;
+		pDoc->Status.bDoorEngvF[DOOR_BL_ENGV] = TRUE;
+		pDoc->Status.bDoorEngvF[DOOR_BR_ENGV] = TRUE;
+	}
 	else
-		pDoc->WorkingInfo.LastJob.bStopFixDef = FALSE;
+		pDoc->WorkingInfo.LastJob.bEngvDrSen = FALSE;
 
-	CString sData = pDoc->WorkingInfo.LastJob.bStopFixDef ? _T("1") : _T("0");
-	::WritePrivateProfileString(_T("Last Job"), _T("Use Fix Defect Stop"), sData, PATH_WORKING_INFO);	
+	CString sData = pDoc->WorkingInfo.LastJob.bEngvDrSen ? _T("1") : _T("0");
+	::WritePrivateProfileString(_T("Last Job"), _T("Use Engrave Door Sensor"), sData, PATH_WORKING_INFO);
+
+	//if(myBtn[9].GetCheck())
+	//	pDoc->WorkingInfo.LastJob.bStopFixDef = TRUE;
+	//else
+	//	pDoc->WorkingInfo.LastJob.bStopFixDef = FALSE;
+
+	//CString sData = pDoc->WorkingInfo.LastJob.bStopFixDef ? _T("1") : _T("0");
+	//::WritePrivateProfileString(_T("Last Job"), _T("Use Fix Defect Stop"), sData, PATH_WORKING_INFO);	
 }
 
 void CDlgInfo::OnChk010() 
@@ -922,18 +1008,38 @@ void CDlgInfo::OnChk010()
 void CDlgInfo::OnChk011() 
 {
 	// TODO: Add your control notification handler code here
-	if(myBtn[11].GetCheck())
-		pDoc->WorkingInfo.LastJob.bAoiSftySen = TRUE;
+	if (myBtn[11].GetCheck())		// 하면 AOI DOOR SENSOR
+	{
+		pDoc->WorkingInfo.LastJob.bAoiDnDrSen = TRUE;
+		pDoc->Status.bDoorAoiF[DOOR_FM_AOI_DN] = TRUE;
+		pDoc->Status.bDoorAoiF[DOOR_FL_AOI_DN] = TRUE;
+		pDoc->Status.bDoorAoiF[DOOR_FR_AOI_DN] = TRUE;
+		pDoc->Status.bDoorAoiF[DOOR_BM_AOI_DN] = TRUE;
+		pDoc->Status.bDoorAoiF[DOOR_BL_AOI_DN] = TRUE;
+		pDoc->Status.bDoorAoiF[DOOR_BR_AOI_DN] = TRUE;
+	}
 	else
-		pDoc->WorkingInfo.LastJob.bAoiSftySen = FALSE;
+		pDoc->WorkingInfo.LastJob.bAoiDnDrSen = FALSE;
 
-	CString sData = pDoc->WorkingInfo.LastJob.bMkSftySen ? _T("1") : _T("0");
-	::WritePrivateProfileString(_T("Last Job"), _T("Use Aoi Safty Sensor"), sData, PATH_WORKING_INFO);	
+	CString sData = pDoc->WorkingInfo.LastJob.bAoiDnDrSen ? _T("1") : _T("0");
+	::WritePrivateProfileString(_T("Last Job"), _T("Use AoiDn Door Sensor"), sData, PATH_WORKING_INFO);
+
+
+	//if(myBtn[11].GetCheck())
+	//	pDoc->WorkingInfo.LastJob.bAoiSftySen = TRUE;
+	//else
+	//	pDoc->WorkingInfo.LastJob.bAoiSftySen = FALSE;
+
+	//CString sData = pDoc->WorkingInfo.LastJob.bAoiSftySen ? _T("1") : _T("0");
+	//::WritePrivateProfileString(_T("Last Job"), _T("Use Aoi Safty Sensor"), sData, PATH_WORKING_INFO);	
 }
 
 void CDlgInfo::OnBtnExit() 
 {
 	// TODO: Add your control notification handler code here
+	if (pView->m_pDlgMenu01)
+		pView->m_pDlgMenu01->UpdateInfo();
+
 	OnOK();
 }
 
@@ -1051,12 +1157,12 @@ void CDlgInfo::SetTwoMetal(BOOL bOn)
 		if(bChk[1])
 		{
 			myBtn[16].SetTextColor(RGB_DARKRED);
-			myBtn[16].SetWindowText(_T("Uncoiler\r정방향 CCW"));
+			myBtn[16].SetWindowText(_T("Uncoiler\r역방향"));
 		}
 		else
 		{
 			myBtn[16].SetTextColor(RGB_BLUE);
-			myBtn[16].SetWindowText(_T("Uncoiler\r정방향 CW"));
+			myBtn[16].SetWindowText(_T("Uncoiler\r정방향"));
 		}
 		pView->SetTwoMetal(bOn, bChk[1]);
 
@@ -1071,12 +1177,12 @@ void CDlgInfo::SetTwoMetal(BOOL bOn)
 		if(bChk[0])
 		{
 			myBtn[15].SetTextColor(RGB_DARKRED);
-			myBtn[15].SetWindowText(_T("Recoiler\r정방향 CCW"));
+			myBtn[15].SetWindowText(_T("Recoiler\r역방향"));
 		}
 		else
 		{
 			myBtn[15].SetTextColor(RGB_BLUE);
-			myBtn[15].SetWindowText(_T("Recoiler\r정방향 CW"));
+			myBtn[15].SetWindowText(_T("Recoiler\r정방향"));
 		}
 		pView->SetTwoMetal(bOn, bChk[0]);
 
@@ -1153,8 +1259,8 @@ void CDlgInfo::OnBnClickedChk2PointAlign()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	myBtn[18].SetCheck(FALSE);
 
-	if(myBtn[17].GetCheck())
-	{ 
+	if (myBtn[17].GetCheck())
+	{
 		CString sVal;
 		pDoc->WorkingInfo.LastJob.nAlignMethode = TWO_POINT;
 		sVal.Format(_T("%d"), pDoc->WorkingInfo.LastJob.nAlignMethode);
@@ -1184,3 +1290,40 @@ void CDlgInfo::OnBnClickedChk4PointAlign()
 		myBtn[18].SetCheck(TRUE);
 	}
 }
+
+void CDlgInfo::OnBnClickedChk1185()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if (myBtn[19].GetCheck()) //하면AOI 클린롤러
+	{
+		pDoc->WorkingInfo.LastJob.bAoiDnCleanRoler = TRUE;
+		pView->m_pMpe->Write(_T("MB44010F"), 1);
+	}
+	else
+	{
+		pDoc->WorkingInfo.LastJob.bAoiDnCleanRoler = FALSE;
+		pView->m_pMpe->Write(_T("MB44010F"), 0);
+	}
+
+	CString sData = pDoc->WorkingInfo.LastJob.bAoiDnCleanRoler ? _T("1") : _T("0");
+	::WritePrivateProfileString(_T("Last Job"), _T("Use Dn Aoi CleanRoler"), sData, PATH_WORKING_INFO);
+}
+
+void CDlgInfo::OnBnClickedChk1186()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if (myBtn[20].GetCheck()) //상면AOI 클린롤러
+	{
+		pDoc->WorkingInfo.LastJob.bAoiUpCleanRoler = TRUE;
+		pView->m_pMpe->Write(_T("MB44010E"), 1);
+	}
+	else
+	{
+		pDoc->WorkingInfo.LastJob.bAoiUpCleanRoler = FALSE;
+		pView->m_pMpe->Write(_T("MB44010E"), 0);
+	}
+
+	CString sData = pDoc->WorkingInfo.LastJob.bAoiUpCleanRoler ? _T("1") : _T("0");
+	::WritePrivateProfileString(_T("Last Job"), _T("Use Up Aoi CleanRoler"), sData, PATH_WORKING_INFO);
+}
+
