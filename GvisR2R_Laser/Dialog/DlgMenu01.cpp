@@ -34,6 +34,7 @@ CDlgMenu01::CDlgMenu01(CWnd* pParent /*=NULL*/)
 	m_pRect = NULL;
 	m_bLoadImg = FALSE;
 	m_pMyGL = NULL;
+	m_nSerial = 0;
 
 	m_nIdxMkInfo[0] = 0;
 	m_nIdxMkInfo[1] = 0;
@@ -99,7 +100,7 @@ BEGIN_MESSAGE_MAP(CDlgMenu01, CDialog)
 	ON_WM_SHOWWINDOW()
 	ON_BN_CLICKED(IDC_CHK_USER_INFO, OnChkUserInfo)
 	ON_WM_PAINT()
-	ON_BN_CLICKED(IDC_CHK_TP_STOP, OnChkTpStop)
+//	ON_BN_CLICKED(IDC_CHK_TP_STOP, OnChkTpStop)
 	ON_WM_TIMER()
 	ON_BN_CLICKED(IDC_CHK_EJECT_BUFFER, OnChkEjectBuffer)
 	ON_BN_CLICKED(IDC_CHK_REVIEW, OnChkReview)
@@ -117,6 +118,9 @@ BEGIN_MESSAGE_MAP(CDlgMenu01, CDialog)
 	//}}AFX_MSG_MAP
 	ON_MESSAGE(WM_DRAW_REELMAP, OnDrawReelMap)
 	ON_MESSAGE(WM_MYSTATIC_REDRAW, OnMyStaticRedraw)
+	ON_MESSAGE(WM_MYBTN_DBLCLK, OnMyBtnDblClk)
+	ON_MESSAGE(WM_MYBTN_DOWN, OnMyBtnDown)
+	ON_MESSAGE(WM_MYBTN_UP, OnMyBtnUp)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -132,8 +136,8 @@ void CDlgMenu01::OnShowWindow(BOOL bShow, UINT nStatus)
 		m_pRect = new CRect;
 		
 		this->GetClientRect(m_pRect);
-		m_pRect->top = 75;
-		m_pRect->bottom += 75;
+		m_pRect->top = 75 + 2;
+		m_pRect->bottom += 75 + 2;
 		m_pRect->left = 3;
 		m_pRect->right += 3;
 		this->MoveWindow(m_pRect, TRUE);
@@ -168,6 +172,7 @@ void CDlgMenu01::AtDlgShow()
 		myStcTitle[62].SetTextColor(RGB_WHITE);
 		myStcTitle[62].SetBkColor(RGB_RED);
 	}
+
 }
 
 void CDlgMenu01::AtDlgHide()
@@ -216,6 +221,42 @@ void CDlgMenu01::DelImg()
 	int i;
 	for(i=0; i<MAX_MENU01_BTN; i++)
 		myBtn[i].DelImgList();
+}
+
+
+LRESULT CDlgMenu01::OnMyBtnDown(WPARAM wPara, LPARAM lPara)
+{
+	int nCtrlID = (int)lPara;
+	SwMyBtnDown(nCtrlID);
+
+	return 0L;
+}
+
+void CDlgMenu01::SwMyBtnDown(int nCtrlID)
+{
+	switch (nCtrlID)
+	{
+	case IDC_CHK_TP_STOP:
+		ChkTpStop();
+		break;
+	}
+}
+
+LRESULT CDlgMenu01::OnMyBtnUp(WPARAM wPara, LPARAM lPara)
+{
+	int nCtrlID = (int)lPara;
+	SwMyBtnUp(nCtrlID);
+	return 0L;
+}
+
+void CDlgMenu01::SwMyBtnUp(int nCtrlID)
+{
+	switch (nCtrlID)
+	{
+	case IDC_CHK_TP_STOP:
+		ChkTpStop();
+		break;
+	}
 }
 
 BOOL CDlgMenu01::OnInitDialog() 
@@ -352,6 +393,14 @@ BOOL CDlgMenu01::OpenReelmap(CString sPath)
 #ifdef TEST_MODE
 	pDoc->m_pReelMapUp->Open(sPath);
 #else
+	stModelInfo stInfo;
+	if (!pDoc->GetPcrInfo(sPath, stInfo))
+	{
+		pView->DispStsBar(_T("E(1)"), 5);
+		AfxMessageBox(_T("Error-GetPcrInfo(1)"));
+		return FALSE;
+	}
+
 	if(pDoc->m_pReelMapUp)
 		pDoc->m_pReelMapUp->Open(pView->GetRmapPath(RMAP_UP, stInfo), stInfo.sModel, stInfo.sLayer, stInfo.sLot);
 #endif
@@ -407,12 +456,19 @@ void CDlgMenu01::DispReelmap(int nSerial, BOOL bDumy)
 	if(nSerial <= 0)
 		return;
 
+	if (pDoc->WorkingInfo.System.bSaveLog)
+	{
+		CString strData;
+		strData.Format(_T("DispReelmap: Serial(%d), Dumy(%d)"), nSerial, bDumy);
+		SaveLog(strData);
+	}
+
 	if(pDoc->m_pReelMap)
 		pDoc->m_pReelMap->Disp(nSerial, bDumy);
  	SetPnlNum();
  	SetPnlDefNum();
 	myStcReelmap.Refresh();
-
+	this->MoveWindow(m_pRect, TRUE);
 // 	if(nSerial == pView->m_nLotEndSerial)
 // 		int nBreak = 1;
 // 
@@ -560,13 +616,15 @@ void CDlgMenu01::DispMkInfoDn()
 void CDlgMenu01::InitMkInfo()
 {
 	InitMkInfoUp();
-	InitMkInfoDn();
+
+	if(pDoc->WorkingInfo.LastJob.bDualTest) // 20220519
+		InitMkInfoDn();
 }
 
 void CDlgMenu01::SelDisp()
 {
 #ifdef USE_VISION
-	if(!pView->m_pVision)
+	if(!pView->m_pVision[0] || !pView->m_pVision[1])
 		return;
 #endif
 
@@ -1589,61 +1647,80 @@ void CDlgMenu01::InitBtn()
 {
 	myBtn[0].SubclassDlgItem(IDC_CHK_TP_STOP, this);
 	myBtn[0].SetHwnd(this->GetSafeHwnd(), IDC_CHK_TP_STOP);
+	myBtn[0].SetBtnType(BTN_TYPE_CHECK);
 	myBtn[0].SetText(_T("On"), BTN_DN);
 	myBtn[0].SetText(_T("Off"), BTN_UP);
 
 	myBtn[1].SubclassDlgItem(IDC_CHK_USER_INFO, this);
 	myBtn[1].SetHwnd(this->GetSafeHwnd(), IDC_CHK_USER_INFO);
+	myBtn[1].SetBtnType(BTN_TYPE_CHECK);
 
 	myBtn[2].SubclassDlgItem(IDC_CHK_REVIEW, this);
 	myBtn[2].SetHwnd(this->GetSafeHwnd(), IDC_CHK_REVIEW);
+	myBtn[2].SetBtnType(BTN_TYPE_CHECK);
 
 	myBtn[3].SubclassDlgItem(IDC_CHK_EJECT_BUFFER, this);
 	myBtn[3].SetHwnd(this->GetSafeHwnd(), IDC_CHK_EJECT_BUFFER);
+	myBtn[3].SetBtnType(BTN_TYPE_CHECK);
 
 	myBtn[4].SubclassDlgItem(IDC_CHK_REMARKING, this);
 	myBtn[4].SetHwnd(this->GetSafeHwnd(), IDC_CHK_REMARKING);
+	myBtn[4].SetBtnType(BTN_TYPE_CHECK);
 
 	myBtn[5].SubclassDlgItem(IDC_CHK_REVIEW_MOVE, this);
 	myBtn[5].SetHwnd(this->GetSafeHwnd(), IDC_CHK_REVIEW_MOVE);
+	myBtn[5].SetBtnType(BTN_TYPE_CHECK);
 	
 	myBtn[6].SubclassDlgItem(IDC_CHK_LOT_END, this);
 	myBtn[6].SetHwnd(this->GetSafeHwnd(), IDC_CHK_LOT_END);
+	myBtn[6].SetBtnType(BTN_TYPE_CHECK);
 	
 	myBtn[7].SubclassDlgItem(IDC_CHK_MK_1, this);
 	myBtn[7].SetHwnd(this->GetSafeHwnd(), IDC_CHK_MK_1);
+	myBtn[7].SetBtnType(BTN_TYPE_CHECK);
 	
 	myBtn[8].SubclassDlgItem(IDC_CHK_MK_2, this);
 	myBtn[8].SetHwnd(this->GetSafeHwnd(), IDC_CHK_MK_2);
+	myBtn[8].SetBtnType(BTN_TYPE_CHECK);
 	
 	myBtn[9].SubclassDlgItem(IDC_CHK_MK_3, this);
 	myBtn[9].SetHwnd(this->GetSafeHwnd(), IDC_CHK_MK_3);
+	myBtn[9].SetBtnType(BTN_TYPE_CHECK);
 	
 	myBtn[10].SubclassDlgItem(IDC_CHK_MK_4, this);
 	myBtn[10].SetHwnd(this->GetSafeHwnd(), IDC_CHK_MK_4);
+	myBtn[10].SetBtnType(BTN_TYPE_CHECK);
 	
 	myBtn[11].SubclassDlgItem(IDC_BTN_MK_ALL, this);
 	myBtn[11].SetHwnd(this->GetSafeHwnd(), IDC_BTN_MK_ALL);
 	
 	myBtn[12].SubclassDlgItem(IDC_CHK_DEF_UP, this);
 	myBtn[12].SetHwnd(this->GetSafeHwnd(), IDC_CHK_DEF_UP);
+	myBtn[12].SetBtnType(BTN_TYPE_CHECK);
 	
 	myBtn[13].SubclassDlgItem(IDC_CHK_DEF_DN, this);
 	myBtn[13].SetHwnd(this->GetSafeHwnd(), IDC_CHK_DEF_DN);
+	myBtn[13].SetBtnType(BTN_TYPE_CHECK);
 	
 	myBtn[14].SubclassDlgItem(IDC_CHK_DEF_ALL, this);
 	myBtn[14].SetHwnd(this->GetSafeHwnd(), IDC_CHK_DEF_ALL);
+	myBtn[14].SetBtnType(BTN_TYPE_CHECK);
 	
 	myBtn[15].SubclassDlgItem(IDC_BTN_ST, this);
 	myBtn[15].SetHwnd(this->GetSafeHwnd(), IDC_BTN_ST);
+
 	myBtn[16].SubclassDlgItem(IDC_BTN_GD_RA_1, this);
 	myBtn[16].SetHwnd(this->GetSafeHwnd(), IDC_BTN_GD_RA_1);
+
 	myBtn[17].SubclassDlgItem(IDC_BTN_GD_RA_2, this);
 	myBtn[17].SetHwnd(this->GetSafeHwnd(), IDC_BTN_GD_RA_2);
+
 	myBtn[18].SubclassDlgItem(IDC_BTN_GD_RA_3, this);
 	myBtn[18].SetHwnd(this->GetSafeHwnd(), IDC_BTN_GD_RA_3);
+
 	myBtn[19].SubclassDlgItem(IDC_BTN_GD_RA_4, this);
 	myBtn[19].SetHwnd(this->GetSafeHwnd(), IDC_BTN_GD_RA_4);
+
 	myBtn[20].SubclassDlgItem(IDC_BTN_GD_RA_ALL, this);
 	myBtn[20].SetHwnd(this->GetSafeHwnd(), IDC_BTN_GD_RA_ALL);
 
@@ -2129,6 +2206,7 @@ void CDlgMenu01::OnChkUserInfo()
 	// TODO: Add your control notification handler code here
 	BOOL bOn = myBtn[1].GetCheck();
 	ChkUserInfo(bOn);
+	this->MoveWindow(m_pRect, TRUE);
 }
 
 void CDlgMenu01::ChkUserInfo(BOOL bOn)
@@ -2179,33 +2257,85 @@ LRESULT CDlgMenu01::OnDrawReelMap(WPARAM wPara, LPARAM lPara)
 	return 0L;
 }
 
-void CDlgMenu01::OnChkTpStop() 
+void CDlgMenu01::ChkTpStop() 
 {
 	// TODO: Add your control notification handler code here
-	BOOL bOn = myBtn[0].GetCheck();
-	BOOL bUse;
-	if(bOn)
+	BOOL bUse = !pDoc->WorkingInfo.LastJob.bTempPause;
+	Sleep(100);
+
+	if (bUse)
 	{
-		bUse = TRUE;
-		//pView->IoWrite("MB440183", 1);	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
 		pView->m_pMpe->Write(_T("MB440183"), 1);
-		pView->ChkTempStop(TRUE); 
+		pView->ChkTempStop(TRUE);
+		if (!myBtn[0].GetCheck())
+		{
+			myBtn[0].SetCheck(TRUE);
+			//bUse = TRUE;
+			//pView->IoWrite(_T("MB440183", 1);	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
+		}
 	}
 	else
 	{
-		bUse = FALSE;
-		//pView->IoWrite("MB440183", 0);	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
 		pView->m_pMpe->Write(_T("MB440183"), 0);
 		pView->ChkTempStop(FALSE);
+
+		if (myBtn[0].GetCheck())
+		{
+			myBtn[0].SetCheck(FALSE);
+			//bUse = FALSE;
+			//pView->IoWrite(_T("MB440183", 0);	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
+		}
 	}
 
 	pDoc->WorkingInfo.LastJob.bTempPause = bUse;
-	if(pDoc->m_pReelMap)
+	if (pDoc->m_pReelMap)
 		pDoc->m_pReelMap->m_bUseTempPause = bUse;
 
 	CString sData = bUse ? _T("1") : _T("0");
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Temporary Pause"), sData, PATH_WORKING_INFO);
+	this->MoveWindow(m_pRect, TRUE);
+}
 
+LRESULT CDlgMenu01::OnMyBtnDblClk(WPARAM wPara, LPARAM lPara)
+{
+	int nCtrlID = (int)lPara;
+	BOOL bOn;
+
+	switch (nCtrlID)
+	{
+	case IDC_CHK_MK_1:
+		bOn = myBtn[7].GetCheck();
+		if (!bOn)
+			myBtn[7].SetCheck(TRUE); // IDC_CHK_MK_1
+		else
+			myBtn[7].SetCheck(FALSE); // IDC_CHK_MK_1
+		break;
+	case IDC_CHK_MK_2:
+		bOn = myBtn[8].GetCheck();
+		if (!bOn)
+			myBtn[8].SetCheck(TRUE); // IDC_CHK_MK_2
+		else
+			myBtn[8].SetCheck(FALSE); // IDC_CHK_MK_2
+		break;
+	case IDC_CHK_MK_3:
+		bOn = myBtn[9].GetCheck();
+		if (!bOn)
+			myBtn[9].SetCheck(TRUE); // IDC_CHK_MK_3
+		else
+			myBtn[9].SetCheck(FALSE); // IDC_CHK_MK_3
+		break;
+	case IDC_CHK_MK_4:
+		bOn = myBtn[10].GetCheck();
+		if (!bOn)
+			myBtn[10].SetCheck(TRUE); // IDC_CHK_MK_4
+		else
+			myBtn[10].SetCheck(FALSE); // IDC_CHK_MK_4
+		break;
+	}
+
+	this->MoveWindow(m_pRect, TRUE);
+
+	return 0L;
 }
 
 BOOL CDlgMenu01::IsDoneDispMkInfo()
@@ -2321,6 +2451,7 @@ CString CDlgMenu01::GetDispMain()
 void CDlgMenu01::RefreshRmap()
 {
 	myStcReelmap.Refresh();	
+	this->MoveWindow(m_pRect, TRUE);
 }
 
 void CDlgMenu01::ResetLotTime()
@@ -2903,7 +3034,7 @@ void CDlgMenu01::DispStripRatio()
 	else
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
-	myStcData[59].SetText(str); // DC_STC_GD_RA_1_UP
+	myStcData[59].SetText(str); // IDC_STC_GD_RA_1_UP
 
 	nVal[0][1] = pDoc->m_pReelMapUp->GetDefStrip(1);
 	nSum += nVal[0][1];
@@ -2912,7 +3043,7 @@ void CDlgMenu01::DispStripRatio()
 	else
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
-	myStcData[60].SetText(str); // DC_STC_GD_RA_2_UP
+	myStcData[60].SetText(str); // IDC_STC_GD_RA_2_UP
 
 	nVal[0][2] = pDoc->m_pReelMapUp->GetDefStrip(2);
 	nSum += nVal[0][2];
@@ -2921,7 +3052,7 @@ void CDlgMenu01::DispStripRatio()
 	else
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
-	myStcData[61].SetText(str); // DC_STC_GD_RA_3_UP
+	myStcData[61].SetText(str); // IDC_STC_GD_RA_3_UP
 
 	nVal[0][3] = pDoc->m_pReelMapUp->GetDefStrip(3);
 	nSum += nVal[0][3];
@@ -2930,7 +3061,7 @@ void CDlgMenu01::DispStripRatio()
 	else
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
-	myStcData[62].SetText(str); // DC_STC_GD_RA_4_UP
+	myStcData[62].SetText(str); // IDC_STC_GD_RA_4_UP
 	
 	if(nTot > 0)
 		dRatio = ((double)(nTot-nSum)/(double)nTot) * 100.0;
@@ -3403,6 +3534,7 @@ void CDlgMenu01::OnChkEjectBuffer()
 				myBtn[3].SetCheck(TRUE);
 		}
 	}
+	this->MoveWindow(m_pRect, TRUE);
 }
 
 void CDlgMenu01::ResetLastProc()
@@ -3425,6 +3557,7 @@ void CDlgMenu01::OnChkReview()
 	CString sData, sPath=PATH_WORKING_INFO;
 	sData.Format(_T("%d"), pDoc->WorkingInfo.LastJob.bVerify?1:0);
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Verify"), sData, sPath);
+	this->MoveWindow(m_pRect, TRUE);
 }
 
 BOOL CDlgMenu01::ShowKeypad(int nCtlID, CPoint ptSt, int nDir)
@@ -3504,6 +3637,7 @@ void CDlgMenu01::OnChkReviewMove()
 	CString sData, sPath=PATH_WORKING_INFO;
 	sData.Format(_T("%d"), pDoc->WorkingInfo.LastJob.bReview?1:0);
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Review"), sData, sPath);
+	this->MoveWindow(m_pRect, TRUE);
 }
 
 int CDlgMenu01::GetCurSerial()
@@ -3545,6 +3679,7 @@ void CDlgMenu01::OnChkLotEnd()
 			myBtn[6].SetCheck(TRUE);
 		}
 	}
+	this->MoveWindow(m_pRect, TRUE);
 }
 
 void CDlgMenu01::OnChkDefUp() 
@@ -3557,6 +3692,7 @@ void CDlgMenu01::OnChkDefUp()
 	else
 		myBtn[12].SetCheck(TRUE);
 // 		((CButton*)GetDlgItem(IDC_CHK_DEF_UP))->SetCheck(TRUE);
+	this->MoveWindow(m_pRect, TRUE);
 }
 
 void CDlgMenu01::OnChkDefDn() 
@@ -3573,6 +3709,7 @@ void CDlgMenu01::OnChkDefDn()
 	else
 		myBtn[13].SetCheck(TRUE);
 // 		((CButton*)GetDlgItem(IDC_CHK_DEF_DN))->SetCheck(TRUE);	
+	this->MoveWindow(m_pRect, TRUE);
 }
 
 void CDlgMenu01::OnChkDefAll() 
@@ -3585,6 +3722,7 @@ void CDlgMenu01::OnChkDefAll()
 	else
 		myBtn[14].SetCheck(TRUE);
 // 		((CButton*)GetDlgItem(IDC_CHK_DEF_ALL))->SetCheck(TRUE);		
+	this->MoveWindow(m_pRect, TRUE);
 }
 
 void CDlgMenu01::OnStcUp() 
@@ -3655,6 +3793,8 @@ void CDlgMenu01::OnBtnMkAll()
 		myBtn[9].EnableWindow(FALSE);
 	if(!bEnable[3])
 		myBtn[10].EnableWindow(FALSE);
+
+	this->MoveWindow(m_pRect, TRUE);
 }
 
 void CDlgMenu01::SetStripAllMk()
@@ -3663,6 +3803,8 @@ void CDlgMenu01::SetStripAllMk()
 	myBtn[8].SetCheck(TRUE); // IDC_CHK_MK_2
 	myBtn[9].SetCheck(TRUE); // IDC_CHK_MK_3
 	myBtn[10].SetCheck(TRUE); // IDC_CHK_MK_4
+
+	this->MoveWindow(m_pRect, TRUE);
 }
 
 void CDlgMenu01::EnableBtn(BOOL bEnable)
@@ -3830,6 +3972,7 @@ void CDlgMenu01::OnChkRemarking()
 			myBtn[4].SetCheck(TRUE);
 		}
 	}
+	this->MoveWindow(m_pRect, TRUE);
 }
 
 void CDlgMenu01::ChkPartialSpd()
@@ -4383,4 +4526,5 @@ void CDlgMenu01::OnChk2layer()
 	CString sData = bUse ? _T("1") : _T("0");
 	::WritePrivateProfileString(_T("Last Job"), _T("Use 2Layer"), sData, PATH_WORKING_INFO);
 
+	this->MoveWindow(m_pRect, TRUE);
 }

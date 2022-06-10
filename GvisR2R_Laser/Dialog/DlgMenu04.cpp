@@ -143,8 +143,8 @@ void CDlgMenu04::OnShowWindow(BOOL bShow, UINT nStatus)
 		m_pRect = new CRect;
 		
 		this->GetClientRect(m_pRect);
-		m_pRect->top = 75;
-		m_pRect->bottom += 75;
+		m_pRect->top = 75 + 2;
+		m_pRect->bottom += 75 + 2;
 		m_pRect->left = 3;
 		m_pRect->right += 3;
 		this->MoveWindow(m_pRect, TRUE);
@@ -244,33 +244,46 @@ void CDlgMenu04::InitBtn()
 	myBtn[0].SubclassDlgItem(IDC_CHK_0, this);
 	myBtn[0].SetHwnd(this->GetSafeHwnd(), IDC_CHK_0);
 	myBtn[0].SetBoarder(FALSE);
+	myBtn[0].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[1].SubclassDlgItem(IDC_CHK_1, this);
 	myBtn[1].SetHwnd(this->GetSafeHwnd(), IDC_CHK_1);
 	myBtn[1].SetBoarder(FALSE);
+	myBtn[1].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[2].SubclassDlgItem(IDC_CHK_2, this);
 	myBtn[2].SetHwnd(this->GetSafeHwnd(), IDC_CHK_2);
 	myBtn[2].SetBoarder(FALSE);
+	myBtn[2].SetBtnType(BTN_TYPE_CHECK);
 	
 	myBtn[3].SubclassDlgItem(IDC_CHK_10, this);
 	myBtn[3].SetHwnd(this->GetSafeHwnd(), IDC_CHK_10);
+	myBtn[3].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[4].SubclassDlgItem(IDC_CHK_11, this);
 	myBtn[4].SetHwnd(this->GetSafeHwnd(), IDC_CHK_11);
+	myBtn[4].SetBtnType(BTN_TYPE_CHECK);
 
 	myBtn[5].SubclassDlgItem(IDC_BTN_BUFF_UP2, this);
 	myBtn[5].SetHwnd(this->GetSafeHwnd(), IDC_BTN_BUFF_UP2);
 	myBtn[5].SetBoarder(FALSE);
+
 	myBtn[6].SubclassDlgItem(IDC_BTN_BUFF_DN2, this);
 	myBtn[6].SetHwnd(this->GetSafeHwnd(), IDC_BTN_BUFF_DN2);
 	myBtn[6].SetBoarder(FALSE);
+
 	myBtn[7].SubclassDlgItem(IDC_BTN_BUFF_HOME2, this);
 	myBtn[7].SetHwnd(this->GetSafeHwnd(), IDC_BTN_BUFF_HOME2);
+
 	myBtn[8].SubclassDlgItem(IDC_BTN_BUFF_INIT_MOVE2, this);
 	myBtn[8].SetHwnd(this->GetSafeHwnd(), IDC_BTN_BUFF_INIT_MOVE2);
+
 	myBtn[9].SubclassDlgItem(IDC_BTN_BUFF_INIT_SAVE2, this);
 	myBtn[9].SetHwnd(this->GetSafeHwnd(), IDC_BTN_BUFF_INIT_SAVE2);
 
 	myBtn[10].SubclassDlgItem(IDC_BTN_RESET_MK_L, this);
 	myBtn[10].SetHwnd(this->GetSafeHwnd(), IDC_BTN_RESET_MK_L);
+
 	myBtn[11].SubclassDlgItem(IDC_BTN_RESET_MK_R, this);
 	myBtn[11].SetHwnd(this->GetSafeHwnd(), IDC_BTN_RESET_MK_R);
 
@@ -1051,7 +1064,7 @@ void CDlgMenu04::OnStc209()
 
 	CString sData;
 	GetDlgItem(IDC_STC_209)->GetWindowText(sData);
-	pDoc->SetAoiMkDist(_tstoi(sData));
+	pDoc->SetAoiMkDist(_tstof(sData));
 }
 
 void CDlgMenu04::OnStc25() 

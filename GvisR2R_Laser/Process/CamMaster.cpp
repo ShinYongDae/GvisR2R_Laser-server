@@ -52,10 +52,14 @@ CCamMaster::CCamMaster()
 	m_sPathCamSpecDir=_T("");
 	m_sModel=_T("");
 	m_sLayer=_T("");
+
+	PolygonPoints = NULL;	//20140116-ndy debug
+
 }
 
 CCamMaster::~CCamMaster()
 {
+	FreePolygonRgnData();
 	PinImgFree();
 	AlignImgFree();
 	PcsImgFree();
@@ -102,7 +106,11 @@ BOOL CCamMaster::LoadMstInfo()
 // 	GetCamPxlRes();
 	if(LoadStripRgnFromCam())
 	{
-		LoadPcsRgnFromCam();
+		if(pDoc->WorkingInfo.System.bStripPcsRgnBin)
+			LoadStripPieceRegion_Binary();
+		else
+			LoadPcsRgnFromCam();
+
 		LoadPcsImg();
 		LoadCadImg();
 
@@ -189,16 +197,62 @@ BOOL CCamMaster::LoadMasterSpec()
 BOOL CCamMaster::LoadCadMk()
 {
 #ifdef USE_CAM_MASTER
+	BOOL b2PointAlign = FALSE;
+	BOOL b4PointAlign = FALSE;
+
+	CFileFind findfile;
+	CString sPath2, sPath;
+
+	if (m_sPathCamSpecDir.Right(1) != "\\")
+		sPath2.Format(_T("%s\\%s\\%s.pch2"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	else
+		sPath2.Format(_T("%s%s\\%s.pch2"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+
+	if (findfile.FindFile(sPath2)) // find 4PointAlign file.
+	{
+		b4PointAlign = TRUE; 
+	}
+
+	if (m_sPathCamSpecDir.Right(1) != "\\")
+		sPath.Format(_T("%s\\%s\\%s.pch"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	else
+		sPath.Format(_T("%s%s\\%s.pch"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+
+	if (findfile.FindFile(sPath)) // find 2PointAlign file.
+	{
+		b2PointAlign = TRUE; 
+	}
+
+	if(b4PointAlign && b2PointAlign)
+	{
+		if (pDoc->WorkingInfo.LastJob.nAlignMethode == FOUR_POINT)
+			return LoadCadMk4PntAlign(sPath2);
+		else
+			return LoadCadMk2PntAlign(sPath);
+	}
+	else if (b4PointAlign)
+	{
+		pDoc->WorkingInfo.LastJob.nAlignMethode = FOUR_POINT;
+		return LoadCadMk4PntAlign(sPath2);
+	}
+	else if (b2PointAlign)
+	{
+		pDoc->WorkingInfo.LastJob.nAlignMethode = TWO_POINT;
+		return LoadCadMk2PntAlign(sPath);
+	}
+	else
+		return FALSE;
+#else
+	return TRUE;
+#endif
+}
+
+BOOL CCamMaster::LoadCadMk2PntAlign(CString sPath)
+{
 	CFile file;
 	int nRet;
 	int nSzAlignMk, nSzPcsMk;
 	int i;
-
-	CString sPath;
-	sPath.Format(_T("%s\\%s\\%s.pch"), m_sPathCamSpecDir, 
-										  m_sModel, 
-										  m_sLayer);
-
 
 	// Structure Initialize
 	m_stAlignMk.X0 = 0.0;
@@ -221,13 +275,16 @@ BOOL CCamMaster::LoadCadMk()
 		if(nRet != nSzAlignMk)
 			return(FALSE);
 
-		nRet = file.Read((void *) &m_lPcsNum, sizeof(long));
-		if(nRet != sizeof(long))
+		//nRet = file.Read((void *) &m_lPcsNum, sizeof(long));
+		//if(nRet != sizeof(long))
+		//	return(FALSE);
+		nRet = file.Read((void *)&m_lPcsNum, sizeof(int));
+		if (nRet != sizeof(int))
 			return(FALSE);
 
 		nSzPcsMk = m_lPcsNum * sizeof(stPieceMark);
-		nRet = file.Read((void *) &m_stPcsMk, nSzPcsMk);
-		if(nRet != nSzPcsMk)
+		nRet = file.Read((void *)&m_stPcsMk, nSzPcsMk);
+		if (nRet != nSzPcsMk)
 			return(FALSE);
 
 		file.Close();
@@ -235,21 +292,68 @@ BOOL CCamMaster::LoadCadMk()
 	}
 	else
 		return(FALSE);
-#else
-	return TRUE;
-#endif
+}
+
+BOOL CCamMaster::LoadCadMk4PntAlign(CString sPath)
+{
+	CFile file;
+	int nRet;
+	int nSzAlignMk, nSzPcsMk;
+	int i;
+
+	// Structure Initialize
+	m_stAlignMk2.X0 = 0.0;
+	m_stAlignMk2.Y0 = 0.0;
+	m_stAlignMk2.X1 = 0.0;
+	m_stAlignMk2.Y1 = 0.0;
+	m_stAlignMk2.X2 = 0.0;
+	m_stAlignMk2.Y2 = 0.0;
+	m_stAlignMk2.X3 = 0.0;
+	m_stAlignMk2.Y3 = 0.0;
+
+	m_lPcsNum = 0;
+
+	for (i = 0; i < MAX_PCS; i++)
+	{
+		m_stPcsMk[i].X = 0.0;
+		m_stPcsMk[i].Y = 0.0;
+	}
+
+	// Mark File Load
+	if (file.Open((LPCTSTR)sPath, CFile::modeRead))
+	{
+		nSzAlignMk = sizeof(stAlignMark2);
+
+		nRet = file.Read((void *)&m_stAlignMk2, nSzAlignMk);
+		if (nRet != nSzAlignMk)
+			return(FALSE);
+
+		//nRet = file.Read((void *) &m_lPcsNum, sizeof(long));
+		//if(nRet != sizeof(long))
+		//	return(FALSE);
+		nRet = file.Read((void *)&m_lPcsNum, sizeof(int));
+		if (nRet != sizeof(int))
+			return(FALSE);
+
+		nSzPcsMk = m_lPcsNum * sizeof(stPieceMark);
+		nRet = file.Read((void *)&m_stPcsMk, nSzPcsMk);
+		if (nRet != nSzPcsMk)
+			return(FALSE);
+
+		file.Close();
+		return(TRUE);
+	}
+	else
+		return(FALSE);
 }
 
 void CCamMaster::LoadPinImg()
 {
-	//int Cell;
 	BOOL prcStopF = FALSE;
-	//char FileNPin[200], FileNLoc[200];
-	TCHAR FileNLoc[200];//FileNPin[200], 
+	TCHAR FileNLoc[200];
 	CString StrDirectoryPath;
 	CFileFind PinFindFile;
 	CString strFileNPin;
-	//int i;
 
 	DWORD dwMilliseconds = 10;
 
@@ -258,7 +362,8 @@ void CCamMaster::LoadPinImg()
 	//sprintf(FileNLoc, "C:\\R2RSet\\Pin");
 	wsprintf(FileNLoc, TEXT("%s"), _T("C:\\R2RSet\\Pin"));
 
-	if(!PinFindFile.FindFile(FileNLoc))
+	//if(!PinFindFile.FindFile(FileNLoc))
+	if (!pDoc->DirectoryExists(FileNLoc))
 	{
 		if(!CreateDirectory(FileNLoc, NULL))
 		{
@@ -274,10 +379,19 @@ void CCamMaster::LoadPinImg()
 	PinImgFree();
 
 #ifdef USE_CAM_MASTER
+	int Cell;
+	int i;
+	TCHAR FileNPin[200];
+
 	// CAM-Master File Copy and Local File Load
-	strcpy(FileNLoc, PATH_PIN_IMG);
-	strFileNPin.Format(_T("%s\\%s\\%s.TIF"), m_sPathCamSpecDir, m_sModel, m_sLayer);
-	sprintf(FileNPin, "%s", strFileNPin);
+	//strcpy(FileNLoc, PATH_PIN_IMG);
+	wsprintf(FileNLoc, TEXT("%s"), PATH_PIN_IMG);
+	if (m_sPathCamSpecDir.Right(1) != "\\")
+		strFileNPin.Format(_T("%s\\%s\\%s.TIF"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	else
+		strFileNPin.Format(_T("%s%s\\%s.TIF"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	//sprintf(FileNPin, "%s", strFileNPin);
+	wsprintf(FileNPin, TEXT("%s"), strFileNPin);
 
 	if(!CopyFile((LPCTSTR)FileNPin, (LPCTSTR)FileNLoc, FALSE))
 	{
@@ -297,7 +411,7 @@ void CCamMaster::LoadPinImg()
 // 		pView->DispStsBar("Pin 이미지 다운로드를 완료하였습니다.", 0);
 	}
 	else
-		pView->DispMsg(_T("Pin 이미지 다운로드를 실패하였습니다."), RGB_GREEN, DELAY_TIME_MSG);
+		pView->DispMsg(_T("Pin 이미지 다운로드를 실패하였습니다."), _T("경고"), RGB_GREEN, DELAY_TIME_MSG);
 #else
 	PinImgBufAlloc(PATH_PIN_IMG_, FALSE);
 #endif
@@ -342,9 +456,10 @@ BOOL CCamMaster::LoadStripRgnFromCam() // sprintf(FileNCam,"%s%s\\%s.mst",strSpe
 #ifdef TEST_MODE
 	sPath = PATH_CELL_MST;
 #else
-	sPath.Format(_T("%s\\%s\\%s.mst"), m_sPathCamSpecDir, 
-								   m_sModel, 
-								   m_sLayer);
+	if (m_sPathCamSpecDir.Right(1) != "\\")
+		sPath.Format(_T("%s\\%s\\%s.mst"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	else
+		sPath.Format(_T("%s%s\\%s.mst"), m_sPathCamSpecDir, m_sModel, m_sLayer);
 #endif
 
 	//strcpy(FileNCam, sPath);
@@ -408,9 +523,10 @@ BOOL CCamMaster::LoadPcsRgnFromCam()
 #ifdef TEST_MODE
 	sPath = PATH_CELL_RGN;
 #else
-	sPath.Format(_T("%s\\%s\\%s\\Piece.rgn"), MasterInfo.strMasterLocation, 
-										  m_sModel, 
-										  m_sLayer);
+	if (MasterInfo.strMasterLocation.Right(1) != "\\")
+		sPath.Format(_T("%s\\%s\\%s\\Piece.rgn"), MasterInfo.strMasterLocation, m_sModel, m_sLayer);
+	else
+		sPath.Format(_T("%s%s\\%s\\Piece.rgn"), MasterInfo.strMasterLocation, m_sModel, m_sLayer);
 #endif
 
 	// Select Block ID
@@ -532,6 +648,267 @@ BOOL CCamMaster::LoadPcsRgnFromCam()
 	return(TRUE);
 }
 
+////////////////////////////////////////////////////////////////////////////
+//
+//	Object:	1. Load region data "strpcs.rgn"
+//			2. Set Piece Data
+//			3. Set Strip Data
+BOOL CCamMaster::LoadStripPieceRegion_Binary()	//20121120-ndy for PairPanel
+{
+	//TCHAR		FileNCam[1024];
+	CString		strFileNCam;
+	CFileFind	find;
+	CString ModelName = m_sModel;
+	CString Layer = m_sLayer;
+
+	// 1. Find File "strpcs.rgn"
+	if (MasterInfo.strMasterLocation.Right(1) != "\\")
+		strFileNCam.Format(_T("%s\\%s\\%s\\strpcs.bin"), MasterInfo.strMasterLocation, m_sModel, m_sLayer);
+	else
+		strFileNCam.Format(_T("%s%s\\%s\\strpcs.bin"), MasterInfo.strMasterLocation, m_sModel, m_sLayer);
+
+	if (!find.FindFile(strFileNCam))
+	{
+		pView->MsgBox(_T("캠마스터에 피스정보가 설정되지 않았습니다."));
+		return(FALSE);
+	}
+
+	// 2. Read Strip & Piece Info
+	int		i, j, k, nDummy;
+	int		nPieceNum, nPieceCount;
+	CFile	file;
+	TCHAR	FileNLoc[1024];
+	_stprintf(FileNLoc, _T("%s"), strFileNCam);
+
+	if (!file.Open(FileNLoc, CFile::modeRead))
+	{
+		if (!file.Open(FileNLoc, CFile::modeRead))
+		{
+			pView->MsgBox(_T("캠마스터에 피스정보파일을 Open하지 못했습니다."));
+			return(FALSE);
+		}
+	}
+
+	int nFrameSize = 0;
+
+	file.Read((void *)&nFrameSize, sizeof(int));
+	FrameRgnNum = nFrameSize; 
+
+	file.Read((void *)&PieceRgnNum, sizeof(int));
+	file.Read((void *)&m_nCornerNum, sizeof(int));
+	file.Read((void *)&nDummy, sizeof(int));	// reserved
+	file.Read((void *)&nDummy, sizeof(int));	// reserved
+	file.Read((void *)&nDummy, sizeof(int));	// reserved
+	file.Read((void *)&nDummy, sizeof(int));	// reserved
+	file.Read((void *)&nDummy, sizeof(int));	// reserved
+
+												// Init. Buffers
+	for (i = 0; i < FrameRgnNum; i++)
+	{
+		FrameRgnPix[i].iStartX = 0;
+		FrameRgnPix[i].iStartY = 0;
+		FrameRgnPix[i].iEndX = 0;
+		FrameRgnPix[i].iEndY = 0;
+		FrameRgnPix[i].FRotate = 0;
+		FrameRgnPix[i].FMirror = 0;
+		FrameRgnID[i].Col = -1;
+		FrameRgnID[i].Row = -1;
+	}
+
+	for (i = 0; i < MAX_PIECE_RGN_NUM; i++)
+	{
+		PieceRgnPix[i].iStartX = 0;
+		PieceRgnPix[i].iStartY = 0;
+		PieceRgnPix[i].iEndX = 0;
+		PieceRgnPix[i].iEndY = 0;
+		PieceRgnPix[i].FRotate = 0;
+		PieceRgnPix[i].FMirror = 0;
+
+		//PieceRgnID[i].nHeight = 0; //140204lgh
+		//PieceRgnID[i].nWidth = 0; //140204 lgh
+
+		PieceRgnPix[i].Col = -1;
+		PieceRgnPix[i].Row = -1;
+	}
+
+	if (PieceRgnNum > MAX_PIECE_RGN_NUM) // 110803 jsy
+	{
+		file.Close();
+		pView->MsgBox(_T("캠마스터에서 설정한 피스 갯수가 최대치를 초과했습니다."));
+		return FALSE;
+	}
+
+	//start for previous pcs info.
+	CRect rtFrm(10000, 10000, 0, 0);
+	double fData1, fData2, fData3, fData4;
+	long lTop = 0;
+	int nCol = 0, nRow = 0;
+	int Size = 0;
+	int nPieceRgnNum = 0;
+
+	double mmPxl = MasterInfo.dPixelSize / 1000.0; // [mm]
+	//end for previous pcs info.
+
+	AllocPolygonRgnData();
+
+	nPieceCount = 0;
+	for (j = 0; j < FrameRgnNum; j++)
+	{
+		// 4. Set Strip Info.
+		file.Read((void *)&nDummy, sizeof(int));	// Strip ID
+		file.Read((void *)&nDummy, sizeof(int));	// reserved
+		file.Read((void *)&nDummy, sizeof(int));	// reserved
+
+		//file.Read((void *)&FrameRgnID[j].Row, sizeof(int));	// reserved
+		//file.Read((void *)&FrameRgnID[j].Col, sizeof(int));	// reserved
+
+		file.Read((void *)&nDummy, sizeof(int));	// reserved
+		file.Read((void *)&(FrameRgnPix[j]), sizeof(REGIONS_FRAME));
+
+		// 5. Set Piece Info.
+		file.Read((void *)&nPieceNum, sizeof(int));
+
+		for (i = 0; i < nPieceNum; i++)
+		{
+			file.Read((void *)&nDummy, sizeof(int));	// Piece ID
+			file.Read((void *)&PieceRgnPix[i + nPieceCount].Row, sizeof(int));	// Row
+			file.Read((void *)&PieceRgnPix[i + nPieceCount].Col, sizeof(int));	// Col
+			file.Read((void *)&nDummy, sizeof(int));	// reserved
+
+			////////////////////////////////////////////////////////////////////////////////////////////////
+			// Set Piece position
+			nDummy = sizeof(CPoint);
+			file.Read((void *)PolygonPoints[i + nPieceCount], sizeof(CPoint)*m_nCornerNum);
+			file.Read((void *)&(PieceRgnPix[i + nPieceCount].FRotate), sizeof(int));
+
+			// Set PieceRgnPix, 120828 jsy
+			PieceRgnPix[i + nPieceCount].iStartX = PolygonPoints[i + nPieceCount][0].x;
+			PieceRgnPix[i + nPieceCount].iStartY = PolygonPoints[i + nPieceCount][0].y;
+			PieceRgnPix[i + nPieceCount].iEndX = PolygonPoints[i + nPieceCount][0].x;
+			PieceRgnPix[i + nPieceCount].iEndY = PolygonPoints[i + nPieceCount][0].y;
+			for (k = 0; k < m_nCornerNum; k++)
+			{
+				PieceRgnPix[i + nPieceCount].iStartX = min(PieceRgnPix[i + nPieceCount].iStartX, PolygonPoints[i + nPieceCount][k].x);
+				PieceRgnPix[i + nPieceCount].iStartY = min(PieceRgnPix[i + nPieceCount].iStartY, PolygonPoints[i + nPieceCount][k].y);
+				PieceRgnPix[i + nPieceCount].iEndX = max(PieceRgnPix[i + nPieceCount].iEndX, PolygonPoints[i + nPieceCount][k].x);
+				PieceRgnPix[i + nPieceCount].iEndY = max(PieceRgnPix[i + nPieceCount].iEndY, PolygonPoints[i + nPieceCount][k].y);
+			}
+		}
+		nPieceCount += nPieceNum;
+
+	}// for(j = 0; j < FrameRgnNum; j++)
+
+
+	//start for previous pcs info.
+	nPieceRgnNum = PieceRgnNum;
+
+	if (nPieceRgnNum > 0)
+	{
+		if (m_pPcsRgn)
+			delete m_pPcsRgn;
+		m_pPcsRgn = new CPcsRgn(nPieceRgnNum);
+	}
+	else
+	{
+		file.Close();
+		Size = 0;
+		pView->MsgBox(_T("캠마스터에서 설정한 피스 갯수가 없습니다."));
+		return(FALSE);
+	}
+
+	for (i = 0; i < nPieceRgnNum; i++)
+	{
+
+		fData1 = (double)PieceRgnPix[i].iStartX * mmPxl;
+		fData2 = (double)PieceRgnPix[i].iStartY * mmPxl;
+		fData3 = (double)PieceRgnPix[i].iEndX * mmPxl;
+		fData4 = (double)PieceRgnPix[i].iEndY * mmPxl;
+		m_pPcsRgn->pPcs[i] = CRect(fData1, fData2, fData3, fData4);// (left, top, right, bottom)
+		m_pPcsRgn->pCenter[i] = CfPoint((fData1 + fData3) / 2.0, (fData2 + fData4) / 2.0);
+
+		if (i > 0)
+		{
+			if (lTop == m_pPcsRgn->pPcs[i].top)
+				nCol++;
+
+			//if(m_pPcsRgn->pPcs[i].top == m_pPcsRgn->pPcs[i-1].top)
+			//	nCol++;
+		}
+		else
+			lTop = m_pPcsRgn->pPcs[i].top;
+
+		if (m_pPcsRgn->pPcs[i].left < rtFrm.left)
+			rtFrm.left = m_pPcsRgn->pPcs[i].left;
+		if (m_pPcsRgn->pPcs[i].top < rtFrm.top)
+			rtFrm.top = m_pPcsRgn->pPcs[i].top;
+		if (m_pPcsRgn->pPcs[i].right > rtFrm.right)
+			rtFrm.right = m_pPcsRgn->pPcs[i].right;
+		if (m_pPcsRgn->pPcs[i].bottom > rtFrm.bottom)
+			rtFrm.bottom = m_pPcsRgn->pPcs[i].bottom;
+	}
+
+	nCol++;
+
+	m_pPcsRgn->nCol = nCol;
+	m_pPcsRgn->nRow = nPieceRgnNum / nCol;
+
+	double dWidth = rtFrm.right - rtFrm.left;
+	double dHeight = rtFrm.bottom - rtFrm.top;
+	double dMarginW = dWidth * 0.05;
+	double dMarginH = dHeight * 0.05;
+	double dMargin = (dMarginW > dMarginH) ? dMarginH : dMarginW;
+
+	m_pPcsRgn->rtFrm.left = rtFrm.left - dMargin;
+	m_pPcsRgn->rtFrm.top = rtFrm.top - dMargin;
+	m_pPcsRgn->rtFrm.right = rtFrm.right + dMargin;
+	m_pPcsRgn->rtFrm.bottom = rtFrm.bottom + dMargin;
+	//end for previous pcs info.
+
+	file.Close();
+
+
+	return TRUE;
+}
+
+void CCamMaster::AllocPolygonRgnData() //120809 jsy
+{
+	int i;
+
+	FreePolygonRgnData();
+
+	//150910 lgh 
+	PolygonPoints = (CPoint **)malloc(sizeof(CPoint*) * MAX_PIECE_RGN_NUM);
+	int nRefinePieceNum = max(1, PieceRgnNum);
+	for (i = 0; i < nRefinePieceNum; i++)
+		PolygonPoints[i] = (CPoint *)malloc(sizeof(CPoint) * m_nCornerNum);
+
+	for (i = nRefinePieceNum; i < MAX_PIECE_RGN_NUM; i++)
+	{
+		PolygonPoints[i] = NULL;
+	}
+}
+
+void CCamMaster::FreePolygonRgnData()	// 120809 jsy
+{
+	int i;
+	if (PolygonPoints != NULL)
+	{
+		for (i = 0; i < MAX_PIECE_RGN_NUM; i++)
+		{
+			if (PolygonPoints[i] != NULL)
+			{
+				free(PolygonPoints[i]);
+				PolygonPoints[i] = NULL;
+			}
+		}
+
+		free(PolygonPoints);
+		PolygonPoints = NULL;
+	}
+}
+
+
+
 void CCamMaster::LoadPcsImg()
 {
 	BOOL prcStopF = FALSE;
@@ -542,7 +919,8 @@ void CCamMaster::LoadPcsImg()
 
 	//sprintf(FileD, "C:\\R2RSet\\Pcs");
 	_stprintf(FileD, _T("C:\\R2RSet\\Pcs"));
-	if(!PcsFindFile.FindFile(FileD))
+	//if(!PcsFindFile.FindFile(FileD))
+	if (!pDoc->DirectoryExists(FileD))
 	{
 		if(!CreateDirectory(FileD, NULL))
 		{
@@ -557,8 +935,14 @@ void CCamMaster::LoadPcsImg()
 	PcsImgFree();
 		
 #ifdef USE_CAM_MASTER
-	sprintf(FileS,"%s%s\\%s\\Piece.tif", MasterInfo.strMasterLocation, m_sModel, m_sLayer);
-	strcpy(FileD, PATH_PCS_IMG);
+	TCHAR FileS[200];
+	//sprintf(FileS,"%s%s\\%s\\Piece.tif", MasterInfo.strMasterLocation, m_sModel, m_sLayer);
+	//strcpy(FileD, PATH_PCS_IMG);
+	if (MasterInfo.strMasterLocation.Right(1) != "\\")
+		_stprintf(FileS, _T("%s\\%s\\%s\\Piece.tif"), MasterInfo.strMasterLocation, m_sModel, m_sLayer);
+	else
+		_stprintf(FileS, _T("%s%s\\%s\\Piece.tif"), MasterInfo.strMasterLocation, m_sModel, m_sLayer);
+	_stprintf(FileD, PATH_PCS_IMG);
 
 	if(!CopyFile((LPCTSTR)FileS, (LPCTSTR)FileD, FALSE))
 	{
@@ -575,7 +959,7 @@ void CCamMaster::LoadPcsImg()
 // 		pView->DispStsBar("PCS 이미지 다운로드를 완료하였습니다.", 0);
 	}
 	else
-		pView->DispMsg(_T("PCS 이미지 다운로드를 실패하였습니다."), RGB_GREEN, DELAY_TIME_MSG);
+		pView->DispMsg(_T("PCS 이미지 다운로드를 실패하였습니다."), _T("경고"), RGB_GREEN, DELAY_TIME_MSG);
 #else
 	PcsImgBufAlloc(PATH_PCS_IMG_, FALSE);
 #endif
@@ -585,7 +969,6 @@ void CCamMaster::LoadPcsImg()
 
 void CCamMaster::LoadCadImg()
 {
-	//int Cell;
 	BOOL prcStopF = FALSE;
 	//char FileNCam[200], FileNLoc[200];
 	TCHAR FileNLoc[200];//FileNCam[200], 
@@ -604,7 +987,8 @@ void CCamMaster::LoadCadImg()
 	//sprintf(FileNLoc, "C:\\R2RSet\\CAD");
 	_stprintf(FileNLoc, _T("%s"), _T("C:\\R2RSet\\CAD"));
 
-	if(!CADFindFile.FindFile(FileNLoc))
+	//if(!CADFindFile.FindFile(FileNLoc))
+	if (!pDoc->DirectoryExists(FileNLoc))
 	{
 		if(!CreateDirectory(FileNLoc, NULL))
 		{
@@ -637,12 +1021,17 @@ void CCamMaster::LoadCadImg()
 	}
 
 #ifdef USE_CAM_MASTER
+	int Cell;
+	TCHAR FileNCam[200];
+
 	for (Cell = 0; Cell < nStripCell; Cell++) // 한 스트립의 총 셀수.
 	{
 		// CAM-Master File Copy and Local File Load
 		strFileNCam.Format(_T("%s\\CORG%c%d.TIF"), MasterInfo.strCADImgPath, 'O', CellLoadID[Cell]);
-		sprintf(FileNCam, "%s", strFileNCam);
-		sprintf(FileNLoc, "C:\\R2RSet\\CAD\\CORG%c%d.TIF", 'O', CellLoadID[Cell]);
+		//sprintf(FileNCam, "%s", strFileNCam);
+		//sprintf(FileNLoc, "C:\\R2RSet\\CAD\\CORG%c%d.TIF", 'O', CellLoadID[Cell]);
+		_stprintf(FileNCam, _T("%s"), strFileNCam);
+		_stprintf(FileNLoc, _T("C:\\R2RSet\\CAD\\CORG%c%d.TIF"), 'O', CellLoadID[Cell]);
 
 		if(!CopyFile((LPCTSTR)FileNCam, (LPCTSTR)FileNLoc, FALSE))
 		{
@@ -660,9 +1049,9 @@ void CCamMaster::LoadCadImg()
 	}
 
 	if (!prcStopF)
-		pView->DispMsg(_T("CAD 이미지 다운로드를 완료하였습니다."), RGB_GREEN, DELAY_TIME_MSG);
+		pView->DispMsg(_T("CAD 이미지 다운로드를 완료하였습니다."), _T("CAD 이미지"), RGB_GREEN, DELAY_TIME_MSG);
 	else
-		pView->DispMsg(_T("CAD 이미지 다운로드를 실패하였습니다."), RGB_GREEN, DELAY_TIME_MSG);
+		pView->DispMsg(_T("CAD 이미지 다운로드를 실패하였습니다."), _T("CAD 이미지"), RGB_GREEN, DELAY_TIME_MSG);
 #else
 	CADImgBufAlloc(PATH_CAD_IMG, 0, FALSE);
 #endif
@@ -866,7 +1255,8 @@ void CCamMaster::LoadAlignImg()
 	//sprintf(FileNLoc, "C:\\R2RSet\\Align");
 	_stprintf(FileNLoc, _T("%s"), _T("C:\\R2RSet\\Align"));
 
-	if(!AlignFindFile.FindFile(FileNLoc))
+	//if(!AlignFindFile.FindFile(FileNLoc))
+	if (!pDoc->DirectoryExists(FileNLoc))
 	{
 		if(!CreateDirectory(FileNLoc, NULL))
 		{
@@ -882,13 +1272,29 @@ void CCamMaster::LoadAlignImg()
 	AlignImgFree();
 
 #ifdef USE_CAM_MASTER
+	int i;
+	int Cell;
+	TCHAR FileNAlign[200];
+
 	// CAM-Master File Copy and Local File Load
-	strcpy(FileNLoc, PATH_ALIGN0_IMG);
+	//strcpy(FileNLoc, PATH_ALIGN0_IMG);
+	_stprintf(FileNLoc, _T("%s"), PATH_ALIGN0_IMG);
 	if(m_sLayerUp.IsEmpty())
+	{ 
+		if (m_sPathCamSpecDir.Right(1) != "\\")
 		strFileNAlign.Format(_T("%s\\%s\\%s-md0.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer);
 	else
+			strFileNAlign.Format(_T("%s%s\\%s-md0.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	}
+	else
+	{
+		if (m_sPathCamSpecDir.Right(1) != "\\")
 		strFileNAlign.Format(_T("%s\\%s\\%s-md0.tif"), m_sPathCamSpecDir, m_sModel, m_sLayerUp);
-	sprintf(FileNAlign, "%s", strFileNAlign);
+		else
+			strFileNAlign.Format(_T("%s%s\\%s-md0.tif"), m_sPathCamSpecDir, m_sModel, m_sLayerUp);
+	}
+	//sprintf(FileNAlign, "%s", strFileNAlign);
+	_stprintf(FileNAlign, _T("%s"), strFileNAlign);
 
 	if(!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
 	{
@@ -907,15 +1313,27 @@ void CCamMaster::LoadAlignImg()
 // 		pView->DispStsBar("Align0 이미지 다운로드를 완료하였습니다.", 0);
 	}
 	else
-		pView->DispMsg(_T("Align0 이미지 다운로드를 실패하였습니다."), RGB_GREEN, DELAY_TIME_MSG);
+		pView->DispMsg(_T("Align0 이미지 다운로드를 실패하였습니다."), _T("경고"), RGB_GREEN, DELAY_TIME_MSG);
 
 	// CAM-Master File Copy and Local File Load
-	strcpy(FileNLoc, PATH_ALIGN1_IMG);
+	//strcpy(FileNLoc, PATH_ALIGN1_IMG);
+	_stprintf(FileNLoc, _T("%s"), PATH_ALIGN1_IMG);
 	if(m_sLayerUp.IsEmpty())
-		strFileNAlign.Format(_T("%s\\%s\\%s-md1.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	{
+		if (m_sPathCamSpecDir.Right(1) != "\\")
+			strFileNAlign.Format(_T("%s\\%s\\%s-md1.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer); 
+		else
+			strFileNAlign.Format(_T("%s%s\\%s-md1.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	}
 	else
+	{
+		if (m_sPathCamSpecDir.Right(1) != "\\")
 		strFileNAlign.Format(_T("%s\\%s\\%s-md1.tif"), m_sPathCamSpecDir, m_sModel, m_sLayerUp);
-	sprintf(FileNAlign, "%s", strFileNAlign);
+		else
+			strFileNAlign.Format(_T("%s%s\\%s-md1.tif"), m_sPathCamSpecDir, m_sModel, m_sLayerUp);
+	}
+	//sprintf(FileNAlign, "%s", strFileNAlign);
+	_stprintf(FileNAlign, _T("%s"), strFileNAlign);
 
 	if(!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
 	{
@@ -934,7 +1352,7 @@ void CCamMaster::LoadAlignImg()
 // 		pView->DispStsBar("Align1 이미지 다운로드를 완료하였습니다.", 0);
 	}
 	else
-		pView->DispMsg(_T("Align1 이미지 다운로드를 실패하였습니다."), RGB_GREEN, DELAY_TIME_MSG);
+		pView->DispMsg(_T("Align1 이미지 다운로드를 실패하였습니다."), _T("경고"), RGB_GREEN, DELAY_TIME_MSG);
 #else
 	AlignImgBufAlloc(PATH_ALIGN0_IMG, 1);
 #endif

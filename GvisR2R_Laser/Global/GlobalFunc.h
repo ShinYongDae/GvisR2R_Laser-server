@@ -16,6 +16,7 @@
 
 // #include "GlobalDefine.h"
 #include "MyData.h"
+#include "SafeLock.h"
 
 
 char* StringToChar(CString str);
@@ -80,7 +81,7 @@ BOOL GetIntersectPoint(FLINE3D fLine1,FLINE3D fLine2,FPOINT3D &fPt);
 
 double GetDistance(CfPoint3D FirstPoint,CfPoint3D SecondPoint); // 두점 사이의 거리를 얻는다 
 
-
+void SaveLog(CString strMsg, int nType = 0);
 
 
 

@@ -103,17 +103,17 @@ public:
 	BOOL GetCcw();
 	void SetCcw(BOOL bOn);
 	void SetMkOnePnl(BOOL bOn);
-	BOOL GetMkOnePnl();
+	BOOL GetMkOnePnl();				// not used
 	void SetAoiOnePnl(BOOL bOn);
-	BOOL GetAoiOnePnl();
-	void TimMoveMk(int nDir=M_CW) ;
+	BOOL GetAoiOnePnl();			// not used
+	void TimMoveMk(int nDir=M_CW) ;	// not used
 	void MoveMk(int nDir=M_CW);
 	void MoveMk(double dOffset);
-	void TimMoveAoi(int nDir=M_CW);
+	void TimMoveAoi(int nDir=M_CW);	// not used
 	void MoveAoi(int nDir=M_CW);
 	void MoveAoi(double dOffset);
-	void StopMk();
-	void StopAoi();
+	void StopMk();					// not used
+	void StopAoi();					// not used
 	BOOL GetMkTq();
 	BOOL GetAoiTq();
 	void SetMkTq(BOOL bOn);

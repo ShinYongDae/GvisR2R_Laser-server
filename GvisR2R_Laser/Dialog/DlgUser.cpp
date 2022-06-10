@@ -167,12 +167,12 @@ void CDlgUser::WriteUserNameListFile()
 	CString strFileName = _T("C:\\R2RSet\\UserNameList.ini");
 	//strcpy(FileName, strFileName);
 	_stprintf(FileName, _T("%s"), strFileName);
-	char* pRtn;
+	char* pRtn = NULL;
 	fp = fopen(pRtn=TCHARToChar(FileName), "w+");
 
 	if (fp != NULL)
 	{
-		fprintf(fp, "%s", StringToChar(pDoc->m_strUserNameList));			        
+		fprintf(fp, "%s", pRtn = StringToChar(pDoc->m_strUserNameList));
 	}
 	else
 	{
@@ -181,7 +181,8 @@ void CDlgUser::WriteUserNameListFile()
 	}
 
 	fclose(fp);
-	delete pRtn;
+	if(pRtn)
+		delete pRtn;
 }
 
 void CDlgUser::OnChk00() 

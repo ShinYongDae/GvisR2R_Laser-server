@@ -10,9 +10,9 @@
 #include "MyBtn.h"
 #include "MyStatic.h"
 
-#define MAX_INFO_STC				(48+1)
+#define MAX_INFO_STC				51
 #define MAX_INFO_STC_DATA			13
-#define MAX_INFO_BTN				(17+2)
+#define MAX_INFO_BTN				21
 
 /////////////////////////////////////////////////////////////////////////////
 // CDlgInfo dialog
@@ -101,8 +101,10 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedChk2PointAlign();
 	afx_msg void OnBnClickedChk4PointAlign();
+	afx_msg void OnBnClickedChk2PointAlign();
+	afx_msg void OnBnClickedChk1186();
+	afx_msg void OnBnClickedChk1185();
 };
 
 //{{AFX_INSERT_LOCATION}}

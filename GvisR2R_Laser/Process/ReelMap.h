@@ -51,6 +51,9 @@ class CReelMap : public CWnd
 	CString MakeDirUserRestore();
 	CString MakeDirUserRestore(CString sModel, CString sLayer, CString sLot);
 	int GetLastUserRestoreDir(CString strPath);
+
+	char* StrToChar(CString str);
+	void StrToChar(CString str, char* pCh);
 	
 // Construction
 public:

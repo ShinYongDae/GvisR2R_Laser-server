@@ -1781,26 +1781,26 @@ void CDlgMenu02::OnBtnGrab()
 	pPos[2] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[0];
 	pPos[3] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[0];
 
-	if(pDoc->WorkingInfo.LastJob.nAlignMethode == FOUR_POINT)
-	{
-		pPos[4] = pDoc->m_Master[0].m_stAlignMk.X2 + pView->m_pMotion->m_dPinPosX[0];
-		pPos[5] = pDoc->m_Master[0].m_stAlignMk.Y2 + pView->m_pMotion->m_dPinPosY[0];
-		pPos[6] = pDoc->m_Master[0].m_stAlignMk.X3 + pView->m_pMotion->m_dPinPosX[0];
-		pPos[7] = pDoc->m_Master[0].m_stAlignMk.Y3 + pView->m_pMotion->m_dPinPosY[0];
-	}
+	//if(pDoc->WorkingInfo.LastJob.nAlignMethode == FOUR_POINT)
+	//{
+	//	pPos[4] = pDoc->m_Master[0].m_stAlignMk.X2 + pView->m_pMotion->m_dPinPosX[0];
+	//	pPos[5] = pDoc->m_Master[0].m_stAlignMk.Y2 + pView->m_pMotion->m_dPinPosY[0];
+	//	pPos[6] = pDoc->m_Master[0].m_stAlignMk.X3 + pView->m_pMotion->m_dPinPosX[0];
+	//	pPos[7] = pDoc->m_Master[0].m_stAlignMk.Y3 + pView->m_pMotion->m_dPinPosY[0];
+	//}
 
 	int nPos=-1;
 	if( (dCurrX > pPos[0]-0.1 && dCurrX < pPos[0]+0.1) && (dCurrY > pPos[1]-0.1 && dCurrY < pPos[1]+0.1) )
 		nPos = 0;
 	else if( (dCurrX > pPos[2]-0.1 && dCurrX < pPos[2]+0.1) && (dCurrY > pPos[3]-0.1 && dCurrY < pPos[3]+0.1) )
 		nPos = 1;
-	if (pDoc->WorkingInfo.LastJob.nAlignMethode == FOUR_POINT)
-	{
-		if ((dCurrX > pPos[4] - 0.1 && dCurrX < pPos[4] + 0.1) && (dCurrY > pPos[5] - 0.1 && dCurrY < pPos[5] + 0.1))
-			nPos = 2;
-		else if ((dCurrX > pPos[6] - 0.1 && dCurrX < pPos[6] + 0.1) && (dCurrY > pPos[7] - 0.1 && dCurrY < pPos[7] + 0.1))
-			nPos = 3;
-	}
+	//if (pDoc->WorkingInfo.LastJob.nAlignMethode == FOUR_POINT)
+	//{
+	//	if ((dCurrX > pPos[4] - 0.1 && dCurrX < pPos[4] + 0.1) && (dCurrY > pPos[5] - 0.1 && dCurrY < pPos[5] + 0.1))
+	//		nPos = 2;
+	//	else if ((dCurrX > pPos[6] - 0.1 && dCurrX < pPos[6] + 0.1) && (dCurrY > pPos[7] - 0.1 && dCurrY < pPos[7] + 0.1))
+	//		nPos = 3;
+	//}
 	if(nPos==-1)
 		return;
 

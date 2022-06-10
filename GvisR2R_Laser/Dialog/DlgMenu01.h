@@ -176,6 +176,15 @@ public:
 	void GetCtrlPos();
 	void ShiftCtrlPos(BOOL bOrg);
 
+	afx_msg LRESULT OnMyBtnDblClk(WPARAM wPara, LPARAM lPara);
+
+	afx_msg LRESULT OnMyBtnDown(WPARAM wPara, LPARAM lPara);
+	afx_msg LRESULT OnMyBtnUp(WPARAM wPara, LPARAM lPara);
+
+	void SwMyBtnDown(int nCtrlID);
+	void SwMyBtnUp(int nCtrlID);
+
+	void ChkTpStop();
 
 // Dialog Data
 	//{{AFX_DATA(CDlgMenu01)
@@ -202,7 +211,7 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnChkUserInfo();
 	afx_msg void OnPaint();
-	afx_msg void OnChkTpStop();
+	//afx_msg void OnChkTpStop();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);// (UINT nIDEvent);
 	afx_msg void OnChkEjectBuffer();
 	afx_msg void OnChkReview();

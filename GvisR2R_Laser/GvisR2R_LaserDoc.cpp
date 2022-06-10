@@ -42,11 +42,18 @@ END_MESSAGE_MAP()
 CGvisR2R_LaserDoc::CGvisR2R_LaserDoc()
 {
 	// TODO: 여기에 일회성 생성 코드를 추가합니다.
+	int i, k;
 	pDoc = this;
-
-	int i;
 	m_strUserNameList = _T("");
 
+	m_bBufEmpty[0] = FALSE; // Exist
+	m_bBufEmpty[1] = FALSE; // Exist
+	m_bBufEmptyF[0] = FALSE; // Exist
+	m_bBufEmptyF[1] = FALSE; // Exist
+
+
+	// 	m_pCellRgn = NULL;
+	// 	m_pPcsRgn = NULL;
 	m_pReelMap = NULL;
 	m_pReelMapUp = NULL;
 	m_pReelMapDn = NULL;
@@ -54,7 +61,10 @@ CGvisR2R_LaserDoc::CGvisR2R_LaserDoc()
 	m_pReelMapAllDn = NULL;
 
 	for (i = 0; i < MAX_PCR; i++)
-		m_pPcr[i] = NULL;
+	{
+		for (k = 0; k < MAX_PCR_PNL; k++)
+			m_pPcr[i][k] = NULL;
+	}
 
 	pMkInfo = NULL;
 
@@ -234,20 +244,6 @@ CGvisR2R_LaserDoc::~CGvisR2R_LaserDoc()
 		pMkInfo = NULL;
 	}
 
-	for (i = 0; i < MAX_PCR; i++)
-	{
-		for (k = 0; k < MAX_PCR_PNL; k++)
-		{
-			if (m_pPcr[i][k])
-			{
-				delete m_pPcr[i][k];
-				m_pPcr[i][k] = NULL;
-			}
-		}
-		delete[] m_pPcr[i];
-		m_pPcr[i] = NULL;
-	}
-
 	if (m_pMpeI)
 	{
 		delete[] m_pMpeI;
@@ -296,6 +292,20 @@ CGvisR2R_LaserDoc::~CGvisR2R_LaserDoc()
 	{
 		delete m_pSpecLocal;
 		m_pSpecLocal = NULL;
+	}
+
+	for (i = 0; i < MAX_PCR; i++)
+	{
+		for (k = 0; k < MAX_PCR_PNL; k++)
+		{
+			if (m_pPcr[i][k])
+			{
+				delete m_pPcr[i][k];
+				m_pPcr[i][k] = NULL;
+			}
+		}
+		//delete[] m_pPcr[i];
+		//m_pPcr[i] = NULL;
 	}
 }
 
@@ -1010,10 +1020,25 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.System.sPathSapp3 = CString(_T(""));
 	}
 
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("SaveLog"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.System.bSaveLog = _ttoi(szData);
+	else
+		WorkingInfo.System.bSaveLog = FALSE;
+
 	if (0 < ::GetPrivateProfileString(_T("System"), _T("NO_MARKING"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.System.bNoMk = _ttoi(szData);	// 0 : 마킹모드, 1 : 비젼모드
 	else
 		WorkingInfo.System.bNoMk = FALSE;			// 0 : 마킹모드, 1 : 비젼모드
+
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("SaveMkImage"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.System.bSaveMkImg = _ttoi(szData);	
+	else
+		WorkingInfo.System.bSaveMkImg = FALSE;			
+
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("UseStripPcsRgnBin"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.System.bStripPcsRgnBin = _ttoi(szData);
+	else
+		WorkingInfo.System.bStripPcsRgnBin = FALSE;
 
 	if (0 < ::GetPrivateProfileString(_T("System"), _T("REVIEW_MARKING_LENGTH"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.System.sReViewMkLen = CString(szData);
@@ -1292,15 +1317,25 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	else
 		WorkingInfo.LastJob.bMkDrSen = TRUE;
 
-	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use Aoi Door Sensor"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.LastJob.bAoiDrSen = _ttoi(szData) ? TRUE : FALSE;
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use AoiUp Door Sensor"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.bAoiUpDrSen = _ttoi(szData) ? TRUE : FALSE;
 	else
-		WorkingInfo.LastJob.bAoiDrSen = TRUE;
+		WorkingInfo.LastJob.bAoiUpDrSen = TRUE;
+
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use AoiDn Door Sensor"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.bAoiDnDrSen = _ttoi(szData) ? TRUE : FALSE;
+	else
+		WorkingInfo.LastJob.bAoiDnDrSen = TRUE;
 
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use Uncoiler Door Sensor"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.LastJob.bUclDrSen = _ttoi(szData) ? TRUE : FALSE;
 	else
 		WorkingInfo.LastJob.bUclDrSen = TRUE;
+
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use Engrave Door Sensor"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.bEngvDrSen = _ttoi(szData) ? TRUE : FALSE;
+	else
+		WorkingInfo.LastJob.bEngvDrSen = TRUE;
 
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use Buffer Door Sensor"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.LastJob.bBufDrSen = _ttoi(szData) ? TRUE : FALSE;
@@ -1336,6 +1371,17 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.LastJob.sPartialSpd = CString(szData);
 	else
 		WorkingInfo.LastJob.sPartialSpd = _T("10.0");
+
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use Up Aoi CleanRoler"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.bAoiUpCleanRoler = _ttoi(szData) ? TRUE : FALSE;
+	else
+		WorkingInfo.LastJob.bAoiUpCleanRoler = TRUE;
+
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use Dn Aoi CleanRoler"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.bAoiDnCleanRoler = _ttoi(szData) ? TRUE : FALSE;
+	else
+		WorkingInfo.LastJob.bAoiDnCleanRoler = TRUE;
+
 
 	// 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Light Value"), NULL, szData, sizeof(szData), sPath))
 	// 		WorkingInfo.LastJob.sLightVal = CString(szData);
@@ -2172,6 +2218,12 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Fluck.sThreshold = CString(_T(""));
 
 	if (0 < ::GetPrivateProfileString(_T("Fluck"), _T("PROBING_REJECT_MK"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.Fluck.sRejectMkNum = CString(szData);
+	else
+		WorkingInfo.Fluck.sRejectMkNum = CString(_T("20"));
+#else
+
+	if (0 < ::GetPrivateProfileString(_T("MarkingTest"), _T("TOTAL_REJECT_MK"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.Fluck.sRejectMkNum = CString(szData);
 	else
 		WorkingInfo.Fluck.sRejectMkNum = CString(_T("20"));
@@ -3055,8 +3107,14 @@ void CGvisR2R_LaserDoc::SaveWorkingInfo()
 	sData.Format(_T("%d"), WorkingInfo.LastJob.bMkDrSen ? 1 : 0);
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Marking Door Sensor"), sData, sPath);
 
-	sData.Format(_T("%d"), WorkingInfo.LastJob.bAoiDrSen ? 1 : 0);
+	sData.Format(_T("%d"), WorkingInfo.LastJob.bAoiUpDrSen ? 1 : 0);
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Aoi Door Sensor"), sData, sPath);
+
+	sData.Format(_T("%d"), WorkingInfo.LastJob.bAoiDnDrSen ? 1 : 0);
+	::WritePrivateProfileString(_T("Last Job"), _T("Use Aoi Door Sensor"), sData, sPath);
+
+	sData.Format(_T("%d"), WorkingInfo.LastJob.bEngvDrSen ? 1 : 0);
+	::WritePrivateProfileString(_T("Last Job"), _T("Use Engrave Door Sensor"), sData, sPath);
 
 	sData.Format(_T("%d"), WorkingInfo.LastJob.bUclDrSen ? 1 : 0);
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Uncoiler Door Sensor"), sData, sPath);
@@ -3453,9 +3511,9 @@ void CGvisR2R_LaserDoc::SaveWorkingInfo()
 void CGvisR2R_LaserDoc::ClrPcr()
 {
 	int nIdx, i, k;
-	for (i = 0; i < 3; i++)
+	for (i = 0; i < MAX_PCR; i++)
 	{
-		if (m_pPcr[i])
+		if (m_pPcr[i][0])
 		{
 			for (nIdx = 0; nIdx < MAX_PCR_PNL; nIdx++)
 			{
@@ -3465,21 +3523,26 @@ void CGvisR2R_LaserDoc::ClrPcr()
 				m_pPcr[i][nIdx]->m_sModel = _T("");
 				m_pPcr[i][nIdx]->m_sLayer = _T("");
 				m_pPcr[i][nIdx]->m_sLot = _T("");
-				for (k = 0; k < m_pPcr[i][nIdx]->m_nTotDef; k++)
-				{
-					m_pPcr[i][nIdx]->m_nCamId = 0;
-					m_pPcr[i][nIdx]->m_pLayer[k] = -1;
-					m_pPcr[i][nIdx]->m_pDefPcs[k] = 0;
-					m_pPcr[i][nIdx]->m_pDefPos[k].x = 0;
-					m_pPcr[i][nIdx]->m_pDefPos[k].y = 0;
-					m_pPcr[i][nIdx]->m_pDefType[k] = 0;
-					m_pPcr[i][nIdx]->m_pCell[k] = 0;
-					m_pPcr[i][nIdx]->m_pImgSz[k] = 0;
-					m_pPcr[i][nIdx]->m_pImg[k] = 0;
-					m_pPcr[i][nIdx]->m_pMk[k] = 0;
-				}
+
+				m_pPcr[i][nIdx]->m_nCamId = 0;
 				m_pPcr[i][nIdx]->m_nTotDef = 0;
 				m_pPcr[i][nIdx]->m_nTotRealDef = 0;
+
+				//sMsg.Format(_T("%d"), m_pPcr[i][nIdx]->m_nTotDef);
+				//AfxMessageBox(sMsg);
+
+				//for (k = 0; k < m_pPcr[i][nIdx]->m_nTotDef; k++)
+				//{
+				//	m_pPcr[i][nIdx]->m_pLayer[k] = -1;
+				//	m_pPcr[i][nIdx]->m_pDefPcs[k] = 0;
+				//	m_pPcr[i][nIdx]->m_pDefPos[k].x = 0;
+				//	m_pPcr[i][nIdx]->m_pDefPos[k].y = 0;
+				//	m_pPcr[i][nIdx]->m_pDefType[k] = 0;
+				//	m_pPcr[i][nIdx]->m_pCell[k] = 0;
+				//	m_pPcr[i][nIdx]->m_pImgSz[k] = 0;
+				//	m_pPcr[i][nIdx]->m_pImg[k] = 0;
+				//	m_pPcr[i][nIdx]->m_pMk[k] = 0;
+				//}
 			}
 		}
 	}
@@ -3571,11 +3634,6 @@ BOOL CGvisR2R_LaserDoc::InitReelmapUp()
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	int nTotPcs = m_Master[0].m_pPcsRgn->nTotPcs;
 
-	if (m_pReelMap->m_nLayer < 0)
-		m_pReelMap->m_nLayer = pView->m_nSelRmap;
-
-	if (m_pReelMap->m_nLayer == RMAP_UP || m_pReelMap->m_nLayer == RMAP_ALLUP)
-	{
 		if (m_pReelMap)
 		{
 			//m_pReelMap->ResetReelmap();
@@ -3583,6 +3641,20 @@ BOOL CGvisR2R_LaserDoc::InitReelmapUp()
 			m_pReelMap = NULL;
 		}
 		m_pReelMap = new CReelMap(MAX_DISP_PNL, nTotPcs);
+
+
+	if (m_pReelMap->m_nLayer < 0)
+		m_pReelMap->m_nLayer = pView->m_nSelRmap;
+
+	if (m_pReelMap->m_nLayer == RMAP_UP || m_pReelMap->m_nLayer == RMAP_ALLUP)
+	{
+		//if (m_pReelMap)
+		//{
+		//	//m_pReelMap->ResetReelmap();
+		//	delete m_pReelMap;
+		//	m_pReelMap = NULL;
+		//}
+		//m_pReelMap = new CReelMap(MAX_DISP_PNL, nTotPcs);
 
 		if (pMkInfo)
 		{
@@ -3634,11 +3706,6 @@ BOOL CGvisR2R_LaserDoc::InitReelmapDn()
 
 	int nTotPcs = m_Master[0].m_pPcsRgn->nTotPcs;
 
-	if (m_pReelMap->m_nLayer < 0)
-		m_pReelMap->m_nLayer = pView->m_nSelRmap;
-
-	if (m_pReelMap->m_nLayer == RMAP_DN || m_pReelMap->m_nLayer == RMAP_ALLDN)
-	{
 		if (m_pReelMap)
 		{
 			//m_pReelMap->ResetReelmap();
@@ -3646,6 +3713,20 @@ BOOL CGvisR2R_LaserDoc::InitReelmapDn()
 			m_pReelMap = NULL;
 		}
 		m_pReelMap = new CReelMap(MAX_DISP_PNL, nTotPcs);
+
+
+	if (m_pReelMap->m_nLayer < 0)
+		m_pReelMap->m_nLayer = pView->m_nSelRmap;
+
+	if (m_pReelMap->m_nLayer == RMAP_DN || m_pReelMap->m_nLayer == RMAP_ALLDN)
+	{
+		//if (m_pReelMap)
+		//{
+		//	//m_pReelMap->ResetReelmap();
+		//	delete m_pReelMap;
+		//	m_pReelMap = NULL;
+		//}
+		//m_pReelMap = new CReelMap(MAX_DISP_PNL, nTotPcs);
 
 		if (pMkInfo)
 		{
@@ -3682,22 +3763,14 @@ void CGvisR2R_LaserDoc::InitPcr()
 	int k, i;
 	for (i = 0; i < MAX_PCR; i++)
 	{
-		if (m_pPcr[i])
-		{
-			for (k = 0; k < MAX_PCR_PNL; k++)
-			{
-				if (m_pPcr[i][k])
-				{
-					delete m_pPcr[i][k];
-					m_pPcr[i][k] = NULL;
-				}
-			}
-			delete[] m_pPcr[i];
-			m_pPcr[i] = NULL;
-		}
-		m_pPcr[i] = new CDataMarking*[MAX_PCR_PNL];
 		for (k = 0; k < MAX_PCR_PNL; k++)
 		{
+			if (m_pPcr[i][k])
+			{
+				delete m_pPcr[i][k];
+				m_pPcr[i][k] = NULL;
+			}
+
 			m_pPcr[i][k] = new CDataMarking();
 		}
 	}
@@ -3809,9 +3882,10 @@ CString CGvisR2R_LaserDoc::GetCamPxlRes()
 #ifdef TEST_MODE
 	sPath = PATH_PIN_IMG_;
 #else
-	sPath.Format(_T("%s\\%s\\%s.mst"), pDoc->WorkingInfo.System.sPathCamSpecDir,
-		pDoc->WorkingInfo.LastJob.sModelUp,
-		pDoc->WorkingInfo.LastJob.sLayerUp);
+	if (pDoc->WorkingInfo.System.sPathCamSpecDir.Right(1) != "\\")
+		sPath.Format(_T("%s\\%s\\%s.mst"), pDoc->WorkingInfo.System.sPathCamSpecDir, pDoc->WorkingInfo.LastJob.sModelUp, pDoc->WorkingInfo.LastJob.sLayerUp);
+	else
+		sPath.Format(_T("%s%s\\%s.mst"), pDoc->WorkingInfo.System.sPathCamSpecDir, pDoc->WorkingInfo.LastJob.sModelUp, pDoc->WorkingInfo.LastJob.sLayerUp);
 #endif
 
 	int nPos = sPath.ReverseFind('-');
@@ -4063,30 +4137,38 @@ BOOL CGvisR2R_LaserDoc::GetAoiInfoUp(int nSerial, int *pNewLot, BOOL bFromBuf) /
 
 
 
-	if (Status.PcrShare[0].sModel.IsEmpty() || Status.PcrShare[0].sLayer.IsEmpty())// || Status.PcrShare[0].sLot.IsEmpty())
+	if (Status.PcrShare[0].sModel.IsEmpty() || Status.PcrShare[0].sLayer.IsEmpty() || Status.PcrShare[0].sLot.IsEmpty())
 	{
 		pView->MsgBox(_T("Error - Aoi Information."));
 		// 		AfxMessageBox(_T("Error - Aoi Information."));
 		return FALSE;
 	}
 
-	if (WorkingInfo.LastJob.sModelUp != Status.PcrShare[0].sModel || WorkingInfo.LastJob.sLayerUp != Status.PcrShare[0].sLayer)//|| WorkingInfo.LastJob.sLotUp != Status.PcrShare[0].sLot)
+	if (WorkingInfo.LastJob.sModelUp != Status.PcrShare[0].sModel || WorkingInfo.LastJob.sLayerUp != Status.PcrShare[0].sLayer || WorkingInfo.LastJob.sLotUp != Status.PcrShare[0].sLot)
 	{
+		if (m_bBufEmptyF[0])
+	{
+			if (!m_bBufEmpty[0])
+				m_bBufEmptyF[0] = FALSE;
+
 		WorkingInfo.LastJob.sModelUp = Status.PcrShare[0].sModel;
 		WorkingInfo.LastJob.sLayerUp = Status.PcrShare[0].sLayer;
 		WorkingInfo.LastJob.sLotUp = Status.PcrShare[0].sLot;
 		return TRUE;
 	}
+	}
 
-	if (WorkingInfo.LastJob.sLotUp != Status.PcrShare[0].sLot)
+	if(bFromBuf)
 	{
-		if (GetLastShotUp() && (WorkingInfo.LastJob.bLotSep || m_bDoneChgLot))
+		if (WorkingInfo.LastJob.sLotUp != Status.PcrShare[0].sLot)
 		{
+			//if (GetLastShotUp() && (WorkingInfo.LastJob.bLotSep || m_bDoneChgLot))
+			//{
 			*pNewLot = 1;
 			pView->m_sNewLotUp = Status.PcrShare[0].sLot;
-		}
-		else
-		{
+			//}
+			//else
+			//{
 			WorkingInfo.LastJob.sLotUp = Status.PcrShare[0].sLot;
 			SetModelInfoUp();
 			pView->OpenReelmapUp(); // At Start...
@@ -4097,6 +4179,7 @@ BOOL CGvisR2R_LaserDoc::GetAoiInfoUp(int nSerial, int *pNewLot, BOOL bFromBuf) /
 				if (pView->m_nSelRmap == RMAP_UP || pView->m_nSelRmap == RMAP_ALLUP)
 					pView->m_pDlgMenu01->OpenReelmap(pView->m_nSelRmap);
 			}
+			//}
 		}
 	}
 
@@ -4201,30 +4284,38 @@ BOOL CGvisR2R_LaserDoc::GetAoiInfoDn(int nSerial, int *pNewLot, BOOL bFromBuf) /
 
 
 
-	if (Status.PcrShare[1].sModel.IsEmpty() || Status.PcrShare[1].sLayer.IsEmpty())// || Status.PcrShare[1].sLot.IsEmpty())
+	if (Status.PcrShare[1].sModel.IsEmpty() || Status.PcrShare[1].sLayer.IsEmpty() || Status.PcrShare[1].sLot.IsEmpty())
 	{
 		pView->MsgBox(_T("Error - Aoi Information."));
 		// 		AfxMessageBox(_T("Error - Aoi Information."));
 		return FALSE;
 	}
 
-	if (WorkingInfo.LastJob.sModelDn != Status.PcrShare[1].sModel || WorkingInfo.LastJob.sLayerDn != Status.PcrShare[1].sLayer)//|| WorkingInfo.LastJob.sLotDn != Status.PcrShare[1].sLot)
+	if (WorkingInfo.LastJob.sModelDn != Status.PcrShare[1].sModel || WorkingInfo.LastJob.sLayerDn != Status.PcrShare[1].sLayer || WorkingInfo.LastJob.sLotDn != Status.PcrShare[1].sLot)
 	{
+		if (m_bBufEmptyF[1])
+	{
+			if (!m_bBufEmpty[1])
+				m_bBufEmptyF[1] = FALSE;
+
 		WorkingInfo.LastJob.sModelDn = Status.PcrShare[1].sModel;
 		WorkingInfo.LastJob.sLayerDn = Status.PcrShare[1].sLayer;
 		WorkingInfo.LastJob.sLotDn = Status.PcrShare[1].sLot;
 		return TRUE;
 	}
+	}
 
-	if (WorkingInfo.LastJob.sLotDn != Status.PcrShare[1].sLot)
+	if (bFromBuf)
 	{
-		if (GetLastShotDn() && (pDoc->WorkingInfo.LastJob.bLotSep || m_bDoneChgLot))
+		if (WorkingInfo.LastJob.sLotDn != Status.PcrShare[1].sLot)
 		{
+			//if (GetLastShotDn() && (pDoc->WorkingInfo.LastJob.bLotSep || m_bDoneChgLot))
+			//{
 			*pNewLot = 1;
 			pView->m_sNewLotDn = Status.PcrShare[1].sLot;
-		}
-		else
-		{
+			//}
+			//else
+			//{
 			WorkingInfo.LastJob.sLotDn = Status.PcrShare[1].sLot;
 			SetModelInfoDn();
 
@@ -4236,6 +4327,7 @@ BOOL CGvisR2R_LaserDoc::GetAoiInfoDn(int nSerial, int *pNewLot, BOOL bFromBuf) /
 				if (pView->m_nSelRmap == RMAP_DN || pView->m_nSelRmap == RMAP_ALLDN)
 					pView->m_pDlgMenu01->OpenReelmap(pView->m_nSelRmap);
 			}
+			//}
 		}
 	}
 
@@ -4758,6 +4850,8 @@ int CGvisR2R_LaserDoc::LoadPCRUp(int nSerial, BOOL bFromShare)	// return : 2(Fai
 	if (!m_pPcr[0][nIdx])
 		return(2);
 
+	BOOL bResetMkInfo = FALSE;
+
 	m_pPcr[0][nIdx]->m_nIdx = nIdx;							// m_nIdx : From 0 to nTot.....
 	m_pPcr[0][nIdx]->m_nSerial = nSerial;
 
@@ -4793,6 +4887,21 @@ int CGvisR2R_LaserDoc::LoadPCRUp(int nSerial, BOOL bFromShare)	// return : 2(Fai
 	strTotalBadPieceNum = strFileData.Left(nTemp);;
 	strFileData.Delete(0, nTemp + 1);
 	nFileSize = nFileSize - nTemp - 1;
+
+	if (!strModel.IsEmpty() && !strLot.IsEmpty() && !strLayer.IsEmpty())
+	{
+		if (WorkingInfo.LastJob.sModelUp.IsEmpty() || WorkingInfo.LastJob.sLotUp.IsEmpty() || WorkingInfo.LastJob.sLayerUp.IsEmpty())
+		{
+			WorkingInfo.LastJob.sModelUp = strModel;
+			WorkingInfo.LastJob.sLotUp = strLot;
+			WorkingInfo.LastJob.sLayerUp = strLayer;
+
+			if (!WorkingInfo.LastJob.bDualTest)
+			{
+				pView->ResetMkInfo(0); // 0 : AOI-Up , 1 : AOI-Dn , 2 : AOI-UpDn
+			}
+		}
+	}
 
 	int nTotDef = _tstoi(strTotalBadPieceNum);
 
@@ -4988,6 +5097,23 @@ int CGvisR2R_LaserDoc::LoadPCRDn(int nSerial, BOOL bFromShare)	// return : 2(Fai
 	strFileData.Delete(0, nTemp + 1);
 	nFileSize = nFileSize - nTemp - 1;
 
+
+	if (!strModel.IsEmpty() && !strLot.IsEmpty() && !strLayer.IsEmpty())
+	{
+		if (WorkingInfo.LastJob.sModelDn.IsEmpty() || WorkingInfo.LastJob.sLotDn.IsEmpty() || WorkingInfo.LastJob.sLayerDn.IsEmpty())
+		{
+			WorkingInfo.LastJob.sModelDn = strModel;
+			WorkingInfo.LastJob.sLotDn = strLot;
+			WorkingInfo.LastJob.sLayerDn = strLayer;
+
+			if (WorkingInfo.LastJob.bDualTest)
+			{
+				pView->ResetMkInfo(2); // 0 : AOI-Up , 1 : AOI-Dn , 2 : AOI-UpDn
+			}
+		}
+	}
+
+
 	int nTotDef = _tstoi(strTotalBadPieceNum);
 
 	m_pPcr[1][nIdx]->Init(nSerial, nTotDef);
@@ -5141,42 +5267,72 @@ BOOL CGvisR2R_LaserDoc::CopyDefImgUp(int nSerial, CString sNewLot)
 	strAOIImgDataPath.Format(_T("%s\\VRSImage"), WorkingInfo.System.sPathAoiUp);
 
 
-
+	if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
+		strMakeFolderPath.Format(_T("%s\\%s"), WorkingInfo.System.sPathOldFile,
+			WorkingInfo.LastJob.sModelUp);
+	else
 	strMakeFolderPath.Format(_T("%s%s"), WorkingInfo.System.sPathOldFile,
 		WorkingInfo.LastJob.sModelUp);
-	if (!finder.FindFile(strMakeFolderPath))
+
+	//if (!finder.FindFile(strMakeFolderPath))
+	if (!pDoc->DirectoryExists(strMakeFolderPath))
 		CreateDirectory(strMakeFolderPath, NULL);
 
-
+	if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
+		strMakeFolderPath.Format(_T("%s\\%s\\%s"), WorkingInfo.System.sPathOldFile,
+			WorkingInfo.LastJob.sModelUp,
+			sLot);
+	else
 	strMakeFolderPath.Format(_T("%s%s\\%s"), WorkingInfo.System.sPathOldFile,
 		WorkingInfo.LastJob.sModelUp,
 		sLot);
-	if (!finder.FindFile(strMakeFolderPath))
+	//if (!finder.FindFile(strMakeFolderPath))
+	if (!pDoc->DirectoryExists(strMakeFolderPath))
 		CreateDirectory(strMakeFolderPath, NULL);
 
-
+	if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
+		strMakeFolderPath.Format(_T("%s\\%s\\%s\\%s"), WorkingInfo.System.sPathOldFile,
+			WorkingInfo.LastJob.sModelUp,
+			sLot,
+			WorkingInfo.LastJob.sLayerUp);
+	else
 	strMakeFolderPath.Format(_T("%s%s\\%s\\%s"), WorkingInfo.System.sPathOldFile,
 		WorkingInfo.LastJob.sModelUp,
 		sLot,
 		WorkingInfo.LastJob.sLayerUp);
-	if (!finder.FindFile(strMakeFolderPath))
+	//if (!finder.FindFile(strMakeFolderPath))
+	if (!pDoc->DirectoryExists(strMakeFolderPath))
 		CreateDirectory(strMakeFolderPath, NULL);
 
 
+	if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
+		strMakeFolderPath.Format(_T("%s\\%s\\%s\\%s\\DefImage"), WorkingInfo.System.sPathOldFile,
+			WorkingInfo.LastJob.sModelUp,
+			sLot,
+			WorkingInfo.LastJob.sLayerUp);
+	else
 	strMakeFolderPath.Format(_T("%s%s\\%s\\%s\\DefImage"), WorkingInfo.System.sPathOldFile,
 		WorkingInfo.LastJob.sModelUp,
 		sLot,
 		WorkingInfo.LastJob.sLayerUp);
-	if (!finder.FindFile(strMakeFolderPath))
+	//if (!finder.FindFile(strMakeFolderPath))
+	if (!pDoc->DirectoryExists(strMakeFolderPath))
 		CreateDirectory(strMakeFolderPath, NULL);
 
-
+	if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
+		strMakeFolderPath.Format(_T("%s\\%s\\%s\\%s\\DefImage\\%d"), WorkingInfo.System.sPathOldFile,
+			WorkingInfo.LastJob.sModelUp,
+			sLot,
+			WorkingInfo.LastJob.sLayerUp,
+			nSerial);
+	else
 	strMakeFolderPath.Format(_T("%s%s\\%s\\%s\\DefImage\\%d"), WorkingInfo.System.sPathOldFile,
 		WorkingInfo.LastJob.sModelUp,
 		sLot,
 		WorkingInfo.LastJob.sLayerUp,
 		nSerial);
-	if (!finder.FindFile(strMakeFolderPath))
+	//if (!finder.FindFile(strMakeFolderPath))
+	if (!pDoc->DirectoryExists(strMakeFolderPath))
 		CreateDirectory(strMakeFolderPath, NULL);
 
 
@@ -5199,12 +5355,29 @@ BOOL CGvisR2R_LaserDoc::CopyDefImgUp(int nSerial, CString sNewLot)
 		if (pDoc->m_pPcr[0][nIdx]->m_pMk[i] != -2) // -2 (NoMarking)
 		{
 			int nDefImg = pDoc->m_pPcr[0][nIdx]->m_pImg[i];
+			if (strAOIImgDataPath.Right(1) != "\\")
 			strDefImgPathS.Format(_T("%s\\%s\\%s\\%s\\%d\\%05d.tif"), strAOIImgDataPath,
 				WorkingInfo.LastJob.sModelUp,
 				WorkingInfo.LastJob.sLayerUp,
 				sLot,
 				nSerial,
 				nDefImg);
+			else
+				strDefImgPathS.Format(_T("%s%s\\%s\\%s\\%d\\%05d.tif"), strAOIImgDataPath,
+					WorkingInfo.LastJob.sModelUp,
+					WorkingInfo.LastJob.sLayerUp,
+					sLot,
+					nSerial,
+					nDefImg);
+
+			if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
+				strDefImgPathD.Format(_T("%s\\%s\\%s\\%s\\DefImage\\%d\\%05d.tif"), WorkingInfo.System.sPathOldFile,
+					WorkingInfo.LastJob.sModelUp,
+					sLot,
+					WorkingInfo.LastJob.sLayerUp,
+					nSerial,
+					nDefImg);
+			else
 			strDefImgPathD.Format(_T("%s%s\\%s\\%s\\DefImage\\%d\\%05d.tif"), WorkingInfo.System.sPathOldFile,
 				WorkingInfo.LastJob.sModelUp,
 				sLot,
@@ -5230,8 +5403,9 @@ BOOL CGvisR2R_LaserDoc::CopyDefImgUp(int nSerial, CString sNewLot)
 				if (nErrorCnt > 10)
 				{
 					nErrorCnt = 0;
-					strTemp.Format(_T("%s \r\n: Defect Image File Copy Fail"), strDefImgPathS);
-					AfxMessageBox(strTemp);
+					strTemp.Format(_T("%s \r\n: Defect Image File Not Exist"), strDefImgPathS);
+					//AfxMessageBox(strTemp);
+					return TRUE;
 				}
 				else
 				{
@@ -5271,42 +5445,70 @@ BOOL CGvisR2R_LaserDoc::CopyDefImgDn(int nSerial, CString sNewLot)
 
 	strAOIImgDataPath.Format(_T("%s\\VRSImage"), WorkingInfo.System.sPathAoiDn);
 
-
+	if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
+		strMakeFolderPath.Format(_T("%s\\%s"), WorkingInfo.System.sPathOldFile,
+			WorkingInfo.LastJob.sModelDn);
+	else
 	strMakeFolderPath.Format(_T("%s%s"), WorkingInfo.System.sPathOldFile,
 		WorkingInfo.LastJob.sModelDn);
-	if (!finder.FindFile(strMakeFolderPath))
+	//if (!finder.FindFile(strMakeFolderPath))
+	if (!pDoc->DirectoryExists(strMakeFolderPath))
 		CreateDirectory(strMakeFolderPath, NULL);
 
-
+	if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
+		strMakeFolderPath.Format(_T("%s\\%s\\%s"), WorkingInfo.System.sPathOldFile,
+			WorkingInfo.LastJob.sModelDn,
+			sLot);
+	else
 	strMakeFolderPath.Format(_T("%s%s\\%s"), WorkingInfo.System.sPathOldFile,
 		WorkingInfo.LastJob.sModelDn,
 		sLot);
-	if (!finder.FindFile(strMakeFolderPath))
+	//if (!finder.FindFile(strMakeFolderPath))
+	if (!pDoc->DirectoryExists(strMakeFolderPath))
 		CreateDirectory(strMakeFolderPath, NULL);
 
-
+	if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
+		strMakeFolderPath.Format(_T("%s\\%s\\%s\\%s"), WorkingInfo.System.sPathOldFile,
+			WorkingInfo.LastJob.sModelDn,
+			sLot,
+			WorkingInfo.LastJob.sLayerDn);
+	else
 	strMakeFolderPath.Format(_T("%s%s\\%s\\%s"), WorkingInfo.System.sPathOldFile,
 		WorkingInfo.LastJob.sModelDn,
 		sLot,
 		WorkingInfo.LastJob.sLayerDn);
-	if (!finder.FindFile(strMakeFolderPath))
+	//if (!finder.FindFile(strMakeFolderPath))
+	if (!pDoc->DirectoryExists(strMakeFolderPath))
 		CreateDirectory(strMakeFolderPath, NULL);
 
-
+	if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
+		strMakeFolderPath.Format(_T("%s\\%s\\%s\\%s\\DefImage"), WorkingInfo.System.sPathOldFile,
+			WorkingInfo.LastJob.sModelDn,
+			sLot,
+			WorkingInfo.LastJob.sLayerDn);
+	else
 	strMakeFolderPath.Format(_T("%s%s\\%s\\%s\\DefImage"), WorkingInfo.System.sPathOldFile,
 		WorkingInfo.LastJob.sModelDn,
 		sLot,
 		WorkingInfo.LastJob.sLayerDn);
-	if (!finder.FindFile(strMakeFolderPath))
+	//if (!finder.FindFile(strMakeFolderPath))
+	if (!pDoc->DirectoryExists(strMakeFolderPath))
 		CreateDirectory(strMakeFolderPath, NULL);
 
-
+	if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
+		strMakeFolderPath.Format(_T("%s\\%s\\%s\\%s\\DefImage\\%d"), WorkingInfo.System.sPathOldFile,
+			WorkingInfo.LastJob.sModelDn,
+			sLot,
+			WorkingInfo.LastJob.sLayerDn,
+			nSerial);
+	else
 	strMakeFolderPath.Format(_T("%s%s\\%s\\%s\\DefImage\\%d"), WorkingInfo.System.sPathOldFile,
 		WorkingInfo.LastJob.sModelDn,
 		sLot,
 		WorkingInfo.LastJob.sLayerDn,
 		nSerial);
-	if (!finder.FindFile(strMakeFolderPath))
+	//if (!finder.FindFile(strMakeFolderPath))
+	if (!pDoc->DirectoryExists(strMakeFolderPath))
 		CreateDirectory(strMakeFolderPath, NULL);
 
 	int nIdx = GetIdxPcrBufDn(nSerial);
@@ -5328,12 +5530,30 @@ BOOL CGvisR2R_LaserDoc::CopyDefImgDn(int nSerial, CString sNewLot)
 		if (pDoc->m_pPcr[1][nIdx]->m_pMk[i] != -2) // -2 (NoMarking)
 		{
 			int nDefImg = pDoc->m_pPcr[1][nIdx]->m_pImg[i];
+
+			if (strAOIImgDataPath.Right(1) != "\\")
 			strDefImgPathS.Format(_T("%s\\%s\\%s\\%s\\%d\\%05d.tif"), strAOIImgDataPath,
 				WorkingInfo.LastJob.sModelDn,
 				WorkingInfo.LastJob.sLayerDn,
 				sLot,
 				nSerial,
 				nDefImg);
+			else
+				strDefImgPathS.Format(_T("%s%s\\%s\\%s\\%d\\%05d.tif"), strAOIImgDataPath,
+					WorkingInfo.LastJob.sModelDn,
+					WorkingInfo.LastJob.sLayerDn,
+					sLot,
+					nSerial,
+					nDefImg);
+
+			if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
+				strDefImgPathD.Format(_T("%s\\%s\\%s\\%s\\DefImage\\%d\\%05d.tif"), WorkingInfo.System.sPathOldFile,
+					WorkingInfo.LastJob.sModelDn,
+					sLot,
+					WorkingInfo.LastJob.sLayerDn,
+					nSerial,
+					nDefImg);
+			else
 			strDefImgPathD.Format(_T("%s%s\\%s\\%s\\DefImage\\%d\\%05d.tif"), WorkingInfo.System.sPathOldFile,
 				WorkingInfo.LastJob.sModelDn,
 				sLot,
@@ -5359,9 +5579,9 @@ BOOL CGvisR2R_LaserDoc::CopyDefImgDn(int nSerial, CString sNewLot)
 				if (nErrorCnt > 10)
 				{
 					nErrorCnt = 0;
-					strTemp.Format(_T("%s \r\n: Defect Image File Copy Fail"), strDefImgPathS);
-					AfxMessageBox(strTemp);
-					return FALSE;
+					strTemp.Format(_T("%s \r\n: Defect Image File Not Exist"), strDefImgPathS);
+					//AfxMessageBox(strTemp);
+					return TRUE;
 				}
 				else
 				{
@@ -5525,6 +5745,12 @@ int CGvisR2R_LaserDoc::GetLastShotMk()
 		{
 			CFileFind FF;
 			CString sPath, sRmapPath, sMsg;
+			if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
+				sPath.Format(_T("%s\\%s\\%s\\%s"), WorkingInfo.System.sPathOldFile,
+					WorkingInfo.LastJob.sModelDn,
+					WorkingInfo.LastJob.sLotDn,
+					WorkingInfo.LastJob.sLayerDn);
+			else
 			sPath.Format(_T("%s%s\\%s\\%s"), WorkingInfo.System.sPathOldFile,
 				WorkingInfo.LastJob.sModelDn,
 				WorkingInfo.LastJob.sLotDn,
@@ -5551,6 +5777,12 @@ int CGvisR2R_LaserDoc::GetLastShotMk()
 		{
 			CFileFind FF;
 			CString sPath, sRmapPath, sMsg;
+			if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
+				sPath.Format(_T("%s\\%s\\%s\\%s"), WorkingInfo.System.sPathOldFile,
+					WorkingInfo.LastJob.sModelUp,
+					WorkingInfo.LastJob.sLotUp,
+					WorkingInfo.LastJob.sLayerUp);
+			else
 			sPath.Format(_T("%s%s\\%s\\%s"), WorkingInfo.System.sPathOldFile,
 				WorkingInfo.LastJob.sModelUp,
 				WorkingInfo.LastJob.sLotUp,
@@ -5714,6 +5946,7 @@ void CGvisR2R_LaserDoc::SetAoiFdPitch(double dPitch)
 	::WritePrivateProfileString(_T("Motion"), _T("AOI_FEEDING_DRUM_LEAD_PITCH"), sVal, sPath);
 	long lData = (long)(dPitch * 1000.0);
 	pView->m_pMpe->Write(_T("ML45012"), lData);	// 검사부 Feeding 롤러 Lead Pitch (단위 mm * 1000)
+	pView->m_pMpe->Write(_T("ML45020"), lData);	// 검사부 Feeding 롤러 Lead Pitch (단위 mm * 1000)
 }
 
 double CGvisR2R_LaserDoc::GetAoiFdPitch()
@@ -5812,7 +6045,7 @@ void CGvisR2R_LaserDoc::SetAoiMkDist(double dLen)
 	WorkingInfo.Motion.sFdMkAoiInitDist = sData;
 	::WritePrivateProfileString(_T("Motion"), _T("FEEDING_PUNCH_AOI_INIT_DIST"), sData, sPath);
 	long lData = (long)(dLen * 1000.0);
-	pView->m_pMpe->Write(_T("ML45008"), lData);	// AOI(상)에서 AOI(하) Shot수 (단위 Shot수 * 1000)
+	pView->m_pMpe->Write(_T("ML45008"), lData);	// AOI(하)에서 마킹까지 거리 (단위 mm * 1000)
 }
 
 void CGvisR2R_LaserDoc::SetAoiAoiDist(int nShot)
@@ -5822,7 +6055,7 @@ void CGvisR2R_LaserDoc::SetAoiAoiDist(int nShot)
 	WorkingInfo.Motion.sFdAoiAoiDistShot = sData;
 	::WritePrivateProfileString(_T("Motion"), _T("FEEDING_AOI_AOI_SHOT_NUM"), sData, sPath);
 	long lData = (long)(nShot * 1000);
-	pView->m_pMpe->Write(_T("ML45010"), lData);	// AOI(하)에서 마킹까지 거리 (단위 mm * 1000)
+	pView->m_pMpe->Write(_T("ML45010"), lData);	// AOI(상)에서 AOI(하) Shot수 (단위 Shot수 * 1000)
 }
 
 
@@ -6750,7 +6983,8 @@ BOOL CGvisR2R_LaserDoc::MakeMkDirUp()
 	if (pos != -1)
 		sPath.Delete(pos, sPath.GetLength() - pos);
 
-	if (!finder.FindFile(sPath))
+	//if (!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	if (WorkingInfo.LastJob.sModelUp.IsEmpty() || WorkingInfo.LastJob.sLotUp.IsEmpty() || WorkingInfo.LastJob.sLayerUp.IsEmpty())
@@ -6762,20 +6996,23 @@ BOOL CGvisR2R_LaserDoc::MakeMkDirUp()
 
 	sPath.Format(_T("%s%s"), pDoc->WorkingInfo.System.sPathOldFile,
 		WorkingInfo.LastJob.sModelUp);
-	if (!finder.FindFile(sPath))
+	//if (!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
 		WorkingInfo.LastJob.sModelUp,
 		WorkingInfo.LastJob.sLotUp);
-	if (!finder.FindFile(sPath))
+	//if (!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
 		WorkingInfo.LastJob.sModelUp,
 		WorkingInfo.LastJob.sLotUp,
 		WorkingInfo.LastJob.sLayerUp);
-	if (!finder.FindFile(sPath))
+	//if (!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	return TRUE;
@@ -6796,7 +7033,8 @@ BOOL CGvisR2R_LaserDoc::MakeMkDirDn()
 	if (pos != -1)
 		sPath.Delete(pos, sPath.GetLength() - pos);
 
-	if (!finder.FindFile(sPath))
+	//if (!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	if (WorkingInfo.LastJob.sModelDn.IsEmpty() || WorkingInfo.LastJob.sLotDn.IsEmpty() || WorkingInfo.LastJob.sLayerDn.IsEmpty())
@@ -6808,20 +7046,23 @@ BOOL CGvisR2R_LaserDoc::MakeMkDirDn()
 
 	sPath.Format(_T("%s%s"), pDoc->WorkingInfo.System.sPathOldFile,
 		WorkingInfo.LastJob.sModelDn);
-	if (!finder.FindFile(sPath))
+	//if (!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
 		WorkingInfo.LastJob.sModelDn,
 		WorkingInfo.LastJob.sLotDn);
-	if (!finder.FindFile(sPath))
+	//if (!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
 		WorkingInfo.LastJob.sModelDn,
 		WorkingInfo.LastJob.sLotDn,
 		WorkingInfo.LastJob.sLayerDn);
-	if (!finder.FindFile(sPath))
+	//if (!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	return TRUE;
@@ -7159,7 +7400,8 @@ BOOL CGvisR2R_LaserDoc::MakeMkDir(stModelInfo stInfo)
 	if (pos != -1)
 		sPath.Delete(pos, sPath.GetLength() - pos);
 
-	if (!finder.FindFile(sPath))
+	//if (!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	if (stInfo.sModel.IsEmpty() || stInfo.sLot.IsEmpty() || stInfo.sLayer.IsEmpty())
@@ -7171,20 +7413,23 @@ BOOL CGvisR2R_LaserDoc::MakeMkDir(stModelInfo stInfo)
 
 	sPath.Format(_T("%s%s"), pDoc->WorkingInfo.System.sPathOldFile,
 		stInfo.sModel);
-	if (!finder.FindFile(sPath))
+	//if (!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
 		stInfo.sModel,
 		stInfo.sLot);
-	if (!finder.FindFile(sPath))
+	//if (!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
 		stInfo.sModel,
 		stInfo.sLot,
 		stInfo.sLayer);
-	if (!finder.FindFile(sPath))
+	//if (!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	return TRUE;
@@ -7718,3 +7963,11 @@ double CGvisR2R_LaserDoc::GetEngraveBuffInitPos()
 	return (_tstof(WorkingInfo.Motion.sEngraveStBufPos));
 }
 
+
+BOOL CGvisR2R_LaserDoc::DirectoryExists(LPCTSTR szPath)
+{
+	DWORD dwAttrib = GetFileAttributes(szPath);
+
+	return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
+		(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+}

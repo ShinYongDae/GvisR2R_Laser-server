@@ -293,6 +293,27 @@ void CPcsRgn::GetMkPnt(int nC, int nR, int &nPcsId, CfPoint &ptPnt)
 		nPcsId = -1;
 }
 
+void CPcsRgn::GetPcsRgn(int nC, int nR, int &nPcsId, CRect &ptRect)
+{
+	int nNodeX = nCol;
+	int nNodeY = nRow;
+
+	if (nC < nNodeX && nR < nNodeY)
+	{
+		if (nC % 2)	// È¦¼ö.
+			nPcsId = nNodeY * (nC + 1) - 1 - nR;
+		else		// Â¦¼ö.
+			nPcsId = nNodeY * nC + nR;
+
+		ptRect.left = pPcs[nPcsId].left;
+		ptRect.top = pPcs[nPcsId].top;
+		ptRect.right = pPcs[nPcsId].right;
+		ptRect.bottom = pPcs[nPcsId].bottom;
+	}
+	else
+		nPcsId = -1;
+}
+
 BOOL CPcsRgn::GetMkMatrix(int nPcsId, int &nC, int &nR)
 {
 	int nNodeX = nCol;

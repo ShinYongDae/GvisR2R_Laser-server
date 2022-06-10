@@ -727,8 +727,10 @@
 #define IDC_STC_67                      1236
 #define IDC_STC_12_15                   1237
 #define IDC_STC_68                      1237
+#define IDC_STC_1145                    1237
 #define IDC_STC_12_16                   1238
 #define IDC_STC_69                      1238
+#define IDC_STC_1146                    1238
 #define IDC_STC_12_17                   1239
 #define IDC_STC_70                      1239
 #define IDC_CHK_17                      1240
@@ -1035,6 +1037,8 @@
 #define IDC_STC_CURR                    1834
 #define IDC_STC_MIN                     1835
 #define IDC_STC_MAX                     1836
+#define IDC_CHK_1185                    1837
+#define IDC_CHK_1186                    1838
 #define IDC_STATIC_SERVER_PORT          2557
 #define IDC_STATIC_MY_IP_ADDR           2558
 #define IDC_STATIC_RECV_MSG_FROM_SERVER 2559
@@ -1046,13 +1050,15 @@
 #define IDC_STATIC_SERVER_CONNECTION_INFORMATION 2682
 #define ID_32771                        32771
 #define ID_APP_MINIMIZE                 32772
+#define ID_DATABASECONNECT              32773
+#define ID_DATABASE_CONNECTION          32774
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        335
-#define _APS_NEXT_COMMAND_VALUE         32773
+#define _APS_NEXT_COMMAND_VALUE         32775
 #define _APS_NEXT_CONTROL_VALUE         1009
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

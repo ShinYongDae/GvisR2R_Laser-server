@@ -419,6 +419,9 @@ typedef enum {KOREAN=0, ENGLISH=1, JAPANESE=2} LANG;
 #define WM_SERVER_RECEIVED				(WM_USER + 110)
 #define WM_SERVER_CLOSED				(WM_USER + 111)
 
+#define WM_MYBTN_DBLCLK					(WM_USER + 120)
+
+
 // Flow control flags
 
 #define FC_DTRDSR       0x01
@@ -533,6 +536,15 @@ typedef struct
 	int FRotate;	//0 : 0  1 : 90  2 : 180  3 : 270 [Degree]
 } REGIONS_PIECE;
 
+typedef struct {
+	int iStartX, iStartY;
+	int iEndX, iEndY;
+	int FMirror;	//0 : 원본 1 : 상하미러  2 : 좌퓖E肩?
+	int FRotate;	//0 : 0도  1 : 90도  2 : 180도  3 : 270도
+	int Row;
+	int Col;
+} REGIONS_PIECE_2;
+
 
 #define MYGL_GAP_PNL				5
 #define MAX_DISP_PNL				6
@@ -601,7 +613,7 @@ struct stSystem
 
 	CString sPathOldFile;
 	CString sPathSapp3;
-
+	BOOL bSaveLog;
 	BOOL bNoMk;	// 0 : 마킹모드, 1 : 비젼모드
 	CString sReViewMkLen;
 	BOOL bReViewMk;
@@ -612,6 +624,8 @@ struct stSystem
 	CString sIpClient[3];	// ID_SR1000W, ID_MDX2500, ID_PUNCH
 	CString sIpServer[3];	// ID_SR1000W, ID_MDX2500, ID_ENGRAVE
 	CString sPort[3];		// ID_SR1000W, ID_MDX2500, ID_ENGRAVE(ID_PUNCH)
+	BOOL bSaveMkImg;
+	BOOL bStripPcsRgnBin;
 
 	stSystem()
 	{
@@ -628,6 +642,7 @@ struct stSystem
 		sPathVsShareDn = _T("");
 
 		sPathOldFile = _T("");
+		bSaveLog = FALSE;
 		bNoMk = FALSE;	// 0 : 마킹모드, 1 : 비젼모드
 		sReViewMkLen = _T("");
 		bReViewMk = FALSE;
@@ -639,6 +654,9 @@ struct stSystem
 		sIpClient[ID_SR1000W] = _T(""); sIpClient[ID_MDX2500] = _T(""); sIpClient[ID_PUNCH] = _T("");	// ID_SR1000W, ID_MDX2500, ID_PUNCH
 		sIpServer[ID_SR1000W] = _T(""); sIpServer[ID_MDX2500] = _T(""); sIpServer[ID_ENGRAVE] = _T("");	// ID_SR1000W, ID_MDX2500, ID_ENGRAVE
 		sPort[ID_SR1000W] = _T(""); sPort[ID_MDX2500] = _T(""); sPort[ID_ENGRAVE] = _T("");				// ID_SR1000W, ID_MDX2500, ID_ENGRAVE(ID_PUNCH)
+
+		bSaveMkImg = FALSE;
+		bStripPcsRgnBin = FALSE;
 	}
 };
 
@@ -657,7 +675,7 @@ struct stLastJob
 	CString sStripOutRatio;
 	BOOL bContFixDef;
 	CString sNumRangeFixDef, sNumContFixDef;
-	BOOL bRclDrSen, bMkDrSen, bBufDrSen, bAoiDrSen, bUclDrSen;
+	BOOL bRclDrSen, bMkDrSen, bBufDrSen, bAoiUpDrSen, bAoiDnDrSen, bEngvDrSen, bUclDrSen;
 	BOOL bDispMkPcs, bStopFixDef, bMkSftySen, bAoiSftySen;
 	CString sJogSpd, sLotSerial; //sLightVal, 
 	BOOL bLightOn, bMkOnePnl, bAoiOnePnl, bEngraveOnePnl;
@@ -676,6 +694,7 @@ struct stLastJob
 	CString sEngraveOrderNum, sEngraveLastShot;
 	CString sEngraveOrgX, sEngraveOrgY, sEngravePosOffsetX, sEngravePosOffsetY, sEngravePosTheta;
 	int nAlignMethode;
+	BOOL bAoiUpCleanRoler, bAoiDnCleanRoler;
 
 	stLastJob()
 	{
@@ -693,7 +712,7 @@ struct stLastJob
 		bContFixDef = FALSE;
 		sNumRangeFixDef = _T("");
 		sNumContFixDef = _T("");
-		bRclDrSen = FALSE; bMkDrSen = FALSE; bBufDrSen = FALSE; bAoiDrSen = FALSE; bUclDrSen = FALSE;
+		bRclDrSen = FALSE; bMkDrSen = FALSE; bBufDrSen = FALSE; bAoiUpDrSen = FALSE; bAoiDnDrSen = FALSE; bEngvDrSen = FALSE; bUclDrSen = FALSE;
 		bDispMkPcs = FALSE; bStopFixDef = FALSE; bMkSftySen = FALSE; bAoiSftySen = FALSE;
 		sJogSpd = _T(""); sLotSerial = _T(""); //sLightVal=""); 
 		bLightOn = FALSE; bMkOnePnl = FALSE; bAoiOnePnl = FALSE; bEngraveOnePnl = FALSE;
@@ -716,6 +735,8 @@ struct stLastJob
 		sEngraveOrderNum = _T(""); sEngraveLastShot = _T("");
 		sEngraveOrgX = _T(""); sEngraveOrgY = _T(""); sEngravePosOffsetX = _T(""); sEngravePosOffsetY = _T(""); sEngravePosTheta = _T("");
 		nAlignMethode = TWO_POINT;
+
+		bAoiUpCleanRoler = FALSE; bAoiDnCleanRoler = FALSE;
 	}
 };
 
@@ -1094,9 +1115,13 @@ typedef enum {
 	DOOR_BL_MK = 2, DOOR_BR_MK = 3
 }  DOOR_MK;
 typedef enum {
-	DOOR_FM_AOI = 0, DOOR_FL_AOI = 1, DOOR_FR_AOI = 2,
-	DOOR_BM_AOI = 3, DOOR_BL_AOI = 4, DOOR_BR_AOI = 5
-}  DOOR_AOI;
+	DOOR_FM_AOI_UP = 0, DOOR_FL_AOI_UP = 1, DOOR_FR_AOI_UP = 2,
+	DOOR_BM_AOI_UP = 3, DOOR_BL_AOI_UP = 4, DOOR_BR_AOI_UP = 5
+}  DOOR_AOI_UP;
+typedef enum {
+	DOOR_FM_AOI_DN = 6, DOOR_FL_AOI_DN = 7, DOOR_FR_AOI_DN = 8,
+	DOOR_BM_AOI_DN = 9, DOOR_BL_AOI_DN = 10, DOOR_BR_AOI_DN = 11
+}  DOOR_AOI_DN;
 typedef enum {
 	DOOR_FL_UC = 0, DOOR_FR_UC = 1,
 	DOOR_BL_UC = 2, DOOR_BR_UC = 3
@@ -1105,8 +1130,14 @@ typedef enum {
 	DOOR_FL_RC = 0, DOOR_FR_RC = 1,
 	DOOR_S_RC = 2, DOOR_BL_RC = 3, DOOR_BR_RC = 4
 }  DOOR_RC;
+typedef enum {
+	DOOR_FL_ENGV = 0, DOOR_FR_ENGV = 1,
+	DOOR_S_ENGV = 2, DOOR_BL_ENGV = 3, DOOR_BR_ENGV = 4
+}  DOOR_ENGV;
+
 typedef enum { EMG_M_MK = 0, EMG_B_MK = 1 }  EMG_MK;
-typedef enum { EMG_F_AOI = 0, EMG_B_AOI = 1 }  EMG_AOI;
+typedef enum { EMG_F_AOI_UP = 0, EMG_B_AOI_UP = 1 }  EMG_AOI_UP;
+typedef enum { EMG_F_AOI_DN = 2, EMG_B_AOI_DN = 3 }  EMG_AOI_DN;
 typedef enum { LMT_NEG = 0, LMT_POS = 1 }  SENS_LIMIT;
 
 
@@ -1129,11 +1160,12 @@ struct stStatus
 {
 	BOOL bAuto, bManual, bOneCycle;								// Mode 스위치
 	BOOL bSwJogLeft, bSwJogFast, bSwJogStep;								// Jog 판넬 선택 스위치
-	BOOL bDoorMk[4], bDoorAoi[6];								// 도어 센서
-	BOOL bDoorMkF[4], bDoorAoiF[6];								// 도어 센서
-	BOOL bEmgMk[2], bEmgAoi[2];									// 비상정지 스위치
+	BOOL bDoorMk[4], bDoorAoi[12];								// 도어 센서
+	BOOL bDoorMkF[4], bDoorAoiF[12];							// 도어 센서
+	BOOL bEmgMk[2], bEmgAoi[4];									// 비상정지 스위치
 	BOOL bEmgUc, bEmgRc;										// 비상정지 스위치
-	BOOL bEmgMkF[2], bEmgAoiF[2];								// 비상정지 스위치
+	BOOL bEmgEngv[2], bEmgEngvF[2];								// 비상정지 스위치
+	BOOL bEmgMkF[2], bEmgAoiF[4];								// 비상정지 스위치
 	BOOL bEmgUcF, bEmgRcF;										// 비상정지 스위치
 	BOOL bMainAirMk, bMainAirAoi;								// 메인 에어
 	BOOL bSensTblVacMk, bSensTblVacAoi;							// 테이블 진공 센서
@@ -1144,12 +1176,15 @@ struct stStatus
 	BOOL bSigTestDoneAoi, bSigTblAirAoi;						// 검사부 신호
 	BOOL bDoorUc[4], bDoorRe[5];								// 도어 센서
 	BOOL bDoorUcF[4], bDoorReF[5];								// 도어 센서
+	BOOL bDoorEngv[4], bDoorEngvF[4];							// 도어 센서
 
 	stPcrShare PcrShare[2];
 
 	stStatus()
 	{
 		bAuto = FALSE; bManual = FALSE; bOneCycle = FALSE; bSwJogLeft = FALSE; bSwJogFast = FALSE; bSwJogStep = FALSE;
+		bDoorEngv[0] = FALSE; bDoorEngv[1] = FALSE; bDoorEngv[2] = FALSE; bDoorEngv[3] = FALSE;
+		bDoorEngvF[0] = FALSE; bDoorEngvF[1] = FALSE; bDoorEngvF[2] = FALSE; bDoorEngvF[3] = FALSE;
 		bDoorMk[0] = FALSE; bDoorMk[1] = FALSE; bDoorMk[2] = FALSE; bDoorMk[3] = FALSE;
 		bDoorMkF[0] = FALSE; bDoorMkF[1] = FALSE; bDoorMkF[2] = FALSE; bDoorMkF[3] = FALSE;
 		bDoorAoi[0] = FALSE; bDoorAoi[1] = FALSE; bDoorAoi[2] = FALSE; bDoorAoi[3] = FALSE; bDoorAoi[4] = FALSE; bDoorAoi[5] = FALSE;
@@ -1157,6 +1192,8 @@ struct stStatus
 		bEmgMk[0] = FALSE; bEmgMk[1] = FALSE;
 		bEmgAoi[0] = FALSE; bEmgAoi[1] = FALSE;
 		bEmgUc = FALSE; bEmgRc = FALSE;
+		bEmgEngv[0] = FALSE; bEmgEngvF[0] = FALSE;
+		bEmgEngv[1] = FALSE; bEmgEngvF[1] = FALSE;
 		bEmgMkF[0] = FALSE; bEmgMkF[1] = FALSE;
 		bEmgAoiF[0] = FALSE; bEmgAoiF[1] = FALSE;
 		bEmgUcF = FALSE; bEmgRcF = FALSE;

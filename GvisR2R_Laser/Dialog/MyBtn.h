@@ -152,6 +152,8 @@ protected:
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 };
 
 /////////////////////////////////////////////////////////////////////////////

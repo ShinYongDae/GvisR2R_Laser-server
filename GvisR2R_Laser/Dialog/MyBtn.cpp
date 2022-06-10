@@ -11,6 +11,9 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+#include "../GvisR2R_LaserView.h"
+extern CGvisR2R_LaserView* pView;
+
 const CSize cButtonMargin(50,50);		// number of pixels wider button is than icon
 
 ///////////////////////////////////////////////////////////////////////
@@ -1053,7 +1056,17 @@ bool CMyBtn::ModifyHitRegion(const CRect& rClient,CHitRgn& hitRgn)
 void CMyBtn::OnLButtonDown(UINT nFlags, CPoint point) 
 {
 	// TODO: Add your message handler code here and/or call default
-	
+	if (m_nCtrlID == IDC_CHK_MK_1 && m_hParentWnd == pView->m_pDlgMenu01->GetSafeHwnd())
+		return;
+	if (m_nCtrlID == IDC_CHK_MK_2 && m_hParentWnd == pView->m_pDlgMenu01->GetSafeHwnd())
+		return;
+	if (m_nCtrlID == IDC_CHK_MK_3 && m_hParentWnd == pView->m_pDlgMenu01->GetSafeHwnd())
+		return;
+	if (m_nCtrlID == IDC_CHK_MK_4 && m_hParentWnd == pView->m_pDlgMenu01->GetSafeHwnd())
+		return;
+
+
+
 	if(m_ctlStyle == BS_AUTOCHECKBOX)
 	{
 		if(m_chkState & DFCS_PUSHED)
@@ -1088,6 +1101,14 @@ void CMyBtn::OnLButtonDown(UINT nFlags, CPoint point)
 void CMyBtn::OnLButtonUp(UINT nFlags, CPoint point) 
 {
 	// TODO: Add your message handler code here and/or call default
+	if (m_nCtrlID == IDC_CHK_MK_1 && m_hParentWnd == pView->m_pDlgMenu01->GetSafeHwnd())
+		return;
+	if (m_nCtrlID == IDC_CHK_MK_2 && m_hParentWnd == pView->m_pDlgMenu01->GetSafeHwnd())
+		return;
+	if (m_nCtrlID == IDC_CHK_MK_3 && m_hParentWnd == pView->m_pDlgMenu01->GetSafeHwnd())
+		return;
+	if (m_nCtrlID == IDC_CHK_MK_4 && m_hParentWnd == pView->m_pDlgMenu01->GetSafeHwnd())
+		return;
 
 	if(m_ctlStyle == BS_AUTOCHECKBOX)
 	{
@@ -1246,4 +1267,14 @@ void CMyBtn::SetImageBk(int nImg)
 void CMyBtn::Refresh()
 {
 	RedrawWindow();
+}
+
+
+void CMyBtn::OnLButtonDblClk(UINT nFlags, CPoint point)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	if (m_hParentWnd && m_nCtrlID)
+		::PostMessage(m_hParentWnd, WM_MYBTN_DBLCLK, (WPARAM)NULL, (LPARAM)m_nCtrlID);
+
+	CButton::OnLButtonDblClk(nFlags, point);
 }

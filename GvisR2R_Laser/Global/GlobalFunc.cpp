@@ -16,9 +16,10 @@ static char THIS_FILE[]=__FILE__;
 #endif
 
 
+CCriticalSection g_LogLock;
 
 
-char* StringToChar(CString str)
+char* StringToChar(CString str) // char* returned must be deleted... 
 {
 	char*		szStr = NULL;
 	wchar_t*	wszStr;
@@ -37,7 +38,7 @@ char* StringToChar(CString str)
 	return szStr;
 }
 
-void StringToChar(CString str, char* pCh)
+void StringToChar(CString str, char* pCh) // char* returned must be deleted... 
 {
 	wchar_t*	wszStr;
 	int				nLenth;
@@ -55,7 +56,7 @@ void StringToChar(CString str, char* pCh)
 }
 
 
-char* StringToChar(CString str, int &nLen)
+char* StringToChar(CString str, int &nLen) // char* returned must be deleted... 
 {
 	char*		szStr = NULL;
 	wchar_t*	wszStr;
@@ -112,7 +113,7 @@ CString CharToStringEncode(const char *szStr, int nEncode)
 }
 
 // CString ¡æ TCHAR
-TCHAR* StringToTCHAR(CString str)
+TCHAR* StringToTCHAR(CString str) // TCHAR* returned must be deleted... 
 {
 	TCHAR *tszStr = NULL;
 	int nLen = str.GetLength() + 1;
@@ -132,7 +133,7 @@ CString TCHARToString(TCHAR *str)
 }
 
 
-wchar_t* StringToWCHAR(CString str, int &nLen)
+wchar_t* StringToWCHAR(CString str, int &nLen) // wchar_t* returned must be deleted... 
 {
 	char * chText;
 	wchar_t *szCh = NULL;
@@ -143,7 +144,7 @@ wchar_t* StringToWCHAR(CString str, int &nLen)
 	return szCh;
 }
 
-wchar_t* CharToWCHAR(const char *str, int &nLen)
+wchar_t* CharToWCHAR(const char *str, int &nLen) // wchar_t* returned must be deleted... 
 {
 	wchar_t *szCh = NULL;
 	nLen = MultiByteToWideChar(949, 0, str, -1, NULL, NULL);
@@ -152,7 +153,7 @@ wchar_t* CharToWCHAR(const char *str, int &nLen)
 	return szCh;
 }
 
-char* WCHARToChar(const wchar_t *str)
+char* WCHARToChar(const wchar_t *str) // char* returned must be deleted... 
 {
 	int nLength = WideCharToMultiByte(CP_ACP, 0, str, -1, NULL, 0, NULL, NULL);
 	char *pText = new char[nLength];
@@ -160,7 +161,7 @@ char* WCHARToChar(const wchar_t *str)
 	return pText;
 }
 
-TCHAR* CharToTCHAR(char *str)
+TCHAR* CharToTCHAR(char *str) // TCHAR* returned must be deleted... 
 {
 	int nLength = strlen(str) + sizeof(char);
 
@@ -177,7 +178,7 @@ TCHAR* CharToTCHAR(char *str)
 	return tszStr;
 }
 
-char* TCHARToChar(TCHAR *tszStr)
+char* TCHARToChar(TCHAR *tszStr) // TCHAR* returned must be deleted... 
 {
 	char *szStr = NULL;
 	int nLength;
@@ -192,7 +193,7 @@ char* TCHARToChar(TCHAR *tszStr)
 	return szStr;
 }
 
-char* TCHARToChar(const TCHAR *tszStr)
+char* TCHARToChar(const TCHAR *tszStr) // char* returned must be deleted... 
 {
 	char *szStr = NULL;
 	int nLength;
@@ -221,7 +222,7 @@ char* UnicodeToMultibyte(CString strUnicode)
 	return UnicodeToMultibyte(lpWideCharStr);
 }
 
-char* UnicodeToMultibyte(LPCWSTR szUnicode)
+char* UnicodeToMultibyte(LPCWSTR szUnicode) // char* returned must be deleted... 
 {
 	int nLen;
 	char* pMultibyte = NULL;
@@ -1202,4 +1203,56 @@ BOOL GetIntersectPoint(FLINE fLine1,FLINE fLine2,FPOINT &fPt)
 BOOL GetIntersectPoint(FLINE3D fLine1,FLINE3D fLine2,FPOINT3D &fPt)
 {
 	return GetIntersectPoint(fLine1.p1,fLine1.p2,fLine2.p1,fLine2.p2,fPt);
+}
+void SaveLog(CString strMsg, int nType)
+{
+	CSafeLock lock(&g_LogLock);
+
+	char szFile[MAX_PATH] = { 0, };
+	char szPath[MAX_PATH] = { 0, };
+	char* pszPos = NULL;
+
+	//TCHAR szPath[MAX_PATH] = { 0, };
+
+	GetModuleFileName(NULL, CharToTCHAR(szPath), MAX_PATH);
+	pszPos = strrchr(szPath, '\\');
+	*pszPos = NULL;
+
+	sprintf(szPath, "C:\\AoiLog");
+	CreateDirectory(CharToTCHAR(szPath), NULL);
+
+	switch (nType)
+	{
+	case 0:
+		sprintf(szFile, "%s\\%s.txt", szPath, COleDateTime::GetCurrentTime().Format( _T("%Y%m%d") ));
+		break;
+
+	//case THETA_ADJUST:	//140502 jsy
+	//	sprintf(szPath, "C:\\AoiLog\\ThetaAdjust");
+	//	CreateDirectory(szPath, NULL);
+	//	sprintf(szFile, "%s\\%s.txt", szPath, COleDateTime::GetCurrentTime().Format("%Y%m%d"));
+	//	break;
+
+	//case CALIBF_ADJUST: //140527 lgh add 
+	//	sprintf(szPath, "C:\\AoiLog\\CalibF");
+	//	CreateDirectory(szPath, NULL);
+	//	sprintf(szFile, "%s\\CalibF.txt", szPath);
+	//	break;
+	}
+
+	CString strDate;
+	CString strContents;
+
+	strDate.Format(_T("%s: "), COleDateTime::GetCurrentTime().Format( _T("%Y/%m/%d %H:%M:%S") ));
+	strContents = strDate;
+	strContents += strMsg;
+	strContents += _T("\r\n");
+	CFile file;
+	if (file.Open(CharToTCHAR(szFile), CFile::modeCreate | CFile::modeNoTruncate | CFile::modeWrite | CFile::shareDenyNone) == 0)
+		return;
+
+	file.SeekToEnd();
+	file.Write(strContents, strContents.GetLength());
+	file.Flush();
+	file.Close();
 }

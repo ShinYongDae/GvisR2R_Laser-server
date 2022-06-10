@@ -99,6 +99,9 @@ typedef CArray<stDispMain, stDispMain> CArDispMain;
 
 class CGvisR2R_LaserView : public CFormView
 {
+	BOOL m_bDestroyedView;
+	BOOL m_bBufEmpty[2];
+
 	CDlgMyMsg* m_pDlgMyMsg;
 	CCriticalSection m_csMyMsgBox;
 	CCriticalSection m_csDispMain;
@@ -139,6 +142,7 @@ class CGvisR2R_LaserView : public CFormView
 
 	CString m_sShare[2], m_sBuf[2]; // [0]: AOI-Up , [1]: AOI-Dn
 	int m_pBufSerial[2][100], m_nBufTot[2]; // [0]: AOI-Up , [1]: AOI-Dn
+	__int64 m_nBufSerialSorting[2][100]; // [0]: AOI-Up , [1]: AOI-Dn
 	int m_nBufSerial[2][2]; // [0]: AOI-Up , [1]: AOI-Dn // [0]: Cam0, [1]:Cam1
 
 	CString m_sDispMsg[10];
@@ -175,7 +179,7 @@ class CGvisR2R_LaserView : public CFormView
 	void GetMpeIO();
 	void GetMpeSignal();
 	void GetMpeData();
-	void DispThreadTick();
+	//void DispThreadTick();
 	void DispTime();
 	void Init();
 	void InitIO();
@@ -190,6 +194,9 @@ class CGvisR2R_LaserView : public CFormView
 	void DoSens();
 	void DoAuto();
 	void DoInterlock();
+
+	void DoSaftySens();
+	void DoDoorSens();
 
 	void DoModeSel();		// SliceIo[0]
 	void DoMainSw();		// SliceIo[0]
@@ -211,6 +218,15 @@ class CGvisR2R_LaserView : public CFormView
 	void DispStsMainMsg(int nIdx = 0);
 	void SetPlcParam();
 
+
+	BOOL SortingInUp(CString sPath, int nIndex);
+	BOOL SortingOutUp(int* pSerial, int nTot);
+	void SwapUp(__int64 *num1, __int64 *num2);
+	BOOL SortingInDn(CString sPath, int nIndex);
+	BOOL SortingOutDn(int* pSerial, int nTot);
+	void SwapDn(__int64 *num1, __int64 *num2);
+
+	void MoveInitPos0(BOOL bWait=TRUE);
 
 protected: // serialization에서만 만들어집니다.
 	CGvisR2R_LaserView();
@@ -347,6 +363,7 @@ public:
 	CMdx2500* m_pMdx2500;
 	CEngrave* m_pEngrave;
 
+	int m_nNewLot;
 
 // 작업입니다.
 public:
@@ -376,6 +393,8 @@ public:
 	BOOL WaitClrDispMsg();
 	LONG OnQuitDispMsg(UINT wParam, LONG lParam);
 	void ShowDlg(int nID);
+	void DispIo();
+	void DispDatabaseConnection();
 
 	void TowerLamp(COLORREF color, BOOL bOn, BOOL bWink = FALSE);
 	void DispTowerWinker();
@@ -717,6 +736,7 @@ public:
 	void SetPathAtBuf();
 	void SetPathAtBufUp();
 	void SetPathAtBufDn();
+	void LoadPcrFromBuf();
 
 	BOOL SetSerialReelmap(int nSerial, BOOL bDumy = FALSE);
 	BOOL SetSerialMkInfo(int nSerial, BOOL bDumy = FALSE);
@@ -756,7 +776,6 @@ public:
 	void MoveMk0InitPos();
 	BOOL MoveAlign0(int nPos);
 	//BOOL TwoPointAlign0(int nPos);
-	void MoveInitPos0();
 	//BOOL IsNoMk0();
 	BOOL IsInitPos0();
 	BOOL StartLive0();
@@ -805,10 +824,14 @@ public:
 	double GetAoiInitDist();
 	double GetAoiRemain();
 	void SetEngraveFdPitch(double dPitch);
+	BOOL IsConnected();
+	void DestroyView();
 
 	BOOL IsConnectedMdx();
 	BOOL IsConnectedSr();
 	BOOL IsConnectedMk();
+
+	BOOL IsPinPos0();
 
 
 // 재정의입니다.
