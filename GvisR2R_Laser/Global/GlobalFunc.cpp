@@ -1204,6 +1204,7 @@ BOOL GetIntersectPoint(FLINE3D fLine1,FLINE3D fLine2,FPOINT3D &fPt)
 {
 	return GetIntersectPoint(fLine1.p1,fLine1.p2,fLine2.p1,fLine2.p2,fPt);
 }
+
 void SaveLog(CString strMsg, int nType)
 {
 	CSafeLock lock(&g_LogLock);
@@ -1216,7 +1217,6 @@ void SaveLog(CString strMsg, int nType)
 
 	GetModuleFileName(NULL, CharToTCHAR(szPath), MAX_PATH);
 	pszPos = strrchr(szPath, '\\');
-	*pszPos = NULL;
 
 	sprintf(szPath, "C:\\AoiLog");
 	CreateDirectory(CharToTCHAR(szPath), NULL);
