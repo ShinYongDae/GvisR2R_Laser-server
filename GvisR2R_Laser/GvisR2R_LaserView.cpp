@@ -10535,6 +10535,10 @@ BOOL CGvisR2R_LaserView::UpdateReelmap(int nSerial)
 			AfxMessageBox(_T("Error-GetPcrInfo(4)"));
 			return FALSE;
 		}
+
+		if (!pDoc->MakeMkDir(stInfo.sModel, stInfo.sLot, stInfo.sLayer))
+			return FALSE;
+
 		str = _T("ReelMapDataUp.txt"); // [0]:AOI-Up
 		sPathRmap[0].Format(_T("%s%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
 			stInfo.sModel,
@@ -10557,6 +10561,10 @@ BOOL CGvisR2R_LaserView::UpdateReelmap(int nSerial)
 				AfxMessageBox(_T("Error-GetPcrInfo(5)"));
 				return FALSE;
 			}
+
+			if (!pDoc->MakeMkDir(stInfo.sModel, stInfo.sLot, stInfo.sLayer))
+				return FALSE;
+
 			str = _T("ReelMapDataDn.txt"); // [1]:AOI-Dn
 			sPathRmap[1].Format(_T("%s%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
 				stInfo.sModel,

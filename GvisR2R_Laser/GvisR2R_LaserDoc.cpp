@@ -6950,6 +6950,52 @@ void CGvisR2R_LaserDoc::SetModelInfoDn()
 	::WritePrivateProfileString(_T("Last Job"), _T("LotDn No"), sData, sPath);
 }
 
+BOOL CGvisR2R_LaserDoc::MakeMkDir(CString sModel, CString sLot, CString sLayer)
+{
+	CString sMsg = _T("");
+	CFileFind finder;
+	CString sPath;
+
+	sPath.Format(_T("%s"), pDoc->WorkingInfo.System.sPathOldFile);
+	int pos = sPath.ReverseFind('\\');
+	if (pos != -1)
+		sPath.Delete(pos, sPath.GetLength() - pos);
+
+	//if (!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
+		CreateDirectory(sPath, NULL);
+
+	if (sModel.IsEmpty() || sLot.IsEmpty() || sLayer.IsEmpty())
+	{
+		sMsg.Format(_T("모델이나 로뜨 또는 레이어명이 없습니다."));
+		AfxMessageBox(sMsg);
+		return FALSE;
+	}
+
+	sPath.Format(_T("%s%s"), pDoc->WorkingInfo.System.sPathOldFile,
+		sModel);
+	//if (!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
+		CreateDirectory(sPath, NULL);
+
+	sPath.Format(_T("%s%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
+		sModel,
+		sLot);
+	//if (!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
+		CreateDirectory(sPath, NULL);
+
+	sPath.Format(_T("%s%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
+		sModel,
+		sLot,
+		sLayer);
+	//if (!finder.FindFile(sPath))
+	if (!pDoc->DirectoryExists(sPath))
+		CreateDirectory(sPath, NULL);
+
+	return TRUE;
+}
+
 BOOL CGvisR2R_LaserDoc::MakeMkDir()
 {
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
