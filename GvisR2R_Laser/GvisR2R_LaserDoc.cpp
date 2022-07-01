@@ -572,10 +572,10 @@ BOOL CGvisR2R_LaserDoc::LoadIoInfo()
 					token2 = _tcstok(NULL, sep);
 					token3 = _tcstok(NULL, sep);
 					token4 = _tcstok(NULL, sep);
-					// 					token5 = _tcstok(NULL,sep);
+					//token5 = _tcstok(NULL,sep);
 
 					strAddr = CString(token1);
-					// 					strMReg = CString(token2);
+					//strMReg = CString(token2);
 					strSymbol = CString(token2);
 					strName = CString(token3);
 					strMBoth = CString(token4);
@@ -583,7 +583,7 @@ BOOL CGvisR2R_LaserDoc::LoadIoInfo()
 				else
 				{
 					strAddr = _T("");
-					// 					strMReg = _T("");
+					//strMReg = _T("");
 					strSymbol = _T("");
 					strName = _T("");
 					strMBoth = _T("");
@@ -1125,7 +1125,10 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	else
 		WorkingInfo.System.sPort[ID_PUNCH] = CString(_T("8800"));
 
-
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("Delay Show Time"), NULL, szData, sizeof(szData), sPath))
+		m_nDelayShow = _ttoi(szData);
+	else
+		m_nDelayShow = 500;
 
 	// [Last Job]
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Process Code"), NULL, szData, sizeof(szData), sPath))
@@ -1157,6 +1160,11 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		AfxMessageBox(_T("LayerUp가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
 		WorkingInfo.LastJob.sLayerUp = CString(_T(""));
 	}
+
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Test Mode"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.nTestMode = _ttoi(szData);
+	else
+		WorkingInfo.LastJob.nTestMode = 0;
 
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use Dual AOI"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.LastJob.bDualTest = _ttoi(szData) ? TRUE : FALSE;
@@ -1838,21 +1846,21 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Motion.sFdAoiAoiDistShot = CString(_T(""));
 	}
 
-	//if (0 < ::GetPrivateProfileString(_T("Motion"), _T("AOI_TENSION_SERVO_TORQUE"), NULL, szData, sizeof(szData), sPath))
-	//	WorkingInfo.Motion.sAoiTq = CString(szData);
-	//else
-	//{
-	//	AfxMessageBox(_T("AOI 텐션 토크가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-	//	WorkingInfo.Motion.sAoiTq = CString(_T(""));
-	//}
+	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("AOI_TENSION_SERVO_TORQUE"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.Motion.sAoiTq = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("AOI 텐션 토크가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.Motion.sAoiTq = CString(_T(""));
+	}
 
-	//if (0 < ::GetPrivateProfileString(_T("Motion"), _T("MARKING_TENSION_SERVO_TORQUE"), NULL, szData, sizeof(szData), sPath))
-	//	WorkingInfo.Motion.sMkTq = CString(szData);
-	//else
-	//{
-	//	AfxMessageBox(_T("마킹 텐션 토크가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-	//	WorkingInfo.Motion.sMkTq = CString(_T(""));
-	//}
+	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("MARKING_TENSION_SERVO_TORQUE"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.Motion.sMkTq = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("마킹 텐션 토크가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.Motion.sMkTq = CString(_T(""));
+	}
 
 	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("AOI_FEEDING_VACUUM_OFF"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.Motion.sAoiFdVacOff = CString(szData);
@@ -3190,6 +3198,12 @@ void CGvisR2R_LaserDoc::SaveWorkingInfo()
 
 	sData = WorkingInfo.LastJob.sPartialSpd;
 	::WritePrivateProfileString(_T("Last Job"), _T("Partial Speed"), sData, sPath);
+
+	sData.Format(_T("%d"), WorkingInfo.LastJob.bEngraveCleanner ? 1 : 0);
+	::WritePrivateProfileString(_T("Last Job"), _T("Engrave Cleanner"), sData, sPath);
+
+	sData.Format(_T("%d"), WorkingInfo.LastJob.bAoiDnCleanner ? 1 : 0);
+	::WritePrivateProfileString(_T("Last Job"), _T("AoiDn Cleanner"), sData, sPath);
 
 
 
@@ -5134,8 +5148,13 @@ int CGvisR2R_LaserDoc::LoadPCRDn(int nSerial, BOOL bFromShare)	// return : 2(Fai
 			strPieceID = strFileData.Left(nTemp);
 			strFileData.Delete(0, nTemp + 1);
 			nFileSize = nFileSize - nTemp - 1;
-			//m_pPcr[1][nIdx]->m_pDefPcs[i] = _tstoi(strPieceID);
-			m_pPcr[1][nIdx]->m_pDefPcs[i] = Mirroring(_tstoi(strPieceID));
+
+			// LoadStripPieceRegion_Binary()에 의해 PCS Index가 결정됨.
+			if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
+				m_pPcr[1][nIdx]->m_pDefPcs[i] = _tstoi(strPieceID);				// DTS용
+			else
+				m_pPcr[1][nIdx]->m_pDefPcs[i] = Mirroring(_tstoi(strPieceID));	// 초기 양면검사기용
+
 			m_pPcr[1][nIdx]->m_pLayer[i] = 1; // Dn
 
 											  // BadPointPosX
@@ -5190,7 +5209,7 @@ int CGvisR2R_LaserDoc::LoadPCRDn(int nSerial, BOOL bFromShare)	// return : 2(Fai
 	}
 
 	return (1); // 1(정상)
-				// 	return(m_pPcr[1][nIdx]->m_nErrPnl);
+	//return(m_pPcr[1][nIdx]->m_nErrPnl);
 }
 
 BOOL CGvisR2R_LaserDoc::CopyDefImg(int nSerial)

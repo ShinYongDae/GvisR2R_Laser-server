@@ -527,7 +527,6 @@ enum SliceDO_4{ DO_INK_MK=0 };
 #define ID_ENGRAVE		2
 #endif
 
-
 typedef struct 
 {
 	int iStartX, iStartY;
@@ -537,6 +536,7 @@ typedef struct
 } REGIONS_PIECE;
 
 typedef struct {
+	int nId;
 	int iStartX, iStartY;
 	int iEndX, iEndY;
 	int FMirror;	//0 : ø¯∫ª 1 : ªÛ«œπÃ∑Ø  2 : ¡¬øÅEÃ∑?
@@ -596,6 +596,8 @@ enum MAIN_BTN { MN_RST=0, MN_RDY=1, MN_STOP=2, MN_RUN=3 };
 
 enum IMG_KIND { CAD_IMG=0, DEF_IMG=1 };
 enum ALIGN_METHODE { ONE_POINT = 1, TWO_POINT, THREE_POINT, FOUR_POINT };
+
+enum WORK_MODE { MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2 };
 
 
 
@@ -687,7 +689,7 @@ struct stLastJob
 	CString sAoiLastShot[2]; // [Up/Dn]
 	CString sPartialSpd;
 	BOOL bOneMetal, bTwoMetal;
-	BOOL bDualTest, bSampleTest;
+	BOOL bDualTest, bSampleTest, nTestMode;
 	BOOL bCore150Recoiler, bCore150Uncoiler;
 	CString sSampleTestShotNum;
 	BOOL bUse2Layer;
@@ -695,6 +697,8 @@ struct stLastJob
 	CString sEngraveOrgX, sEngraveOrgY, sEngravePosOffsetX, sEngravePosOffsetY, sEngravePosTheta;
 	int nAlignMethode;
 	BOOL bAoiUpCleanRoler, bAoiDnCleanRoler;
+	BOOL bUseEngraveCleanner, bUseAoiDnCleanner;
+	BOOL bEngraveCleanner, bAoiDnCleanner;
 
 	stLastJob()
 	{
@@ -726,9 +730,11 @@ struct stLastJob
 		sPartialSpd = _T("10");
 
 		bOneMetal = FALSE; bTwoMetal = FALSE;
-		bDualTest = TRUE; bSampleTest = FALSE;
+		bDualTest = TRUE; bSampleTest = FALSE; nTestMode = 0;
 		bCore150Recoiler = FALSE; bCore150Uncoiler = FALSE;
 		sSampleTestShotNum = _T("");
+		bUseEngraveCleanner = FALSE; bUseAoiDnCleanner = FALSE;
+		bEngraveCleanner = FALSE; bAoiDnCleanner = FALSE;
 
 		bUse2Layer = FALSE;
 
@@ -1132,8 +1138,8 @@ typedef enum {
 }  DOOR_RC;
 typedef enum {
 	DOOR_FL_ENGV = 0, DOOR_FR_ENGV = 1,
-	DOOR_S_ENGV = 2, DOOR_BL_ENGV = 3, DOOR_BR_ENGV = 4
-}  DOOR_ENGV;
+	DOOR_BL_ENGV = 2, DOOR_BR_ENGV = 3
+}  DOOR_ENGV;//DOOR_S_ENGV = 2, 
 
 typedef enum { EMG_M_MK = 0, EMG_B_MK = 1 }  EMG_MK;
 typedef enum { EMG_F_AOI_UP = 0, EMG_B_AOI_UP = 1 }  EMG_AOI_UP;

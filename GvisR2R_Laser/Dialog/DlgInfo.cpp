@@ -81,12 +81,16 @@ BEGIN_MESSAGE_MAP(CDlgInfo, CDialog)
 	ON_BN_CLICKED(IDC_CHK_SAMPLE_TEST, OnChkSampleTest)
 	ON_BN_CLICKED(IDC_CHK_ONE_METAL, OnChkOneMetal)
 	ON_BN_CLICKED(IDC_CHK_TWO_METAL, OnChkTwoMetal)
+	ON_BN_CLICKED(IDC_CHK_USE_AOI_INNER, OnChkUseAoiInner)
+	ON_BN_CLICKED(IDC_CHK_USE_AOI_OUTER, OnChkUseAoiOuter)
 	ON_BN_CLICKED(IDC_STC_181, OnStc181)
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_CHK_4_POINT_ALIGN, &CDlgInfo::OnBnClickedChk4PointAlign)
 	ON_BN_CLICKED(IDC_CHK_2_POINT_ALIGN, &CDlgInfo::OnBnClickedChk2PointAlign)
 	ON_BN_CLICKED(IDC_CHK_1186, &CDlgInfo::OnBnClickedChk1186)
 	ON_BN_CLICKED(IDC_CHK_1185, &CDlgInfo::OnBnClickedChk1185)
+	ON_BN_CLICKED(IDC_CHK_1187, &CDlgInfo::OnBnClickedChk1187)
+	ON_BN_CLICKED(IDC_CHK_1188, &CDlgInfo::OnBnClickedChk1188)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -169,8 +173,8 @@ BOOL CDlgInfo::OnInitDialog()
 // 	GetDlgItem(IDC_STC_0020)->ShowWindow(SW_HIDE);
 // 	GetDlgItem(IDC_STC_0021)->ShowWindow(SW_HIDE);
 // 
-// 	GetDlgItem(IDC_STC_0043)->ShowWindow(SW_HIDE);
-// 	GetDlgItem(IDC_CHK_008)->ShowWindow(SW_HIDE);
+ 	GetDlgItem(IDC_STC_0043)->ShowWindow(SW_HIDE);
+ 	GetDlgItem(IDC_CHK_008)->ShowWindow(SW_HIDE);
  	GetDlgItem(IDC_STC_0044)->ShowWindow(SW_HIDE);
  	GetDlgItem(IDC_CHK_009)->ShowWindow(SW_HIDE);
 // 	GetDlgItem(IDC_STC_0046)->ShowWindow(SW_HIDE);
@@ -266,11 +270,27 @@ void CDlgInfo::InitBtn()
 	myBtn[20].SetHwnd(this->GetSafeHwnd(), IDC_CHK_1186);
 	myBtn[20].SetBtnType(BTN_TYPE_CHECK);
 
+	myBtn[21].SubclassDlgItem(IDC_CHK_1187, this); //AOI초음파세정기
+	myBtn[21].SetHwnd(this->GetSafeHwnd(), IDC_CHK_1187);
+	myBtn[21].SetBtnType(BTN_TYPE_CHECK);
+
+	myBtn[22].SubclassDlgItem(IDC_CHK_1188, this); //각인부초음파세정기
+	myBtn[22].SetHwnd(this->GetSafeHwnd(), IDC_CHK_1188);
+	myBtn[22].SetBtnType(BTN_TYPE_CHECK);
+
+	myBtn[23].SubclassDlgItem(IDC_CHK_USE_AOI_INNER, this); //WORK_MODE : MODE_INNER
+	myBtn[23].SetHwnd(this->GetSafeHwnd(), IDC_CHK_USE_AOI_INNER);
+	myBtn[23].SetBtnType(BTN_TYPE_CHECK);
+
+	myBtn[24].SubclassDlgItem(IDC_CHK_USE_AOI_OUTER, this); //WORK_MODE : MODE_OUTER
+	myBtn[24].SetHwnd(this->GetSafeHwnd(), IDC_CHK_USE_AOI_OUTER);
+	myBtn[24].SetBtnType(BTN_TYPE_CHECK);
+
 
 	int i;
 	for(i=0; i<MAX_INFO_BTN; i++)
 	{
-		if(0 == i || 12 == i || 13 == i || 14 == i )
+		if(0 == i || 12 == i || 13 == i || 14 == i  || 23 == i || 24 == i)
 		{
 			myBtn[i].SetFont(_T("굴림체"),16,TRUE);
 			myBtn[i].SetTextColor(RGB_BLACK);
@@ -283,7 +303,7 @@ void CDlgInfo::InitBtn()
 			//myBtn[i].SetBtnType(BTN_TYPE_CHECK);
 		}
 
-		if(0 != i && 12 != i && 13 != i && 14 != i && 15 != i && 16 != i)
+		if(0 != i && 12 != i && 13 != i && 14 != i && 15 != i && 16 != i && 23 != i && 24 != i)
 		{
 			myBtn[i].SetFont(_T("굴림체"),16,TRUE);
 			myBtn[i].SetTextColor(RGB_BLACK);
@@ -357,6 +377,8 @@ void CDlgInfo::InitStcTitle()
 	myStcTitle[48].SubclassDlgItem(IDC_STC_65, this);
 	myStcTitle[49].SubclassDlgItem(IDC_STC_1145, this); //하면AOI 클린롤러
 	myStcTitle[50].SubclassDlgItem(IDC_STC_1146, this); //상면AOI 클린롤러
+	myStcTitle[51].SubclassDlgItem(IDC_STC_1147, this); //AOI초음파세정기
+	myStcTitle[52].SubclassDlgItem(IDC_STC_1148, this); //각인부초음파세정기
 
 	for(int i=0; i<MAX_INFO_STC; i++)
 	{
@@ -598,6 +620,16 @@ void CDlgInfo::Disp()
 		myBtn[20].SetCheck(TRUE);
 	else
 		myBtn[20].SetCheck(FALSE);
+
+	if (pDoc->WorkingInfo.LastJob.bUseAoiDnCleanner) //AOI초음파세정기
+		myBtn[21].SetCheck(TRUE);
+	else
+		myBtn[21].SetCheck(FALSE);
+
+	if (pDoc->WorkingInfo.LastJob.bUseEngraveCleanner) //각인부초음파세정기
+		myBtn[22].SetCheck(TRUE);
+	else
+		myBtn[22].SetCheck(FALSE);
 }
 
 void CDlgInfo::OnStc0008() 
@@ -1118,6 +1150,31 @@ void CDlgInfo::OnStc61()
 	
 }
 
+
+void CDlgInfo::SetTestMode(int nMode)
+{
+	pDoc->WorkingInfo.LastJob.nTestMode = nMode; // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2 .
+
+	CString sData;
+	sData.Format(_T("%d"), nMode);
+	::WritePrivateProfileString(_T("Last Job"), _T("Test Mode"), sData, PATH_WORKING_INFO);
+
+	switch (nMode)
+	{
+	case MODE_NONE:
+		break;
+	case MODE_INNER:
+		break;
+	case MODE_OUTER:
+		break;
+	default:
+		break;
+	}
+
+	myBtn[23].RedrawWindow();
+	myBtn[24].RedrawWindow();
+}
+
 void CDlgInfo::SetDualTest(BOOL bOn)
 {
 	pDoc->WorkingInfo.LastJob.bDualTest = bOn;
@@ -1192,6 +1249,46 @@ void CDlgInfo::SetTwoMetal(BOOL bOn)
 // 			myBtn[16].SetCheck(FALSE);
 	}
 
+}
+
+void CDlgInfo::OnChkUseAoiInner() 
+{
+	// TODO: Add your control notification handler code here
+	BOOL bOn[2];
+	bOn[0] = myBtn[23].GetCheck();
+	bOn[1] = myBtn[24].GetCheck();
+
+	if (bOn[0] && bOn[1])
+	{
+		myBtn[24].SetCheck(FALSE);
+		SetTestMode(MODE_INNER);
+	}
+	else if (bOn[0] && !bOn[1])
+		SetTestMode(MODE_INNER);
+	else if (!bOn[0] && bOn[1])
+		SetTestMode(MODE_OUTER);
+	else
+		SetTestMode(MODE_NONE);
+}
+
+void CDlgInfo::OnChkUseAoiOuter() 
+{
+	// TODO: Add your control notification handler code here
+	BOOL bOn[2];
+	bOn[0] = myBtn[23].GetCheck();
+	bOn[1] = myBtn[24].GetCheck();
+
+	if (bOn[0] && bOn[1])
+	{
+		myBtn[23].SetCheck(FALSE);
+		SetTestMode(MODE_OUTER);
+	}
+	else if (bOn[0] && !bOn[1])
+		SetTestMode(MODE_INNER);
+	else if (!bOn[0] && bOn[1])
+		SetTestMode(MODE_OUTER);
+	else
+		SetTestMode(MODE_NONE);
 }
 
 void CDlgInfo::OnChkUseAoiDual() 
@@ -1327,3 +1424,40 @@ void CDlgInfo::OnBnClickedChk1186()
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Up Aoi CleanRoler"), sData, PATH_WORKING_INFO);
 }
 
+
+void CDlgInfo::OnBnClickedChk1187()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if (myBtn[21].GetCheck()) //AOI초음파세정기
+	{
+		pDoc->WorkingInfo.LastJob.bUseAoiDnCleanner = TRUE;
+		pView->m_pMpe->Write(_T("MB44016F"), 1);
+	}
+	else
+	{
+		pDoc->WorkingInfo.LastJob.bUseAoiDnCleanner = FALSE;
+		pView->m_pMpe->Write(_T("MB44016F"), 0);
+	}
+
+	CString sData = pDoc->WorkingInfo.LastJob.bUseAoiDnCleanner ? _T("1") : _T("0");
+	::WritePrivateProfileString(_T("Last Job"), _T("Use AoiDn Cleanner"), sData, PATH_WORKING_INFO);
+}
+
+
+void CDlgInfo::OnBnClickedChk1188()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if (myBtn[22].GetCheck()) //각인부초음파세정기
+	{
+		pDoc->WorkingInfo.LastJob.bUseEngraveCleanner = TRUE;
+		pView->m_pMpe->Write(_T("MB44016E"), 1);
+	}
+	else
+	{
+		pDoc->WorkingInfo.LastJob.bUseEngraveCleanner = FALSE;
+		pView->m_pMpe->Write(_T("MB44016E"), 0);
+	}
+
+	CString sData = pDoc->WorkingInfo.LastJob.bUseEngraveCleanner ? _T("1") : _T("0");
+	::WritePrivateProfileString(_T("Last Job"), _T("Use Engrave Cleanner"), sData, PATH_WORKING_INFO);
+}
