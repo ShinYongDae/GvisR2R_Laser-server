@@ -1395,7 +1395,7 @@ void CDlgMenu05::DisplayReelMapData()
 	//파일을 불러옴. 
 	//strcpy(FileD, strReelMapPath);
 	wsprintf(FileD, TEXT("%s"), strReelMapPath);
-	char* pRtn;
+	char* pRtn = NULL;
 	if((fp = fopen(pRtn=TCHARToChar(FileD), "r")) != NULL)
 	{
 		fseek(fp, 0, SEEK_END);
@@ -1451,7 +1451,8 @@ void CDlgMenu05::DisplayReelMapData()
 		DsipMsg.Format(_T("파일이 존재하지 않습니다.\r\n%s"), strReelMapPath);
 		AfxMessageBox(DsipMsg);
 	}
-	delete pRtn;
+	if(pRtn)
+		delete pRtn;
 	GetDlgItem(IDC_EDIT_RESULT)->SetWindowText(strReelMapData);
 }
 
@@ -1637,7 +1638,7 @@ CString CDlgMenu05::LoadFile(CString sPath)
 	//파일을 불러옴. 
 	//strcpy(FileD, sPath);
 	_stprintf(FileD, TEXT("%s"), sPath);
-	char* pRtn;
+	char* pRtn = NULL;
 	if((fp = fopen(pRtn=TCHARToChar(FileD), "r")) != NULL)
 	{
 		fseek(fp, 0, SEEK_END);
@@ -1687,7 +1688,8 @@ CString CDlgMenu05::LoadFile(CString sPath)
 	}
 
 	dlg.DestroyWindow();
-	delete pRtn;
+	if(pRtn)
+		delete pRtn;
 	return sData;
 }
 
@@ -1941,9 +1943,12 @@ void CDlgMenu05::OnBtnSave()
 		}
 	}
 	//버퍼의 내용을 file에 복사한다.
+	char* pRtn = NULL;
 	file.SeekToBegin();
-	file.Write(StringToChar(strData), strData.GetLength());
+	file.Write(pRtn = StringToChar(strData), strData.GetLength());
 	file.Close();	
+	if (pRtn)
+		delete pRtn;
 	return;
 }
 

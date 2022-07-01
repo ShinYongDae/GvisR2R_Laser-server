@@ -11527,7 +11527,7 @@ BOOL CGvisR2R_LaserView::MakeDummyUp(int nErr) // AOI 상면 기준.
 		pDoc->WorkingInfo.LastJob.sLotUp,
 		nSerial);
 	char* pRtn = NULL;
-	fpPCR = fopen(pRtn = StringToChar(strRstPath2), "w+"); delete pRtn;
+	fpPCR = fopen(pRtn = StringToChar(strRstPath2), "w+"); if(pRtn) delete pRtn; pRtn = NULL;
 	if (fpPCR == NULL)
 	{
 		AfxMessageBox(_T("TROUBLE_SAVE_PIECEOUT_VRS"), MB_ICONWARNING | MB_OK);
@@ -11546,7 +11546,7 @@ BOOL CGvisR2R_LaserView::MakeDummyUp(int nErr) // AOI 상면 기준.
 		pDoc->WorkingInfo.LastJob.sLotUp,
 		nSerial);
 
-	fpPCR = fopen(pRtn = StringToChar(sDummyPath), "w+"); delete pRtn;
+	fpPCR = fopen(pRtn = StringToChar(sDummyPath), "w+"); if(pRtn) delete pRtn; pRtn = NULL;
 	if (fpPCR == NULL)
 	{
 		AfxMessageBox(_T("TROUBLE_SAVE_PIECEOUT_VRS"), MB_ICONWARNING | MB_OK);
@@ -11568,7 +11568,7 @@ BOOL CGvisR2R_LaserView::MakeDummyUp(int nErr) // AOI 상면 기준.
 
 	sDummyPath.Format(_T("%s%04d.pcr"), pDoc->WorkingInfo.System.sPathVsShareUp, nSerial);
 
-	fpPCR = fopen(pRtn = StringToChar(sDummyPath), "w+"); delete pRtn;
+	fpPCR = fopen(pRtn = StringToChar(sDummyPath), "w+"); if(pRtn) delete pRtn; pRtn = NULL;
 	if (fpPCR == NULL)
 	{
 		AfxMessageBox(_T("TROUBLE_SAVE_PIECEOUT_VRS"), MB_ICONWARNING | MB_OK);
@@ -11642,7 +11642,7 @@ BOOL CGvisR2R_LaserView::MakeDummyDn(int nErr) // AOI 상면 기준.
 		pDoc->WorkingInfo.LastJob.sLotDn,
 		nSerial);
 
-	fpPCR = fopen(pRtn = StringToChar(sDummyPath), "w+"); delete pRtn;
+	fpPCR = fopen(pRtn = StringToChar(sDummyPath), "w+"); if (pRtn) delete pRtn; pRtn = NULL;
 	if (fpPCR == NULL)
 	{
 		AfxMessageBox(_T("TROUBLE_SAVE_PIECEOUT_VRS"), MB_ICONWARNING | MB_OK);
@@ -13597,9 +13597,12 @@ void CGvisR2R_LaserView::MakeResult()
 		}
 	}
 	//버퍼의 내용을 file에 복사한다.
+	char* pRtn = NULL;
 	file.SeekToBegin();
-	file.Write(StringToChar(strData), strData.GetLength());
+	file.Write(pRtn = StringToChar(strData), strData.GetLength());
 	file.Close();
+	if (pRtn)
+		delete pRtn;
 }
 
 void CGvisR2R_LaserView::MakeSapp3()
@@ -13611,6 +13614,7 @@ void CGvisR2R_LaserView::MakeSapp3()
 	//char FileName[MAX_PATH];
 	TCHAR FileName[MAX_PATH];
 	CString sPath, sVal, strMsg;
+	char* pRtn = NULL;
 
 	sPath.Format(_T("%s%9s_%4s_%5s.txt"), pDoc->WorkingInfo.System.sPathSapp3,
 		pDoc->WorkingInfo.LastJob.sLotUp,
@@ -13618,12 +13622,12 @@ void CGvisR2R_LaserView::MakeSapp3()
 		pDoc->WorkingInfo.System.sMcName);
 	//strcpy(FileName, sPath);
 	_stprintf(FileName, _T("%s"), sPath);
-	char* pRtn;
+
 	fp = fopen(pRtn = TCHARToChar(FileName), "w+");
 
 	if (fp != NULL)
 	{
-		fprintf( fp, "%s\n", StringToChar(m_pDlgMenu05->Sapp3Data()) );
+		fprintf( fp, "%s\n", pRtn = StringToChar(m_pDlgMenu05->Sapp3Data()) );
 	}
 	else
 	{
@@ -13631,7 +13635,8 @@ void CGvisR2R_LaserView::MakeSapp3()
 		AfxMessageBox(strMsg, MB_ICONWARNING | MB_OK);
 	}
 
-	delete pRtn;
+	if(pRtn)
+		delete pRtn;
 	fclose(fp);
 }
 

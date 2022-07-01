@@ -1239,6 +1239,7 @@ void SaveLog(CString strMsg, int nType)
 	strContents += _T("    ");
 	strContents += _T("\r\n");
 
+	char* pRtn = NULL;
 	CFile file;
 
 	if (file.Open(szFile, CFile::modeCreate | CFile::modeNoTruncate | CFile::modeWrite | CFile::shareDenyNone) == 0)
@@ -1246,7 +1247,10 @@ void SaveLog(CString strMsg, int nType)
 
 	file.SeekToEnd();
 	int nLenth = strContents.GetLength();
-	file.Write(StringToChar(strContents), nLenth);
+	file.Write(pRtn = StringToChar(strContents), nLenth);
 	file.Flush();
 	file.Close();
+
+	if (pRtn)
+		delete pRtn;
 }

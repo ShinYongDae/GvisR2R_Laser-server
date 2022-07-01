@@ -251,11 +251,12 @@ void CMyFile::DoCopy(CString sSource, CString sDest, bool bDelteAfterCopy)
 	{
 		PreparePath(sDest);
 		char drive[MAX_PATH], dir[MAX_PATH], name[MAX_PATH], ext[MAX_PATH];
-		char* pRtn;
+		char* pRtn = NULL;
 		_splitpath(pRtn=StringToChar(sSource), drive, dir, name, ext);
 		sDest = sDest + CString(name) + CString(ext);
 		DoFileCopy(sSource, sDest);
-		delete pRtn;
+		if(pRtn)
+			delete pRtn;
 	}
 }
 
@@ -425,7 +426,7 @@ CString CMyFile::ChangeFileName(CString sFileName)
 	char dir  [MAX_PATH];
 	char name [MAX_PATH];
 	char ext  [MAX_PATH];
-	char* pRtn;
+	char* pRtn = NULL;
 	_splitpath(pRtn=StringToChar(sFileName), drive, dir, name, ext);
 	sName = name;
 
@@ -463,7 +464,8 @@ CString CMyFile::ChangeFileName(CString sFileName)
 	}
 
 	sResult = CString(drive) + CString(dir) + sNewName;
-	delete pRtn;
+	if(pRtn)
+		delete pRtn;
 	return sResult;
 }
 

@@ -131,7 +131,7 @@ int CDlgUser::ReadUserNameListFile()
 	strFileName = _T("C:\\R2RSet\\UserNameList.ini");
 	//strcpy(FileD, strFileName);
 	_stprintf(FileD, _T("%s"), strFileName);
-	char* pRtn;
+	char* pRtn = NULL;
 	if((fp = fopen(pRtn=TCHARToChar(FileD), "r")) != NULL)
 	{
 		fseek(fp, 0, SEEK_END);
@@ -154,7 +154,8 @@ int CDlgUser::ReadUserNameListFile()
 		//AfxMessageBox(_T("파일이 존재하지 않습니다.\r\nC:\\R2RSet\\UserNameList.ini"));
 	}
 
-	delete pRtn;
+	if(pRtn)
+		delete pRtn;
 	return (int)nFileSize;
 }
 

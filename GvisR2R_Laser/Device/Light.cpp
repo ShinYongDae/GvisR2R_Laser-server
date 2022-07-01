@@ -107,10 +107,10 @@ BOOL CLight::Send(CString str)
 	
 	//char* cSend = new char[nLen+1];
 	//strcpy(cSend, str);
-	char* pRtn;
+	char* pRtn = NULL;
 	TCHAR* cSend = new TCHAR[nLen + 1];
 	wsprintf(cSend, TEXT("%s"), str);	
-	BOOL bRtn = m_Rs232.WriteRs232Block(pRtn = TCHARToChar(cSend), nLen); delete pRtn;;
+	BOOL bRtn = m_Rs232.WriteRs232Block(pRtn = TCHARToChar(cSend), nLen); if(pRtn) delete pRtn;
 	delete cSend;
 
 	return TRUE;
