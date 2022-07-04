@@ -84,12 +84,12 @@ BEGIN
     BEGIN
         MENUITEM "GvisR2R_Laser 정보(&A)...",     ID_APP_ABOUT
     END
-    MENUITEM "Database connect",            ID_DATABASE_CONNECTION
     MENUITEM "최소화(&Minimize)",              ID_APP_MINIMIZE
     POPUP "시스템 종료(&Finish)"
     BEGIN
         MENUITEM "종료(&X)",                      ID_APP_EXIT
     END
+    MENUITEM "Database connect",            ID_DATABASE_CONNECTION
 END
 
 

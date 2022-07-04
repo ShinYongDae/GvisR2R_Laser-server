@@ -1389,7 +1389,7 @@ BOOL CGvisR2R_LaserView::HwInit()
 	if (!m_pEngrave)
 	{
 		m_pEngrave = new CEngrave(pDoc->WorkingInfo.System.sIpClient[ID_PUNCH], pDoc->WorkingInfo.System.sIpServer[ID_ENGRAVE], pDoc->WorkingInfo.System.sPort[ID_ENGRAVE], this);
-		//m_pEngrave->SetHwnd(this->GetSafeHwnd());
+		m_pEngrave->SetHwnd(this->GetSafeHwnd());
 	}
 #endif
 

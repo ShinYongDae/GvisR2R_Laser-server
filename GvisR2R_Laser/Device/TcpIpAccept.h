@@ -17,6 +17,7 @@ class CTcpIpAccept : public CSocketComm //, public CEasyThread
 	BYTE* m_pReceiveBuffer;
 	int m_nBufferId;
 	CString m_strReceived;
+	BOOL m_bClose;
 
 	int ReadComm();
 	int ReadCommData(SOCKET_DATA &SocketData, DWORD dwSize, DWORD dwTimeout);

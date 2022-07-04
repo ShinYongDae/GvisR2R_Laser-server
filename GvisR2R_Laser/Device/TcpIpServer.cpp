@@ -29,7 +29,7 @@ CTcpIpServer::CTcpIpServer(CWnd* pParent/*=NULL*/)
 
 CTcpIpServer::~CTcpIpServer()
 {
-	/*
+	
 	for (int i = 0; i < MAX_CLIENT; i++)
 	{
 		if(m_pAcceptAddr[i])
@@ -41,7 +41,7 @@ CTcpIpServer::~CTcpIpServer()
 			Sleep(30);
 		}
 	}
-	*/
+	
 	::DeleteCriticalSection(&m_sc);
 }
 
@@ -259,7 +259,10 @@ void CTcpIpServer::wmAcceptClosed(WPARAM wParam, LPARAM lParam)
 
 	if (m_pAcceptAddr[nClientID])
 	{
+		m_pAcceptAddr[nClientID]->Stop();
+		delete m_pAcceptAddr[nClientID];
 		m_pAcceptAddr[nClientID] = NULL;
+		Sleep(30);
 	}
 }
 

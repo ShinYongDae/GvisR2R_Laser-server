@@ -14,27 +14,29 @@ CTcpIpAccept::CTcpIpAccept(CTcpIpServer* pParent/*=NULL*/)
 	m_nBufferId = 0;
 	m_pCurrentBuffer = new BYTE[16384]; // 1mb
 
-	m_bStop = 0;
+	m_bStop = FALSE;
+	m_bClose = FALSE;
 	//m_sAcceptIp = _T("");
 }
 
 CTcpIpAccept::~CTcpIpAccept()
 {
 	//m_sAcceptIp.ReleaseBuffer();
-/*
-	if(m_pReceiveBuffer)
-	{
-		delete[] m_pReceiveBuffer;
-		m_pReceiveBuffer = NULL;
-	}
-	if (m_pCurrentBuffer)
-	{
-		delete[] m_pCurrentBuffer; 
-		m_pCurrentBuffer = NULL;
-	}
 
-	::DeleteCriticalSection(&m_sc);
-*/
+	//if(m_pReceiveBuffer)
+	//{
+	//	delete[] m_pReceiveBuffer;
+	//	m_pReceiveBuffer = NULL;
+	//}
+	//if (m_pCurrentBuffer)
+	//{
+	//	delete[] m_pCurrentBuffer; 
+	//	m_pCurrentBuffer = NULL;
+	//}
+
+	//::DeleteCriticalSection(&m_sc);
+
+	Close();
 }
 
 
@@ -176,9 +178,9 @@ UINT WINAPI CTcpIpAccept::SocketThreadProc(LPVOID pParam)
 		if (nExit == 0)
 			break;
 	}
-	pThis->Close();
+	//pThis->Close();
 
-	pThis->m_bAlive = FALSE;
+	//pThis->m_bAlive = FALSE;
 	Sleep(10);
 	return 1L;
 } // end SocketThreadProc
@@ -194,6 +196,8 @@ int CTcpIpAccept::Running()
 	{
 		return ReadCommData(m_SocketData, sizeof(m_SocketData), 50000);
 	}
+
+	return 0; // Terminate Thread
 }
 
 int CTcpIpAccept::ReadCommData(SOCKET_DATA &SocketData, DWORD dwSize, DWORD dwTimeout)
@@ -477,6 +481,10 @@ BOOL CTcpIpAccept::Stop()
 
 void CTcpIpAccept::Close()
 {
+	if (m_bClose)
+		return;
+	m_bClose = TRUE;
+
 	if (m_pReceiveBuffer)
 	{
 		delete[] m_pReceiveBuffer;
