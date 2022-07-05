@@ -454,12 +454,17 @@ int CTcpIpAccept::ReadComm()
 
 void CTcpIpAccept::OnDataReceived()
 {
-	if (GetServerID() == ID_SR1000W || GetServerID() == ID_MDX2500)
-	{
-		m_strReceived = CharToString((char*)m_pCurrentBuffer);
-		((CTcpIpServer*)m_pParent)->wmAcceptReceived((WPARAM)m_nClientID, (LPARAM)(LPCTSTR)m_strReceived);
-	}
-	else if (GetServerID() == ID_ENGRAVE)
+	//if (GetServerID() == ID_SR1000W || GetServerID() == ID_MDX2500)
+	//{
+	//	m_strReceived = CharToString((char*)m_pCurrentBuffer);
+	//	((CTcpIpServer*)m_pParent)->wmAcceptReceived((WPARAM)m_nClientID, (LPARAM)(LPCTSTR)m_strReceived);
+	//}
+	//else if (GetServerID() == ID_ENGRAVE)
+	//{
+	//	((CTcpIpServer*)m_pParent)->wmAcceptReceived((WPARAM)m_nClientID, (LPARAM)&m_SocketData);
+	//}
+
+	if (GetServerID() == ID_ENGRAVE)
 	{
 		((CTcpIpServer*)m_pParent)->wmAcceptReceived((WPARAM)m_nClientID, (LPARAM)&m_SocketData);
 	}

@@ -14324,7 +14324,12 @@ LRESULT CGvisR2R_LaserView::wmServerReceived(WPARAM wParam, LPARAM lParam)
 
 	int nAcceptId = (int)wParam;
 	SOCKET_DATA sSockData;
-	SOCKET_DATA rSockData = m_pEngrave->GetSocketData();
+	SOCKET_DATA *pSocketData = (SOCKET_DATA*)lParam;
+
+	//SOCKET_DATA rSockData = m_pEngrave->GetSocketData();
+	//int nCmdCode = rSockData.nCmdCode;
+	//int nMsgId = rSockData.nMsgID;
+	SOCKET_DATA rSockData = *pSocketData;
 	int nCmdCode = rSockData.nCmdCode;
 	int nMsgId = rSockData.nMsgID;
 	switch (nCmdCode)
@@ -14332,18 +14337,79 @@ LRESULT CGvisR2R_LaserView::wmServerReceived(WPARAM wParam, LPARAM lParam)
 	case _GetSig:
 		if(nMsgId == _Connect)
 		{
-			sSockData.nCmdCode = _Rtn
-				;
+			sSockData.nCmdCode = _Rtn;
 			sSockData.nMsgID = _Connect;
 			m_pEngrave->SendCommand(nAcceptId, sSockData);
 		}
+		break;
+	case _SetData:
+		GetInfo(rSockData);
 		break;
 	default:
 		break;
 	}
 
+	if(m_pDlgMenu01)
+		m_pDlgMenu01->UpdateInfo();
+
 	return (LRESULT)1;
 }
+
+void CGvisR2R_LaserView::GetInfo(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+
+	switch (nMsgId)
+	{
+	case _OpName:
+		pDoc->WorkingInfo.LastJob.sSelUserName = CharToString(SockData.strData);
+		break;
+	case _ModelUpName:
+		pDoc->WorkingInfo.LastJob.sModelUp = CharToString(SockData.strData);
+		break;
+	case _ModelDnName:
+		pDoc->WorkingInfo.LastJob.sModelDn = CharToString(SockData.strData);
+		break;
+	case _LotUpName:
+		pDoc->WorkingInfo.LastJob.sLotUp = CharToString(SockData.strData);
+		break;
+	case _LotDnName:
+		pDoc->WorkingInfo.LastJob.sLotDn = CharToString(SockData.strData);
+		break;
+	case _LayerUpName:
+		pDoc->WorkingInfo.LastJob.sLayerUp = CharToString(SockData.strData);
+		break;
+	case _LayerDnName:
+		pDoc->WorkingInfo.LastJob.sLayerDn = CharToString(SockData.strData);
+		break;
+	case _TotReelLen:
+		pDoc->WorkingInfo.LastJob.sReelTotLen = CharToString(SockData.strData);
+		break;
+	case _PartVel:
+		pDoc->WorkingInfo.LastJob.sPartialSpd = CharToString(SockData.strData);
+		break;
+	case _TempStopLen:
+		pDoc->WorkingInfo.LastJob.sTempPauseLen = CharToString(SockData.strData);
+		break;
+	case _LotCutLen:
+		pDoc->WorkingInfo.LastJob.sLotCutPosLen = CharToString(SockData.strData);
+		break;
+	case _LotSerial:
+		pDoc->WorkingInfo.LastJob.sLotSerial = CharToString(SockData.strData);
+		break;
+	case _MkVerfyLen:
+		pDoc->WorkingInfo.LastJob.sVerifyLen = CharToString(SockData.strData);
+		break;
+	default:
+		break;
+	}
+
+	//sSockData.nCmdCode = _Rtn;
+	//sSockData.nMsgID = _Connect;
+	//m_pEngrave->SendCommand(nAcceptId, sSockData);
+}
+
 void CGvisR2R_LaserView::SetEngraveFdPitch(double dPitch)
 {
 	pDoc->SetEngraveFdPitch(dPitch);

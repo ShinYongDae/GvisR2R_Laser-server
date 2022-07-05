@@ -148,14 +148,21 @@ LRESULT CEngrave::wmAcceptReceived(WPARAM wParam, LPARAM lParam)
 int CEngrave::OnServerReceived(WPARAM wParam, LPARAM lParam)
 {
 	int nAcceptID = (int)wParam;
+	SOCKET_DATA *pSocketData = (SOCKET_DATA*)lParam;
 	//CString sReceived = (LPCTSTR)lParam;
 	//if (sReceived == _T("Fail to connect."))
 	//	return 1;
-	if (m_pServer)
-		m_SocketData = m_pServer->GetSocketData();
+
+	//if (m_pServer)
+	//	m_SocketData = m_pServer->GetSocketData();
+	//if (m_hParentWnd)
+	//	::PostMessage(m_hParentWnd, WM_SERVER_RECEIVED, (WPARAM)nAcceptID, (LPARAM)&m_SocketData); // "OrderNum-ShotNum" (9bytes'-'3bytes)
+	
 	if (m_hParentWnd)
-		::PostMessage(m_hParentWnd, WM_SERVER_RECEIVED, (WPARAM)nAcceptID, (LPARAM)&m_SocketData); // "OrderNum-ShotNum" (9bytes'-'3bytes)
+		::PostMessage(m_hParentWnd, WM_SERVER_RECEIVED, (WPARAM)nAcceptID, (LPARAM)pSocketData);
+	
 	m_bWaitForResponse = FALSE;
+
 	//if (sReceived.GetLength() > 0)
 /*
 	switch (nAcceptID)

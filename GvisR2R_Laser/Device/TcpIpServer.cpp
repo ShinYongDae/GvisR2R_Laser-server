@@ -238,16 +238,25 @@ void CTcpIpServer::wmAcceptReceived(WPARAM wParam, LPARAM lParam)
 {
 	int nClientID = (int)wParam;
 
-	if (GetServerID() == ID_SR1000W || GetServerID() == ID_MDX2500)
-	{
-		CString sReceived = (LPCTSTR)lParam;
-		::SendMessage(m_hParentWnd, WM_SERVER_RECEIVED, (WPARAM)nClientID, (LPARAM)(LPCTSTR)sReceived);
-	}
-	else if (GetServerID() == ID_ENGRAVE)
+	//if (GetServerID() == ID_SR1000W || GetServerID() == ID_MDX2500)
+	//{
+	//	CString sReceived = (LPCTSTR)lParam;
+	//	::SendMessage(m_hParentWnd, WM_SERVER_RECEIVED, (WPARAM)nClientID, (LPARAM)(LPCTSTR)sReceived);
+	//}
+	//else if (GetServerID() == ID_ENGRAVE)
+	//{
+	//	if (m_pAcceptAddr[nClientID])
+	//	{
+	//		m_SocketData = m_pAcceptAddr[nClientID]->GetSocketData();			
+	//		::SendMessage(m_hParentWnd, WM_SERVER_RECEIVED, (WPARAM)nClientID, (LPARAM)&m_SocketData);
+	//	}
+	//}
+
+	if (GetServerID() == ID_ENGRAVE)
 	{
 		if (m_pAcceptAddr[nClientID])
 		{
-			m_SocketData = m_pAcceptAddr[nClientID]->GetSocketData();
+			m_SocketData = m_pAcceptAddr[nClientID]->GetSocketData();			
 			::SendMessage(m_hParentWnd, WM_SERVER_RECEIVED, (WPARAM)nClientID, (LPARAM)&m_SocketData);
 		}
 	}

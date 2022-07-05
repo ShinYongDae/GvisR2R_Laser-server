@@ -833,6 +833,7 @@ public:
 
 	BOOL IsPinPos0();
 
+	void GetInfo(SOCKET_DATA SockData);
 
 // 재정의입니다.
 public:
