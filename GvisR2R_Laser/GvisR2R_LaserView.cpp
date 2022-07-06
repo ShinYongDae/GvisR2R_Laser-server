@@ -14344,6 +14344,23 @@ LRESULT CGvisR2R_LaserView::wmServerReceived(WPARAM wParam, LPARAM lParam)
 		break;
 	case _SetData:
 		GetInfo(rSockData);
+		GetTotRatio(rSockData);
+		GetStTime(rSockData);
+		GetRunTime(rSockData);
+		GetEdTime(rSockData);
+		GetStripRatio(rSockData);
+		GetDef(rSockData);
+		Get2DReader(rSockData);
+		GetEngInfo(rSockData);
+		GetFdInfo(rSockData);
+		GetAoiInfo(rSockData);
+		GetMkInfo(rSockData);
+		GetMkInfoLf(rSockData);
+		GetMkInfoRt(rSockData);
+
+		//sSockData.nCmdCode = _Rtn;
+		//sSockData.nMsgID = _Connect;
+		//m_pEngrave->SendCommand(nAcceptId, sSockData);
 		break;
 	default:
 		break;
@@ -14354,6 +14371,8 @@ LRESULT CGvisR2R_LaserView::wmServerReceived(WPARAM wParam, LPARAM lParam)
 
 	return (LRESULT)1;
 }
+
+// Start for GetSysInfo()
 
 void CGvisR2R_LaserView::GetInfo(SOCKET_DATA SockData)
 {
@@ -14404,11 +14423,477 @@ void CGvisR2R_LaserView::GetInfo(SOCKET_DATA SockData)
 	default:
 		break;
 	}
-
-	//sSockData.nCmdCode = _Rtn;
-	//sSockData.nMsgID = _Connect;
-	//m_pEngrave->SendCommand(nAcceptId, sSockData);
 }
+
+void CGvisR2R_LaserView::GetTotRatio(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+
+	switch (nMsgId)
+	{
+	case _DefNumUp:
+		pDoc->m_nBad[0] = SockData.nData1;
+		break;
+	case _DefRtoUp:
+		pDoc->m_dBadRatio[0] = (double)SockData.fData1;
+		break;
+	case _GoodNumUp:
+		pDoc->m_nGood[0] = SockData.nData1;
+		break;
+	case _GoodRtoUp:
+		pDoc->m_dGoodRatio[0] = (double)SockData.fData1;
+		break;
+	case _TestNumUp:
+		pDoc->m_nTestNum[0] = SockData.nData1;
+		break;
+	case _DefNumDn:
+		pDoc->m_nBad[1] = SockData.nData1;
+		break;
+	case _DefRtoDn:
+		pDoc->m_dBadRatio[1] = (double)SockData.fData1;
+		break;
+	case _GoodNumDn:
+		pDoc->m_nGood[1] = SockData.nData1;
+		break;
+	case _GoodRtoDn:
+		pDoc->m_dGoodRatio[1] = (double)SockData.fData1;
+		break;
+	case _TestNumDn:
+		pDoc->m_nTestNum[1] = SockData.nData1;
+		break;
+	case _DefNumTot:
+		pDoc->m_nBad[2] = SockData.nData1;
+		break;
+	case _DefRtoTot:
+		pDoc->m_dBadRatio[2] = (double)SockData.fData1;
+		break;
+	case _GoodNumTot:
+		pDoc->m_nGood[2] = SockData.nData1;
+		break;
+	case _GoodRtoTot:
+		pDoc->m_dGoodRatio[2] = (double)SockData.fData1;
+		break;
+	case _TestNumTot:
+		pDoc->m_nTestNum[2] = SockData.nData1;
+		break;
+	default:
+		break;
+	}
+}
+
+void CGvisR2R_LaserView::GetStTime(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+
+	switch (nMsgId)
+	{
+	case _LotStTime:
+		pDoc->m_sLotStTime = CharToString(SockData.strData);
+		break;
+	default:
+		break;
+	}
+}
+
+void CGvisR2R_LaserView::GetRunTime(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+
+	switch (nMsgId)
+	{
+	case _LotRunTime:
+		pDoc->m_sLotRunTime = CharToString(SockData.strData);
+		break;
+	default:
+		break;
+	}
+}
+
+void CGvisR2R_LaserView::GetEdTime(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+
+	switch (nMsgId)
+	{
+	case _LotEdTime:
+		pDoc->m_sLotEdTime = CharToString(SockData.strData);
+		break;
+	default:
+		break;
+	}
+}
+
+void CGvisR2R_LaserView::GetStripRatio(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+
+	switch (nMsgId)
+	{
+	case _1LnGoodRtoUp:
+		pDoc->m_dStripRatio[0][0] = (double)SockData.fData1;
+		break;
+	case _2LnGoodRtoUp:
+		pDoc->m_dStripRatio[0][1] = (double)SockData.fData1;
+		break;
+	case _3LnGoodRtoUp:
+		pDoc->m_dStripRatio[0][2] = (double)SockData.fData1;
+		break;
+	case _4LnGoodRtoUp:
+		pDoc->m_dStripRatio[0][3] = (double)SockData.fData1;
+		break;
+	case _AllLnGoodRtoUp:
+		pDoc->m_dStripRatio[0][4] = (double)SockData.fData1;
+		break;
+	case _1LnGoodRtoDn:
+		pDoc->m_dStripRatio[1][0] = (double)SockData.fData1;
+		break;
+	case _2LnGoodRtoDn:
+		pDoc->m_dStripRatio[1][1] = (double)SockData.fData1;
+		break;
+	case _3LnGoodRtoDn:
+		pDoc->m_dStripRatio[1][2] = (double)SockData.fData1;
+		break;
+	case _4LnGoodRtoDn:
+		pDoc->m_dStripRatio[1][3] = (double)SockData.fData1;
+		break;
+	case _AllLnGoodRtoDn:
+		pDoc->m_dStripRatio[1][4] = (double)SockData.fData1;
+		break;
+	case _1LnGoodRtoTot:
+		pDoc->m_dStripRatio[2][0] = (double)SockData.fData1;
+		break;
+	case _2LnGoodRtoTot:
+		pDoc->m_dStripRatio[2][1] = (double)SockData.fData1;
+		break;
+	case _3LnGoodRtoTot:
+		pDoc->m_dStripRatio[2][2] = (double)SockData.fData1;
+		break;
+	case _4LnGoodRtoTot:
+		pDoc->m_dStripRatio[2][3] = (double)SockData.fData1;
+		break;
+	case _AllLnGoodRtoTot:
+		pDoc->m_dStripRatio[2][4] = (double)SockData.fData1;
+		break;
+	default:
+		break;
+	}
+}
+
+void CGvisR2R_LaserView::GetDef(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+
+	switch (nMsgId)
+	{
+	case _DefNumOpen:
+		pDoc->m_nDef[DEF_OPEN] = SockData.nData1; // IDC_STC_DEF_OPEN
+		break;
+	case _DefNumShort:
+		pDoc->m_nDef[DEF_SHORT] = SockData.nData1; // IDC_STC_DEF_SHORT
+		break;
+	case _DefNumUshort:
+		pDoc->m_nDef[DEF_USHORT] = SockData.nData1; // IDC_STC_DEF_U_SHORT
+		break;
+	case _DefNumLnW:
+		pDoc->m_nDef[DEF_SPACE] = SockData.nData1; // IDC_STC_DEF_SPACE
+		break;
+	case _DefExtr:
+		pDoc->m_nDef[DEF_EXTRA] = SockData.nData1; // IDC_STC_DEF_EXTRA
+		break;
+	case _DefNumProt:
+		pDoc->m_nDef[DEF_PROTRUSION] = SockData.nData1; // IDC_STC_DEF_PROT
+		break;
+	case _DefNumPhole:
+		pDoc->m_nDef[DEF_PINHOLE] = SockData.nData1; // IDC_STC_DEF_P_HOLE
+		break;
+	case _DefNumPad:
+		pDoc->m_nDef[DEF_PAD] = SockData.nData1; // IDC_STC_DEF_PAD
+		break;
+	case _DefNumHopen:
+		pDoc->m_nDef[DEF_HOLE_OPEN] = SockData.nData1; // IDC_STC_DEF_H_OPEN
+		break;
+	case _DefNumHmiss:
+		pDoc->m_nDef[DEF_HOLE_MISS] = SockData.nData1; // IDC_STC_DEF_H_MISS
+		break;
+	case _DefNumHpos:
+		pDoc->m_nDef[DEF_HOLE_POSITION] = SockData.nData1; // IDC_STC_DEF_H_POS
+		break;
+	case _DefNumHdef:
+		pDoc->m_nDef[DEF_HOLE_DEFECT] = SockData.nData1; // IDC_STC_DEF_H_DEF
+		break;
+	case _DefNumNick:
+		pDoc->m_nDef[DEF_NICK] = SockData.nData1; // IDC_STC_DEF_NICK
+		break;
+	case _DefNumPoi:
+		pDoc->m_nDef[DEF_POI] = SockData.nData1; // IDC_STC_DEF_POI
+		break;
+	case _DefNumVhOpen:
+		pDoc->m_nDef[DEF_VH_OPEN] = SockData.nData1; // IDC_STC_DEF_VH_OPEN
+		break;
+	case _DefNumVhMiss:
+		pDoc->m_nDef[DEF_VH_MISS] = SockData.nData1; // IDC_STC_DEF_VH_MISS
+		break;
+	case _DefNumVhPos:
+		pDoc->m_nDef[DEF_VH_POSITION] = SockData.nData1; // IDC_STC_DEF_VH_POS
+		break;
+	case _DefNumVhd:
+		pDoc->m_nDef[DEF_VH_DEF] = SockData.nData1; // IDC_STC_DEF_VH_DEF
+		break;
+	case _DefNumLight:
+		pDoc->m_nDef[DEF_LIGHT] = SockData.nData1; // IDC_STC_DEF_LIGHT
+		break;
+	case _DefNumEnick:
+		pDoc->m_nDef[DEF_EDGE_NICK] = SockData.nData1;
+		break;
+	case _DefNumEprot:
+		pDoc->m_nDef[DEF_EDGE_PROT] = SockData.nData1;
+		break;
+	case _DefNumEspace:
+		pDoc->m_nDef[DEF_EDGE_SPACE] = SockData.nData1;
+		break;
+	case _DefNumUdd1:
+		pDoc->m_nDef[DEF_USER_DEFINE_1] = SockData.nData1;
+		break;
+	case _DefNumNrw:
+		pDoc->m_nDef[DEF_NARROW] = SockData.nData1;
+		break;
+	case _DefNumWide:
+		pDoc->m_nDef[DEF_WIDE] = SockData.nData1;
+		break;
+	default:
+		break;
+	}
+}
+
+void CGvisR2R_LaserView::Get2DReader(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+
+	switch (nMsgId)
+	{
+	case _2DEngLen:
+		pDoc->WorkingInfo.Motion.s2DEngLen = CharToString(SockData.strData);
+		break;
+	case _2DAoiLen:
+		pDoc->WorkingInfo.Motion.s2DAoiLen = CharToString(SockData.strData);
+		break;
+	case _2DMkLen:
+		pDoc->WorkingInfo.Motion.s2DMkLen = CharToString(SockData.strData);
+		break;
+	case _2DMoveVel:
+		pDoc->WorkingInfo.Motion.s2DMoveVel = CharToString(SockData.strData);
+		break;
+	case _2DMoveAcc:
+		pDoc->WorkingInfo.Motion.s2DMoveAcc = CharToString(SockData.strData);
+		break;
+	case _2DOneShotLen:
+		pDoc->WorkingInfo.Motion.s2DOneShotRemainLen = CharToString(SockData.strData);
+		break;
+	default:
+		break;
+	}
+}
+
+void CGvisR2R_LaserView::GetEngInfo(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+
+	switch (nMsgId)
+	{
+	case _EngLeadPitch:
+		pDoc->WorkingInfo.Motion.sEngraveFdLead = CharToString(SockData.strData);
+		break;
+	case _EngPushOffLen:
+		pDoc->WorkingInfo.Motion.sEngraveFdVacOff = CharToString(SockData.strData);
+		break;
+	case _EngTqVal:
+		pDoc->WorkingInfo.Motion.sEngraveTq = CharToString(SockData.strData);
+		break;
+	case _EngAoiLen:
+		pDoc->WorkingInfo.Motion.sEngAoiLen = CharToString(SockData.strData);
+		break;
+	case _EngFdDiffMax:
+		pDoc->WorkingInfo.Motion.sEngFdDiffMax = CharToString(SockData.strData);
+		break;
+	case _EngFdDiffRng:
+		pDoc->WorkingInfo.Motion.sEngFdDiffRng = CharToString(SockData.strData);
+		break;
+	case _EngFdDiffNum:
+		pDoc->WorkingInfo.Motion.sEngFdDiffNum = CharToString(SockData.strData);
+		break;
+	case _EngBuffInitPos:
+		pDoc->WorkingInfo.Motion.sEngBuffInitPos = CharToString(SockData.strData);
+		break;
+	case _EngBuffCurrPos:
+		pDoc->WorkingInfo.Motion.sEngBuffCurrPos = CharToString(SockData.strData);
+		break;
+	default:
+		break;
+	}
+}
+
+void CGvisR2R_LaserView::GetFdInfo(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+
+	switch (nMsgId)
+	{
+	case _FdVel:
+		pDoc->WorkingInfo.Motion.sMkFdVel = CharToString(SockData.strData);
+		break;
+	case _FdAcc:
+		pDoc->WorkingInfo.Motion.sMkFdAcc = CharToString(SockData.strData);
+		break;
+	case _OnePnlLen:
+		pDoc->WorkingInfo.Motion.sMkFdDist = CharToString(SockData.strData);
+		break;
+	case _OnePnlVel:
+		pDoc->WorkingInfo.Motion.sMkFdVel = CharToString(SockData.strData);
+		break;
+	case _OnePnlAcc:
+		pDoc->WorkingInfo.Motion.sMkFdAcc = CharToString(SockData.strData);
+		break;
+	case _FdDiffMax:
+		pDoc->WorkingInfo.Motion.sLmtFdErr = CharToString(SockData.strData);
+		break;
+	case _FdDiffRng:
+		pDoc->WorkingInfo.Motion.sLmtFdAdjOffSet = CharToString(SockData.strData);
+		break;
+	case _FdDiffNum:
+		pDoc->WorkingInfo.Motion.sLmtFdOvrNum = CharToString(SockData.strData);
+		break;
+	default:
+		break;
+	}
+}
+
+void CGvisR2R_LaserView::GetAoiInfo(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+
+	switch (nMsgId)
+	{
+	case _AoiLeadPitch:
+		pDoc->WorkingInfo.Motion.sAoiFdLead = CharToString(SockData.strData);
+		break;
+	case _AoiPushOffLen:
+		pDoc->WorkingInfo.Motion.sAoiFdVacOff = CharToString(SockData.strData);
+		break;
+	case _AoiTqVal:
+		pDoc->WorkingInfo.Motion.sAoiTq = CharToString(SockData.strData);
+		break;
+	case _AoiBuffShotNum:
+		pDoc->WorkingInfo.Motion.sFdAoiAoiDistShot = CharToString(SockData.strData);
+		break;
+	case _AoiMkLen:
+		pDoc->WorkingInfo.Motion.sFdMkAoiInitDist = CharToString(SockData.strData);
+		break;
+	default:
+		break;
+	}
+}
+
+void CGvisR2R_LaserView::GetMkInfo(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+
+	switch (nMsgId)
+	{
+	case _MkLeadPitch:
+		pDoc->WorkingInfo.Motion.sMkFdLead = CharToString(SockData.strData);
+		break;
+	case _MkPushOffLen:
+		pDoc->WorkingInfo.Motion.sMkTq = CharToString(SockData.strData);
+		break;
+	case _MkBuffInitPos:
+		pDoc->WorkingInfo.Motion.sStBufPos = CharToString(SockData.strData);
+		break;
+	case _MkBuffCurrPos:
+		pDoc->m_dMkBuffCurrPos = (double)SockData.fData1;
+		break;
+	case _MkNumLf:
+		pDoc->WorkingInfo.Marking[0].nMkCnt = SockData.nData1;
+		break;
+	case _MkNumRt:
+		pDoc->WorkingInfo.Marking[1].nMkCnt = SockData.nData1;
+		break;
+	case _MkMaxNumLf:
+		pDoc->WorkingInfo.Marking[0].nMkLimit = SockData.nData1;
+		break;
+	case _MkMaxNumRt:
+		pDoc->WorkingInfo.Marking[1].nMkLimit = SockData.nData1;
+		break;
+	default:
+		break;
+	}
+}
+
+void CGvisR2R_LaserView::GetMkInfoLf(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+
+	switch (nMsgId)
+	{
+	//case:
+	//	pDoc->WorkingInfo.LastJob.sVerifyLen = CharToString(SockData.strData);
+	//	break;
+	//case:
+	//	pDoc->WorkingInfo.Motion. = CharToString(SockData.strData);
+	//	break;
+	//case:
+	//	pDoc->WorkingInfo.Motion. = CharToString(SockData.strData);
+	//	break;
+	//case:
+	//	pDoc->WorkingInfo.Motion. = CharToString(SockData.strData);
+	//	break;
+	//case:
+	//	pDoc->WorkingInfo.Motion. = CharToString(SockData.strData);
+	//	break;
+	//case:
+	//	pDoc->WorkingInfo.Motion. = CharToString(SockData.strData);
+	//	break;
+	//case:
+	//	pDoc->WorkingInfo.Motion. = CharToString(SockData.strData);
+	//	break;
+	//case:
+	//	pDoc->WorkingInfo.Motion. = CharToString(SockData.strData);
+	//	break;
+	//case:
+	//	pDoc->WorkingInfo.Motion. = CharToString(SockData.strData);
+	//	break;
+	default:
+		break;
+	}
+}
+
+void CGvisR2R_LaserView::GetMkInfoRt(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+
+	switch (nMsgId)
+	{
+	//case:
+	//	pDoc->WorkingInfo.LastJob.sVerifyLen = CharToString(SockData.strData);
+	//	break;
+	default:
+		break;
+	}
+}
+
+// End for GetSysInfo()
 
 void CGvisR2R_LaserView::SetEngraveFdPitch(double dPitch)
 {

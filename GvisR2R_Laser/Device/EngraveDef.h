@@ -45,7 +45,7 @@ typedef enum _stItemInx {
 	_OpName, _ModelUpName, _ModelDnName, _LotUpName, _LotDnName, _LayerUpName, _LayerDnName, _OrderNum, _ShotNum, _TotReelLen, _TotOpRto, _LotOpRto, 
 	_TotVel, _PartVel, _TempStopLen, _LotCutLen, _MkDoneLen, _AoiDnDoneLen, _AoiUpDoneLen, _LotSerial, //_MkNumLf, _MkNumRt,	
 	_DefNumUp, _DefNumDn, _DefNumTot, _DefRtoUp, _DefRtoDn, _DefRtoTot, _GoodNumTot, _GoodNumUp, _GoodNumDn, _GoodRtoUp, 
-	_GoodRtoDn, _GoodRtoTot, _TestNumUp, _TestNumDn, TestNumTot, _MkVerfyLen, _LotStTime, _LotEdTime, _LotRunTime, 	
+	_GoodRtoDn, _GoodRtoTot, _TestNumUp, _TestNumDn, _TestNumTot, _MkVerfyLen, _LotStTime, _LotEdTime, _LotRunTime, 	
 	_1LnGoodRtoUp, _1LnGoodRtoDn, _1LnGoodRtoTot, _2LnGoodRtoUp, _2LnGoodRtoDn, _2LnGoodRtoTot, _3LnGoodRtoUp, _3LnGoodRtoDn, 
 	_3LnGoodRtoTot, _4LnGoodRtoUp, _4LnGoodRtoDn, _4LnGoodRtoTot, _AllLnGoodRtoUp, _AllLnGoodRtoDn, _AllLnGoodRtoTot, 	
 	_DefNumOpen, _DefNumShort, _DefNumUshort, _DefNumLnW, _DefExtr, _DefNumProt, _DefNumEnick, _DefNumUdd1, _DefNumPhole, 
@@ -55,12 +55,12 @@ typedef enum _stItemInx {
 	_2DEngLen, _2DAoiLen, _2DMkLen, _2DMoveVel, _2DMoveAcc, _2DOneShotLen, _EngLeadPitch, _EngPushOffLen, _EngTqVal, _EngAoiLen,
 	_EngFdDiffMax, _EngFdDiffRng, _EngFdDiffNum, _EngBuffInitPos, _EngBuffCurrPos,  
 	// Menu04
-	_FdVal, _FdAcc, _OnePnlLen, _OnePnlVal, _OnePnlAcc, _AoiLeadPitch, _MkLeadPitch, _FdDiffMax, _FdDiffRng, _FdDiffNum, 
+	_FdVel, _FdAcc, _OnePnlLen, _OnePnlVel, _OnePnlAcc, _AoiLeadPitch, _MkLeadPitch, _FdDiffMax, _FdDiffRng, _FdDiffNum, 
 	_AoiPushOffLen, _MkPushOffLen, _AoiTqVal, _MkTqVal, _AoiBuffShotNum, _AoiMkLen, _MkBuffInitPos, _MkBuffCurrPos,
 	_MkNumLf, _MkNumRt, _MkMaxNumLf, _MkMaxNumRt,
 	_MkInitPosLf, _MkInitValLf, _MkInitAccLf, _MkFnlPosLf, _MkFnlValLf, _MkFnlAccLf, _MkFnlTqLf,
 	_MkHgtPosX1Lf, _MkHgtPosY1Lf, _MkHgtPosX2Lf, _MkHgtPosY2Lf, _MkHgtPosX3Lf, _MkHgtPosY3Lf, _MkHgtPosX4Lf, _MkHgtPosY4Lf,
-	_MkInitPosRt, _MkInitValRt, _MkInitAccRt, _MkFnlPosRt, _MkFnlValRt, _MkFnlAccRt, _MkFnlTqRt,
+	_MkInitPosRt, _MkInitVelRt, _MkInitAccRt, _MkFnlPosRt, _MkFnlVelRt, _MkFnlAccRt, _MkFnlTqRt,
 	_MkHgtPosX1Rt, _MkHgtPosY1Rt, _MkHgtPosX2Rt, _MkHgtPosY2Rt, _MkHgtPosX3Rt, _MkHgtPosY3Rt, _MkHgtPosX4Rt, _MkHgtPosY4Rt,
 }_ItemInx;
 

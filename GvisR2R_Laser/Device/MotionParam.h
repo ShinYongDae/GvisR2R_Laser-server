@@ -155,6 +155,9 @@ typedef struct stMotionMotion
 	CString sMkFdVacOff, sAoiFdVacOff, sEngraveFdVacOff;
 	CString sSafeZone, sCollisionLength, sCollisionMargin;
 	CString sAlignResultPosX[2][4], sAlignResultPosY[2][4], sAlignResultTheta[2][4], sAlignResultScore[2][4]; // [Cam][Pos]
+	CString s2DEngLen, s2DAoiLen, s2DMkLen, s2DMoveVel, s2DMoveAcc, s2DOneShotRemainLen;
+	CString sEngAoiLen, sEngFdDiffMax, sEngFdDiffRng, sEngFdDiffNum;
+	CString sEngBuffInitPos, sEngBuffCurrPos;
 
 	stMotionMotion()
 	{
@@ -200,6 +203,10 @@ typedef struct stMotionMotion
 				sAlignResultScore[k][i] = _T("");
 			}
 		}
+
+		s2DEngLen = _T(""); s2DAoiLen = _T(""); s2DMkLen = _T(""); s2DMoveVel = _T(""); s2DMoveAcc = _T(""); s2DOneShotRemainLen = _T("");
+		sEngAoiLen = _T(""); sEngFdDiffMax = _T(""); sEngFdDiffRng = _T(""); sEngFdDiffNum = _T("");
+		sEngBuffInitPos = _T(""); sEngBuffCurrPos = _T("");
 	}
 
 }MotionMotion;

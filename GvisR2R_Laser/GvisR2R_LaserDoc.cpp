@@ -196,6 +196,27 @@ CGvisR2R_LaserDoc::CGvisR2R_LaserDoc()
 	m_nTestShotNum = 0;
 	m_sTestOrderNum = _T("");
 	m_sTestShotNum = _T("");
+
+	m_nBad[0] = 0; m_nBad[1] = 0; m_nBad[2] = 0;
+	m_nGood[0] = 0; m_nGood[1] = 0; m_nGood[2] = 0;	
+	m_dBadRatio[0] = 0.0; m_dBadRatio[1] = 0.0; m_dBadRatio[2] = 0.0;
+	m_dGoodRatio[0] = 0.0; m_dGoodRatio[1] = 0.0; m_dGoodRatio[2] = 0.0;
+	m_nTestNum[0] = 0; m_nTestNum[1] = 0; m_nTestNum[2] = 0;
+	m_sLotStTime = _T(""); m_sLotEdTime = _T(""); m_sLotRunTime = _T("");
+	
+	for (i = 0; i < 3; i++)
+	{
+		for (k = 0; k < 5; k++)
+		{
+			m_dStripRatio[i][k] = 0.0;				// [3]: Up/Dn/ALL , [5]: Strip 0~3, ALL
+			m_dTotRatio[i][k];						// [3]: Up/Dn/ALL , [5]: Strip 0~3, ALL
+		}
+	}
+
+	for(i=0; i<MAX_DEF; i++)
+		m_nDef[i] = 0;		
+
+	m_dMkBuffCurrPos = 0.0;
 }
 
 CGvisR2R_LaserDoc::~CGvisR2R_LaserDoc()

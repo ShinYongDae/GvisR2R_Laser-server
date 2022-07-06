@@ -834,6 +834,19 @@ public:
 	BOOL IsPinPos0();
 
 	void GetInfo(SOCKET_DATA SockData);
+	void GetTotRatio(SOCKET_DATA SockData);
+	void GetStTime(SOCKET_DATA SockData);
+	void GetRunTime(SOCKET_DATA SockData);
+	void GetEdTime(SOCKET_DATA SockData);
+	void GetStripRatio(SOCKET_DATA SockData);
+	void GetDef(SOCKET_DATA SockData);
+	void Get2DReader(SOCKET_DATA SockData);
+	void GetEngInfo(SOCKET_DATA SockData);
+	void GetFdInfo(SOCKET_DATA SockData);
+	void GetAoiInfo(SOCKET_DATA SockData);
+	void GetMkInfo(SOCKET_DATA SockData);
+	void GetMkInfoLf(SOCKET_DATA SockData);
+	void GetMkInfoRt(SOCKET_DATA SockData);
 
 // 재정의입니다.
 public:
