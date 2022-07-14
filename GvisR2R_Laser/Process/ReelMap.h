@@ -88,7 +88,7 @@ public:
 	int m_nSelMarkingPnl;
 	double m_dTotLen, m_dPnlLen, m_dLotLen, m_dTempPauseLen, m_dLotCutPosLen;
 	BOOL m_bUseLotSep, m_bUseTempPause;
-	int m_nLastShot;
+	int m_nLastShot, m_nCompletedShot;
 	double m_dProgressRatio;
 
 // Operations
@@ -112,6 +112,7 @@ public:
 	BOOL Write(int nSerial, int nLayer);
 	BOOL Disp(int nMkPnl, BOOL bDumy=FALSE);
 	void SetLastSerial(int nSerial);
+	void SetCompletedSerial(int nSerial);
 	void SetLotSt();
 	void SetLotEd();
 	BOOL InitRst();

@@ -665,8 +665,8 @@ struct stSystem
 struct stLastJob
 {
 	CString sProcessNum;
-	CString sModelUp, sLayerUp, sLotUp, sSerialUp;
-	CString sModelDn, sLayerDn, sLotDn, sSerialDn;
+	CString sModelUp, sLayerUp, sLotUp, sSerialUp, sCompletedSerialUp;
+	CString sModelDn, sLayerDn, sLotDn, sSerialDn, sCompletedSerialDn;
 
 	CString sSelUserName, sReelTotLen, sOnePnlLen;
 	BOOL bLotSep;
@@ -674,9 +674,9 @@ struct stLastJob
 	BOOL bTempPause;	// [0]:AOI-Up , [1]:AOI-Dn
 	int nMergingLayer;
 	CString sTempPauseLen, sLmtTotYld, sLmtPatlYld;
-	CString sStripOutRatio;
+	CString sStripOutRatio, sCustomNeedRatio;
 	BOOL bContFixDef;
-	CString sNumRangeFixDef, sNumContFixDef;
+	CString sNumRangeFixDef, sNumContFixDef, sUltraSonicCleannerStTim;
 	BOOL bRclDrSen, bMkDrSen, bBufDrSen, bAoiUpDrSen, bAoiDnDrSen, bEngvDrSen, bUclDrSen;
 	BOOL bDispMkPcs, bStopFixDef, bMkSftySen, bAoiSftySen;
 	CString sJogSpd, sLotSerial; //sLightVal, 
@@ -703,8 +703,8 @@ struct stLastJob
 	stLastJob()
 	{
 		sProcessNum = _T("");
-		sModelUp = _T(""); sLayerUp = _T(""); sLotUp = _T(""); sSerialUp = _T("");
-		sModelDn = _T(""); sLayerDn = _T(""); sLotDn = _T(""); sSerialDn = _T("");
+		sModelUp = _T(""); sLayerUp = _T(""); sLotUp = _T(""); sSerialUp = _T(""); sCompletedSerialUp = _T("");
+		sModelDn = _T(""); sLayerDn = _T(""); sLotDn = _T(""); sSerialDn = _T(""); sCompletedSerialDn = _T("");
 
 		sSelUserName = _T(""); sReelTotLen = _T(""); sOnePnlLen = _T("");
 		bLotSep = FALSE;
@@ -713,9 +713,11 @@ struct stLastJob
 		nMergingLayer = 0; 	// [0]:AOI-Up , [1]:AOI-Dn
 		sTempPauseLen = _T(""); sLmtTotYld = _T(""); sLmtPatlYld = _T("");
 		sStripOutRatio = _T("20.0"); // Minimum 20%
+		sCustomNeedRatio = _T("");
 		bContFixDef = FALSE;
 		sNumRangeFixDef = _T("");
 		sNumContFixDef = _T("");
+		sUltraSonicCleannerStTim = _T("5.0"); // AOI_Dn : MW05940, AOI_Up : MW05942
 		bRclDrSen = FALSE; bMkDrSen = FALSE; bBufDrSen = FALSE; bAoiUpDrSen = FALSE; bAoiDnDrSen = FALSE; bEngvDrSen = FALSE; bUclDrSen = FALSE;
 		bDispMkPcs = FALSE; bStopFixDef = FALSE; bMkSftySen = FALSE; bAoiSftySen = FALSE;
 		sJogSpd = _T(""); sLotSerial = _T(""); //sLightVal=""); 

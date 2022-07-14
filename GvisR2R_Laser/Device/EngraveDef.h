@@ -58,7 +58,7 @@ typedef enum _stItemInx {
 	_FdVel, _FdAcc, _OnePnlLen, _OnePnlVel, _OnePnlAcc, _AoiLeadPitch, _MkLeadPitch, _FdDiffMax, _FdDiffRng, _FdDiffNum, 
 	_AoiPushOffLen, _MkPushOffLen, _AoiTqVal, _MkTqVal, _AoiBuffShotNum, _AoiMkLen, _MkBuffInitPos, _MkBuffCurrPos,
 	_MkNumLf, _MkNumRt, _MkMaxNumLf, _MkMaxNumRt,
-	_MkInitPosLf, _MkInitValLf, _MkInitAccLf, _MkFnlPosLf, _MkFnlValLf, _MkFnlAccLf, _MkFnlTqLf,
+	_MkInitPosLf, _MkInitVelLf, _MkInitAccLf, _MkFnlPosLf, _MkFnlVelLf, _MkFnlAccLf, _MkFnlTqLf,
 	_MkHgtPosX1Lf, _MkHgtPosY1Lf, _MkHgtPosX2Lf, _MkHgtPosY2Lf, _MkHgtPosX3Lf, _MkHgtPosY3Lf, _MkHgtPosX4Lf, _MkHgtPosY4Lf,
 	_MkInitPosRt, _MkInitVelRt, _MkInitAccRt, _MkFnlPosRt, _MkFnlVelRt, _MkFnlAccRt, _MkFnlTqRt,
 	_MkHgtPosX1Rt, _MkHgtPosY1Rt, _MkHgtPosX2Rt, _MkHgtPosY2Rt, _MkHgtPosX3Rt, _MkHgtPosY3Rt, _MkHgtPosX4Rt, _MkHgtPosY4Rt,

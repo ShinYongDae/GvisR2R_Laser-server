@@ -14366,8 +14366,14 @@ LRESULT CGvisR2R_LaserView::wmServerReceived(WPARAM wParam, LPARAM lParam)
 		break;
 	}
 
-	if(m_pDlgMenu01)
+	if (m_pDlgMenu01)
 		m_pDlgMenu01->UpdateInfo();
+
+	if (m_pDlgMenu03)
+		m_pDlgMenu03->UpdateInfo();
+
+	if (m_pDlgMenu04)
+		m_pDlgMenu04->UpdateInfo();
 
 	return (LRESULT)1;
 }
@@ -14846,33 +14852,51 @@ void CGvisR2R_LaserView::GetMkInfoLf(SOCKET_DATA SockData)
 
 	switch (nMsgId)
 	{
-	//case:
-	//	pDoc->WorkingInfo.LastJob.sVerifyLen = CharToString(SockData.strData);
-	//	break;
-	//case:
-	//	pDoc->WorkingInfo.Motion. = CharToString(SockData.strData);
-	//	break;
-	//case:
-	//	pDoc->WorkingInfo.Motion. = CharToString(SockData.strData);
-	//	break;
-	//case:
-	//	pDoc->WorkingInfo.Motion. = CharToString(SockData.strData);
-	//	break;
-	//case:
-	//	pDoc->WorkingInfo.Motion. = CharToString(SockData.strData);
-	//	break;
-	//case:
-	//	pDoc->WorkingInfo.Motion. = CharToString(SockData.strData);
-	//	break;
-	//case:
-	//	pDoc->WorkingInfo.Motion. = CharToString(SockData.strData);
-	//	break;
-	//case:
-	//	pDoc->WorkingInfo.Motion. = CharToString(SockData.strData);
-	//	break;
-	//case:
-	//	pDoc->WorkingInfo.Motion. = CharToString(SockData.strData);
-	//	break;
+	case _MkInitPosLf:
+		pDoc->WorkingInfo.Marking[0].sWaitPos = CharToString(SockData.strData);
+		break;
+	case _MkInitVelLf:
+		pDoc->WorkingInfo.Marking[0].sWaitVel = CharToString(SockData.strData);
+		break;
+	case _MkInitAccLf:
+		pDoc->WorkingInfo.Marking[0].sWaitAcc = CharToString(SockData.strData);
+		break;
+	case _MkFnlPosLf:
+		pDoc->WorkingInfo.Marking[0].sMarkingPos = CharToString(SockData.strData);
+		break;
+	case _MkFnlVelLf:
+		pDoc->WorkingInfo.Marking[0].sMarkingVel = CharToString(SockData.strData);
+		break;
+	case _MkFnlAccLf:
+		pDoc->WorkingInfo.Marking[0].sMarkingAcc = CharToString(SockData.strData);
+		break;
+	case _MkFnlTqLf:
+		pDoc->WorkingInfo.Marking[0].sMarkingToq = CharToString(SockData.strData);
+		break;
+	case _MkHgtPosX1Lf:
+		pDoc->WorkingInfo.Marking[0].sMeasurePosX[0] = CharToString(SockData.strData);
+		break;
+	case _MkHgtPosY1Lf:
+		pDoc->WorkingInfo.Marking[0].sMeasurePosY[0] = CharToString(SockData.strData);
+		break;
+	case _MkHgtPosX2Lf:
+		pDoc->WorkingInfo.Marking[0].sMeasurePosX[1] = CharToString(SockData.strData);
+		break;
+	case _MkHgtPosY2Lf:
+		pDoc->WorkingInfo.Marking[0].sMeasurePosY[1] = CharToString(SockData.strData);
+		break;
+	case _MkHgtPosX3Lf:
+		pDoc->WorkingInfo.Marking[0].sMeasurePosX[2] = CharToString(SockData.strData);
+		break;
+	case _MkHgtPosY3Lf:
+		pDoc->WorkingInfo.Marking[0].sMeasurePosY[2] = CharToString(SockData.strData);
+		break;
+	case _MkHgtPosX4Lf:
+		pDoc->WorkingInfo.Marking[0].sMeasurePosX[3] = CharToString(SockData.strData);
+		break;
+	case _MkHgtPosY4Lf:
+		pDoc->WorkingInfo.Marking[0].sMeasurePosY[3] = CharToString(SockData.strData);
+		break;
 	default:
 		break;
 	}
@@ -14885,9 +14909,51 @@ void CGvisR2R_LaserView::GetMkInfoRt(SOCKET_DATA SockData)
 
 	switch (nMsgId)
 	{
-	//case:
-	//	pDoc->WorkingInfo.LastJob.sVerifyLen = CharToString(SockData.strData);
-	//	break;
+	case _MkInitPosRt:
+		pDoc->WorkingInfo.Marking[1].sWaitPos = CharToString(SockData.strData);
+		break;
+	case _MkInitVelRt:
+		pDoc->WorkingInfo.Marking[1].sWaitVel = CharToString(SockData.strData);
+		break;
+	case _MkInitAccRt:
+		pDoc->WorkingInfo.Marking[1].sWaitAcc = CharToString(SockData.strData);
+		break;
+	case _MkFnlPosRt:
+		pDoc->WorkingInfo.Marking[1].sMarkingPos = CharToString(SockData.strData);
+		break;
+	case _MkFnlVelRt:
+		pDoc->WorkingInfo.Marking[1].sMarkingVel = CharToString(SockData.strData);
+		break;
+	case _MkFnlAccRt:
+		pDoc->WorkingInfo.Marking[1].sMarkingAcc = CharToString(SockData.strData);
+		break;
+	case _MkFnlTqRt:
+		pDoc->WorkingInfo.Marking[1].sMarkingToq = CharToString(SockData.strData);
+		break;
+	case _MkHgtPosX1Rt:
+		pDoc->WorkingInfo.Marking[1].sMeasurePosX[0] = CharToString(SockData.strData);
+		break;
+	case _MkHgtPosY1Rt:
+		pDoc->WorkingInfo.Marking[1].sMeasurePosY[0] = CharToString(SockData.strData);
+		break;
+	case _MkHgtPosX2Rt:
+		pDoc->WorkingInfo.Marking[1].sMeasurePosX[1] = CharToString(SockData.strData);
+		break;
+	case _MkHgtPosY2Rt:
+		pDoc->WorkingInfo.Marking[1].sMeasurePosY[1] = CharToString(SockData.strData);
+		break;
+	case _MkHgtPosX3Rt:
+		pDoc->WorkingInfo.Marking[1].sMeasurePosX[2] = CharToString(SockData.strData);
+		break;
+	case _MkHgtPosY3Rt:
+		pDoc->WorkingInfo.Marking[1].sMeasurePosY[2] = CharToString(SockData.strData);
+		break;
+	case _MkHgtPosX4Rt:
+		pDoc->WorkingInfo.Marking[1].sMeasurePosX[3] = CharToString(SockData.strData);
+		break;
+	case _MkHgtPosY4Rt:
+		pDoc->WorkingInfo.Marking[1].sMeasurePosY[3] = CharToString(SockData.strData);
+		break;
 	default:
 		break;
 	}

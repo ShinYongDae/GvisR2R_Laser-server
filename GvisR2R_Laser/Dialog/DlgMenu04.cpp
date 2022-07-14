@@ -2206,7 +2206,6 @@ void CDlgMenu04::OnStc124()
 	//pView->m_pVoiceCoil[1]->SetMarkFinalData(1);
 }
 
-
 BOOL CDlgMenu04::OnEraseBkgnd(CDC* pDC)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
@@ -2218,4 +2217,8 @@ BOOL CDlgMenu04::OnEraseBkgnd(CDC* pDC)
 	//return CDialog::OnEraseBkgnd(pDC);
 }
 
+void CDlgMenu04::UpdateInfo()
+{
+	Disp();
+}
 

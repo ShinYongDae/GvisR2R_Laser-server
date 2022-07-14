@@ -397,6 +397,7 @@
 #define IDC_STC_006                     1147
 #define IDC_STC_TOTAL_NUM_DN            1148
 #define IDC_STC_008                     1148
+#define IDC_STC_194                     1148
 #define IDC_STC_WK_DN                   1149
 #define IDC_STC_0013                    1149
 #define IDC_STC_010                     1149
@@ -497,10 +498,12 @@
 #define IDC_STC_GD_RA_2_ALL             1175
 #define IDC_STC_203                     1175
 #define IDC_STC_42                      1175
+#define IDC_STC_195                     1175
 #define IDC_STC_GD_RA_3_ALL             1176
 #define IDC_STATIC_RNG_2                1176
 #define IDC_STC_204                     1176
 #define IDC_COMBO_MODEL                 1176
+#define IDC_STC_196                     1176
 #define IDC_STC_GD_RA_4_ALL             1177
 #define IDC_STC_205                     1177
 #define IDC_LIST_LOT                    1177
@@ -725,6 +728,7 @@
 #define IDC_STC_66                      1235
 #define IDC_STC_12_14                   1236
 #define IDC_STC_67                      1236
+#define IDC_STC_197                     1236
 #define IDC_STC_12_15                   1237
 #define IDC_STC_68                      1237
 #define IDC_STC_1145                    1237
@@ -739,6 +743,7 @@
 #define IDC_STC_1148                    1240
 #define IDC_STC_12_19                   1241
 #define IDC_STC_72                      1241
+#define IDC_STC_198                     1241
 #define IDC_STC_12_18                   1242
 #define IDC_STC_73                      1242
 #define IDC_STC_12_20                   1243
@@ -1042,7 +1047,9 @@
 #define IDC_STC_MIN                     1835
 #define IDC_STC_MAX                     1836
 #define IDC_CHK_1185                    1837
+#define IDC_CHK_85                      1837
 #define IDC_CHK_1186                    1838
+#define IDC_CHK_86                      1838
 #define IDC_CHK_1187                    1839
 #define IDC_CHK_1188                    1840
 #define IDC_STATIC_SERVER_PORT          2557

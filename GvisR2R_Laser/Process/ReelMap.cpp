@@ -41,6 +41,7 @@ CReelMap::CReelMap(int nPnl, int nPcs, int nDir)
 	m_dLotCutPosLen = 0.0;
 	m_nSerial = 0;
 	m_nLastShot = 0;
+	m_nCompletedShot = 0;
 
 	//m_nCntFixPcs = 0;
 	m_nPrevSerial[0] = 0;	// --
@@ -560,7 +561,7 @@ BOOL CReelMap::OpenUser(CString sPath)
 		fprintf(fp, "상면레이어 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sLayerUp)); if (pRtn) delete pRtn; pRtn = NULL;
 		if (bDualTest)
 		{
-			fprintf(fp, "하면레이어 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sLayerDn)); delete pRtn;
+			fprintf(fp, "하면레이어 = %s\r\n", pRtn = StrToChar(pDoc->WorkingInfo.LastJob.sLayerDn)); if (pRtn) delete pRtn; pRtn = NULL;
 		}
 		fprintf(fp, "\r\n");
 		fprintf(fp, "Process Code = \r\n");
@@ -1592,6 +1593,37 @@ void CReelMap::SetLastSerial(int nSerial)
 	else
 		sData.Format(_T("%04d-%02d-%02d, %02d:%02d:%02d"), nYear, nMonth, nDay, nHour, nMin, nSec);
 	::WritePrivateProfileString(_T("Info"), _T("Marked Date"), sData, m_sPathBuf);
+
+	UpdateRst(nSerial);
+}
+
+void CReelMap::SetCompletedSerial(int nSerial)
+{
+	if (nSerial <= 0)
+	{
+		AfxMessageBox(_T("Serial Error.67"));
+		return;
+	}
+
+	m_nCompletedShot = nSerial;
+
+	CString sData;
+	sData.Format(_T("%d"), nSerial);
+	::WritePrivateProfileString(_T("Info"), _T("Completed Shot"), sData, m_sPathBuf);
+
+	int nYear, nMonth, nDay, nHour, nMin, nSec;
+	nYear = pDoc->WorkingInfo.Lot.CurTime.nYear;
+	nMonth = pDoc->WorkingInfo.Lot.CurTime.nMonth;
+	nDay = pDoc->WorkingInfo.Lot.CurTime.nDay;
+	nHour = pDoc->WorkingInfo.Lot.CurTime.nHour;
+	nMin = pDoc->WorkingInfo.Lot.CurTime.nMin;
+	nSec = pDoc->WorkingInfo.Lot.CurTime.nSec;
+
+	if (!nYear && !nMonth && !nDay && !nHour && !nMin && !nSec)
+		sData = _T("");
+	else
+		sData.Format(_T("%04d-%02d-%02d, %02d:%02d:%02d"), nYear, nMonth, nDay, nHour, nMin, nSec);
+	::WritePrivateProfileString(_T("Info"), _T("Completed Date"), sData, m_sPathBuf);
 
 	UpdateRst(nSerial);
 }
@@ -2656,10 +2688,19 @@ BOOL CReelMap::RemakeReelmap()
 	int nStripNumY, nPieceNumPerStrip;
 
 	CString sModel, sLot, sLayer[2];
-	int nLastShot, nPnl, nRow, nCol, nDefCode;// , nStrip;//, nC, nR;
+	int nLastShot, nPnl, nRow, nCol, nDefCode, nCompletedShot;// , nStrip;//, nC, nR;
 	CString sPnl, sRow, sVal;
 	TCHAR sep[] = {_T(",/;\r\n\t")};
 	TCHAR szData[MAX_PATH];
+
+	if (0 < ::GetPrivateProfileString(_T("Info"), _T("Completed Shot"), NULL, szData, sizeof(szData), sPath))
+		nCompletedShot = _tstoi(szData);
+	else
+	{
+		nCompletedShot = 0; // Failed.
+		//pView->MsgBox(_T("릴맵에 Completed Shot 정보가 없습니다."));
+		//return FALSE;
+	}
 
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("Marked Shot"), NULL, szData, sizeof(szData), sPath))
 		nLastShot = _tstoi(szData); 

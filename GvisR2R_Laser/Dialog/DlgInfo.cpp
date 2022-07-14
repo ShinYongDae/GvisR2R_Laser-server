@@ -74,6 +74,8 @@ BEGIN_MESSAGE_MAP(CDlgInfo, CDialog)
 	ON_BN_CLICKED(IDC_BTN_EXIT, OnBtnExit)
 	ON_BN_CLICKED(IDC_STC_174, OnStc174)
 	ON_BN_CLICKED(IDC_STC_178, OnStc178)
+	ON_BN_CLICKED(IDC_STC_32, OnStc32)
+	ON_BN_CLICKED(IDC_STC_183, OnStc183)
 	ON_WM_CTLCOLOR()
 	ON_BN_CLICKED(IDC_STC_61, OnStc61)
 	ON_BN_CLICKED(IDC_CHK_USE_AOI_DUAL, OnChkUseAoiDual)
@@ -87,8 +89,8 @@ BEGIN_MESSAGE_MAP(CDlgInfo, CDialog)
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_CHK_4_POINT_ALIGN, &CDlgInfo::OnBnClickedChk4PointAlign)
 	ON_BN_CLICKED(IDC_CHK_2_POINT_ALIGN, &CDlgInfo::OnBnClickedChk2PointAlign)
-	ON_BN_CLICKED(IDC_CHK_1186, &CDlgInfo::OnBnClickedChk1186)
-	ON_BN_CLICKED(IDC_CHK_1185, &CDlgInfo::OnBnClickedChk1185)
+	ON_BN_CLICKED(IDC_CHK_86, &CDlgInfo::OnBnClickedChk86)
+	ON_BN_CLICKED(IDC_CHK_85, &CDlgInfo::OnBnClickedChk85)
 	ON_BN_CLICKED(IDC_CHK_1187, &CDlgInfo::OnBnClickedChk1187)
 	ON_BN_CLICKED(IDC_CHK_1188, &CDlgInfo::OnBnClickedChk1188)
 END_MESSAGE_MAP()
@@ -380,6 +382,14 @@ void CDlgInfo::InitStcTitle()
 	myStcTitle[51].SubclassDlgItem(IDC_STC_1147, this); //AOI초음파세정기
 	myStcTitle[52].SubclassDlgItem(IDC_STC_1148, this); //각인부초음파세정기
 
+	myStcTitle[53].SubclassDlgItem(IDC_STC_30, this); //초음파세정기 동작
+	myStcTitle[54].SubclassDlgItem(IDC_STC_31, this); //검사시작 후
+	myStcTitle[55].SubclassDlgItem(IDC_STC_33, this); //초
+
+	myStcTitle[56].SubclassDlgItem(IDC_STC_73, this); //고객출하수율
+	myStcTitle[57].SubclassDlgItem(IDC_STC_182, this); //양품율
+	myStcTitle[58].SubclassDlgItem(IDC_STC_184, this); //%
+
 	for(int i=0; i<MAX_INFO_STC; i++)
 	{
 		myStcTitle[i].SetFontName(_T("Arial"));
@@ -418,6 +428,8 @@ void CDlgInfo::InitStcTitle()
 		case 24:
 		case 27:
 		case 40:
+		case 55:
+		case 58:
 			myStcTitle[i].SetTextColor(RGB_NAVY);
 			myStcTitle[i].SetBkColor(RGB_WHITE);
 			myStcTitle[i].SetFontBold(TRUE);
@@ -446,6 +458,9 @@ void CDlgInfo::InitStcData()
 	myStcData[10].SubclassDlgItem(IDC_STC_178, this);
 	myStcData[11].SubclassDlgItem(IDC_STC_61, this);
 	myStcData[12].SubclassDlgItem(IDC_STC_181, this);
+
+	myStcData[13].SubclassDlgItem(IDC_STC_32, this); // 초음파세정기 동작 검사시작 후 시작시간 [초]
+	myStcData[14].SubclassDlgItem(IDC_STC_183, this); // 고객출하수율
 
 	for(int i=0; i<MAX_INFO_STC_DATA; i++)
 	{
@@ -512,6 +527,8 @@ void CDlgInfo::Disp()
 	myStcData[10].SetText(pDoc->WorkingInfo.LastJob.sPartialSpd);
  	myStcData[11].SetText(pDoc->WorkingInfo.LastJob.sNumRangeFixDef);
  	myStcData[12].SetText(pDoc->WorkingInfo.LastJob.sSampleTestShotNum);
+	myStcData[13].SetText(pDoc->WorkingInfo.LastJob.sUltraSonicCleannerStTim);
+	myStcData[14].SetText(pDoc->WorkingInfo.LastJob.sCustomNeedRatio);
 
 	if(pDoc->WorkingInfo.LastJob.bLotSep)
 		myBtn[1].SetCheck(TRUE);
@@ -812,6 +829,34 @@ void CDlgInfo::OnStc0037()
 	::WritePrivateProfileString(_T("Last Job"), _T("Number of Continuous Fix Defect"), sVal, PATH_WORKING_INFO);	
 }
 
+void CDlgInfo::OnStc32()
+{
+	// TODO: Add your control notification handler code here
+	myStcData[13].SetBkColor(RGB_RED);
+	myStcData[13].RedrawWindow();
+
+	CPoint pt;	CRect rt;
+	GetDlgItem(IDC_STC_32)->GetWindowRect(&rt);
+	pt.x = rt.right; pt.y = rt.bottom;
+	ShowKeypad(IDC_STC_32, pt, TO_BOTTOM | TO_RIGHT);
+
+	myStcData[13].SetBkColor(RGB_WHITE);
+	myStcData[13].RedrawWindow();
+
+	CString sVal;
+	GetDlgItem(IDC_STC_32)->GetWindowText(sVal);
+	pDoc->WorkingInfo.LastJob.sUltraSonicCleannerStTim = sVal;
+	::WritePrivateProfileString(_T("Last Job"), _T("Ultra Sonic Cleanner Start Time"), sVal, PATH_WORKING_INFO);
+
+	double dTime = _tstof(sVal) * 100.0;
+	int nTime = int(dTime);
+	if (pView->m_pMpe)
+	{
+		pView->m_pMpe->Write(_T("MW05940"), (long)nTime);	// AOI_Dn (단위 [초] * 100) : 1 is 10 mSec.
+		pView->m_pMpe->Write(_T("MW05942"), (long)nTime);	// AOI_Up (단위 [초] * 100) : 1 is 10 mSec.
+	}
+}
+
 void CDlgInfo::OnChk000() 
 {
 	// TODO: Add your control notification handler code here
@@ -1095,6 +1140,25 @@ void CDlgInfo::OnStc174()
 	::WritePrivateProfileString(_T("Last Job"), _T("Strip Out Ratio"), sVal, PATH_WORKING_INFO);	
 }
 
+void CDlgInfo::OnStc183() 
+{
+	// TODO: Add your control notification handler code here
+	myStcData[14].SetBkColor(RGB_RED);
+	myStcData[14].RedrawWindow();
+
+	CPoint pt;	CRect rt;
+	GetDlgItem(IDC_STC_183)->GetWindowRect(&rt);
+	pt.x = rt.right; pt.y = rt.bottom;
+	ShowKeypad(IDC_STC_183, pt, TO_BOTTOM|TO_RIGHT);
+
+	myStcData[14].SetBkColor(RGB_WHITE);
+	myStcData[14].RedrawWindow();
+	
+	CString sVal;
+	GetDlgItem(IDC_STC_183)->GetWindowText(sVal);
+	pDoc->WorkingInfo.LastJob.sCustomNeedRatio = sVal;
+	::WritePrivateProfileString(_T("Last Job"), _T("Custom Need Ratio"), sVal, PATH_WORKING_INFO);	
+}
 void CDlgInfo::OnStc178() 
 {
 	// TODO: Add your control notification handler code here
@@ -1388,7 +1452,7 @@ void CDlgInfo::OnBnClickedChk4PointAlign()
 	}
 }
 
-void CDlgInfo::OnBnClickedChk1185()
+void CDlgInfo::OnBnClickedChk85()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	if (myBtn[19].GetCheck()) //하면AOI 클린롤러
@@ -1406,7 +1470,7 @@ void CDlgInfo::OnBnClickedChk1185()
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Dn Aoi CleanRoler"), sData, PATH_WORKING_INFO);
 }
 
-void CDlgInfo::OnBnClickedChk1186()
+void CDlgInfo::OnBnClickedChk86()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	if (myBtn[20].GetCheck()) //상면AOI 클린롤러

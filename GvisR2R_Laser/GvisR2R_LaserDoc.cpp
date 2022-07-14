@@ -1233,6 +1233,22 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.LastJob.sSerialDn = CString(_T(""));
 	}
 
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Completed SerialUp"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.sCompletedSerialUp = CString(szData);
+	else
+	{
+		//AfxMessageBox(_T("SerialUp이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.LastJob.sCompletedSerialUp = CString(_T(""));
+	}
+
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Completed SerialDn"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.sCompletedSerialDn = CString(szData);
+	else
+	{
+		//AfxMessageBox(_T("SerialDn이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.LastJob.sCompletedSerialDn = CString(_T(""));
+	}
+
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Operator Name"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.LastJob.sSelUserName = CString(szData);
 	else
@@ -1336,6 +1352,12 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.LastJob.sNumContFixDef = CString(_T(""));
 	}
 
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Ultra Sonic Cleanner Start Time"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.sUltraSonicCleannerStTim = CString(szData);
+	else
+		WorkingInfo.LastJob.sUltraSonicCleannerStTim = CString(_T("5.0"));
+
+
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use Recoiler Door Sensor"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.LastJob.bRclDrSen = _ttoi(szData) ? TRUE : FALSE;
 	else
@@ -1395,6 +1417,11 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.LastJob.sStripOutRatio = CString(szData);
 	else
 		WorkingInfo.LastJob.sStripOutRatio = _T("20.0"); // Minimum 20%
+
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Custom Need Ratio"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.sCustomNeedRatio = CString(szData);
+	else
+		WorkingInfo.LastJob.sCustomNeedRatio = _T("");
 
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Partial Speed"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.LastJob.sPartialSpd = CString(szData);
@@ -3076,6 +3103,9 @@ void CGvisR2R_LaserDoc::SaveWorkingInfo()
 	sData = WorkingInfo.LastJob.sSerialUp;
 	::WritePrivateProfileString(_T("Last Job"), _T("Last SerialUp"), sData, sPath);
 
+	sData = WorkingInfo.LastJob.sCompletedSerialUp;
+	::WritePrivateProfileString(_T("Last Job"), _T("Completed SerialUp"), sData, sPath);
+
 	sData = WorkingInfo.LastJob.sModelDn;
 	::WritePrivateProfileString(_T("Last Job"), _T("ModelDn Name"), sData, sPath);
 
@@ -3087,6 +3117,9 @@ void CGvisR2R_LaserDoc::SaveWorkingInfo()
 
 	sData = WorkingInfo.LastJob.sSerialDn;
 	::WritePrivateProfileString(_T("Last Job"), _T("Last SerialDn"), sData, sPath);
+
+	sData = WorkingInfo.LastJob.sCompletedSerialDn;
+	::WritePrivateProfileString(_T("Last Job"), _T("Completed SerialDn"), sData, sPath);
 
 	sData = WorkingInfo.LastJob.sSelUserName;
 	::WritePrivateProfileString(_T("Last Job"), _T("Operator Name"), sData, sPath);
@@ -3129,6 +3162,9 @@ void CGvisR2R_LaserDoc::SaveWorkingInfo()
 
 	sData = WorkingInfo.LastJob.sNumContFixDef;
 	::WritePrivateProfileString(_T("Last Job"), _T("Number of Continuous Fix Defect"), sData, sPath);
+
+	sData = WorkingInfo.LastJob.sUltraSonicCleannerStTim;
+	::WritePrivateProfileString(_T("Last Job"), _T("Ultra Sonic Cleanner Start Time"), sData, sPath);
 
 	sData.Format(_T("%d"), WorkingInfo.LastJob.bRclDrSen ? 1 : 0);
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Recoiler Door Sensor"), sData, sPath);
@@ -3216,6 +3252,9 @@ void CGvisR2R_LaserDoc::SaveWorkingInfo()
 
 	sData = WorkingInfo.LastJob.sStripOutRatio;
 	::WritePrivateProfileString(_T("Last Job"), _T("Strip Out Ratio"), sData, sPath);
+
+	sData = WorkingInfo.LastJob.sCustomNeedRatio;
+	::WritePrivateProfileString(_T("Last Job"), _T("Custom Need Ratio"), sData, sPath);
 
 	sData = WorkingInfo.LastJob.sPartialSpd;
 	::WritePrivateProfileString(_T("Last Job"), _T("Partial Speed"), sData, sPath);
@@ -6956,6 +6995,41 @@ void CGvisR2R_LaserDoc::SetLastSerial(int nSerial)
 				m_pReelMapAllUp->SetLastSerial(nSerial);
 			if (m_pReelMapAllDn)
 				m_pReelMapAllDn->SetLastSerial(nSerial);
+		}
+	}
+}
+
+void CGvisR2R_LaserDoc::SetCompletedSerial(int nSerial)
+{
+	if (nSerial <= 0)
+	{
+		AfxMessageBox(_T("Serial Error.49"));
+		return;
+	}
+
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+
+	if (nSerial > 0)
+	{
+		CString str, sPath = PATH_WORKING_INFO;
+		str.Format(_T("%d"), nSerial);
+		WorkingInfo.LastJob.sCompletedSerialUp = str;
+		::WritePrivateProfileString(_T("Last Job"), _T("Completed SerialUp"), str, sPath);
+		WorkingInfo.LastJob.sCompletedSerialDn = str;
+		::WritePrivateProfileString(_T("Last Job"), _T("Completed SerialDn"), str, sPath);
+
+		// 		if(m_pReelMap)
+		// 			m_pReelMap->SetCompletedSerial(nSerial);
+		if (m_pReelMapUp)
+			m_pReelMapUp->SetCompletedSerial(nSerial);
+		if (bDualTest)
+		{
+			if (m_pReelMapDn)
+				m_pReelMapDn->SetCompletedSerial(nSerial);
+			if (m_pReelMapAllUp)
+				m_pReelMapAllUp->SetCompletedSerial(nSerial);
+			if (m_pReelMapAllDn)
+				m_pReelMapAllDn->SetCompletedSerial(nSerial);
 		}
 	}
 }

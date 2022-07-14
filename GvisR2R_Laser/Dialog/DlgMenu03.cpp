@@ -2448,6 +2448,26 @@ void CDlgMenu03::SetMkOnePnl(BOOL bOn)
 
 }
 
+void CDlgMenu03::SetEngraveCleanner(BOOL bOn)
+{
+	pView->m_pMpe->Write(_T("MB44014E"), bOn ? 1 : 0); // [각인부 세정기]
+
+	CString sData, sPath = PATH_WORKING_INFO;
+	pDoc->WorkingInfo.LastJob.bEngraveCleanner = bOn;
+	sData.Format(_T("%d"), pDoc->WorkingInfo.LastJob.bEngraveCleanner ? 1 : 0);
+	::WritePrivateProfileString(_T("Last Job"), _T("Engrave Cleanner"), sData, sPath);
+}
+
+void CDlgMenu03::SetAoiDnCleanner(BOOL bOn)
+{
+	pView->m_pMpe->Write(_T("MB44014F"), bOn ? 1 : 0); // [AOI(하) 세정기]
+
+	CString sData, sPath = PATH_WORKING_INFO;
+	pDoc->WorkingInfo.LastJob.bAoiDnCleanner = bOn;
+	sData.Format(_T("%d"), pDoc->WorkingInfo.LastJob.bAoiDnCleanner ? 1 : 0);
+	::WritePrivateProfileString(_T("Last Job"), _T("AoiDn Cleanner"), sData, sPath);
+}
+
 void CDlgMenu03::SetAoiOnePnl(BOOL bOn)
 {
 	//pView->IoWrite("MB440151", bOn?1:0);	// 한판넬 이송상태 ON (PC가 ON, OFF)
@@ -4289,3 +4309,7 @@ BOOL CDlgMenu03::IsEngraveTblBlw()
 	return bOn;
 }
 
+void CDlgMenu03::UpdateInfo()
+{
+	Disp();
+}

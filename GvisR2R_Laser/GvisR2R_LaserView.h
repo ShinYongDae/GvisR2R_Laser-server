@@ -68,7 +68,23 @@
 #define TIM_SHOW_MENU01			18
 #define TIM_SHOW_MENU02			19
 #define TIM_CHK_TEMP_STOP		20
+#define TIM_SAFTY_STOP			21
 
+namespace Mk2PtIdx
+{
+	typedef enum Index {Start = 2, ChkSn = 4, InitMk = 10, Move0Cam1 = 12, Move0Cam0 = 14, Align1_0 = 17, Align0_0 = 18, 
+						Move1Cam1 = 21, Move1Cam0 = 23, Align1_1 = 26, Align0_1 = 27, MoveInitPt = 29, ChkElec = 32, DoMk = 35, 
+						Verify = 37, DoneMk = 38, LotDiff = 50 }; 
+}
+
+namespace Mk4PtIdx
+{
+	typedef enum Index {Start = 2, ChkSn = 4, InitMk = 10, Move0Cam1 = 12, Move0Cam0 = 14, Align1_0 = 17, Align0_0 = 18,
+						Move1Cam1 = 21, Move1Cam0 = 23, Align1_1 = 26, Align0_1 = 27, Move2Cam1 = 29, Move2Cam0 = 31,
+						Align1_2 = 34, Align0_2 = 35, Move3Cam1 = 37, Move3Cam0 = 39, Align1_3 = 42, Align0_3 = 43,
+						MoveInitPt = 45, ChkElec = 48, DoMk = 51,
+						Verify = 53, DoneMk = 54, LotDiff = 60};
+}
 
 typedef struct _DispMain
 {
@@ -148,6 +164,7 @@ class CGvisR2R_LaserView : public CFormView
 	CString m_sDispMsg[10];
 	double m_dTotVel, m_dPartVel;
 	BOOL m_bTIM_CHK_TEMP_STOP;
+	BOOL m_bTIM_SAFTY_STOP;
 	CString m_sMyMsg; int m_nTypeMyMsg;
 	int m_nVsBufLastSerial[2];
 	BOOL m_bOpenShareUp, m_bOpenShareDn;
