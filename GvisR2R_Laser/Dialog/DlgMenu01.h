@@ -117,6 +117,9 @@ public:
 	void DispStTime();
 	void DispRunTime();
 	void DispEdTime();
+	CString GetStTime();
+	CString GetRunTime();
+	CString GetEdTime();
 	int GetSerial();
 	BOOL SetSerial(int nSerial, BOOL bDumy=FALSE);
 	void UpdateWorking();
