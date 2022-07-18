@@ -1429,14 +1429,14 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.LastJob.sPartialSpd = _T("10.0");
 
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use Up Aoi CleanRoler"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.LastJob.bAoiUpCleanRoler = _ttoi(szData) ? TRUE : FALSE;
+		WorkingInfo.LastJob.bUseAoiUpCleanRoler = _ttoi(szData) ? TRUE : FALSE;
 	else
-		WorkingInfo.LastJob.bAoiUpCleanRoler = TRUE;
+		WorkingInfo.LastJob.bUseAoiUpCleanRoler = TRUE;
 
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use Dn Aoi CleanRoler"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.LastJob.bAoiDnCleanRoler = _ttoi(szData) ? TRUE : FALSE;
+		WorkingInfo.LastJob.bUseAoiDnCleanRoler = _ttoi(szData) ? TRUE : FALSE;
 	else
-		WorkingInfo.LastJob.bAoiDnCleanRoler = TRUE;
+		WorkingInfo.LastJob.bUseAoiDnCleanRoler = TRUE;
 
 
 	// 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Light Value"), NULL, szData, sizeof(szData), sPath))

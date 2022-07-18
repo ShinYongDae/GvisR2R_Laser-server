@@ -850,6 +850,7 @@ public:
 
 	BOOL IsPinPos0();
 
+	void GetSysInfo(SOCKET_DATA SockData);
 	void GetInfo(SOCKET_DATA SockData);
 	void GetTotRatio(SOCKET_DATA SockData);
 	void GetStTime(SOCKET_DATA SockData);

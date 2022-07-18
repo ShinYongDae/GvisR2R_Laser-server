@@ -628,12 +628,12 @@ void CDlgInfo::Disp()
 		myBtn[16].SetTextColor(RGB_BLUE);
 	}
 
-	if (pDoc->WorkingInfo.LastJob.bAoiDnCleanRoler)
+	if (pDoc->WorkingInfo.LastJob.bUseAoiDnCleanRoler)
 		myBtn[19].SetCheck(TRUE);
 	else
 		myBtn[19].SetCheck(FALSE);
 
-	if (pDoc->WorkingInfo.LastJob.bAoiUpCleanRoler)
+	if (pDoc->WorkingInfo.LastJob.bUseAoiUpCleanRoler)
 		myBtn[20].SetCheck(TRUE);
 	else
 		myBtn[20].SetCheck(FALSE);
@@ -953,10 +953,10 @@ void CDlgInfo::OnChk004()
 	if(myBtn[4].GetCheck())
 	{
 		pDoc->WorkingInfo.LastJob.bRclDrSen = TRUE;
-		pDoc->Status.bDoorReF[DOOR_FR_RC] = TRUE;
-		pDoc->Status.bDoorReF[DOOR_S_RC] = TRUE;
-		pDoc->Status.bDoorReF[DOOR_BL_RC] = TRUE;
-		pDoc->Status.bDoorReF[DOOR_BR_RC] = TRUE;
+		pDoc->Status.bDoorReF[DOOR_FR_RC] = FALSE;
+		pDoc->Status.bDoorReF[DOOR_S_RC] = FALSE;
+		pDoc->Status.bDoorReF[DOOR_BL_RC] = FALSE;
+		pDoc->Status.bDoorReF[DOOR_BR_RC] = FALSE;
 	}
 	else
 		pDoc->WorkingInfo.LastJob.bRclDrSen = FALSE;
@@ -971,12 +971,12 @@ void CDlgInfo::OnChk005()
 	if(myBtn[5].GetCheck())		// 상면 AOI DOOR SENSOR
 	{
 		pDoc->WorkingInfo.LastJob.bAoiUpDrSen = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_FM_AOI_UP] = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_FL_AOI_UP] = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_FR_AOI_UP] = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_BM_AOI_UP] = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_BL_AOI_UP] = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_BR_AOI_UP] = TRUE;
+		pDoc->Status.bDoorAoiF[DOOR_FM_AOI_UP] = FALSE;
+		pDoc->Status.bDoorAoiF[DOOR_FL_AOI_UP] = FALSE;
+		pDoc->Status.bDoorAoiF[DOOR_FR_AOI_UP] = FALSE;
+		pDoc->Status.bDoorAoiF[DOOR_BM_AOI_UP] = FALSE;
+		pDoc->Status.bDoorAoiF[DOOR_BL_AOI_UP] = FALSE;
+		pDoc->Status.bDoorAoiF[DOOR_BR_AOI_UP] = FALSE;
 	}
 	else
 		pDoc->WorkingInfo.LastJob.bAoiUpDrSen = FALSE;
@@ -991,10 +991,10 @@ void CDlgInfo::OnChk006()
 	if(myBtn[6].GetCheck())
 	{
 		pDoc->WorkingInfo.LastJob.bMkDrSen = TRUE;
-		pDoc->Status.bDoorMkF[DOOR_FL_MK] = TRUE;
-		pDoc->Status.bDoorMkF[DOOR_FR_MK] = TRUE;
-		pDoc->Status.bDoorMkF[DOOR_BL_MK] = TRUE;
-		pDoc->Status.bDoorMkF[DOOR_BR_MK] = TRUE;
+		pDoc->Status.bDoorMkF[DOOR_FL_MK] = FALSE;
+		pDoc->Status.bDoorMkF[DOOR_FR_MK] = FALSE;
+		pDoc->Status.bDoorMkF[DOOR_BL_MK] = FALSE;
+		pDoc->Status.bDoorMkF[DOOR_BR_MK] = FALSE;
 	}
 	else
 		pDoc->WorkingInfo.LastJob.bMkDrSen = FALSE;
@@ -1009,10 +1009,10 @@ void CDlgInfo::OnChk007()
 	if(myBtn[7].GetCheck())
 	{
 		pDoc->WorkingInfo.LastJob.bUclDrSen = TRUE;
-		pDoc->Status.bDoorUcF[DOOR_FL_UC] = TRUE;
-		pDoc->Status.bDoorUcF[DOOR_FR_UC] = TRUE;
-		pDoc->Status.bDoorUcF[DOOR_BL_UC] = TRUE;
-		pDoc->Status.bDoorUcF[DOOR_BR_UC] = TRUE;
+		pDoc->Status.bDoorUcF[DOOR_FL_UC] = FALSE;
+		pDoc->Status.bDoorUcF[DOOR_FR_UC] = FALSE;
+		pDoc->Status.bDoorUcF[DOOR_BL_UC] = FALSE;
+		pDoc->Status.bDoorUcF[DOOR_BR_UC] = FALSE;
 	}
 	else
 		pDoc->WorkingInfo.LastJob.bUclDrSen = FALSE;
@@ -1050,10 +1050,10 @@ void CDlgInfo::OnChk009()
 	if (myBtn[9].GetCheck())
 	{
 		pDoc->WorkingInfo.LastJob.bEngvDrSen = TRUE;
-		pDoc->Status.bDoorEngvF[DOOR_FL_ENGV] = TRUE;
-		pDoc->Status.bDoorEngvF[DOOR_FR_ENGV] = TRUE;
-		pDoc->Status.bDoorEngvF[DOOR_BL_ENGV] = TRUE;
-		pDoc->Status.bDoorEngvF[DOOR_BR_ENGV] = TRUE;
+		pDoc->Status.bDoorEngvF[DOOR_FL_ENGV] = FALSE;
+		pDoc->Status.bDoorEngvF[DOOR_FR_ENGV] = FALSE;
+		pDoc->Status.bDoorEngvF[DOOR_BL_ENGV] = FALSE;
+		pDoc->Status.bDoorEngvF[DOOR_BR_ENGV] = FALSE;
 	}
 	else
 		pDoc->WorkingInfo.LastJob.bEngvDrSen = FALSE;
@@ -1088,12 +1088,12 @@ void CDlgInfo::OnChk011()
 	if (myBtn[11].GetCheck())		// 하면 AOI DOOR SENSOR
 	{
 		pDoc->WorkingInfo.LastJob.bAoiDnDrSen = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_FM_AOI_DN] = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_FL_AOI_DN] = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_FR_AOI_DN] = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_BM_AOI_DN] = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_BL_AOI_DN] = TRUE;
-		pDoc->Status.bDoorAoiF[DOOR_BR_AOI_DN] = TRUE;
+		pDoc->Status.bDoorAoiF[DOOR_FM_AOI_DN] = FALSE;
+		pDoc->Status.bDoorAoiF[DOOR_FL_AOI_DN] = FALSE;
+		pDoc->Status.bDoorAoiF[DOOR_FR_AOI_DN] = FALSE;
+		pDoc->Status.bDoorAoiF[DOOR_BM_AOI_DN] = FALSE;
+		pDoc->Status.bDoorAoiF[DOOR_BL_AOI_DN] = FALSE;
+		pDoc->Status.bDoorAoiF[DOOR_BR_AOI_DN] = FALSE;
 	}
 	else
 		pDoc->WorkingInfo.LastJob.bAoiDnDrSen = FALSE;
@@ -1457,16 +1457,16 @@ void CDlgInfo::OnBnClickedChk85()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	if (myBtn[19].GetCheck()) //하면AOI 클린롤러
 	{
-		pDoc->WorkingInfo.LastJob.bAoiDnCleanRoler = TRUE;
+		pDoc->WorkingInfo.LastJob.bUseAoiDnCleanRoler = TRUE;
 		pView->m_pMpe->Write(_T("MB44010F"), 1);
 	}
 	else
 	{
-		pDoc->WorkingInfo.LastJob.bAoiDnCleanRoler = FALSE;
+		pDoc->WorkingInfo.LastJob.bUseAoiDnCleanRoler = FALSE;
 		pView->m_pMpe->Write(_T("MB44010F"), 0);
 	}
 
-	CString sData = pDoc->WorkingInfo.LastJob.bAoiDnCleanRoler ? _T("1") : _T("0");
+	CString sData = pDoc->WorkingInfo.LastJob.bUseAoiDnCleanRoler ? _T("1") : _T("0");
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Dn Aoi CleanRoler"), sData, PATH_WORKING_INFO);
 }
 
@@ -1475,16 +1475,16 @@ void CDlgInfo::OnBnClickedChk86()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	if (myBtn[20].GetCheck()) //상면AOI 클린롤러
 	{
-		pDoc->WorkingInfo.LastJob.bAoiUpCleanRoler = TRUE;
+		pDoc->WorkingInfo.LastJob.bUseAoiUpCleanRoler = TRUE;
 		pView->m_pMpe->Write(_T("MB44010E"), 1);
 	}
 	else
 	{
-		pDoc->WorkingInfo.LastJob.bAoiUpCleanRoler = FALSE;
+		pDoc->WorkingInfo.LastJob.bUseAoiUpCleanRoler = FALSE;
 		pView->m_pMpe->Write(_T("MB44010E"), 0);
 	}
 
-	CString sData = pDoc->WorkingInfo.LastJob.bAoiUpCleanRoler ? _T("1") : _T("0");
+	CString sData = pDoc->WorkingInfo.LastJob.bUseAoiUpCleanRoler ? _T("1") : _T("0");
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Up Aoi CleanRoler"), sData, PATH_WORKING_INFO);
 }
 

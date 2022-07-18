@@ -12919,8 +12919,8 @@ void CGvisR2R_LaserView::SetPlcParam()
 	pView->m_pMpe->Write(_T("MB44017E"), (pDoc->WorkingInfo.LastJob.bCore150Recoiler) ? 1 : 0);	// Recoiler Core 150mm On
 	pView->m_pMpe->Write(_T("MB44017F"), (pDoc->WorkingInfo.LastJob.bCore150Uncoiler) ? 1 : 0);	// Uncoiler Core 150mm On
 
-	pView->m_pMpe->Write(_T("MB44010E"), (pDoc->WorkingInfo.LastJob.bAoiUpCleanRoler ? 1 : 0));
-	pView->m_pMpe->Write(_T("MB44010F"), (pDoc->WorkingInfo.LastJob.bAoiDnCleanRoler ? 1 : 0));
+	pView->m_pMpe->Write(_T("MB44010E"), (pDoc->WorkingInfo.LastJob.bUseAoiUpCleanRoler ? 1 : 0));
+	pView->m_pMpe->Write(_T("MB44010F"), (pDoc->WorkingInfo.LastJob.bUseAoiDnCleanRoler ? 1 : 0));
 }
 
 void CGvisR2R_LaserView::InitIoWrite()
@@ -14343,20 +14343,7 @@ LRESULT CGvisR2R_LaserView::wmServerReceived(WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case _SetData:
-		GetInfo(rSockData);
-		GetTotRatio(rSockData);
-		GetStTime(rSockData);
-		GetRunTime(rSockData);
-		GetEdTime(rSockData);
-		GetStripRatio(rSockData);
-		GetDef(rSockData);
-		Get2DReader(rSockData);
-		GetEngInfo(rSockData);
-		GetFdInfo(rSockData);
-		GetAoiInfo(rSockData);
-		GetMkInfo(rSockData);
-		GetMkInfoLf(rSockData);
-		GetMkInfoRt(rSockData);
+		GetSysInfo(rSockData);
 
 		//sSockData.nCmdCode = _Rtn;
 		//sSockData.nMsgID = _Connect;
@@ -14379,6 +14366,24 @@ LRESULT CGvisR2R_LaserView::wmServerReceived(WPARAM wParam, LPARAM lParam)
 }
 
 // Start for GetSysInfo()
+
+void CGvisR2R_LaserView::GetSysInfo(SOCKET_DATA SockData)
+{
+	GetInfo(SockData);
+	GetTotRatio(SockData);
+	GetStTime(SockData);
+	GetRunTime(SockData);
+	GetEdTime(SockData);
+	GetStripRatio(SockData);
+	GetDef(SockData);
+	Get2DReader(SockData);
+	GetEngInfo(SockData);
+	GetFdInfo(SockData);
+	GetAoiInfo(SockData);
+	GetMkInfo(SockData);
+	GetMkInfoLf(SockData);
+	GetMkInfoRt(SockData);
+}
 
 void CGvisR2R_LaserView::GetInfo(SOCKET_DATA SockData)
 {
@@ -14413,6 +14418,9 @@ void CGvisR2R_LaserView::GetInfo(SOCKET_DATA SockData)
 		break;
 	case _PartVel:
 		pDoc->WorkingInfo.LastJob.sPartialSpd = CharToString(SockData.strData);
+		break;
+	case _TempPause:
+		pDoc->WorkingInfo.LastJob.bTempPause = (SockData.nData1 > 0) ? TRUE : FALSE;
 		break;
 	case _TempStopLen:
 		pDoc->WorkingInfo.LastJob.sTempPauseLen = CharToString(SockData.strData);
