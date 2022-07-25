@@ -1429,7 +1429,7 @@ void CDlgMenu05::DisplayReelMapData()
 			nRSize++;
 		}
 
-		strReelMapData.Format(_T("%s"), FileData);
+		strReelMapData.Format(_T("%s"), CharToString(FileData));
 
 /*
 		fseek(fp, 0, SEEK_END);
@@ -1676,7 +1676,7 @@ CString CDlgMenu05::LoadFile(CString sPath)
 			nRSize++;
 		}
 
-		sData.Format(_T("%s"), FileData);
+		sData.Format(_T("%s"), CharToString(FileData));
 
 		fclose(fp);
 		free( FileData );

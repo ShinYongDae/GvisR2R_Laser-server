@@ -91,6 +91,8 @@ public:
 	int m_nLastShot, m_nCompletedShot;
 	double m_dProgressRatio;
 
+	stYield m_stYield;
+
 // Operations
 public:
 	void SetRgbDef(int nDef, COLORREF rgbVal);

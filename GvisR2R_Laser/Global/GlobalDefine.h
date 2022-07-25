@@ -1017,6 +1017,36 @@ struct stWorkingInfo
 	stElecChk Probing[2];
 };
 
+struct stYield
+{
+	int nTot, nGood, nDef;
+	int nTotSriptOut;
+	int nDefStrip[4], nDefA[MAX_DEF], nDefPerStrip[4][MAX_DEF], nStripOut[4];
+
+	stYield()
+	{
+		nTot = 0; nGood = 0; nDef = 0;
+		nTotSriptOut = 0;
+		nDefStrip[0] = 0; nDefStrip[1] = 0; nDefStrip[2] = 0; nDefStrip[3] = 0;
+		nStripOut[0] = 0; nStripOut[1] = 0; nStripOut[2] = 0; nStripOut[3] = 0;
+
+		for (int k = 0; k < MAX_DEF; k++)
+		{
+			nDefA[k] = 0;
+
+			for (int i = 0; i < 4; i++)
+			{
+				nDefPerStrip[i][k] = 0;
+			}
+		}
+	}
+
+	~stYield()
+	{
+		;
+	}
+};
+
 
 // struct stMasterInfo
 // {

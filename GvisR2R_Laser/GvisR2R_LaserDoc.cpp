@@ -4169,7 +4169,7 @@ BOOL CGvisR2R_LaserDoc::GetAoiInfoUp(int nSerial, int *pNewLot, BOOL bFromBuf) /
 	}
 	else
 	{
-		strFileData.Format(_T("PCR 파일이 존재하지 않습니다.\r\n%s"), FileD);
+		strFileData.Format(_T("PCR 파일이 존재하지 않습니다.\r\n%s"), sPath);
 		pView->MsgBox(strFileData);
 		return(FALSE);
 	}
@@ -4316,7 +4316,7 @@ BOOL CGvisR2R_LaserDoc::GetAoiInfoDn(int nSerial, int *pNewLot, BOOL bFromBuf) /
 	}
 	else
 	{
-		strFileData.Format(_T("PCR 파일이 존재하지 않습니다.\r\n%s"), FileD);
+		strFileData.Format(_T("PCR 파일이 존재하지 않습니다.\r\n%s"), sPath);
 		pView->MsgBox(strFileData);
 		return(FALSE);
 	}
@@ -4913,7 +4913,7 @@ int CGvisR2R_LaserDoc::LoadPCRUp(int nSerial, BOOL bFromShare)	// return : 2(Fai
 	}
 	else
 	{
-		strFileData.Format(_T("PCR[Up] 파일이 존재하지 않습니다.\r\n%s"), FileD);
+		strFileData.Format(_T("PCR[Up] 파일이 존재하지 않습니다.\r\n%s"), sPath);
 		pView->MsgBox(strFileData);
 		// 		AfxMessageBox(strFileData);
 		return(2);
@@ -5124,7 +5124,7 @@ int CGvisR2R_LaserDoc::LoadPCRDn(int nSerial, BOOL bFromShare)	// return : 2(Fai
 	}
 	else
 	{
-		strFileData.Format(_T("PCR[Dn] 파일이 존재하지 않습니다.\r\n%s"), FileD);
+		strFileData.Format(_T("PCR[Dn] 파일이 존재하지 않습니다.\r\n%s"), sPath);
 		pView->MsgBox(strFileData);
 		//		AfxMessageBox(strFileData);
 		return(2);
@@ -7627,7 +7627,7 @@ BOOL CGvisR2R_LaserDoc::GetPcrInfo(CString sPath, stModelInfo &stInfo)
 	}
 	else
 	{
-		strFileData.Format(_T("PCR 파일이 존재하지 않습니다.\r\n%s"), FileD);
+		strFileData.Format(_T("PCR 파일이 존재하지 않습니다.\r\n%s"), sPath);
 		pView->MsgBox(strFileData);
 		return(FALSE);
 	}
