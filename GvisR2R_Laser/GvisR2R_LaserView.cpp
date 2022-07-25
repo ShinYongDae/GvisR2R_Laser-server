@@ -14369,6 +14369,7 @@ LRESULT CGvisR2R_LaserView::wmServerReceived(WPARAM wParam, LPARAM lParam)
 
 void CGvisR2R_LaserView::GetSysInfo(SOCKET_DATA SockData)
 {
+	GetOpInfo(SockData);
 	GetInfo(SockData);
 	GetTotRatio(SockData);
 	GetStTime(SockData);
@@ -14383,6 +14384,117 @@ void CGvisR2R_LaserView::GetSysInfo(SOCKET_DATA SockData)
 	GetMkInfo(SockData);
 	GetMkInfoLf(SockData);
 	GetMkInfoRt(SockData);
+}
+
+void CGvisR2R_LaserView::GetOpInfo(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+	CString sVal;
+
+	switch (nMsgId)
+	{
+	case _OpName:
+		pDoc->WorkingInfo.LastJob.sSelUserName = CharToString(SockData.strData);
+		break;
+	case _DualTest:
+		pDoc->WorkingInfo.LastJob.bDualTest = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _SampleTest:
+		pDoc->WorkingInfo.LastJob.bSampleTest = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _SampleShotNum:
+		sVal.Format(_T("%d"), (int)SockData.nData1);
+		pDoc->WorkingInfo.LastJob.sSampleTestShotNum = sVal;
+		break;
+	case _TestMode:
+		pDoc->WorkingInfo.LastJob.nTestMode = (int)SockData.nData1; // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2
+		break;
+	case _RecoilerCcw:
+		pDoc->WorkingInfo.LastJob.bOneMetal = (SockData.nData1 > 0) ? TRUE : FALSE;	// OneMetal : TRUE -> SetTwoMetal(FALSE);
+		break;
+	case _UncoilerCcw:
+		pDoc->WorkingInfo.LastJob.bTwoMetal = (SockData.nData1 > 0) ? TRUE : FALSE;	// TwoMetal : TRUE -> SetTwoMetal(TRUE);
+		break;
+	case _AlignMethode:
+		pDoc->WorkingInfo.LastJob.nAlignMethode = (int)SockData.nData1; // TWO_POINT, FOUR_POINT
+		break;
+	case _DoorRecoiler:
+		pDoc->WorkingInfo.LastJob.bRclDrSen = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _DoorAoiUp:
+		pDoc->WorkingInfo.LastJob.bAoiUpDrSen = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _DoorAoiDn:
+		pDoc->WorkingInfo.LastJob.bAoiDnDrSen = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _DoorMk:
+		pDoc->WorkingInfo.LastJob.bMkDrSen = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _DoorEngrave:
+		pDoc->WorkingInfo.LastJob.bEngvDrSen = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _DoorUncoiler:
+		pDoc->WorkingInfo.LastJob.bUclDrSen = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _SaftyMk:
+		pDoc->WorkingInfo.LastJob.bMkSftySen = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _CleannerAoiUp:
+		pDoc->WorkingInfo.LastJob.bUseAoiUpCleanRoler = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _CleannerAoiDn:
+		pDoc->WorkingInfo.LastJob.bUseAoiDnCleanRoler = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _UltraSonicAoiDn:
+		pDoc->WorkingInfo.LastJob.bUseAoiDnCleanner = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _UltraSonicEngrave:
+		pDoc->WorkingInfo.LastJob.bUseEngraveCleanner = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _TotReelLen:
+		pDoc->WorkingInfo.LastJob.sReelTotLen = CharToString(SockData.strData);
+		break;
+	case _OnePnlLen:
+		pDoc->WorkingInfo.Motion.sMkFdDist = CharToString(SockData.strData);
+		break;
+	case _TempPause:
+		pDoc->WorkingInfo.LastJob.bTempPause = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _TempStopLen:
+		pDoc->WorkingInfo.LastJob.sTempPauseLen = CharToString(SockData.strData);
+		break;
+	case _LotCut:
+		pDoc->WorkingInfo.LastJob.bLotSep = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _LotCutLen:
+		pDoc->WorkingInfo.LastJob.sLotSepLen = CharToString(SockData.strData);
+		break;
+	case _LotCutPosLen:
+		pDoc->WorkingInfo.LastJob.sLotCutPosLen = CharToString(SockData.strData);
+		break;
+	case _LmtTotYld:
+		pDoc->WorkingInfo.LastJob.sLmtTotYld = CharToString(SockData.strData);
+		break;
+	case _LmtPatlYld:
+		pDoc->WorkingInfo.LastJob.sLmtPatlYld = CharToString(SockData.strData);
+		break;
+	case _StripOutRatio:
+		pDoc->WorkingInfo.LastJob.sStripOutRatio = CharToString(SockData.strData);
+		break;
+	case _CustomNeedRatio:
+		pDoc->WorkingInfo.LastJob.sCustomNeedRatio = CharToString(SockData.strData);
+		break;
+	case _NumRangeFixDef:
+		pDoc->WorkingInfo.LastJob.sNumRangeFixDef = CharToString(SockData.strData);
+		break;
+	case _NumContFixDef:
+		pDoc->WorkingInfo.LastJob.sNumContFixDef = CharToString(SockData.strData);
+		break;
+	case _UltraSonicStTim:
+		pDoc->WorkingInfo.LastJob.sUltraSonicCleannerStTim = CharToString(SockData.strData);
+		break;
+	}
 }
 
 void CGvisR2R_LaserView::GetInfo(SOCKET_DATA SockData)

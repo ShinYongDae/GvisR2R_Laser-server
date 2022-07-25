@@ -74,8 +74,8 @@ BEGIN_MESSAGE_MAP(CDlgInfo, CDialog)
 	ON_BN_CLICKED(IDC_BTN_EXIT, OnBtnExit)
 	ON_BN_CLICKED(IDC_STC_174, OnStc174)
 	ON_BN_CLICKED(IDC_STC_178, OnStc178)
-	ON_BN_CLICKED(IDC_STC_32, OnStc32)
-	ON_BN_CLICKED(IDC_STC_183, OnStc183)
+	ON_BN_CLICKED(IDC_STC_197, OnStc197)
+	ON_BN_CLICKED(IDC_STC_196, OnStc196)
 	ON_WM_CTLCOLOR()
 	ON_BN_CLICKED(IDC_STC_61, OnStc61)
 	ON_BN_CLICKED(IDC_CHK_USE_AOI_DUAL, OnChkUseAoiDual)
@@ -384,11 +384,11 @@ void CDlgInfo::InitStcTitle()
 
 	myStcTitle[53].SubclassDlgItem(IDC_STC_30, this); //초음파세정기 동작
 	myStcTitle[54].SubclassDlgItem(IDC_STC_31, this); //검사시작 후
-	myStcTitle[55].SubclassDlgItem(IDC_STC_33, this); //초
+	myStcTitle[55].SubclassDlgItem(IDC_STC_198, this); //초
 
-	myStcTitle[56].SubclassDlgItem(IDC_STC_73, this); //고객출하수율
-	myStcTitle[57].SubclassDlgItem(IDC_STC_182, this); //양품율
-	myStcTitle[58].SubclassDlgItem(IDC_STC_184, this); //%
+	myStcTitle[56].SubclassDlgItem(IDC_STC_194, this); //고객출하수율
+	myStcTitle[57].SubclassDlgItem(IDC_STC_195, this); //양품율
+	myStcTitle[58].SubclassDlgItem(IDC_STC_66, this); //%
 
 	for(int i=0; i<MAX_INFO_STC; i++)
 	{
@@ -459,8 +459,8 @@ void CDlgInfo::InitStcData()
 	myStcData[11].SubclassDlgItem(IDC_STC_61, this);
 	myStcData[12].SubclassDlgItem(IDC_STC_181, this);
 
-	myStcData[13].SubclassDlgItem(IDC_STC_32, this); // 초음파세정기 동작 검사시작 후 시작시간 [초]
-	myStcData[14].SubclassDlgItem(IDC_STC_183, this); // 고객출하수율
+	myStcData[13].SubclassDlgItem(IDC_STC_197, this); // 초음파세정기 동작 검사시작 후 시작시간 [초]
+	myStcData[14].SubclassDlgItem(IDC_STC_196, this); // 고객출하수율
 
 	for(int i=0; i<MAX_INFO_STC_DATA; i++)
 	{
@@ -829,22 +829,22 @@ void CDlgInfo::OnStc0037()
 	::WritePrivateProfileString(_T("Last Job"), _T("Number of Continuous Fix Defect"), sVal, PATH_WORKING_INFO);	
 }
 
-void CDlgInfo::OnStc32()
+void CDlgInfo::OnStc197()
 {
 	// TODO: Add your control notification handler code here
 	myStcData[13].SetBkColor(RGB_RED);
 	myStcData[13].RedrawWindow();
 
 	CPoint pt;	CRect rt;
-	GetDlgItem(IDC_STC_32)->GetWindowRect(&rt);
+	GetDlgItem(IDC_STC_197)->GetWindowRect(&rt);
 	pt.x = rt.right; pt.y = rt.bottom;
-	ShowKeypad(IDC_STC_32, pt, TO_BOTTOM | TO_RIGHT);
+	ShowKeypad(IDC_STC_197, pt, TO_BOTTOM | TO_RIGHT);
 
 	myStcData[13].SetBkColor(RGB_WHITE);
 	myStcData[13].RedrawWindow();
 
 	CString sVal;
-	GetDlgItem(IDC_STC_32)->GetWindowText(sVal);
+	GetDlgItem(IDC_STC_197)->GetWindowText(sVal);
 	pDoc->WorkingInfo.LastJob.sUltraSonicCleannerStTim = sVal;
 	::WritePrivateProfileString(_T("Last Job"), _T("Ultra Sonic Cleanner Start Time"), sVal, PATH_WORKING_INFO);
 
@@ -1140,22 +1140,22 @@ void CDlgInfo::OnStc174()
 	::WritePrivateProfileString(_T("Last Job"), _T("Strip Out Ratio"), sVal, PATH_WORKING_INFO);	
 }
 
-void CDlgInfo::OnStc183() 
+void CDlgInfo::OnStc196() 
 {
 	// TODO: Add your control notification handler code here
 	myStcData[14].SetBkColor(RGB_RED);
 	myStcData[14].RedrawWindow();
 
 	CPoint pt;	CRect rt;
-	GetDlgItem(IDC_STC_183)->GetWindowRect(&rt);
+	GetDlgItem(IDC_STC_196)->GetWindowRect(&rt);
 	pt.x = rt.right; pt.y = rt.bottom;
-	ShowKeypad(IDC_STC_183, pt, TO_BOTTOM|TO_RIGHT);
+	ShowKeypad(IDC_STC_196, pt, TO_BOTTOM|TO_RIGHT);
 
 	myStcData[14].SetBkColor(RGB_WHITE);
 	myStcData[14].RedrawWindow();
 	
 	CString sVal;
-	GetDlgItem(IDC_STC_183)->GetWindowText(sVal);
+	GetDlgItem(IDC_STC_196)->GetWindowText(sVal);
 	pDoc->WorkingInfo.LastJob.sCustomNeedRatio = sVal;
 	::WritePrivateProfileString(_T("Last Job"), _T("Custom Need Ratio"), sVal, PATH_WORKING_INFO);	
 }
@@ -1524,4 +1524,9 @@ void CDlgInfo::OnBnClickedChk1188()
 
 	CString sData = pDoc->WorkingInfo.LastJob.bUseEngraveCleanner ? _T("1") : _T("0");
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Engrave Cleanner"), sData, PATH_WORKING_INFO);
+}
+
+void CDlgInfo::UpdateInfo()
+{
+	Disp();
 }

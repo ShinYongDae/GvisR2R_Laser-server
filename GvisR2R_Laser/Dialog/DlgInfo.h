@@ -47,6 +47,8 @@ public:
 	void AtDlgShow();
 	void AtDlgHide();
 
+	void UpdateInfo();
+
 // Dialog Data
 	//{{AFX_DATA(CDlgInfo)
 	enum { IDD = IDD_DLG_INFO };
@@ -88,7 +90,7 @@ protected:
 	afx_msg void OnStc0030();
 	afx_msg void OnStc0034();
 	afx_msg void OnStc0037();
-	afx_msg void OnStc32();
+	afx_msg void OnStc197();
 	afx_msg void OnBtnExit();
 	afx_msg void OnStc174();
 	afx_msg void OnStc178();
@@ -102,7 +104,7 @@ protected:
 	afx_msg void OnChkUseAoiInner();
 	afx_msg void OnChkUseAoiOuter();
 	afx_msg void OnStc181();
-	afx_msg void OnStc183();
+	afx_msg void OnStc196();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 public:
