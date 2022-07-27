@@ -925,14 +925,14 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 	if (nIDEvent == TIM_CHK_TEMP_STOP)
 	{
 		KillTimer(TIM_CHK_TEMP_STOP);
-		if (!(pDoc->m_pMpeSignal[7] & (0x01 << 3)))	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
-		{
-			m_bTIM_CHK_TEMP_STOP = FALSE;
-			m_pDlgMenu01->SetTempStop(FALSE);
-		}
+		//if (!(pDoc->m_pMpeSignal[7] & (0x01 << 3)))	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
+		//{
+		//	m_bTIM_CHK_TEMP_STOP = FALSE;
+		//	m_pDlgMenu01->SetTempStop(FALSE);
+		//}
 
-		if (m_bTIM_CHK_TEMP_STOP)
-			SetTimer(TIM_CHK_TEMP_STOP, 100, NULL);
+		//if (m_bTIM_CHK_TEMP_STOP)
+		//	SetTimer(TIM_CHK_TEMP_STOP, 100, NULL);
 	}
 
 	CFormView::OnTimer(nIDEvent);
@@ -1091,146 +1091,146 @@ void CGvisR2R_LaserView::Init()
 
 void CGvisR2R_LaserView::InitIO()
 {
-	int i, k;
-	// 	pDoc->m_nSliceIo = pDoc->MkIo.SliceIo.nMaxSeg; // pDoc->MkIo.SliceIo.nInSeg;
+	//int i, k;
+	//// 	pDoc->m_nSliceIo = pDoc->MkIo.SliceIo.nMaxSeg; // pDoc->MkIo.SliceIo.nInSeg;
 
-	pDoc->m_nMpeIo = pDoc->MkIo.MpeIo.nMaxSeg;
-	pDoc->m_nMpeI = pDoc->MkIo.MpeIo.nMaxSeg;
+	//pDoc->m_nMpeIo = pDoc->MkIo.MpeIo.nMaxSeg;
+	//pDoc->m_nMpeI = pDoc->MkIo.MpeIo.nMaxSeg;
 
-	if (!pDoc->m_pMpeI)
-	{
-		if (pDoc->m_nMpeI > 0)
-		{
-			pDoc->m_pMpeI = new unsigned short[pDoc->m_nMpeI];
-			for (i = 0; i < pDoc->m_nMpeI; i++)
-				pDoc->m_pMpeI[i] = 0;
-		}
-	}
+	//if (!pDoc->m_pMpeI)
+	//{
+	//	if (pDoc->m_nMpeI > 0)
+	//	{
+	//		pDoc->m_pMpeI = new unsigned short[pDoc->m_nMpeI];
+	//		for (i = 0; i < pDoc->m_nMpeI; i++)
+	//			pDoc->m_pMpeI[i] = 0;
+	//	}
+	//}
 
-	if (!pDoc->m_pMpeIF)
-	{
-		if (pDoc->m_nMpeI > 0)
-		{
-			pDoc->m_pMpeIF = new unsigned short[pDoc->m_nMpeI];
-			for (i = 0; i < pDoc->m_nMpeI; i++)
-				pDoc->m_pMpeIF[i] = 0;
-		}
-	}
+	//if (!pDoc->m_pMpeIF)
+	//{
+	//	if (pDoc->m_nMpeI > 0)
+	//	{
+	//		pDoc->m_pMpeIF = new unsigned short[pDoc->m_nMpeI];
+	//		for (i = 0; i < pDoc->m_nMpeI; i++)
+	//			pDoc->m_pMpeIF[i] = 0;
+	//	}
+	//}
 
-	if (!pDoc->m_pMpeIo)
-	{
-		if (pDoc->m_nMpeIo > 0)
-		{
-			pDoc->m_pMpeIo = new unsigned short[pDoc->m_nMpeIo];
-			for (i = 0; i < pDoc->m_nMpeIo; i++)
-				pDoc->m_pMpeIo[i] = 0;
-		}
-	}
+	//if (!pDoc->m_pMpeIo)
+	//{
+	//	if (pDoc->m_nMpeIo > 0)
+	//	{
+	//		pDoc->m_pMpeIo = new unsigned short[pDoc->m_nMpeIo];
+	//		for (i = 0; i < pDoc->m_nMpeIo; i++)
+	//			pDoc->m_pMpeIo[i] = 0;
+	//	}
+	//}
 
-	if (!pDoc->m_pMpeIoF)
-	{
-		if (pDoc->m_nMpeIo > 0)
-		{
-			pDoc->m_pMpeIoF = new unsigned short[pDoc->m_nMpeIo];
-			for (i = 0; i < pDoc->m_nMpeIo; i++)
-				pDoc->m_pMpeIoF[i] = 0;
-		}
-	}
-
-
-	pDoc->m_nMpeSignal = pDoc->MkIo.MpeSignal.nMaxSeg;
-	if (!pDoc->m_pMpeSignal)
-	{
-		if (pDoc->m_nMpeSignal > 0)
-		{
-			pDoc->m_pMpeSignal = new unsigned short[pDoc->m_nMpeSignal];
-			for (i = 0; i < pDoc->m_nMpeSignal; i++)
-				pDoc->m_pMpeSignal[i] = 0;
-		}
-	}
+	//if (!pDoc->m_pMpeIoF)
+	//{
+	//	if (pDoc->m_nMpeIo > 0)
+	//	{
+	//		pDoc->m_pMpeIoF = new unsigned short[pDoc->m_nMpeIo];
+	//		for (i = 0; i < pDoc->m_nMpeIo; i++)
+	//			pDoc->m_pMpeIoF[i] = 0;
+	//	}
+	//}
 
 
-	pDoc->m_nMpeData = pDoc->MkIo.MpeData.nMaxSeg;
-	if (!pDoc->m_pMpeData)
-	{
-		if (pDoc->m_nMpeData > 0)
-		{
-			pDoc->m_pMpeData = new long*[pDoc->m_nMpeData];
-			for (i = 0; i < pDoc->m_nMpeData; i++)
-			{
-				pDoc->m_pMpeData[i] = new long[16];
-				for (k = 0; k < 16; k++)
-					pDoc->m_pMpeData[i][k] = 0;
-			}
-		}
-	}
+	//pDoc->m_nMpeSignal = pDoc->MkIo.MpeSignal.nMaxSeg;
+	//if (!pDoc->m_pMpeSignal)
+	//{
+	//	if (pDoc->m_nMpeSignal > 0)
+	//	{
+	//		pDoc->m_pMpeSignal = new unsigned short[pDoc->m_nMpeSignal];
+	//		for (i = 0; i < pDoc->m_nMpeSignal; i++)
+	//			pDoc->m_pMpeSignal[i] = 0;
+	//	}
+	//}
 
 
-	// 	if(!pDoc->m_pSliceIo)
-	// 	{
-	// 		if(pDoc->m_nSliceIo>0)
-	// 		{
-	// 			pDoc->m_pSliceIo = new unsigned short[pDoc->m_nSliceIo];
-	// 			for(i=0; i<pDoc->m_nSliceIo; i++)
-	// 				pDoc->m_pSliceIo[i] = 0;
-	// 		}
-	// 	}
-	// 	if(!pDoc->m_pSliceIoF)
-	// 	{
-	// 		if(pDoc->m_nSliceIo>0)
-	// 		{
-	// 			pDoc->m_pSliceIoF = new unsigned short[pDoc->m_nSliceIo];
-	// 			for(i=0; i<pDoc->m_nSliceIo; i++)
-	// 				pDoc->m_pSliceIoF[i] = 0;
-	// 		}
-	// 	}
-	// 	if(!pDoc->m_pPrevSliceIo)
-	// 	{
-	// 		if(pDoc->m_nSliceIo>0)
-	// 		{
-	// 			pDoc->m_pPrevSliceIo = new unsigned short[pDoc->m_nSliceIo];
-	// 			for(i=0; i<pDoc->m_nSliceIo; i++)
-	// 				pDoc->m_pPrevSliceIo[i] = 0;
-	// 		}
-	// 	}
-	// 
-	// 	if(!pDoc->m_pSliceMpeIo)
-	// 	{
-	// 		if(pDoc->m_nSliceIo>0)
-	// 		{
-	// 			pDoc->m_pSliceMpeIo = new unsigned short[pDoc->m_nSliceIo];
-	// 			for(i=0; i<pDoc->m_nSliceIo; i++)
-	// 				pDoc->m_pSliceMpeIo[i] = 0;
-	// 		}
-	// 	}
-	// 	if(!pDoc->m_pSliceMpeIoF)
-	// 	{
-	// 		if(pDoc->m_nSliceIo>0)
-	// 		{
-	// 			pDoc->m_pSliceMpeIoF = new unsigned short[pDoc->m_nSliceIo];
-	// 			for(i=0; i<pDoc->m_nSliceIo; i++)
-	// 				pDoc->m_pSliceMpeIoF[i] = 0;
-	// 		}
-	// 	}
-	// 	if(!pDoc->m_pPrevSliceMpeIo)
-	// 	{
-	// 		if(pDoc->m_nSliceIo>0)
-	// 		{
-	// 			pDoc->m_pPrevSliceMpeIo = new unsigned short[pDoc->m_nSliceIo];
-	// 			for(i=0; i<pDoc->m_nSliceIo; i++)
-	// 				pDoc->m_pPrevSliceMpeIo[i] = 0;
-	// 		}
-	// 	}
+	//pDoc->m_nMpeData = pDoc->MkIo.MpeData.nMaxSeg;
+	//if (!pDoc->m_pMpeData)
+	//{
+	//	if (pDoc->m_nMpeData > 0)
+	//	{
+	//		pDoc->m_pMpeData = new long*[pDoc->m_nMpeData];
+	//		for (i = 0; i < pDoc->m_nMpeData; i++)
+	//		{
+	//			pDoc->m_pMpeData[i] = new long[16];
+	//			for (k = 0; k < 16; k++)
+	//				pDoc->m_pMpeData[i][k] = 0;
+	//		}
+	//	}
+	//}
 
-	// 	if(!pDoc->m_pPrevMpeIo)
-	// 	{
-	// 		if(pDoc->m_nMpeIo>0)
-	// 		{
-	// 			pDoc->m_pPrevMpeIo = new unsigned short[pDoc->m_nMpeIo];
-	// 			for(i=0; i<pDoc->m_nMpeIo; i++)
-	// 				pDoc->m_pPrevMpeIo[i] = 0;
-	// 		}
-	// 	}
+
+	//// 	if(!pDoc->m_pSliceIo)
+	//// 	{
+	//// 		if(pDoc->m_nSliceIo>0)
+	//// 		{
+	//// 			pDoc->m_pSliceIo = new unsigned short[pDoc->m_nSliceIo];
+	//// 			for(i=0; i<pDoc->m_nSliceIo; i++)
+	//// 				pDoc->m_pSliceIo[i] = 0;
+	//// 		}
+	//// 	}
+	//// 	if(!pDoc->m_pSliceIoF)
+	//// 	{
+	//// 		if(pDoc->m_nSliceIo>0)
+	//// 		{
+	//// 			pDoc->m_pSliceIoF = new unsigned short[pDoc->m_nSliceIo];
+	//// 			for(i=0; i<pDoc->m_nSliceIo; i++)
+	//// 				pDoc->m_pSliceIoF[i] = 0;
+	//// 		}
+	//// 	}
+	//// 	if(!pDoc->m_pPrevSliceIo)
+	//// 	{
+	//// 		if(pDoc->m_nSliceIo>0)
+	//// 		{
+	//// 			pDoc->m_pPrevSliceIo = new unsigned short[pDoc->m_nSliceIo];
+	//// 			for(i=0; i<pDoc->m_nSliceIo; i++)
+	//// 				pDoc->m_pPrevSliceIo[i] = 0;
+	//// 		}
+	//// 	}
+	//// 
+	//// 	if(!pDoc->m_pSliceMpeIo)
+	//// 	{
+	//// 		if(pDoc->m_nSliceIo>0)
+	//// 		{
+	//// 			pDoc->m_pSliceMpeIo = new unsigned short[pDoc->m_nSliceIo];
+	//// 			for(i=0; i<pDoc->m_nSliceIo; i++)
+	//// 				pDoc->m_pSliceMpeIo[i] = 0;
+	//// 		}
+	//// 	}
+	//// 	if(!pDoc->m_pSliceMpeIoF)
+	//// 	{
+	//// 		if(pDoc->m_nSliceIo>0)
+	//// 		{
+	//// 			pDoc->m_pSliceMpeIoF = new unsigned short[pDoc->m_nSliceIo];
+	//// 			for(i=0; i<pDoc->m_nSliceIo; i++)
+	//// 				pDoc->m_pSliceMpeIoF[i] = 0;
+	//// 		}
+	//// 	}
+	//// 	if(!pDoc->m_pPrevSliceMpeIo)
+	//// 	{
+	//// 		if(pDoc->m_nSliceIo>0)
+	//// 		{
+	//// 			pDoc->m_pPrevSliceMpeIo = new unsigned short[pDoc->m_nSliceIo];
+	//// 			for(i=0; i<pDoc->m_nSliceIo; i++)
+	//// 				pDoc->m_pPrevSliceMpeIo[i] = 0;
+	//// 		}
+	//// 	}
+
+	//// 	if(!pDoc->m_pPrevMpeIo)
+	//// 	{
+	//// 		if(pDoc->m_nMpeIo>0)
+	//// 		{
+	//// 			pDoc->m_pPrevMpeIo = new unsigned short[pDoc->m_nMpeIo];
+	//// 			for(i=0; i<pDoc->m_nMpeIo; i++)
+	//// 				pDoc->m_pPrevMpeIo[i] = 0;
+	//// 		}
+	//// 	}
 }
 
 BOOL CGvisR2R_LaserView::InitAct()
@@ -1837,8 +1837,8 @@ void CGvisR2R_LaserView::TowerLamp(COLORREF color, BOOL bOn, BOOL bWink)
 	{
 		m_bTimTowerWinker = FALSE;
 
-		if (!pDoc->m_pMpeIo)
-			return;
+		//if (!pDoc->m_pMpeIo)
+		//	return;
 	}
 }
 
@@ -3951,8 +3951,8 @@ void CGvisR2R_LaserView::DoBoxSw()
 
 void CGvisR2R_LaserView::DoEmgSw()
 {
-	if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
-		return;
+	//if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
+	//	return;
 
 	// 	unsigned short usIn = pDoc->m_pMpeIo[4];
 	// 	unsigned short *usInF = &pDoc->m_pMpeIoF[4];
@@ -4089,10 +4089,10 @@ delete [] pSeg2;
 
 void CGvisR2R_LaserView::GetMpeIO()
 {
-	if (!m_pMpe || !pDoc->m_pMpeIo)
-		return;
+	//if (!m_pMpe || !pDoc->m_pMpeIo)
+	//	return;
 
-	m_pMpe->GetMpeIO();
+	//m_pMpe->GetMpeIO();
 }
 
 // void CGvisR2R_LaserView::GetMpeIO()
@@ -4185,9 +4185,9 @@ void CGvisR2R_LaserView::GetMpeIO()
 
 void CGvisR2R_LaserView::GetMpeSignal()
 {
-	if (!m_pMpe || !pDoc->m_pMpeSignal)
-		return;
-	m_pMpe->GetMpeSignal();
+	//if (!m_pMpe || !pDoc->m_pMpeSignal)
+	//	return;
+	//m_pMpe->GetMpeSignal();
 }
 
 
@@ -4337,76 +4337,76 @@ delete [] pSeg2;
 
 void CGvisR2R_LaserView::GetMpeData()
 {
-	if (!m_pMpe || !pDoc->m_pMpeData)
-		return;
+	//if (!m_pMpe || !pDoc->m_pMpeData)
+	//	return;
 
-	// MpeData
-	int nSize, nIdx, nLoop, nSt, k;
-	int nInSeg = pDoc->MkIo.MpeData.nInSeg;
-	int nOutSeg = pDoc->MkIo.MpeData.nOutSeg;
+	//// MpeData
+	//int nSize, nIdx, nLoop, nSt, k;
+	//int nInSeg = pDoc->MkIo.MpeData.nInSeg;
+	//int nOutSeg = pDoc->MkIo.MpeData.nOutSeg;
 
-	// MpeData - [In]
-	int *pSeg0 = new int[nInSeg];
-	long **pData0 = new long*[nInSeg];
-	for (nIdx = 0; nIdx < nInSeg; nIdx++)
-	{
-		pData0[nIdx] = new long[16];
-		memset(pData0[nIdx], 0, sizeof(long) * 16);
-	}
+	//// MpeData - [In]
+	//int *pSeg0 = new int[nInSeg];
+	//long **pData0 = new long*[nInSeg];
+	//for (nIdx = 0; nIdx < nInSeg; nIdx++)
+	//{
+	//	pData0[nIdx] = new long[16];
+	//	memset(pData0[nIdx], 0, sizeof(long) * 16);
+	//}
 
-	// Group Read...
-	int nGrpStep = pDoc->MkIo.MpeData.nGrpStep;
-	nSt = pDoc->MkIo.MpeData.nGrpInSt;
-	for (nLoop = 0; nLoop < pDoc->MkIo.MpeData.nGrpIn; nLoop++)
-	{
-		for (nIdx = 0; nIdx < nGrpStep; nIdx++)
-			pSeg0[nIdx] = nIdx + nSt;
-		nSize = m_pMpe->ReadData(pSeg0, nGrpStep, pData0);
+	//// Group Read...
+	//int nGrpStep = pDoc->MkIo.MpeData.nGrpStep;
+	//nSt = pDoc->MkIo.MpeData.nGrpInSt;
+	//for (nLoop = 0; nLoop < pDoc->MkIo.MpeData.nGrpIn; nLoop++)
+	//{
+	//	for (nIdx = 0; nIdx < nGrpStep; nIdx++)
+	//		pSeg0[nIdx] = nIdx + nSt;
+	//	nSize = m_pMpe->ReadData(pSeg0, nGrpStep, pData0);
 
-		for (nIdx = 0; nIdx < nGrpStep; nIdx++)
-		{
-			for (k = 0; k < 16; k++)
-				pDoc->m_pMpeData[nIdx + nSt][k] = pData0[nIdx][k];
-		}
+	//	for (nIdx = 0; nIdx < nGrpStep; nIdx++)
+	//	{
+	//		for (k = 0; k < 16; k++)
+	//			pDoc->m_pMpeData[nIdx + nSt][k] = pData0[nIdx][k];
+	//	}
 
-		nSt += nGrpStep;
-	}
-	for (nIdx = 0; nIdx < nInSeg; nIdx++)
-		delete[] pData0[nIdx];
-	delete[] pData0;
-	delete[] pSeg0;
+	//	nSt += nGrpStep;
+	//}
+	//for (nIdx = 0; nIdx < nInSeg; nIdx++)
+	//	delete[] pData0[nIdx];
+	//delete[] pData0;
+	//delete[] pSeg0;
 
-	m_bChkMpeIoOut = FALSE;
+	//m_bChkMpeIoOut = FALSE;
 
-	// MpeData - [Out]
-	int *pSeg2 = new int[nOutSeg];
-	long **pData2 = new long*[nOutSeg];
-	for (nIdx = 0; nIdx < nOutSeg; nIdx++)
-	{
-		pData2[nIdx] = new long[16];
-		memset(pData2[nIdx], 0, sizeof(unsigned long) * 16);
-	}
+	//// MpeData - [Out]
+	//int *pSeg2 = new int[nOutSeg];
+	//long **pData2 = new long*[nOutSeg];
+	//for (nIdx = 0; nIdx < nOutSeg; nIdx++)
+	//{
+	//	pData2[nIdx] = new long[16];
+	//	memset(pData2[nIdx], 0, sizeof(unsigned long) * 16);
+	//}
 
-	// Group Read...
-	nSt = pDoc->MkIo.MpeData.nGrpOutSt;
-	for (nLoop = 0; nLoop < pDoc->MkIo.MpeData.nGrpOut; nLoop++)
-	{
-		for (nIdx = 0; nIdx < nGrpStep; nIdx++)
-			pSeg2[nIdx] = nIdx + nSt;
-		nSize = m_pMpe->ReadData(pSeg2, nGrpStep, pData2);
+	//// Group Read...
+	//nSt = pDoc->MkIo.MpeData.nGrpOutSt;
+	//for (nLoop = 0; nLoop < pDoc->MkIo.MpeData.nGrpOut; nLoop++)
+	//{
+	//	for (nIdx = 0; nIdx < nGrpStep; nIdx++)
+	//		pSeg2[nIdx] = nIdx + nSt;
+	//	nSize = m_pMpe->ReadData(pSeg2, nGrpStep, pData2);
 
-		for (nIdx = 0; nIdx < nGrpStep; nIdx++)
-		{
-			for (k = 0; k < 16; k++)
-				pDoc->m_pMpeData[nIdx + nSt][k] = pData2[nIdx][k];
-		}
+	//	for (nIdx = 0; nIdx < nGrpStep; nIdx++)
+	//	{
+	//		for (k = 0; k < 16; k++)
+	//			pDoc->m_pMpeData[nIdx + nSt][k] = pData2[nIdx][k];
+	//	}
 
-		nSt += nGrpStep;
-	}
-	for (nIdx = 0; nIdx < nOutSeg; nIdx++)
-		delete[] pData2[nIdx];
-	delete[] pData2;
-	delete[] pSeg2;
+	//	nSt += nGrpStep;
+	//}
+	//for (nIdx = 0; nIdx < nOutSeg; nIdx++)
+	//	delete[] pData2[nIdx];
+	//delete[] pData2;
+	//delete[] pSeg2;
 }
 
 int CGvisR2R_LaserView::GetTime(int nSel)
@@ -4520,2639 +4520,2639 @@ void CGvisR2R_LaserView::DispTime()
 // System Input IO .......................................................................
 void CGvisR2R_LaserView::DoSaftySens()
 {
-	if (!pDoc->m_pMpeI || !pDoc->m_pMpeIF)
-		return;
+	//if (!pDoc->m_pMpeI || !pDoc->m_pMpeIF)
+	//	return;
 
-	//BOOL bOn = pDoc->m_pMpeIb[7] & (0x01 << 8) ? TRUE : FALSE;	// 마킹부 안전 센서 1
-	//BOOL bOnF = pDoc->m_pMpeIF[7] & (0x01 << 8) ? TRUE : FALSE;	// 마킹부 안전 센서 1
+	////BOOL bOn = pDoc->m_pMpeIb[7] & (0x01 << 8) ? TRUE : FALSE;	// 마킹부 안전 센서 1
+	////BOOL bOnF = pDoc->m_pMpeIF[7] & (0x01 << 8) ? TRUE : FALSE;	// 마킹부 안전 센서 1
 
-	unsigned short usIn = pDoc->m_pMpeI[7];
-	unsigned short *usInF = &pDoc->m_pMpeIF[7];
+	//unsigned short usIn = pDoc->m_pMpeI[7];
+	//unsigned short *usInF = &pDoc->m_pMpeIF[7];
 
 
-	if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))		// 마킹부 안전 센서
-	{
-		*usInF |= (0x01 << 8);								
-		pDoc->Status.bSensSaftyMk = TRUE;
-	}
-	else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))	// 마킹부 안전 센서
-	{
-		*usInF &= ~(0x01 << 8);
-		pDoc->Status.bSensSaftyMk = FALSE;
-	}
+	//if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))		// 마킹부 안전 센서
+	//{
+	//	*usInF |= (0x01 << 8);								
+	//	pDoc->Status.bSensSaftyMk = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))	// 마킹부 안전 센서
+	//{
+	//	*usInF &= ~(0x01 << 8);
+	//	pDoc->Status.bSensSaftyMk = FALSE;
+	//}
 }
 
 void CGvisR2R_LaserView::DoDoorSens()
 {
-	unsigned short usIn;
-	unsigned short *usInF;
+	//unsigned short usIn;
+	//unsigned short *usInF;
 
-	if (!pDoc->m_pMpeI || !pDoc->m_pMpeIF)
-		return;
+	//if (!pDoc->m_pMpeI || !pDoc->m_pMpeIF)
+	//	return;
 
-	usIn = pDoc->m_pMpeI[1];
-	usInF = &pDoc->m_pMpeIF[1];
+	//usIn = pDoc->m_pMpeI[1];
+	//usInF = &pDoc->m_pMpeIF[1];
 
-	if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))		// 언코일러 전면 도어 센서
-	{
-		*usInF |= (0x01 << 12);
-		pDoc->Status.bDoorUc[DOOR_FL_UC] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))	// 언코일러 측면 도어 센서
-	{
-		*usInF &= ~(0x01 << 13);
-		pDoc->Status.bDoorUc[DOOR_FR_UC] = FALSE;
-	}
-	else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))	// 언코일러 후면 도어 센서(좌)
-	{
-		*usInF &= ~(0x01 << 14);
-		pDoc->Status.bDoorUc[DOOR_BL_UC] = FALSE;
-	}
-	else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))	// 언코일러 후면 도어 센서(우)
-	{
-		*usInF &= ~(0x01 << 15);
-		pDoc->Status.bDoorUc[DOOR_BR_UC] = FALSE;
-	}
+	//if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))		// 언코일러 전면 도어 센서
+	//{
+	//	*usInF |= (0x01 << 12);
+	//	pDoc->Status.bDoorUc[DOOR_FL_UC] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))	// 언코일러 측면 도어 센서
+	//{
+	//	*usInF &= ~(0x01 << 13);
+	//	pDoc->Status.bDoorUc[DOOR_FR_UC] = FALSE;
+	//}
+	//else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))	// 언코일러 후면 도어 센서(좌)
+	//{
+	//	*usInF &= ~(0x01 << 14);
+	//	pDoc->Status.bDoorUc[DOOR_BL_UC] = FALSE;
+	//}
+	//else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))	// 언코일러 후면 도어 센서(우)
+	//{
+	//	*usInF &= ~(0x01 << 15);
+	//	pDoc->Status.bDoorUc[DOOR_BR_UC] = FALSE;
+	//}
 
-	usIn = pDoc->m_pMpeI[7];
-	usInF = &pDoc->m_pMpeIF[7];
+	//usIn = pDoc->m_pMpeI[7];
+	//usInF = &pDoc->m_pMpeIF[7];
 
-	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))		// 마킹부 도어 센서 1 
-	{
-		*usInF |= (0x01 << 10);
-		pDoc->Status.bDoorMk[DOOR_FL_MK] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))	// 마킹부 도어 센서 2
-	{
-		*usInF &= ~(0x01 << 11);
-		pDoc->Status.bDoorMk[DOOR_FR_MK] = FALSE;
-	}
-	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))	// 마킹부 도어 센서 3
-	{
-		*usInF &= ~(0x01 << 12);
-		pDoc->Status.bDoorMk[DOOR_BL_MK] = FALSE;
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))	// 마킹부 도어 센서 4
-	{
-		*usInF &= ~(0x01 << 13);
-		pDoc->Status.bDoorMk[DOOR_BR_MK] = FALSE;
-	}
+	//if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))		// 마킹부 도어 센서 1 
+	//{
+	//	*usInF |= (0x01 << 10);
+	//	pDoc->Status.bDoorMk[DOOR_FL_MK] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))	// 마킹부 도어 센서 2
+	//{
+	//	*usInF &= ~(0x01 << 11);
+	//	pDoc->Status.bDoorMk[DOOR_FR_MK] = FALSE;
+	//}
+	//else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))	// 마킹부 도어 센서 3
+	//{
+	//	*usInF &= ~(0x01 << 12);
+	//	pDoc->Status.bDoorMk[DOOR_BL_MK] = FALSE;
+	//}
+	//else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))	// 마킹부 도어 센서 4
+	//{
+	//	*usInF &= ~(0x01 << 13);
+	//	pDoc->Status.bDoorMk[DOOR_BR_MK] = FALSE;
+	//}
 
-	usIn = pDoc->m_pMpeI[11];
-	usInF = &pDoc->m_pMpeIF[11];
+	//usIn = pDoc->m_pMpeI[11];
+	//usInF = &pDoc->m_pMpeIF[11];
 
-	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))		// 검사부 상 도어 센서 1 
-	{
-		*usInF |= (0x01 << 10);
-		pDoc->Status.bDoorMk[DOOR_FL_AOI_UP] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))	// 검사부 상 도어 센서 2
-	{
-		*usInF &= ~(0x01 << 11);
-		pDoc->Status.bDoorMk[DOOR_FR_AOI_UP] = FALSE;
-	}
-	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))	// 검사부 상 도어 센서 3
-	{
-		*usInF &= ~(0x01 << 12);
-		pDoc->Status.bDoorMk[DOOR_BL_AOI_UP] = FALSE;
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))	// 검사부 상 도어 센서 4
-	{
-		*usInF &= ~(0x01 << 13);
-		pDoc->Status.bDoorMk[DOOR_BR_AOI_UP] = FALSE;
-	}
+	//if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))		// 검사부 상 도어 센서 1 
+	//{
+	//	*usInF |= (0x01 << 10);
+	//	pDoc->Status.bDoorMk[DOOR_FL_AOI_UP] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))	// 검사부 상 도어 센서 2
+	//{
+	//	*usInF &= ~(0x01 << 11);
+	//	pDoc->Status.bDoorMk[DOOR_FR_AOI_UP] = FALSE;
+	//}
+	//else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))	// 검사부 상 도어 센서 3
+	//{
+	//	*usInF &= ~(0x01 << 12);
+	//	pDoc->Status.bDoorMk[DOOR_BL_AOI_UP] = FALSE;
+	//}
+	//else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))	// 검사부 상 도어 센서 4
+	//{
+	//	*usInF &= ~(0x01 << 13);
+	//	pDoc->Status.bDoorMk[DOOR_BR_AOI_UP] = FALSE;
+	//}
 
-	usIn = pDoc->m_pMpeI[15];
-	usInF = &pDoc->m_pMpeIF[15];
+	//usIn = pDoc->m_pMpeI[15];
+	//usInF = &pDoc->m_pMpeIF[15];
 
-	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))		// 검사부 상 도어 센서 1 
-	{
-		*usInF |= (0x01 << 10);
-		pDoc->Status.bDoorAoi[DOOR_FL_AOI_UP] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))	// 검사부 상 도어 센서 2
-	{
-		*usInF &= ~(0x01 << 11);
-		pDoc->Status.bDoorAoi[DOOR_FR_AOI_UP] = FALSE;
-	}
-	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))	// 검사부 상 도어 센서 3
-	{
-		*usInF &= ~(0x01 << 12);
-		pDoc->Status.bDoorAoi[DOOR_BL_AOI_UP] = FALSE;
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))	// 검사부 상 도어 센서 4
-	{
-		*usInF &= ~(0x01 << 13);
-		pDoc->Status.bDoorAoi[DOOR_BR_AOI_UP] = FALSE;
-	}
+	//if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))		// 검사부 상 도어 센서 1 
+	//{
+	//	*usInF |= (0x01 << 10);
+	//	pDoc->Status.bDoorAoi[DOOR_FL_AOI_UP] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))	// 검사부 상 도어 센서 2
+	//{
+	//	*usInF &= ~(0x01 << 11);
+	//	pDoc->Status.bDoorAoi[DOOR_FR_AOI_UP] = FALSE;
+	//}
+	//else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))	// 검사부 상 도어 센서 3
+	//{
+	//	*usInF &= ~(0x01 << 12);
+	//	pDoc->Status.bDoorAoi[DOOR_BL_AOI_UP] = FALSE;
+	//}
+	//else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))	// 검사부 상 도어 센서 4
+	//{
+	//	*usInF &= ~(0x01 << 13);
+	//	pDoc->Status.bDoorAoi[DOOR_BR_AOI_UP] = FALSE;
+	//}
 
-	usIn = pDoc->m_pMpeI[15];
-	usInF = &pDoc->m_pMpeIF[15];
+	//usIn = pDoc->m_pMpeI[15];
+	//usInF = &pDoc->m_pMpeIF[15];
 
-	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))		// 검사부 하 도어 센서 1 
-	{
-		*usInF |= (0x01 << 10);
-		pDoc->Status.bDoorAoi[DOOR_FL_AOI_DN] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))	// 검사부 하 도어 센서 2
-	{
-		*usInF &= ~(0x01 << 11);
-		pDoc->Status.bDoorAoi[DOOR_FR_AOI_DN] = FALSE;
-	}
-	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))	// 검사부 하 도어 센서 3
-	{
-		*usInF &= ~(0x01 << 12);
-		pDoc->Status.bDoorAoi[DOOR_BL_AOI_DN] = FALSE;
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))	// 검사부 하 도어 센서 4
-	{
-		*usInF &= ~(0x01 << 13);
-		pDoc->Status.bDoorAoi[DOOR_BR_AOI_DN] = FALSE;
-	}
+	//if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))		// 검사부 하 도어 센서 1 
+	//{
+	//	*usInF |= (0x01 << 10);
+	//	pDoc->Status.bDoorAoi[DOOR_FL_AOI_DN] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))	// 검사부 하 도어 센서 2
+	//{
+	//	*usInF &= ~(0x01 << 11);
+	//	pDoc->Status.bDoorAoi[DOOR_FR_AOI_DN] = FALSE;
+	//}
+	//else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))	// 검사부 하 도어 센서 3
+	//{
+	//	*usInF &= ~(0x01 << 12);
+	//	pDoc->Status.bDoorAoi[DOOR_BL_AOI_DN] = FALSE;
+	//}
+	//else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))	// 검사부 하 도어 센서 4
+	//{
+	//	*usInF &= ~(0x01 << 13);
+	//	pDoc->Status.bDoorAoi[DOOR_BR_AOI_DN] = FALSE;
+	//}
 
-	usIn = pDoc->m_pMpeI[17];
-	usInF = &pDoc->m_pMpeIF[17];
+	//usIn = pDoc->m_pMpeI[17];
+	//usInF = &pDoc->m_pMpeIF[17];
 
-	if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))		// 리코일러 전면 도어 센서
-	{
-		*usInF |= (0x01 << 12);
-		pDoc->Status.bDoorRe[DOOR_FL_RC] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))	// 리코일러 측면 도어 센서
-	{
-		*usInF &= ~(0x01 << 13);
-		pDoc->Status.bDoorRe[DOOR_FR_RC] = FALSE;
-	}
-	else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))	// 리코일러 후면 도어 센서(좌)
-	{
-		*usInF &= ~(0x01 << 14);
-		pDoc->Status.bDoorRe[DOOR_BL_RC] = FALSE;
-	}
-	else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))	// 리코일러 후면 도어 센서(우)
-	{
-		*usInF &= ~(0x01 << 15);
-		pDoc->Status.bDoorRe[DOOR_BR_RC] = FALSE;
-	}
+	//if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))		// 리코일러 전면 도어 센서
+	//{
+	//	*usInF |= (0x01 << 12);
+	//	pDoc->Status.bDoorRe[DOOR_FL_RC] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))	// 리코일러 측면 도어 센서
+	//{
+	//	*usInF &= ~(0x01 << 13);
+	//	pDoc->Status.bDoorRe[DOOR_FR_RC] = FALSE;
+	//}
+	//else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))	// 리코일러 후면 도어 센서(좌)
+	//{
+	//	*usInF &= ~(0x01 << 14);
+	//	pDoc->Status.bDoorRe[DOOR_BL_RC] = FALSE;
+	//}
+	//else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))	// 리코일러 후면 도어 센서(우)
+	//{
+	//	*usInF &= ~(0x01 << 15);
+	//	pDoc->Status.bDoorRe[DOOR_BR_RC] = FALSE;
+	//}
 
-	usIn = pDoc->m_pMpeI[27];
-	usInF = &pDoc->m_pMpeIF[27];
+	//usIn = pDoc->m_pMpeI[27];
+	//usInF = &pDoc->m_pMpeIF[27];
 
-	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))		// 각인부 도어 센서 1
-	{
-		*usInF |= (0x01 << 10);
-		pDoc->Status.bDoorEngv[DOOR_FL_ENGV] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))	// 각인부 도어 센서 2
-	{
-		*usInF &= ~(0x01 << 11);
-		pDoc->Status.bDoorEngv[DOOR_FR_ENGV] = FALSE;
-	}
-	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))	// 각인부 도어 센서 3
-	{
-		*usInF &= ~(0x01 << 12);
-		pDoc->Status.bDoorEngv[DOOR_BL_ENGV] = FALSE;
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))	// 각인부 도어 센서 4
-	{
-		*usInF &= ~(0x01 << 13);
-		pDoc->Status.bDoorEngv[DOOR_BR_ENGV] = FALSE;
-	}
+	//if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))		// 각인부 도어 센서 1
+	//{
+	//	*usInF |= (0x01 << 10);
+	//	pDoc->Status.bDoorEngv[DOOR_FL_ENGV] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))	// 각인부 도어 센서 2
+	//{
+	//	*usInF &= ~(0x01 << 11);
+	//	pDoc->Status.bDoorEngv[DOOR_FR_ENGV] = FALSE;
+	//}
+	//else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))	// 각인부 도어 센서 3
+	//{
+	//	*usInF &= ~(0x01 << 12);
+	//	pDoc->Status.bDoorEngv[DOOR_BL_ENGV] = FALSE;
+	//}
+	//else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))	// 각인부 도어 센서 4
+	//{
+	//	*usInF &= ~(0x01 << 13);
+	//	pDoc->Status.bDoorEngv[DOOR_BR_ENGV] = FALSE;
+	//}
 }
 
 void CGvisR2R_LaserView::DoModeSel()
 {
-	if (!pDoc->m_pMpeI)
-		return;
+	//if (!pDoc->m_pMpeI)
+	//	return;
 
-	BOOL bMode[2];
-	bMode[0] = pDoc->m_pMpeI[4] & (0x01 << 5) ? TRUE : FALSE;	// 마킹부 자동/수동/1회운전 1
-	bMode[1] = pDoc->m_pMpeI[4] & (0x01 << 6) ? TRUE : FALSE;	// 마킹부 자동/수동/1회운전 2
+	//BOOL bMode[2];
+	//bMode[0] = pDoc->m_pMpeI[4] & (0x01 << 5) ? TRUE : FALSE;	// 마킹부 자동/수동/1회운전 1
+	//bMode[1] = pDoc->m_pMpeI[4] & (0x01 << 6) ? TRUE : FALSE;	// 마킹부 자동/수동/1회운전 2
 
-	if (bMode[0] && !bMode[1])		 // 마킹부 자동/수동/1회운전 (1,2)
-	{
-		pDoc->Status.bAuto = TRUE;
-		pDoc->Status.bManual = FALSE;
-		pDoc->Status.bOneCycle = FALSE;
-	}
-	else if (!bMode[0] && bMode[1])
-	{
-		pDoc->Status.bAuto = FALSE;
-		pDoc->Status.bManual = FALSE;
-		pDoc->Status.bOneCycle = TRUE;
-	}
-	else if (!bMode[0] && !bMode[1])
-	{
-		pDoc->Status.bAuto = FALSE;
-		pDoc->Status.bManual = TRUE;
-		pDoc->Status.bOneCycle = FALSE;
-	}
-	else
-	{
-		pDoc->Status.bAuto = FALSE;
-		pDoc->Status.bManual = FALSE;
-		pDoc->Status.bOneCycle = FALSE;
-	}
+	//if (bMode[0] && !bMode[1])		 // 마킹부 자동/수동/1회운전 (1,2)
+	//{
+	//	pDoc->Status.bAuto = TRUE;
+	//	pDoc->Status.bManual = FALSE;
+	//	pDoc->Status.bOneCycle = FALSE;
+	//}
+	//else if (!bMode[0] && bMode[1])
+	//{
+	//	pDoc->Status.bAuto = FALSE;
+	//	pDoc->Status.bManual = FALSE;
+	//	pDoc->Status.bOneCycle = TRUE;
+	//}
+	//else if (!bMode[0] && !bMode[1])
+	//{
+	//	pDoc->Status.bAuto = FALSE;
+	//	pDoc->Status.bManual = TRUE;
+	//	pDoc->Status.bOneCycle = FALSE;
+	//}
+	//else
+	//{
+	//	pDoc->Status.bAuto = FALSE;
+	//	pDoc->Status.bManual = FALSE;
+	//	pDoc->Status.bOneCycle = FALSE;
+	//}
 
 
-	if (pDoc->Status.bManual && !m_bManual)
-	{
-		m_bManual = TRUE;
-		m_bAuto = FALSE;
-		m_bOneCycle = FALSE;
+	//if (pDoc->Status.bManual && !m_bManual)
+	//{
+	//	m_bManual = TRUE;
+	//	m_bAuto = FALSE;
+	//	m_bOneCycle = FALSE;
 
-		if (m_pDlgMenu03)
-		{
-			m_pDlgMenu03->DoManual();
-		}
-	}
-	else if (pDoc->Status.bAuto && !m_bAuto)
-	{
-		m_bManual = FALSE;
-		m_bAuto = TRUE;
-		m_bOneCycle = FALSE;
+	//	if (m_pDlgMenu03)
+	//	{
+	//		m_pDlgMenu03->DoManual();
+	//	}
+	//}
+	//else if (pDoc->Status.bAuto && !m_bAuto)
+	//{
+	//	m_bManual = FALSE;
+	//	m_bAuto = TRUE;
+	//	m_bOneCycle = FALSE;
 
-		if (m_pDlgMenu03)
-		{
-			m_pDlgMenu03->DoAuto();
-		}
-	}
-	else if (pDoc->Status.bOneCycle && !m_bOneCycle)
-	{
-		m_bManual = FALSE;
-		m_bAuto = FALSE;
-		m_bOneCycle = TRUE;
-	}
+	//	if (m_pDlgMenu03)
+	//	{
+	//		m_pDlgMenu03->DoAuto();
+	//	}
+	//}
+	//else if (pDoc->Status.bOneCycle && !m_bOneCycle)
+	//{
+	//	m_bManual = FALSE;
+	//	m_bAuto = FALSE;
+	//	m_bOneCycle = TRUE;
+	//}
 
 }
 
 void CGvisR2R_LaserView::DoMainSw()
 {
-	// 	if(!pDoc->m_pSliceIo || !pDoc->m_pSliceIoF)
-	// 		return;
-	// 
-	// 	unsigned short usIn = pDoc->m_pSliceIo[0];
-	// 	unsigned short *usInF = &pDoc->m_pSliceIoF[0];
-	unsigned short usIn = pDoc->m_pMpeI[4];
-	unsigned short *usInF = &pDoc->m_pMpeIF[4];
+	//// 	if(!pDoc->m_pSliceIo || !pDoc->m_pSliceIoF)
+	//// 		return;
+	//// 
+	//// 	unsigned short usIn = pDoc->m_pSliceIo[0];
+	//// 	unsigned short *usInF = &pDoc->m_pSliceIoF[0];
+	//unsigned short usIn = pDoc->m_pMpeI[4];
+	//unsigned short *usInF = &pDoc->m_pMpeIF[4];
 
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
-	{
-		*usInF |= (0x01 << 0);								// 마킹부 비상정지 스위치(모니터부)
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-	}
+	//if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
+	//{
+	//	*usInF |= (0x01 << 0);								// 마킹부 비상정지 스위치(모니터부)
+	//}
+	//else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+	//{
+	//	*usInF &= ~(0x01 << 0);
+	//}
 
-	if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
-	{
-		*usInF |= (0x01 << 1);								// 마킹부 운전 스위치
-		m_bSwStopNow = FALSE;
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwRun();
-	}
-	else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
-	{
-		*usInF &= ~(0x01 << 1);
-	}
+	//if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
+	//{
+	//	*usInF |= (0x01 << 1);								// 마킹부 운전 스위치
+	//	m_bSwStopNow = FALSE;
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwRun();
+	//}
+	//else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
+	//{
+	//	*usInF &= ~(0x01 << 1);
+	//}
 
-	if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
-	{
-		*usInF |= (0x01 << 2);								// 마킹부 정지 스위치
-															// 		m_bSwStopNow = TRUE;
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwStop();
-	}
-	else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
-	{
-		*usInF &= ~(0x01 << 2);
-	}
+	//if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
+	//{
+	//	*usInF |= (0x01 << 2);								// 마킹부 정지 스위치
+	//														// 		m_bSwStopNow = TRUE;
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwStop();
+	//}
+	//else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
+	//{
+	//	*usInF &= ~(0x01 << 2);
+	//}
 
-	if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
-	{
-		*usInF |= (0x01 << 3);								// 마킹부 운전준비 스위치
-		m_bSwStopNow = FALSE;
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwReady();
-	}
-	else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
-	{
-		*usInF &= ~(0x01 << 3);
-	}
+	//if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
+	//{
+	//	*usInF |= (0x01 << 3);								// 마킹부 운전준비 스위치
+	//	m_bSwStopNow = FALSE;
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwReady();
+	//}
+	//else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
+	//{
+	//	*usInF &= ~(0x01 << 3);
+	//}
 
-	if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
-	{
-		*usInF |= (0x01 << 4);								// 마킹부 리셋 스위치
-		m_bSwStopNow = FALSE;
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwReset();
-	}
-	else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
-	{
-		*usInF &= ~(0x01 << 4);
-	}
+	//if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
+	//{
+	//	*usInF |= (0x01 << 4);								// 마킹부 리셋 스위치
+	//	m_bSwStopNow = FALSE;
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwReset();
+	//}
+	//else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
+	//{
+	//	*usInF &= ~(0x01 << 4);
+	//}
 
-	// 	if((usIn & (0x01<<6)) && !(*usInF & (0x01<<6)))
-	// 	{
-	// 		*usInF |= (0x01<<6);								// 마킹부 마킹 스위치
-	// 
-	// 		BOOL bOn = pDoc->m_pSliceIo[7] & (0x01<<10) ? TRUE : FALSE;	// 마킹부 토크 클램프 스위치 램프 -> 마킹부 마킹 실린더 SOL
-	// 		if(!bOn)
-	// 		{
-	// 			if(m_pDlgMenu03)
-	// 				m_pDlgMenu03->SwMkDnSol(TRUE);
-	// 			Sleep(300);
-	// 		}
-	// 		if(m_pDlgMenu02)
-	// 		{
-	// 			m_pDlgMenu02->m_bMkDnSolOff = TRUE;
-	// 			m_pDlgMenu02->SwMarking();
-	// 		}
-	// 	}
-	// 	else if(!(usIn & (0x01<<6)) && (*usInF & (0x01<<6)))
-	// 	{
-	// 		*usInF &= ~(0x01<<6);								
-	// 	}
+	//// 	if((usIn & (0x01<<6)) && !(*usInF & (0x01<<6)))
+	//// 	{
+	//// 		*usInF |= (0x01<<6);								// 마킹부 마킹 스위치
+	//// 
+	//// 		BOOL bOn = pDoc->m_pSliceIo[7] & (0x01<<10) ? TRUE : FALSE;	// 마킹부 토크 클램프 스위치 램프 -> 마킹부 마킹 실린더 SOL
+	//// 		if(!bOn)
+	//// 		{
+	//// 			if(m_pDlgMenu03)
+	//// 				m_pDlgMenu03->SwMkDnSol(TRUE);
+	//// 			Sleep(300);
+	//// 		}
+	//// 		if(m_pDlgMenu02)
+	//// 		{
+	//// 			m_pDlgMenu02->m_bMkDnSolOff = TRUE;
+	//// 			m_pDlgMenu02->SwMarking();
+	//// 		}
+	//// 	}
+	//// 	else if(!(usIn & (0x01<<6)) && (*usInF & (0x01<<6)))
+	//// 	{
+	//// 		*usInF &= ~(0x01<<6);								
+	//// 	}
 
-	if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
-	{
-		*usInF |= (0x01 << 7);								// 마킹부 JOG 버튼(상)
-		//if (pDoc->Status.bSwJogLeft)
-			SwJog(AXIS_Y0, M_CCW, TRUE);
-		//else
-		//	SwJog(AXIS_Y1, M_CCW, TRUE);
-	}
-	else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
-	{
-		*usInF &= ~(0x01 << 7);
-		//if (pDoc->Status.bSwJogLeft)
-			SwJog(AXIS_Y0, M_CCW, FALSE);
-		//else
-		//	SwJog(AXIS_Y1, M_CCW, FALSE);
-	}
+	//if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
+	//{
+	//	*usInF |= (0x01 << 7);								// 마킹부 JOG 버튼(상)
+	//	//if (pDoc->Status.bSwJogLeft)
+	//		SwJog(AXIS_Y0, M_CCW, TRUE);
+	//	//else
+	//	//	SwJog(AXIS_Y1, M_CCW, TRUE);
+	//}
+	//else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
+	//{
+	//	*usInF &= ~(0x01 << 7);
+	//	//if (pDoc->Status.bSwJogLeft)
+	//		SwJog(AXIS_Y0, M_CCW, FALSE);
+	//	//else
+	//	//	SwJog(AXIS_Y1, M_CCW, FALSE);
+	//}
 
-	if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
-	{
-		*usInF |= (0x01 << 8);								// 마킹부 JOG 버튼(하)
-		//if (pDoc->Status.bSwJogLeft)
-			SwJog(AXIS_Y0, M_CW, TRUE);
-		//else
-		//	SwJog(AXIS_Y1, M_CW, TRUE);
-	}
-	else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
-	{
-		*usInF &= ~(0x01 << 8);
-		//if (pDoc->Status.bSwJogLeft)
-			SwJog(AXIS_Y0, M_CW, FALSE);
-		//else
-		//	SwJog(AXIS_Y1, M_CW, FALSE);
-	}
+	//if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
+	//{
+	//	*usInF |= (0x01 << 8);								// 마킹부 JOG 버튼(하)
+	//	//if (pDoc->Status.bSwJogLeft)
+	//		SwJog(AXIS_Y0, M_CW, TRUE);
+	//	//else
+	//	//	SwJog(AXIS_Y1, M_CW, TRUE);
+	//}
+	//else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
+	//{
+	//	*usInF &= ~(0x01 << 8);
+	//	//if (pDoc->Status.bSwJogLeft)
+	//		SwJog(AXIS_Y0, M_CW, FALSE);
+	//	//else
+	//	//	SwJog(AXIS_Y1, M_CW, FALSE);
+	//}
 
-	if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
-	{
-		*usInF |= (0x01 << 9);								// 마킹부 JOG 버튼(좌)
-		//if (pDoc->Status.bSwJogLeft)
-			SwJog(AXIS_X0, M_CCW, TRUE);
-		//else
-		//	SwJog(AXIS_X1, M_CCW, TRUE);
-	}
-	else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
-	{
-		*usInF &= ~(0x01 << 9);
-		//if (pDoc->Status.bSwJogLeft)
-			SwJog(AXIS_X0, M_CCW, FALSE);
-		//else
-		//	SwJog(AXIS_X1, M_CCW, FALSE);
-	}
+	//if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
+	//{
+	//	*usInF |= (0x01 << 9);								// 마킹부 JOG 버튼(좌)
+	//	//if (pDoc->Status.bSwJogLeft)
+	//		SwJog(AXIS_X0, M_CCW, TRUE);
+	//	//else
+	//	//	SwJog(AXIS_X1, M_CCW, TRUE);
+	//}
+	//else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
+	//{
+	//	*usInF &= ~(0x01 << 9);
+	//	//if (pDoc->Status.bSwJogLeft)
+	//		SwJog(AXIS_X0, M_CCW, FALSE);
+	//	//else
+	//	//	SwJog(AXIS_X1, M_CCW, FALSE);
+	//}
 
-	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
-	{
-		*usInF |= (0x01 << 10);								// 마킹부 JOG 버튼(우)
-		//if (pDoc->Status.bSwJogLeft)
-			SwJog(AXIS_X0, M_CW, TRUE);
-		//else
-		//	SwJog(AXIS_X1, M_CW, TRUE);
-	}
-	else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
-	{
-		*usInF &= ~(0x01 << 10);
-		//if (pDoc->Status.bSwJogLeft)
-			SwJog(AXIS_X0, M_CW, FALSE);
-		//else
-		//	SwJog(AXIS_X1, M_CW, FALSE);
-	}
+	//if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
+	//{
+	//	*usInF |= (0x01 << 10);								// 마킹부 JOG 버튼(우)
+	//	//if (pDoc->Status.bSwJogLeft)
+	//		SwJog(AXIS_X0, M_CW, TRUE);
+	//	//else
+	//	//	SwJog(AXIS_X1, M_CW, TRUE);
+	//}
+	//else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
+	//{
+	//	*usInF &= ~(0x01 << 10);
+	//	//if (pDoc->Status.bSwJogLeft)
+	//		SwJog(AXIS_X0, M_CW, FALSE);
+	//	//else
+	//	//	SwJog(AXIS_X1, M_CW, FALSE);
+	//}
 
-	if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
-	{
-		*usInF |= (0x01 << 11);								// 마킹부 모션 선택(LEFT)
-		pDoc->Status.bSwJogLeft = TRUE;
-	}
-	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
-	{
-		*usInF &= ~(0x01 << 11);
-		pDoc->Status.bSwJogLeft = FALSE;
-	}
+	//if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
+	//{
+	//	*usInF |= (0x01 << 11);								// 마킹부 모션 선택(LEFT)
+	//	pDoc->Status.bSwJogLeft = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
+	//{
+	//	*usInF &= ~(0x01 << 11);
+	//	pDoc->Status.bSwJogLeft = FALSE;
+	//}
 
-	if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
-	{
-		*usInF |= (0x01 << 12);								// 마킹부 속도 선택
-		pDoc->Status.bSwJogFast = TRUE;
-	}
-	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
-	{
-		*usInF &= ~(0x01 << 12);
-		pDoc->Status.bSwJogFast = FALSE;
-	}
+	//if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
+	//{
+	//	*usInF |= (0x01 << 12);								// 마킹부 속도 선택
+	//	pDoc->Status.bSwJogFast = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
+	//{
+	//	*usInF &= ~(0x01 << 12);
+	//	pDoc->Status.bSwJogFast = FALSE;
+	//}
 
-	if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
-	{
-		*usInF |= (0x01 << 13);								// 마킹부 운전 선택(INDEX)
-		pDoc->Status.bSwJogStep = TRUE;
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
-	{
-		*usInF &= ~(0x01 << 13);
-		pDoc->Status.bSwJogStep = FALSE;
-	}
+	//if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
+	//{
+	//	*usInF |= (0x01 << 13);								// 마킹부 운전 선택(INDEX)
+	//	pDoc->Status.bSwJogStep = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
+	//{
+	//	*usInF &= ~(0x01 << 13);
+	//	pDoc->Status.bSwJogStep = FALSE;
+	//}
 
-	if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
-	{
-		*usInF |= (0x01 << 14);								// SPARE	
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
-	{
-		*usInF &= ~(0x01 << 14);
-		// No Use....
-	}
+	//if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
+	//{
+	//	*usInF |= (0x01 << 14);								// SPARE	
+	//														// No Use....
+	//}
+	//else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
+	//{
+	//	*usInF &= ~(0x01 << 14);
+	//	// No Use....
+	//}
 
-	if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
-	{
-		*usInF |= (0x01 << 15);								// SPARE	
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
-	{
-		*usInF &= ~(0x01 << 15);
-		// No Use....
-	}
+	//if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
+	//{
+	//	*usInF |= (0x01 << 15);								// SPARE	
+	//														// No Use....
+	//}
+	//else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
+	//{
+	//	*usInF &= ~(0x01 << 15);
+	//	// No Use....
+	//}
 
-	if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
-		return;
+	//if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
+	//	return;
 
 
-	// 	usIn = pDoc->m_pMpeIo[0];
-	// 	usInF = &pDoc->m_pMpeIoF[0];
-	// 
-	// 	if((usIn & (0x01<<14)) && !(*usInF & (0x01<<14)))
-	// 	{
-	// 		*usInF |= (0x01<<14);								// 언코일러 제품 EPC원점 스위치
-	// 		m_bSwStopNow = TRUE;
-	// 		if(m_pDlgMenu03)
-	// 			m_pDlgMenu03->SwStop();
-	// 	}
-	// 	else if(!(usIn & (0x01<<14)) && (*usInF & (0x01<<14)))
-	// 	{
-	// 		*usInF &= ~(0x01<<14);								
-	// 	}
-	// 
-	// 
-	// 	usIn = pDoc->m_pMpeIo[4];
-	// 	usInF = &pDoc->m_pMpeIoF[4];
-	// 
-	// 	if((usIn & (0x01<<14)) && !(*usInF & (0x01<<14)))
-	// 	{
-	// 		*usInF |= (0x01<<14);								// 리코일러 제품 EPC원점 스위치
-	// 		m_bSwStopNow = TRUE;
-	// 		if(m_pDlgMenu03)
-	// 			m_pDlgMenu03->SwStop();
-	// 	}
-	// 	else if(!(usIn & (0x01<<14)) && (*usInF & (0x01<<14)))
-	// 	{
-	// 		*usInF &= ~(0x01<<14);								
-	// 	}
+	//// 	usIn = pDoc->m_pMpeIo[0];
+	//// 	usInF = &pDoc->m_pMpeIoF[0];
+	//// 
+	//// 	if((usIn & (0x01<<14)) && !(*usInF & (0x01<<14)))
+	//// 	{
+	//// 		*usInF |= (0x01<<14);								// 언코일러 제품 EPC원점 스위치
+	//// 		m_bSwStopNow = TRUE;
+	//// 		if(m_pDlgMenu03)
+	//// 			m_pDlgMenu03->SwStop();
+	//// 	}
+	//// 	else if(!(usIn & (0x01<<14)) && (*usInF & (0x01<<14)))
+	//// 	{
+	//// 		*usInF &= ~(0x01<<14);								
+	//// 	}
+	//// 
+	//// 
+	//// 	usIn = pDoc->m_pMpeIo[4];
+	//// 	usInF = &pDoc->m_pMpeIoF[4];
+	//// 
+	//// 	if((usIn & (0x01<<14)) && !(*usInF & (0x01<<14)))
+	//// 	{
+	//// 		*usInF |= (0x01<<14);								// 리코일러 제품 EPC원점 스위치
+	//// 		m_bSwStopNow = TRUE;
+	//// 		if(m_pDlgMenu03)
+	//// 			m_pDlgMenu03->SwStop();
+	//// 	}
+	//// 	else if(!(usIn & (0x01<<14)) && (*usInF & (0x01<<14)))
+	//// 	{
+	//// 		*usInF &= ~(0x01<<14);								
+	//// 	}
 }
 
 
 void CGvisR2R_LaserView::DoMkSens()
 {
-	// 	if(!pDoc->m_pSliceIo || !pDoc->m_pSliceIoF)
-	// 		return;
-	// 
-	// 	unsigned short usIn = pDoc->m_pSliceIo[2];
-	// 	unsigned short *usInF = &pDoc->m_pSliceIoF[2];
-	unsigned short usIn = 0;
-	unsigned short *usInF = NULL;
+	//// 	if(!pDoc->m_pSliceIo || !pDoc->m_pSliceIoF)
+	//// 		return;
+	//// 
+	//// 	unsigned short usIn = pDoc->m_pSliceIo[2];
+	//// 	unsigned short *usInF = &pDoc->m_pSliceIoF[2];
+	//unsigned short usIn = 0;
+	//unsigned short *usInF = NULL;
 
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
-	{
-		*usInF |= (0x01 << 0);								// 마킹부 테이블 진공 센서
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-	}
+	//if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
+	//{
+	//	*usInF |= (0x01 << 0);								// 마킹부 테이블 진공 센서
+	//}
+	//else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+	//{
+	//	*usInF &= ~(0x01 << 0);
+	//}
 
-	if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
-	{
-		*usInF |= (0x01 << 1);								// 마킹부 테이블 압력 스위치
-	}
-	else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
-	{
-		*usInF &= ~(0x01 << 1);
-	}
+	//if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
+	//{
+	//	*usInF |= (0x01 << 1);								// 마킹부 테이블 압력 스위치
+	//}
+	//else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
+	//{
+	//	*usInF &= ~(0x01 << 1);
+	//}
 
-	if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
-	{
-		*usInF |= (0x01 << 2);								// 마킹부 피딩 진공 센서
-	}
-	else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
-	{
-		*usInF &= ~(0x01 << 2);
-	}
+	//if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
+	//{
+	//	*usInF |= (0x01 << 2);								// 마킹부 피딩 진공 센서
+	//}
+	//else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
+	//{
+	//	*usInF &= ~(0x01 << 2);
+	//}
 
-	if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
-	{
-		*usInF |= (0x01 << 3);								// 마킹부 피딩 클램프 상승 센서
-	}
-	else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
-	{
-		*usInF &= ~(0x01 << 3);
-	}
+	//if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
+	//{
+	//	*usInF |= (0x01 << 3);								// 마킹부 피딩 클램프 상승 센서
+	//}
+	//else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
+	//{
+	//	*usInF &= ~(0x01 << 3);
+	//}
 
-	if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
-	{
-		*usInF |= (0x01 << 4);								// 마킹부 피딩 클램프 하강 센서
-	}
-	else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
-	{
-		*usInF &= ~(0x01 << 4);
-	}
+	//if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
+	//{
+	//	*usInF |= (0x01 << 4);								// 마킹부 피딩 클램프 하강 센서
+	//}
+	//else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
+	//{
+	//	*usInF &= ~(0x01 << 4);
+	//}
 
-	if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
-	{
-		*usInF |= (0x01 << 5);								// 마킹부 토크 진공 센서
-	}
-	else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
-	{
-		*usInF &= ~(0x01 << 5);
-	}
+	//if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
+	//{
+	//	*usInF |= (0x01 << 5);								// 마킹부 토크 진공 센서
+	//}
+	//else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
+	//{
+	//	*usInF &= ~(0x01 << 5);
+	//}
 
-	if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
-	{
-		*usInF |= (0x01 << 6);								// 마킹부 토크 클램프 상승 센서
-	}
-	else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
-	{
-		*usInF &= ~(0x01 << 6);
-	}
+	//if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
+	//{
+	//	*usInF |= (0x01 << 6);								// 마킹부 토크 클램프 상승 센서
+	//}
+	//else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
+	//{
+	//	*usInF &= ~(0x01 << 6);
+	//}
 
-	if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
-	{
-		*usInF |= (0x01 << 7);								// 마킹부 토크 클램프 하강 센서
-	}
-	else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
-	{
-		*usInF &= ~(0x01 << 7);
-	}
+	//if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
+	//{
+	//	*usInF |= (0x01 << 7);								// 마킹부 토크 클램프 하강 센서
+	//}
+	//else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
+	//{
+	//	*usInF &= ~(0x01 << 7);
+	//}
 
-	if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
-	{
-		*usInF |= (0x01 << 8);								// 마킹부 댄서롤 상승 센서
-	}
-	else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
-	{
-		*usInF &= ~(0x01 << 8);
-	}
+	//if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
+	//{
+	//	*usInF |= (0x01 << 8);								// 마킹부 댄서롤 상승 센서
+	//}
+	//else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
+	//{
+	//	*usInF &= ~(0x01 << 8);
+	//}
 
-	if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
-	{
-		*usInF |= (0x01 << 9);								// 마킹부 댄서롤 하강 센서
-	}
-	else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
-	{
-		*usInF &= ~(0x01 << 9);
-	}
+	//if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
+	//{
+	//	*usInF |= (0x01 << 9);								// 마킹부 댄서롤 하강 센서
+	//}
+	//else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
+	//{
+	//	*usInF &= ~(0x01 << 9);
+	//}
 
-	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
-	{
-		*usInF |= (0x01 << 10);								// 검사부 피딩 진공 센서
-	}
-	else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
-	{
-		*usInF &= ~(0x01 << 10);
-	}
+	//if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
+	//{
+	//	*usInF |= (0x01 << 10);								// 검사부 피딩 진공 센서
+	//}
+	//else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
+	//{
+	//	*usInF &= ~(0x01 << 10);
+	//}
 
-	if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
-	{
-		*usInF |= (0x01 << 11);								// 검사부 피딩 클램프 상승 센서
-	}
-	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
-	{
-		*usInF &= ~(0x01 << 11);
-	}
+	//if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
+	//{
+	//	*usInF |= (0x01 << 11);								// 검사부 피딩 클램프 상승 센서
+	//}
+	//else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
+	//{
+	//	*usInF &= ~(0x01 << 11);
+	//}
 
-	if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
-	{
-		*usInF |= (0x01 << 12);								// 검사부 피딩 클램프 하강 센서
-	}
-	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
-	{
-		*usInF &= ~(0x01 << 12);
-	}
+	//if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
+	//{
+	//	*usInF |= (0x01 << 12);								// 검사부 피딩 클램프 하강 센서
+	//}
+	//else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
+	//{
+	//	*usInF &= ~(0x01 << 12);
+	//}
 
-	if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
-	{
-		*usInF |= (0x01 << 13);								// 검사부 토크 진공 센서
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
-	{
-		*usInF &= ~(0x01 << 13);
-	}
+	//if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
+	//{
+	//	*usInF |= (0x01 << 13);								// 검사부 토크 진공 센서
+	//}
+	//else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
+	//{
+	//	*usInF &= ~(0x01 << 13);
+	//}
 
-	if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
-	{
-		*usInF |= (0x01 << 14);								// 검사부 토크 클램프 상승 센서
-	}
-	else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
-	{
-		*usInF &= ~(0x01 << 14);
-	}
+	//if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
+	//{
+	//	*usInF |= (0x01 << 14);								// 검사부 토크 클램프 상승 센서
+	//}
+	//else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
+	//{
+	//	*usInF &= ~(0x01 << 14);
+	//}
 
-	if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
-	{
-		*usInF |= (0x01 << 15);								// 검사부 토크 클램프 하강 센서
-	}
-	else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
-	{
-		*usInF &= ~(0x01 << 15);
-	}
+	//if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
+	//{
+	//	*usInF |= (0x01 << 15);								// 검사부 토크 클램프 하강 센서
+	//}
+	//else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
+	//{
+	//	*usInF &= ~(0x01 << 15);
+	//}
 }
 
 void CGvisR2R_LaserView::DoAoiBoxSw()
 {
-	// 	if(!pDoc->m_pSliceIo || !pDoc->m_pSliceIoF)
-	// 		return;
-	// 
-	// 	unsigned short usIn = pDoc->m_pSliceIo[3];
-	// 	unsigned short *usInF = &pDoc->m_pSliceIoF[3];
-	unsigned short usIn = 0;
-	unsigned short *usInF = NULL;
+	//// 	if(!pDoc->m_pSliceIo || !pDoc->m_pSliceIoF)
+	//// 		return;
+	//// 
+	//// 	unsigned short usIn = pDoc->m_pSliceIo[3];
+	//// 	unsigned short *usInF = &pDoc->m_pSliceIoF[3];
+	//unsigned short usIn = 0;
+	//unsigned short *usInF = NULL;
 
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
-	{
-		*usInF |= (0x01 << 0);								// 검사부 연동 온/오프 스위치
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwAoiRelation();
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-	}
+	//if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
+	//{
+	//	*usInF |= (0x01 << 0);								// 검사부 연동 온/오프 스위치
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwAoiRelation();
+	//}
+	//else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+	//{
+	//	*usInF &= ~(0x01 << 0);
+	//}
 
-	if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
-	{
-		*usInF |= (0x01 << 1);								// 검사부 테이블 브로워 스위치
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwAoiTblBlw();
-	}
-	else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
-	{
-		*usInF &= ~(0x01 << 1);
-	}
+	//if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
+	//{
+	//	*usInF |= (0x01 << 1);								// 검사부 테이블 브로워 스위치
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwAoiTblBlw();
+	//}
+	//else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
+	//{
+	//	*usInF &= ~(0x01 << 1);
+	//}
 
-	if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
-	{
-		*usInF |= (0x01 << 2);								// 검사부 피딩 정회전 스위치
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_18);
-	}
-	else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
-	{
-		*usInF &= ~(0x01 << 2);
-		// 		if(m_pDlgMenu03)
-		// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_18);
-	}
+	//if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
+	//{
+	//	*usInF |= (0x01 << 2);								// 검사부 피딩 정회전 스위치
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_18);
+	//}
+	//else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
+	//{
+	//	*usInF &= ~(0x01 << 2);
+	//	// 		if(m_pDlgMenu03)
+	//	// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_18);
+	//}
 
-	if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
-	{
-		*usInF |= (0x01 << 3);								// 검사부 피딩 역회전 스위치
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_19);
-	}
-	else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
-	{
-		*usInF &= ~(0x01 << 3);
-		// 		if(m_pDlgMenu03)
-		// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_19);
-	}
+	//if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
+	//{
+	//	*usInF |= (0x01 << 3);								// 검사부 피딩 역회전 스위치
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_19);
+	//}
+	//else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
+	//{
+	//	*usInF &= ~(0x01 << 3);
+	//	// 		if(m_pDlgMenu03)
+	//	// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_19);
+	//}
 
-	if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
-	{
-		*usInF |= (0x01 << 4);								// 검사부 피딩 진공 스위치
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwAoiFdVac();
-	}
-	else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
-	{
-		*usInF &= ~(0x01 << 4);
-	}
+	//if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
+	//{
+	//	*usInF |= (0x01 << 4);								// 검사부 피딩 진공 스위치
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwAoiFdVac();
+	//}
+	//else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
+	//{
+	//	*usInF &= ~(0x01 << 4);
+	//}
 
-	if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
-	{
-		*usInF |= (0x01 << 5);								// 검사부 토크 진공 스위치
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwAoiTqVac();
-	}
-	else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
-	{
-		*usInF &= ~(0x01 << 5);
-	}
+	//if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
+	//{
+	//	*usInF |= (0x01 << 5);								// 검사부 토크 진공 스위치
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwAoiTqVac();
+	//}
+	//else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
+	//{
+	//	*usInF &= ~(0x01 << 5);
+	//}
 
-	if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
-	{
-		*usInF |= (0x01 << 6);								// 검사부 테이블 진공 스위치
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwAoiTblVac();
-	}
-	else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
-	{
-		*usInF &= ~(0x01 << 6);
-	}
+	//if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
+	//{
+	//	*usInF |= (0x01 << 6);								// 검사부 테이블 진공 스위치
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwAoiTblVac();
+	//}
+	//else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
+	//{
+	//	*usInF &= ~(0x01 << 6);
+	//}
 
-	if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
-	{
-		*usInF |= (0x01 << 7);								// 검사부 레이져 포인터 스위치
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwAoiLsrPt(TRUE);
-	}
-	else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
-	{
-		*usInF &= ~(0x01 << 7);
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwAoiLsrPt(FALSE);
-	}
+	//if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
+	//{
+	//	*usInF |= (0x01 << 7);								// 검사부 레이져 포인터 스위치
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwAoiLsrPt(TRUE);
+	//}
+	//else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
+	//{
+	//	*usInF &= ~(0x01 << 7);
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwAoiLsrPt(FALSE);
+	//}
 
-	if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
-	{
-		*usInF |= (0x01 << 8);								// 검사부 피딩 클램프 스위치
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwAoiFdClp();
-	}
-	else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
-	{
-		*usInF &= ~(0x01 << 8);
-	}
+	//if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
+	//{
+	//	*usInF |= (0x01 << 8);								// 검사부 피딩 클램프 스위치
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwAoiFdClp();
+	//}
+	//else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
+	//{
+	//	*usInF &= ~(0x01 << 8);
+	//}
 
-	if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
-	{
-		*usInF |= (0x01 << 9);								// 검사부 토크 클램프 스위치
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwAoiTqClp();
-	}
-	else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
-	{
-		*usInF &= ~(0x01 << 9);
-	}
+	//if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
+	//{
+	//	*usInF |= (0x01 << 9);								// 검사부 토크 클램프 스위치
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwAoiTqClp();
+	//}
+	//else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
+	//{
+	//	*usInF &= ~(0x01 << 9);
+	//}
 
-	// 	if((usIn & (0x01<<10)) && !(*usInF & (0x01<<10)))
-	// 	{
-	// 		*usInF |= (0x01<<10);								// 검사부 전면 도어 센서(중)
-	// 		pDoc->Status.bDoorAoi[DOOR_FM_AOI] = TRUE;
-	// 	}
-	// 	else if(!(usIn & (0x01<<10)) && (*usInF & (0x01<<10)))
-	// 	{
-	// 		*usInF &= ~(0x01<<10);								
-	// 		pDoc->Status.bDoorAoi[DOOR_FM_AOI] = FALSE;
-	// 	}
-	// 
-	// 	if((usIn & (0x01<<11)) && !(*usInF & (0x01<<11)))
-	// 	{
-	// 		*usInF |= (0x01<<11);								// 검사부 전면 도어 센서(좌)
-	// 		pDoc->Status.bDoorAoi[DOOR_FL_AOI] = TRUE;
-	// 	}
-	// 	else if(!(usIn & (0x01<<11)) && (*usInF & (0x01<<11)))
-	// 	{
-	// 		*usInF &= ~(0x01<<11);								
-	// 		pDoc->Status.bDoorAoi[DOOR_FL_AOI] = FALSE;
-	// 	}
-	// 
-	// 	if((usIn & (0x01<<12)) && !(*usInF & (0x01<<12)))
-	// 	{
-	// 		*usInF |= (0x01<<12);								// 검사부 전면 도어 센서(우)
-	// 		pDoc->Status.bDoorAoi[DOOR_FR_AOI] = TRUE;
-	// 	}
-	// 	else if(!(usIn & (0x01<<12)) && (*usInF & (0x01<<12)))
-	// 	{
-	// 		*usInF &= ~(0x01<<12);								
-	// 		pDoc->Status.bDoorAoi[DOOR_FR_AOI] = FALSE;
-	// 	}
-	// 
-	// 	if((usIn & (0x01<<13)) && !(*usInF & (0x01<<13)))
-	// 	{
-	// 		*usInF |= (0x01<<13);								// 검사부 후면 도어 센서(중)
-	// 		pDoc->Status.bDoorAoi[DOOR_BM_AOI] = TRUE;
-	// 	}
-	// 	else if(!(usIn & (0x01<<13)) && (*usInF & (0x01<<13)))
-	// 	{
-	// 		*usInF &= ~(0x01<<13);								
-	// 		pDoc->Status.bDoorAoi[DOOR_BM_AOI] = FALSE;
-	// 	}
-	// 
-	// 	if((usIn & (0x01<<14)) && !(*usInF & (0x01<<14)))
-	// 	{
-	// 		*usInF |= (0x01<<14);								// 검사부 후면 도어 센서(좌)
-	// 		pDoc->Status.bDoorAoi[DOOR_BL_AOI] = TRUE;
-	// 	}
-	// 	else if(!(usIn & (0x01<<14)) && (*usInF & (0x01<<14)))
-	// 	{
-	// 		*usInF &= ~(0x01<<14);								
-	// 		pDoc->Status.bDoorAoi[DOOR_BL_AOI] = FALSE;
-	// 	}
-	// 
-	// 	if((usIn & (0x01<<15)) && !(*usInF & (0x01<<15)))
-	// 	{
-	// 		*usInF |= (0x01<<15);								// 검사부 후면 도어 센서(우)
-	// 		pDoc->Status.bDoorAoi[DOOR_BR_AOI] = TRUE;
-	// 	}
-	// 	else if(!(usIn & (0x01<<15)) && (*usInF & (0x01<<15)))
-	// 	{
-	// 		*usInF &= ~(0x01<<15);								
-	// 		pDoc->Status.bDoorAoi[DOOR_BR_AOI] = FALSE;
-	// 	}
+	//// 	if((usIn & (0x01<<10)) && !(*usInF & (0x01<<10)))
+	//// 	{
+	//// 		*usInF |= (0x01<<10);								// 검사부 전면 도어 센서(중)
+	//// 		pDoc->Status.bDoorAoi[DOOR_FM_AOI] = TRUE;
+	//// 	}
+	//// 	else if(!(usIn & (0x01<<10)) && (*usInF & (0x01<<10)))
+	//// 	{
+	//// 		*usInF &= ~(0x01<<10);								
+	//// 		pDoc->Status.bDoorAoi[DOOR_FM_AOI] = FALSE;
+	//// 	}
+	//// 
+	//// 	if((usIn & (0x01<<11)) && !(*usInF & (0x01<<11)))
+	//// 	{
+	//// 		*usInF |= (0x01<<11);								// 검사부 전면 도어 센서(좌)
+	//// 		pDoc->Status.bDoorAoi[DOOR_FL_AOI] = TRUE;
+	//// 	}
+	//// 	else if(!(usIn & (0x01<<11)) && (*usInF & (0x01<<11)))
+	//// 	{
+	//// 		*usInF &= ~(0x01<<11);								
+	//// 		pDoc->Status.bDoorAoi[DOOR_FL_AOI] = FALSE;
+	//// 	}
+	//// 
+	//// 	if((usIn & (0x01<<12)) && !(*usInF & (0x01<<12)))
+	//// 	{
+	//// 		*usInF |= (0x01<<12);								// 검사부 전면 도어 센서(우)
+	//// 		pDoc->Status.bDoorAoi[DOOR_FR_AOI] = TRUE;
+	//// 	}
+	//// 	else if(!(usIn & (0x01<<12)) && (*usInF & (0x01<<12)))
+	//// 	{
+	//// 		*usInF &= ~(0x01<<12);								
+	//// 		pDoc->Status.bDoorAoi[DOOR_FR_AOI] = FALSE;
+	//// 	}
+	//// 
+	//// 	if((usIn & (0x01<<13)) && !(*usInF & (0x01<<13)))
+	//// 	{
+	//// 		*usInF |= (0x01<<13);								// 검사부 후면 도어 센서(중)
+	//// 		pDoc->Status.bDoorAoi[DOOR_BM_AOI] = TRUE;
+	//// 	}
+	//// 	else if(!(usIn & (0x01<<13)) && (*usInF & (0x01<<13)))
+	//// 	{
+	//// 		*usInF &= ~(0x01<<13);								
+	//// 		pDoc->Status.bDoorAoi[DOOR_BM_AOI] = FALSE;
+	//// 	}
+	//// 
+	//// 	if((usIn & (0x01<<14)) && !(*usInF & (0x01<<14)))
+	//// 	{
+	//// 		*usInF |= (0x01<<14);								// 검사부 후면 도어 센서(좌)
+	//// 		pDoc->Status.bDoorAoi[DOOR_BL_AOI] = TRUE;
+	//// 	}
+	//// 	else if(!(usIn & (0x01<<14)) && (*usInF & (0x01<<14)))
+	//// 	{
+	//// 		*usInF &= ~(0x01<<14);								
+	//// 		pDoc->Status.bDoorAoi[DOOR_BL_AOI] = FALSE;
+	//// 	}
+	//// 
+	//// 	if((usIn & (0x01<<15)) && !(*usInF & (0x01<<15)))
+	//// 	{
+	//// 		*usInF |= (0x01<<15);								// 검사부 후면 도어 센서(우)
+	//// 		pDoc->Status.bDoorAoi[DOOR_BR_AOI] = TRUE;
+	//// 	}
+	//// 	else if(!(usIn & (0x01<<15)) && (*usInF & (0x01<<15)))
+	//// 	{
+	//// 		*usInF &= ~(0x01<<15);								
+	//// 		pDoc->Status.bDoorAoi[DOOR_BR_AOI] = FALSE;
+	//// 	}
 }
 
 void CGvisR2R_LaserView::DoEmgSens()
 {
-	// 	if(!pDoc->m_pSliceIo || !pDoc->m_pSliceIoF)
-	// 		return;
+	//// 	if(!pDoc->m_pSliceIo || !pDoc->m_pSliceIoF)
+	//// 		return;
 
-	// 	unsigned short usIn = pDoc->m_pSliceIo[4];
-	// 	unsigned short *usInF = &pDoc->m_pSliceIoF[4];
+	//// 	unsigned short usIn = pDoc->m_pSliceIo[4];
+	//// 	unsigned short *usInF = &pDoc->m_pSliceIoF[4];
 
-	//unsigned short usIn = 0;
-	//unsigned short *usInF = NULL;
+	////unsigned short usIn = 0;
+	////unsigned short *usInF = NULL;
 
-	unsigned short usIn, *usInF;
+	//unsigned short usIn, *usInF;
 
-	if (!pDoc->m_pMpeI || !pDoc->m_pMpeIF)
-		return;
+	//if (!pDoc->m_pMpeI || !pDoc->m_pMpeIF)
+	//	return;
 
-	usIn = pDoc->m_pMpeI[0];
-	usInF = &pDoc->m_pMpeIF[0];
+	//usIn = pDoc->m_pMpeI[0];
+	//usInF = &pDoc->m_pMpeIF[0];
 
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))		// 언코일러 비상정지 스위치
-	{
-		*usInF |= (0x01 << 0);						
-		pDoc->Status.bEmgUc = TRUE;
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-		pDoc->Status.bEmgUc = FALSE;
-	}
+	//if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))		// 언코일러 비상정지 스위치
+	//{
+	//	*usInF |= (0x01 << 0);						
+	//	pDoc->Status.bEmgUc = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+	//{
+	//	*usInF &= ~(0x01 << 0);
+	//	pDoc->Status.bEmgUc = FALSE;
+	//}
 
-	usIn = pDoc->m_pMpeI[4];
-	usInF = &pDoc->m_pMpeIF[4];
+	//usIn = pDoc->m_pMpeI[4];
+	//usInF = &pDoc->m_pMpeIF[4];
 
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))		// 마킹부 비상정지 스위치(모니터부)
-	{
-		*usInF |= (0x01 << 0);						
-		pDoc->Status.bEmgMk[EMG_M_MK] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-		pDoc->Status.bEmgMk[EMG_M_MK] = FALSE;
-	}
+	//if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))		// 마킹부 비상정지 스위치(모니터부)
+	//{
+	//	*usInF |= (0x01 << 0);						
+	//	pDoc->Status.bEmgMk[EMG_M_MK] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+	//{
+	//	*usInF &= ~(0x01 << 0);
+	//	pDoc->Status.bEmgMk[EMG_M_MK] = FALSE;
+	//}
 
-	usIn = pDoc->m_pMpeI[5];
-	usInF = &pDoc->m_pMpeIF[5];
+	//usIn = pDoc->m_pMpeI[5];
+	//usInF = &pDoc->m_pMpeIF[5];
 
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))		// 마킹부 비상정지 스위치(스위치부)	
-	{
-		*usInF |= (0x01 << 0);						
-		pDoc->Status.bEmgMk[EMG_B_MK] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-		pDoc->Status.bEmgMk[EMG_B_MK] = FALSE;
-	}
+	//if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))		// 마킹부 비상정지 스위치(스위치부)	
+	//{
+	//	*usInF |= (0x01 << 0);						
+	//	pDoc->Status.bEmgMk[EMG_B_MK] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+	//{
+	//	*usInF &= ~(0x01 << 0);
+	//	pDoc->Status.bEmgMk[EMG_B_MK] = FALSE;
+	//}
 
-	usIn = pDoc->m_pMpeI[8];
-	usInF = &pDoc->m_pMpeIF[8];
+	//usIn = pDoc->m_pMpeI[8];
+	//usInF = &pDoc->m_pMpeIF[8];
 
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))		// 검사부 상 비상정지 스위치(후면) 
-	{
-		*usInF |= (0x01 << 0);						
-		pDoc->Status.bEmgAoi[EMG_B_AOI_UP] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-		pDoc->Status.bEmgAoi[EMG_B_AOI_UP] = FALSE;
-	}
+	//if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))		// 검사부 상 비상정지 스위치(후면) 
+	//{
+	//	*usInF |= (0x01 << 0);						
+	//	pDoc->Status.bEmgAoi[EMG_B_AOI_UP] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+	//{
+	//	*usInF &= ~(0x01 << 0);
+	//	pDoc->Status.bEmgAoi[EMG_B_AOI_UP] = FALSE;
+	//}
 
-	usIn = pDoc->m_pMpeI[12];
-	usInF = &pDoc->m_pMpeIF[12];
+	//usIn = pDoc->m_pMpeI[12];
+	//usInF = &pDoc->m_pMpeIF[12];
 
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))		// 검사부 하 비상정지 스위치(후면) 
-	{
-		*usInF |= (0x01 << 0);						
-		pDoc->Status.bEmgAoi[EMG_B_AOI_DN] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-		pDoc->Status.bEmgAoi[EMG_B_AOI_DN] = FALSE;
-	}
+	//if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))		// 검사부 하 비상정지 스위치(후면) 
+	//{
+	//	*usInF |= (0x01 << 0);						
+	//	pDoc->Status.bEmgAoi[EMG_B_AOI_DN] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+	//{
+	//	*usInF &= ~(0x01 << 0);
+	//	pDoc->Status.bEmgAoi[EMG_B_AOI_DN] = FALSE;
+	//}
 
-	usIn = pDoc->m_pMpeI[16];
-	usInF = &pDoc->m_pMpeIF[16];
+	//usIn = pDoc->m_pMpeI[16];
+	//usInF = &pDoc->m_pMpeIF[16];
 
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))		// 리코일러 비상정지 스위치
-	{
-		*usInF |= (0x01 << 0);
-		pDoc->Status.bEmgRc = TRUE;
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-		pDoc->Status.bEmgRc = FALSE;
-	}
+	//if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))		// 리코일러 비상정지 스위치
+	//{
+	//	*usInF |= (0x01 << 0);
+	//	pDoc->Status.bEmgRc = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+	//{
+	//	*usInF &= ~(0x01 << 0);
+	//	pDoc->Status.bEmgRc = FALSE;
+	//}
 
-	usIn = pDoc->m_pMpeI[24];
-	usInF = &pDoc->m_pMpeIF[24];
+	//usIn = pDoc->m_pMpeI[24];
+	//usInF = &pDoc->m_pMpeIF[24];
 
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))		// 각인부 비상정지 스위치(모니터부)
-	{
-		*usInF |= (0x01 << 0);
-		pDoc->Status.bEmgEngv[0] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-		pDoc->Status.bEmgEngv[0] = FALSE;
-	}
+	//if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))		// 각인부 비상정지 스위치(모니터부)
+	//{
+	//	*usInF |= (0x01 << 0);
+	//	pDoc->Status.bEmgEngv[0] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+	//{
+	//	*usInF &= ~(0x01 << 0);
+	//	pDoc->Status.bEmgEngv[0] = FALSE;
+	//}
 
-	usIn = pDoc->m_pMpeI[25];
-	usInF = &pDoc->m_pMpeIF[25];
+	//usIn = pDoc->m_pMpeI[25];
+	//usInF = &pDoc->m_pMpeIF[25];
 
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))		// 각인부 비상정지 스위치(스위치부)
-	{
-		*usInF |= (0x01 << 0);
-		pDoc->Status.bEmgEngv[1] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-		pDoc->Status.bEmgEngv[1] = FALSE;
-	}
+	//if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))		// 각인부 비상정지 스위치(스위치부)
+	//{
+	//	*usInF |= (0x01 << 0);
+	//	pDoc->Status.bEmgEngv[1] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+	//{
+	//	*usInF &= ~(0x01 << 0);
+	//	pDoc->Status.bEmgEngv[1] = FALSE;
+	//}
 
 }
 
 void CGvisR2R_LaserView::DoSignal()
 {
-	// 	if(!pDoc->m_pSliceIo || !pDoc->m_pSliceIoF)
-	// 		return;
-	// 
-	// 	unsigned short usIn = pDoc->m_pSliceIo[5];
-	// 	unsigned short *usInF = &pDoc->m_pSliceIoF[5];
-	unsigned short usIn = 0;
-	unsigned short *usInF = NULL;
+	//// 	if(!pDoc->m_pSliceIo || !pDoc->m_pSliceIoF)
+	//// 		return;
+	//// 
+	//// 	unsigned short usIn = pDoc->m_pSliceIo[5];
+	//// 	unsigned short *usInF = &pDoc->m_pSliceIoF[5];
+	//unsigned short usIn = 0;
+	//unsigned short *usInF = NULL;
 
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
-	{
-		*usInF |= (0x01 << 0);								// 검사부 검사 완료
-		pDoc->Status.bSigTestDoneAoi = TRUE;
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-		pDoc->Status.bSigTestDoneAoi = FALSE;
-	}
+	//if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
+	//{
+	//	*usInF |= (0x01 << 0);								// 검사부 검사 완료
+	//	pDoc->Status.bSigTestDoneAoi = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+	//{
+	//	*usInF &= ~(0x01 << 0);
+	//	pDoc->Status.bSigTestDoneAoi = FALSE;
+	//}
 
-	if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
-	{
-		*usInF |= (0x01 << 1);								// 검사부 테이블 진공 완료
-		pDoc->Status.bSigTblAirAoi = TRUE;
-	}
-	else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
-	{
-		*usInF &= ~(0x01 << 1);
-		pDoc->Status.bSigTblAirAoi = FALSE;
-	}
+	//if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
+	//{
+	//	*usInF |= (0x01 << 1);								// 검사부 테이블 진공 완료
+	//	pDoc->Status.bSigTblAirAoi = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
+	//{
+	//	*usInF &= ~(0x01 << 1);
+	//	pDoc->Status.bSigTblAirAoi = FALSE;
+	//}
 
-	if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
-	{
-		*usInF |= (0x01 << 2);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
-	{
-		*usInF &= ~(0x01 << 2);
-		// No Use....
-	}
+	//if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
+	//{
+	//	*usInF |= (0x01 << 2);								// SPARE
+	//														// No Use....
+	//}
+	//else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
+	//{
+	//	*usInF &= ~(0x01 << 2);
+	//	// No Use....
+	//}
 
-	if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
-	{
-		*usInF |= (0x01 << 3);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
-	{
-		*usInF &= ~(0x01 << 3);
-		// No Use....
-	}
+	//if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
+	//{
+	//	*usInF |= (0x01 << 3);								// SPARE
+	//														// No Use....
+	//}
+	//else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
+	//{
+	//	*usInF &= ~(0x01 << 3);
+	//	// No Use....
+	//}
 
-	if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
-	{
-		*usInF |= (0x01 << 4);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
-	{
-		*usInF &= ~(0x01 << 4);
-		// No Use....
-	}
+	//if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
+	//{
+	//	*usInF |= (0x01 << 4);								// SPARE
+	//														// No Use....
+	//}
+	//else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
+	//{
+	//	*usInF &= ~(0x01 << 4);
+	//	// No Use....
+	//}
 
-	if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
-	{
-		*usInF |= (0x01 << 5);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
-	{
-		*usInF &= ~(0x01 << 5);
-		// No Use....
-	}
+	//if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
+	//{
+	//	*usInF |= (0x01 << 5);								// SPARE
+	//														// No Use....
+	//}
+	//else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
+	//{
+	//	*usInF &= ~(0x01 << 5);
+	//	// No Use....
+	//}
 
-	if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
-	{
-		*usInF |= (0x01 << 6);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
-	{
-		*usInF &= ~(0x01 << 6);
-		// No Use....
-	}
+	//if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
+	//{
+	//	*usInF |= (0x01 << 6);								// SPARE
+	//														// No Use....
+	//}
+	//else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
+	//{
+	//	*usInF &= ~(0x01 << 6);
+	//	// No Use....
+	//}
 
-	if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
-	{
-		*usInF |= (0x01 << 7);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
-	{
-		*usInF &= ~(0x01 << 7);
-		// No Use....
-	}
+	//if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
+	//{
+	//	*usInF |= (0x01 << 7);								// SPARE
+	//														// No Use....
+	//}
+	//else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
+	//{
+	//	*usInF &= ~(0x01 << 7);
+	//	// No Use....
+	//}
 
-	if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
-	{
-		*usInF |= (0x01 << 8);								// 검사부 시그날 타워-적색
-		TowerLamp(RGB_RED, TRUE, FALSE);
-	}
-	else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
-	{
-		*usInF &= ~(0x01 << 8);
-		TowerLamp(RGB_RED, FALSE, FALSE);
-	}
+	//if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
+	//{
+	//	*usInF |= (0x01 << 8);								// 검사부 시그날 타워-적색
+	//	TowerLamp(RGB_RED, TRUE, FALSE);
+	//}
+	//else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
+	//{
+	//	*usInF &= ~(0x01 << 8);
+	//	TowerLamp(RGB_RED, FALSE, FALSE);
+	//}
 
-	if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
-	{
-		*usInF |= (0x01 << 9);								// 검사부 시그날 타워-황색
-		TowerLamp(RGB_YELLOW, TRUE, FALSE);
-	}
-	else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
-	{
-		*usInF &= ~(0x01 << 9);
-		TowerLamp(RGB_YELLOW, FALSE, FALSE);
-	}
+	//if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
+	//{
+	//	*usInF |= (0x01 << 9);								// 검사부 시그날 타워-황색
+	//	TowerLamp(RGB_YELLOW, TRUE, FALSE);
+	//}
+	//else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
+	//{
+	//	*usInF &= ~(0x01 << 9);
+	//	TowerLamp(RGB_YELLOW, FALSE, FALSE);
+	//}
 
-	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
-	{
-		*usInF |= (0x01 << 10);								// 검사부 시그날 타워-녹색
-		TowerLamp(RGB_GREEN, TRUE, FALSE);
-	}
-	else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
-	{
-		*usInF &= ~(0x01 << 10);
-		TowerLamp(RGB_GREEN, FALSE, FALSE);
-	}
+	//if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
+	//{
+	//	*usInF |= (0x01 << 10);								// 검사부 시그날 타워-녹색
+	//	TowerLamp(RGB_GREEN, TRUE, FALSE);
+	//}
+	//else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
+	//{
+	//	*usInF &= ~(0x01 << 10);
+	//	TowerLamp(RGB_GREEN, FALSE, FALSE);
+	//}
 
-	if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
-	{
-		*usInF |= (0x01 << 11);								// 검사부 부져 1
-		Buzzer(TRUE, 0);
-	}
-	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
-	{
-		*usInF &= ~(0x01 << 11);
-		Buzzer(FALSE, 0);
-	}
+	//if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
+	//{
+	//	*usInF |= (0x01 << 11);								// 검사부 부져 1
+	//	Buzzer(TRUE, 0);
+	//}
+	//else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
+	//{
+	//	*usInF &= ~(0x01 << 11);
+	//	Buzzer(FALSE, 0);
+	//}
 
-	if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
-	{
-		*usInF |= (0x01 << 12);								// 검사부 부져 2
-		Buzzer(TRUE, 1);
-	}
-	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
-	{
-		*usInF &= ~(0x01 << 12);
-		Buzzer(FALSE, 1);
-	}
+	//if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
+	//{
+	//	*usInF |= (0x01 << 12);								// 검사부 부져 2
+	//	Buzzer(TRUE, 1);
+	//}
+	//else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
+	//{
+	//	*usInF &= ~(0x01 << 12);
+	//	Buzzer(FALSE, 1);
+	//}
 
-	if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
-	{
-		*usInF |= (0x01 << 13);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
-	{
-		*usInF &= ~(0x01 << 13);
-		// No Use....
-	}
+	//if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
+	//{
+	//	*usInF |= (0x01 << 13);								// SPARE
+	//														// No Use....
+	//}
+	//else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
+	//{
+	//	*usInF &= ~(0x01 << 13);
+	//	// No Use....
+	//}
 
-	if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
-	{
-		*usInF |= (0x01 << 14);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
-	{
-		*usInF &= ~(0x01 << 14);
-		// No Use....
-	}
+	//if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
+	//{
+	//	*usInF |= (0x01 << 14);								// SPARE
+	//														// No Use....
+	//}
+	//else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
+	//{
+	//	*usInF &= ~(0x01 << 14);
+	//	// No Use....
+	//}
 
-	if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
-	{
-		*usInF |= (0x01 << 15);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
-	{
-		*usInF &= ~(0x01 << 15);
-		// No Use....
-	}
+	//if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
+	//{
+	//	*usInF |= (0x01 << 15);								// SPARE
+	//														// No Use....
+	//}
+	//else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
+	//{
+	//	*usInF &= ~(0x01 << 15);
+	//	// No Use....
+	//}
 }
 
 void CGvisR2R_LaserView::DoUcBoxSw()
 {
-	if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
-		return;
+	//if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
+	//	return;
 
-	// 	unsigned short usIn = pDoc->m_pMpeIo[0];
-	// 	unsigned short *usInF = &pDoc->m_pMpeIoF[0];
-	unsigned short usIn = 0;
-	unsigned short *usInF = NULL;
+	//// 	unsigned short usIn = pDoc->m_pMpeIo[0];
+	//// 	unsigned short *usInF = &pDoc->m_pMpeIoF[0];
+	//unsigned short usIn = 0;
+	//unsigned short *usInF = NULL;
 
-	// 	if((usIn & (0x01<<0)) && !(*usInF & (0x01<<0)))
-	// 	{
-	// 		*usInF |= (0x01<<0);								// 언코일러 비상정지 스위치
-	// 		pDoc->Status.bEmgUc = TRUE;
-	// 	}
-	// 	else if(!(usIn & (0x01<<0)) && (*usInF & (0x01<<0)))
-	// 	{
-	// 		*usInF &= ~(0x01<<0);	
-	// 		pDoc->Status.bEmgUc = FALSE;
-	// 	}
+	//// 	if((usIn & (0x01<<0)) && !(*usInF & (0x01<<0)))
+	//// 	{
+	//// 		*usInF |= (0x01<<0);								// 언코일러 비상정지 스위치
+	//// 		pDoc->Status.bEmgUc = TRUE;
+	//// 	}
+	//// 	else if(!(usIn & (0x01<<0)) && (*usInF & (0x01<<0)))
+	//// 	{
+	//// 		*usInF &= ~(0x01<<0);	
+	//// 		pDoc->Status.bEmgUc = FALSE;
+	//// 	}
 
-	if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
-	{
-		*usInF |= (0x01 << 1);								// 언코일러 연동 온/오프 스위치
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwUcRelation();
-	}
-	else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
-	{
-		*usInF &= ~(0x01 << 1);
-	}
+	//if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
+	//{
+	//	*usInF |= (0x01 << 1);								// 언코일러 연동 온/오프 스위치
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwUcRelation();
+	//}
+	//else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
+	//{
+	//	*usInF &= ~(0x01 << 1);
+	//}
 
-	if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
-	{
-		*usInF |= (0x01 << 2);								// 언코일러 댄서롤 상승/하강 스위치
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwUcDcRlUpDn();
-	}
-	else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
-	{
-		*usInF &= ~(0x01 << 2);
-	}
+	//if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
+	//{
+	//	*usInF |= (0x01 << 2);								// 언코일러 댄서롤 상승/하강 스위치
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwUcDcRlUpDn();
+	//}
+	//else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
+	//{
+	//	*usInF &= ~(0x01 << 2);
+	//}
 
-	if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
-	{
-		*usInF |= (0x01 << 3);								// 언코일러 클린롤러 상승/하강 스위치
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwUcClRlUpDn();
-	}
-	else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
-	{
-		*usInF &= ~(0x01 << 3);
-	}
+	//if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
+	//{
+	//	*usInF |= (0x01 << 3);								// 언코일러 클린롤러 상승/하강 스위치
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwUcClRlUpDn();
+	//}
+	//else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
+	//{
+	//	*usInF &= ~(0x01 << 3);
+	//}
 
-	if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
-	{
-		*usInF |= (0x01 << 4);								// 언코일러 클린롤러누름 상승/하강 스위치
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwUcClRlPshUpDn();
-	}
-	else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
-	{
-		*usInF &= ~(0x01 << 4);
-	}
+	//if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
+	//{
+	//	*usInF |= (0x01 << 4);								// 언코일러 클린롤러누름 상승/하강 스위치
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwUcClRlPshUpDn();
+	//}
+	//else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
+	//{
+	//	*usInF &= ~(0x01 << 4);
+	//}
 
-	if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
-	{
-		*usInF |= (0x01 << 5);								// 언코일러 제품 이음매(좌) 스위치
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwUcReelJoinL();
-	}
-	else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
-	{
-		*usInF &= ~(0x01 << 5);
-	}
+	//if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
+	//{
+	//	*usInF |= (0x01 << 5);								// 언코일러 제품 이음매(좌) 스위치
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwUcReelJoinL();
+	//}
+	//else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
+	//{
+	//	*usInF &= ~(0x01 << 5);
+	//}
 
-	if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
-	{
-		*usInF |= (0x01 << 6);								// 언코일러 제품 이음매(우) 스위치	
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwUcReelJoinR();
-	}
-	else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
-	{
-		*usInF &= ~(0x01 << 6);
-	}
+	//if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
+	//{
+	//	*usInF |= (0x01 << 6);								// 언코일러 제품 이음매(우) 스위치	
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwUcReelJoinR();
+	//}
+	//else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
+	//{
+	//	*usInF &= ~(0x01 << 6);
+	//}
 
-	if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
-	{
-		*usInF |= (0x01 << 7);								// 언코일러 제품휠 지지 스위치
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwUcReelWheel();
-	}
-	else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
-	{
-		*usInF &= ~(0x01 << 7);
-	}
+	//if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
+	//{
+	//	*usInF |= (0x01 << 7);								// 언코일러 제품휠 지지 스위치
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwUcReelWheel();
+	//}
+	//else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
+	//{
+	//	*usInF &= ~(0x01 << 7);
+	//}
 
-	if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
-	{
-		*usInF |= (0x01 << 8);								// 언코일러 간지척 클램프 스위치
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwUcPprChuck();
-	}
-	else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
-	{
-		*usInF &= ~(0x01 << 8);
-	}
+	//if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
+	//{
+	//	*usInF |= (0x01 << 8);								// 언코일러 간지척 클램프 스위치
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwUcPprChuck();
+	//}
+	//else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
+	//{
+	//	*usInF &= ~(0x01 << 8);
+	//}
 
-	if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
-	{
-		*usInF |= (0x01 << 9);								// 언코일러 간지휠 정회전 스위치
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_32);
-	}
-	else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
-	{
-		*usInF &= ~(0x01 << 9);
-		// 		if(m_pDlgMenu03)
-		// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_32);
-	}
+	//if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
+	//{
+	//	*usInF |= (0x01 << 9);								// 언코일러 간지휠 정회전 스위치
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_32);
+	//}
+	//else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
+	//{
+	//	*usInF &= ~(0x01 << 9);
+	//	// 		if(m_pDlgMenu03)
+	//	// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_32);
+	//}
 
-	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
-	{
-		*usInF |= (0x01 << 10);								// 언코일러 간지휠 역회전 스위치
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_39);
-	}
-	else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
-	{
-		*usInF &= ~(0x01 << 10);
-		// 		if(m_pDlgMenu03)
-		// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_39);
-	}
+	//if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
+	//{
+	//	*usInF |= (0x01 << 10);								// 언코일러 간지휠 역회전 스위치
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_39);
+	//}
+	//else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
+	//{
+	//	*usInF &= ~(0x01 << 10);
+	//	// 		if(m_pDlgMenu03)
+	//	// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_39);
+	//}
 
-	if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
-	{
-		*usInF |= (0x01 << 11);								// 언코일러 제품척 클램프 스위치
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->SwUcReelChuck();
-	}
-	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
-	{
-		*usInF &= ~(0x01 << 11);
-	}
+	//if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
+	//{
+	//	*usInF |= (0x01 << 11);								// 언코일러 제품척 클램프 스위치
+	//	if (m_pDlgMenu03)
+	//		m_pDlgMenu03->SwUcReelChuck();
+	//}
+	//else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
+	//{
+	//	*usInF &= ~(0x01 << 11);
+	//}
 
-	if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
-	{
-		*usInF |= (0x01 << 12);								// 언코일러 제품휠 정회전 스위치
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_26);
-	}
-	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
-	{
-		*usInF &= ~(0x01 << 12);
-		// 		if(m_pDlgMenu03)
-		// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_26);
-	}
+	//if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
+	//{
+	//	*usInF |= (0x01 << 12);								// 언코일러 제품휠 정회전 스위치
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_26);
+	//}
+	//else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
+	//{
+	//	*usInF &= ~(0x01 << 12);
+	//	// 		if(m_pDlgMenu03)
+	//	// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_26);
+	//}
 
-	if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
-	{
-		*usInF |= (0x01 << 13);								// 언코일러 제품휠 역회전 스위치
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_27);
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
-	{
-		*usInF &= ~(0x01 << 13);
-		// 		if(m_pDlgMenu03)
-		// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_27);
-	}
+	//if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
+	//{
+	//	*usInF |= (0x01 << 13);								// 언코일러 제품휠 역회전 스위치
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_27);
+	//}
+	//else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
+	//{
+	//	*usInF &= ~(0x01 << 13);
+	//	// 		if(m_pDlgMenu03)
+	//	// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_27);
+	//}
 
-	// 	if((usIn & (0x01<<14)) && !(*usInF & (0x01<<14)))
-	// 	{
-	// 		*usInF |= (0x01<<14);								// 언코일러 제품 EPC원점 스위치
-	// 		m_bSwStopNow = TRUE;
-	// 		if(m_pDlgMenu03)
-	// 			m_pDlgMenu03->SwStop();
-	// 	}
-	// 	else if(!(usIn & (0x01<<14)) && (*usInF & (0x01<<14)))
-	// 	{
-	// 		*usInF &= ~(0x01<<14);								
-	// 	}
+	//// 	if((usIn & (0x01<<14)) && !(*usInF & (0x01<<14)))
+	//// 	{
+	//// 		*usInF |= (0x01<<14);								// 언코일러 제품 EPC원점 스위치
+	//// 		m_bSwStopNow = TRUE;
+	//// 		if(m_pDlgMenu03)
+	//// 			m_pDlgMenu03->SwStop();
+	//// 	}
+	//// 	else if(!(usIn & (0x01<<14)) && (*usInF & (0x01<<14)))
+	//// 	{
+	//// 		*usInF &= ~(0x01<<14);								
+	//// 	}
 
-	if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
-	{
-		*usInF |= (0x01 << 15);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
-	{
-		*usInF &= ~(0x01 << 15);
-		// No Use....
-	}
+	//if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
+	//{
+	//	*usInF |= (0x01 << 15);								// SPARE
+	//														// No Use....
+	//}
+	//else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
+	//{
+	//	*usInF &= ~(0x01 << 15);
+	//	// No Use....
+	//}
 }
 
 void CGvisR2R_LaserView::DoUcSens1()
 {
-	if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
-		return;
+	//if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
+	//	return;
 
-	unsigned short usIn = 0;
-	unsigned short *usInF = NULL;
-	// 	unsigned short usIn = pDoc->m_pMpeIo[1];
-	// 	unsigned short *usInF = &pDoc->m_pMpeIoF[1];
+	//unsigned short usIn = 0;
+	//unsigned short *usInF = NULL;
+	//// 	unsigned short usIn = pDoc->m_pMpeIo[1];
+	//// 	unsigned short *usInF = &pDoc->m_pMpeIoF[1];
 
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
-	{
-		*usInF |= (0x01 << 0);								// 언코일러 간지모터조절 1	
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-	}
+	//if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
+	//{
+	//	*usInF |= (0x01 << 0);								// 언코일러 간지모터조절 1	
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+	//{
+	//	*usInF &= ~(0x01 << 0);
+	//}
 
-	if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
-	{
-		*usInF |= (0x01 << 1);								// 언코일러 간지모터조절 2	
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
-	{
-		*usInF &= ~(0x01 << 1);
-	}
+	//if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
+	//{
+	//	*usInF |= (0x01 << 1);								// 언코일러 간지모터조절 2	
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
+	//{
+	//	*usInF &= ~(0x01 << 1);
+	//}
 
-	if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
-	{
-		*usInF |= (0x01 << 2);								// 언코일러 간지모터조절 3	
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
-	{
-		*usInF &= ~(0x01 << 2);
-	}
+	//if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
+	//{
+	//	*usInF |= (0x01 << 2);								// 언코일러 간지모터조절 3	
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
+	//{
+	//	*usInF &= ~(0x01 << 2);
+	//}
 
-	if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
-	{
-		*usInF |= (0x01 << 3);								// 언코일러 간지모터조절 4	
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
-	{
-		*usInF &= ~(0x01 << 3);
-	}
+	//if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
+	//{
+	//	*usInF |= (0x01 << 3);								// 언코일러 간지모터조절 4	
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
+	//{
+	//	*usInF &= ~(0x01 << 3);
+	//}
 
-	if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
-	{
-		*usInF |= (0x01 << 4);								// 언코일러 제품모터조절 1	
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
-	{
-		*usInF &= ~(0x01 << 4);
-	}
+	//if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
+	//{
+	//	*usInF |= (0x01 << 4);								// 언코일러 제품모터조절 1	
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
+	//{
+	//	*usInF &= ~(0x01 << 4);
+	//}
 
-	if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
-	{
-		*usInF |= (0x01 << 5);								// 언코일러 제품모터조절 2
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
-	{
-		*usInF &= ~(0x01 << 5);
-	}
+	//if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
+	//{
+	//	*usInF |= (0x01 << 5);								// 언코일러 제품모터조절 2
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
+	//{
+	//	*usInF &= ~(0x01 << 5);
+	//}
 
-	if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
-	{
-		*usInF |= (0x01 << 6);								// 언코일러 제품모터조절 3	
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
-	{
-		*usInF &= ~(0x01 << 6);
-	}
+	//if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
+	//{
+	//	*usInF |= (0x01 << 6);								// 언코일러 제품모터조절 3	
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
+	//{
+	//	*usInF &= ~(0x01 << 6);
+	//}
 
-	if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
-	{
-		*usInF |= (0x01 << 7);								// 언코일러 제품모터조절 4	
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
-	{
-		*usInF &= ~(0x01 << 7);
-	}
+	//if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
+	//{
+	//	*usInF |= (0x01 << 7);								// 언코일러 제품모터조절 4	
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
+	//{
+	//	*usInF &= ~(0x01 << 7);
+	//}
 
-	if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
-	{
-		*usInF |= (0x01 << 8);								// 언코일러 제품 EPC POS 리미트 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
-	{
-		*usInF &= ~(0x01 << 8);
-	}
+	//if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
+	//{
+	//	*usInF |= (0x01 << 8);								// 언코일러 제품 EPC POS 리미트 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
+	//{
+	//	*usInF &= ~(0x01 << 8);
+	//}
 
-	if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
-	{
-		*usInF |= (0x01 << 9);								// 언코일러 제품 EPC NEG 리미트 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
-	{
-		*usInF &= ~(0x01 << 9);
-	}
+	//if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
+	//{
+	//	*usInF |= (0x01 << 9);								// 언코일러 제품 EPC NEG 리미트 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
+	//{
+	//	*usInF &= ~(0x01 << 9);
+	//}
 
-	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
-	{
-		*usInF |= (0x01 << 10);								// 언코일러 제품 EPC 원점 센서 
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
-	{
-		*usInF &= ~(0x01 << 10);
-	}
+	//if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
+	//{
+	//	*usInF |= (0x01 << 10);								// 언코일러 제품 EPC 원점 센서 
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
+	//{
+	//	*usInF &= ~(0x01 << 10);
+	//}
 
-	if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
-	{
-		*usInF |= (0x01 << 11);								// 언코일러 전면 도어 센서(좌)
-		pDoc->Status.bDoorUc[DOOR_FL_UC] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
-	{
-		*usInF &= ~(0x01 << 11);
-		pDoc->Status.bDoorUc[DOOR_FL_UC] = FALSE;
-	}
+	//if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
+	//{
+	//	*usInF |= (0x01 << 11);								// 언코일러 전면 도어 센서(좌)
+	//	pDoc->Status.bDoorUc[DOOR_FL_UC] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
+	//{
+	//	*usInF &= ~(0x01 << 11);
+	//	pDoc->Status.bDoorUc[DOOR_FL_UC] = FALSE;
+	//}
 
-	if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
-	{
-		*usInF |= (0x01 << 12);								// 언코일러 전면 도어 센서(우)
-															// 		pDoc->Status.bDoorUc[DOOR_FR_UC] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
-	{
-		*usInF &= ~(0x01 << 12);
-		// 		pDoc->Status.bDoorUc[DOOR_FR_UC] = FALSE;
-	}
+	//if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
+	//{
+	//	*usInF |= (0x01 << 12);								// 언코일러 전면 도어 센서(우)
+	//														// 		pDoc->Status.bDoorUc[DOOR_FR_UC] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
+	//{
+	//	*usInF &= ~(0x01 << 12);
+	//	// 		pDoc->Status.bDoorUc[DOOR_FR_UC] = FALSE;
+	//}
 
-	if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
-	{
-		*usInF |= (0x01 << 13);								// 언코일러 측면 도어 센서
-		pDoc->Status.bDoorUc[DOOR_FR_UC] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
-	{
-		*usInF &= ~(0x01 << 13);
-		pDoc->Status.bDoorUc[DOOR_FR_UC] = FALSE;
-	}
+	//if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
+	//{
+	//	*usInF |= (0x01 << 13);								// 언코일러 측면 도어 센서
+	//	pDoc->Status.bDoorUc[DOOR_FR_UC] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
+	//{
+	//	*usInF &= ~(0x01 << 13);
+	//	pDoc->Status.bDoorUc[DOOR_FR_UC] = FALSE;
+	//}
 
-	if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
-	{
-		*usInF |= (0x01 << 14);								// 언코일러 후면 도어 센서(좌)
-		pDoc->Status.bDoorUc[DOOR_BL_UC] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
-	{
-		*usInF &= ~(0x01 << 14);
-		pDoc->Status.bDoorUc[DOOR_BL_UC] = FALSE;
-	}
+	//if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
+	//{
+	//	*usInF |= (0x01 << 14);								// 언코일러 후면 도어 센서(좌)
+	//	pDoc->Status.bDoorUc[DOOR_BL_UC] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
+	//{
+	//	*usInF &= ~(0x01 << 14);
+	//	pDoc->Status.bDoorUc[DOOR_BL_UC] = FALSE;
+	//}
 
-	if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
-	{
-		*usInF |= (0x01 << 15);								// 언코일러 후면 도어 센서(우)
-		pDoc->Status.bDoorUc[DOOR_BR_UC] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
-	{
-		*usInF &= ~(0x01 << 15);
-		pDoc->Status.bDoorUc[DOOR_BR_UC] = FALSE;
-	}
+	//if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
+	//{
+	//	*usInF |= (0x01 << 15);								// 언코일러 후면 도어 센서(우)
+	//	pDoc->Status.bDoorUc[DOOR_BR_UC] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
+	//{
+	//	*usInF &= ~(0x01 << 15);
+	//	pDoc->Status.bDoorUc[DOOR_BR_UC] = FALSE;
+	//}
 }
 
 void CGvisR2R_LaserView::DoUcSens2()
 {
-	if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
-		return;
+	//if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
+	//	return;
 
-	unsigned short usIn = 0;
-	unsigned short *usInF = NULL;
-	// 	unsigned short usIn = pDoc->m_pMpeIo[2];
-	// 	unsigned short *usInF = &pDoc->m_pMpeIoF[2];
+	//unsigned short usIn = 0;
+	//unsigned short *usInF = NULL;
+	//// 	unsigned short usIn = pDoc->m_pMpeIo[2];
+	//// 	unsigned short *usInF = &pDoc->m_pMpeIoF[2];
 
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
-	{
-		*usInF |= (0x01 << 0);								// 언코일러 간지텐션 POS 리미트 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-	}
+	//if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
+	//{
+	//	*usInF |= (0x01 << 0);								// 언코일러 간지텐션 POS 리미트 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+	//{
+	//	*usInF &= ~(0x01 << 0);
+	//}
 
-	if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
-	{
-		*usInF |= (0x01 << 1);								// 언코일러 간지텐션 상한 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
-	{
-		*usInF &= ~(0x01 << 1);
-	}
+	//if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
+	//{
+	//	*usInF |= (0x01 << 1);								// 언코일러 간지텐션 상한 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
+	//{
+	//	*usInF &= ~(0x01 << 1);
+	//}
 
-	if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
-	{
-		*usInF |= (0x01 << 2);								// 언코일러 간지텐션 2/3 지점 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
-	{
-		*usInF &= ~(0x01 << 2);
-	}
+	//if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
+	//{
+	//	*usInF |= (0x01 << 2);								// 언코일러 간지텐션 2/3 지점 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
+	//{
+	//	*usInF &= ~(0x01 << 2);
+	//}
 
-	if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
-	{
-		*usInF |= (0x01 << 3);								// 언코일러 간지텐션 1/3 지점 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
-	{
-		*usInF &= ~(0x01 << 3);
-	}
+	//if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
+	//{
+	//	*usInF |= (0x01 << 3);								// 언코일러 간지텐션 1/3 지점 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
+	//{
+	//	*usInF &= ~(0x01 << 3);
+	//}
 
-	if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
-	{
-		*usInF |= (0x01 << 4);								// 언코일러 간지텐션 하한 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
-	{
-		*usInF &= ~(0x01 << 4);
-	}
+	//if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
+	//{
+	//	*usInF |= (0x01 << 4);								// 언코일러 간지텐션 하한 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
+	//{
+	//	*usInF &= ~(0x01 << 4);
+	//}
 
-	if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
-	{
-		*usInF |= (0x01 << 5);								// 언코일러 간지텐션 NEG 리미트 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
-	{
-		*usInF &= ~(0x01 << 5);
-	}
+	//if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
+	//{
+	//	*usInF |= (0x01 << 5);								// 언코일러 간지텐션 NEG 리미트 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
+	//{
+	//	*usInF &= ~(0x01 << 5);
+	//}
 
-	if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
-	{
-		*usInF |= (0x01 << 6);								// 언코일러 간지척 진공 스위치
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
-	{
-		*usInF &= ~(0x01 << 6);
-	}
+	//if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
+	//{
+	//	*usInF |= (0x01 << 6);								// 언코일러 간지척 진공 스위치
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
+	//{
+	//	*usInF &= ~(0x01 << 6);
+	//}
 
-	if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
-	{
-		*usInF |= (0x01 << 7);								// 언코일러 간지버퍼 압력 스위치	
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
-	{
-		*usInF &= ~(0x01 << 7);
-	}
+	//if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
+	//{
+	//	*usInF |= (0x01 << 7);								// 언코일러 간지버퍼 압력 스위치	
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
+	//{
+	//	*usInF &= ~(0x01 << 7);
+	//}
 
-	if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
-	{
-		*usInF |= (0x01 << 8);								// 언코일러 클린롤러 상승 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
-	{
-		*usInF &= ~(0x01 << 8);
-	}
+	//if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
+	//{
+	//	*usInF |= (0x01 << 8);								// 언코일러 클린롤러 상승 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
+	//{
+	//	*usInF &= ~(0x01 << 8);
+	//}
 
-	if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
-	{
-		*usInF |= (0x01 << 9);								// 언코일러 클린롤러 하강 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
-	{
-		*usInF &= ~(0x01 << 9);
-	}
+	//if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
+	//{
+	//	*usInF |= (0x01 << 9);								// 언코일러 클린롤러 하강 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
+	//{
+	//	*usInF &= ~(0x01 << 9);
+	//}
 
-	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
-	{
-		*usInF |= (0x01 << 10);								// 언코일러 클린롤러 누름(전면) 상승 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
-	{
-		*usInF &= ~(0x01 << 10);
-	}
+	//if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
+	//{
+	//	*usInF |= (0x01 << 10);								// 언코일러 클린롤러 누름(전면) 상승 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
+	//{
+	//	*usInF &= ~(0x01 << 10);
+	//}
 
-	if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
-	{
-		*usInF |= (0x01 << 11);								// 언코일러 클린롤러 누름(전면) 하강 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
-	{
-		*usInF &= ~(0x01 << 11);
-	}
+	//if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
+	//{
+	//	*usInF |= (0x01 << 11);								// 언코일러 클린롤러 누름(전면) 하강 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
+	//{
+	//	*usInF &= ~(0x01 << 11);
+	//}
 
-	if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
-	{
-		*usInF |= (0x01 << 12);								// 언코일러 클린롤러 누름(후면) 상승 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
-	{
-		*usInF &= ~(0x01 << 12);
-	}
+	//if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
+	//{
+	//	*usInF |= (0x01 << 12);								// 언코일러 클린롤러 누름(후면) 상승 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
+	//{
+	//	*usInF &= ~(0x01 << 12);
+	//}
 
-	if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
-	{
-		*usInF |= (0x01 << 13);								// 언코일러 클린롤러 누름(후면) 하강 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
-	{
-		*usInF &= ~(0x01 << 13);
-	}
+	//if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
+	//{
+	//	*usInF |= (0x01 << 13);								// 언코일러 클린롤러 누름(후면) 하강 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
+	//{
+	//	*usInF &= ~(0x01 << 13);
+	//}
 
-	if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
-	{
-		*usInF |= (0x01 << 14);								// 언코일러 댄서롤 상승 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
-	{
-		*usInF &= ~(0x01 << 14);
-	}
+	//if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
+	//{
+	//	*usInF |= (0x01 << 14);								// 언코일러 댄서롤 상승 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
+	//{
+	//	*usInF &= ~(0x01 << 14);
+	//}
 
-	if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
-	{
-		*usInF |= (0x01 << 15);								// 언코일러 댄서롤 하강 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
-	{
-		*usInF &= ~(0x01 << 15);
-	}
+	//if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
+	//{
+	//	*usInF |= (0x01 << 15);								// 언코일러 댄서롤 하강 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
+	//{
+	//	*usInF &= ~(0x01 << 15);
+	//}
 }
 
 void CGvisR2R_LaserView::DoUcSens3()
 {
-	if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
-		return;
+	//if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
+	//	return;
 
-	// 	unsigned short usIn = pDoc->m_pMpeIo[3];
-	// 	unsigned short *usInF = &pDoc->m_pMpeIoF[3];
-	unsigned short usIn = 0;
-	unsigned short *usInF = NULL;
+	//// 	unsigned short usIn = pDoc->m_pMpeIo[3];
+	//// 	unsigned short *usInF = &pDoc->m_pMpeIoF[3];
+	//unsigned short usIn = 0;
+	//unsigned short *usInF = NULL;
 
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
-	{
-		*usInF |= (0x01 << 0);								// 언코일러 댄서롤 POS 리미트 센서
-		pDoc->Status.bSensLmtBufUc[LMT_POS] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-		pDoc->Status.bSensLmtBufUc[LMT_POS] = FALSE;
-	}
+	//if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
+	//{
+	//	*usInF |= (0x01 << 0);								// 언코일러 댄서롤 POS 리미트 센서
+	//	pDoc->Status.bSensLmtBufUc[LMT_POS] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+	//{
+	//	*usInF &= ~(0x01 << 0);
+	//	pDoc->Status.bSensLmtBufUc[LMT_POS] = FALSE;
+	//}
 
-	if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
-	{
-		*usInF |= (0x01 << 1);								// 언코일러 댄서롤 상한 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
-	{
-		*usInF &= ~(0x01 << 1);
-	}
+	//if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
+	//{
+	//	*usInF |= (0x01 << 1);								// 언코일러 댄서롤 상한 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
+	//{
+	//	*usInF &= ~(0x01 << 1);
+	//}
 
-	if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
-	{
-		*usInF |= (0x01 << 2);								// 언코일러 댄서롤 2/3 지점 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
-	{
-		*usInF &= ~(0x01 << 2);
-	}
+	//if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
+	//{
+	//	*usInF |= (0x01 << 2);								// 언코일러 댄서롤 2/3 지점 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
+	//{
+	//	*usInF &= ~(0x01 << 2);
+	//}
 
-	if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
-	{
-		*usInF |= (0x01 << 3);								// 언코일러 댄서롤 1/3 지점 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
-	{
-		*usInF &= ~(0x01 << 3);
-	}
+	//if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
+	//{
+	//	*usInF |= (0x01 << 3);								// 언코일러 댄서롤 1/3 지점 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
+	//{
+	//	*usInF &= ~(0x01 << 3);
+	//}
 
-	if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
-	{
-		*usInF |= (0x01 << 4);								// 언코일러 댄서롤 하한 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
-	{
-		*usInF &= ~(0x01 << 4);
-	}
+	//if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
+	//{
+	//	*usInF |= (0x01 << 4);								// 언코일러 댄서롤 하한 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
+	//{
+	//	*usInF &= ~(0x01 << 4);
+	//}
 
-	if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
-	{
-		*usInF |= (0x01 << 5);								// 언코일러 댄서롤 NEG 리미트 센서
-		pDoc->Status.bSensLmtBufUc[LMT_NEG] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
-	{
-		*usInF &= ~(0x01 << 5);
-		pDoc->Status.bSensLmtBufUc[LMT_NEG] = FALSE;
-	}
+	//if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
+	//{
+	//	*usInF |= (0x01 << 5);								// 언코일러 댄서롤 NEG 리미트 센서
+	//	pDoc->Status.bSensLmtBufUc[LMT_NEG] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
+	//{
+	//	*usInF &= ~(0x01 << 5);
+	//	pDoc->Status.bSensLmtBufUc[LMT_NEG] = FALSE;
+	//}
 
-	if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
-	{
-		*usInF |= (0x01 << 6);								// 언코일러 제품척 진공 스위치
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
-	{
-		*usInF &= ~(0x01 << 6);
-	}
+	//if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
+	//{
+	//	*usInF |= (0x01 << 6);								// 언코일러 제품척 진공 스위치
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
+	//{
+	//	*usInF &= ~(0x01 << 6);
+	//}
 
-	if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
-	{
-		*usInF |= (0x01 << 7);								// 언코일러 메인 에어 
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
-	{
-		*usInF &= ~(0x01 << 7);
-	}
+	//if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
+	//{
+	//	*usInF |= (0x01 << 7);								// 언코일러 메인 에어 
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
+	//{
+	//	*usInF &= ~(0x01 << 7);
+	//}
 
-	if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
-	{
-		*usInF |= (0x01 << 8);								// 언코일러 제품휠 지지 상승 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
-	{
-		*usInF &= ~(0x01 << 8);
-	}
+	//if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
+	//{
+	//	*usInF |= (0x01 << 8);								// 언코일러 제품휠 지지 상승 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
+	//{
+	//	*usInF &= ~(0x01 << 8);
+	//}
 
-	if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
-	{
-		*usInF |= (0x01 << 9);								// 언코일러 제품휠 지지 하강 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
-	{
-		*usInF &= ~(0x01 << 9);
-	}
+	//if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
+	//{
+	//	*usInF |= (0x01 << 9);								// 언코일러 제품휠 지지 하강 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
+	//{
+	//	*usInF &= ~(0x01 << 9);
+	//}
 
-	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
-	{
-		*usInF |= (0x01 << 10);								// 언코일러 제품 이음매(좌) 상승 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
-	{
-		*usInF &= ~(0x01 << 10);
-	}
+	//if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
+	//{
+	//	*usInF |= (0x01 << 10);								// 언코일러 제품 이음매(좌) 상승 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
+	//{
+	//	*usInF &= ~(0x01 << 10);
+	//}
 
-	if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
-	{
-		*usInF |= (0x01 << 11);								// 언코일러 제품 이음매(좌) 하강 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
-	{
-		*usInF &= ~(0x01 << 11);
-	}
+	//if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
+	//{
+	//	*usInF |= (0x01 << 11);								// 언코일러 제품 이음매(좌) 하강 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
+	//{
+	//	*usInF &= ~(0x01 << 11);
+	//}
 
-	if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
-	{
-		*usInF |= (0x01 << 12);								// 언코일러 제품 이음매(우) 상승 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
-	{
-		*usInF &= ~(0x01 << 12);
-	}
+	//if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
+	//{
+	//	*usInF |= (0x01 << 12);								// 언코일러 제품 이음매(우) 상승 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
+	//{
+	//	*usInF &= ~(0x01 << 12);
+	//}
 
-	if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
-	{
-		*usInF |= (0x01 << 13);								// 언코일러 제품 이음매(우) 하강 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
-	{
-		*usInF &= ~(0x01 << 13);
-	}
+	//if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
+	//{
+	//	*usInF |= (0x01 << 13);								// 언코일러 제품 이음매(우) 하강 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
+	//{
+	//	*usInF &= ~(0x01 << 13);
+	//}
 
-	if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
-	{
-		*usInF |= (0x01 << 14);								// SPARE	
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
-	{
-		*usInF &= ~(0x01 << 14);
-		// No Use....
-	}
+	//if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
+	//{
+	//	*usInF |= (0x01 << 14);								// SPARE	
+	//														// No Use....
+	//}
+	//else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
+	//{
+	//	*usInF &= ~(0x01 << 14);
+	//	// No Use....
+	//}
 
-	if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
-	{
-		*usInF |= (0x01 << 15);								// 언코일러 제품휠 지지 정위치 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
-	{
-		*usInF &= ~(0x01 << 15);
-	}
+	//if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
+	//{
+	//	*usInF |= (0x01 << 15);								// 언코일러 제품휠 지지 정위치 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
+	//{
+	//	*usInF &= ~(0x01 << 15);
+	//}
 }
 
 void CGvisR2R_LaserView::DoRcBoxSw()
 {
-	if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
-		return;
+	//if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
+	//	return;
 
-	// 	unsigned short usIn = pDoc->m_pMpeIo[4];
-	// 	unsigned short *usInF = &pDoc->m_pMpeIoF[4];
-	unsigned short usIn = 0;
-	unsigned short *usInF = NULL;
+	//// 	unsigned short usIn = pDoc->m_pMpeIo[4];
+	//// 	unsigned short *usInF = &pDoc->m_pMpeIoF[4];
+	//unsigned short usIn = 0;
+	//unsigned short *usInF = NULL;
 
-	// 	if((usIn & (0x01<<0)) && !(*usInF & (0x01<<0)))
-	// 	{
-	// 		*usInF |= (0x01<<0);								// 리코일러 비상정지 스위치
-	// 		pDoc->Status.bEmgRc = TRUE;
-	// 	}
-	// 	else if(!(usIn & (0x01<<0)) && (*usInF & (0x01<<0)))
-	// 	{
-	// 		*usInF &= ~(0x01<<0);								
-	// 		pDoc->Status.bEmgRc = FALSE;
-	// 	}
+	//// 	if((usIn & (0x01<<0)) && !(*usInF & (0x01<<0)))
+	//// 	{
+	//// 		*usInF |= (0x01<<0);								// 리코일러 비상정지 스위치
+	//// 		pDoc->Status.bEmgRc = TRUE;
+	//// 	}
+	//// 	else if(!(usIn & (0x01<<0)) && (*usInF & (0x01<<0)))
+	//// 	{
+	//// 		*usInF &= ~(0x01<<0);								
+	//// 		pDoc->Status.bEmgRc = FALSE;
+	//// 	}
 
-	if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
-	{
-		*usInF |= (0x01 << 1);								// 리코일러 연동 온/오프 스위치
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwRcRelation();
-	}
-	else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
-	{
-		*usInF &= ~(0x01 << 1);
-	}
+	//if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
+	//{
+	//	*usInF |= (0x01 << 1);								// 리코일러 연동 온/오프 스위치
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwRcRelation();
+	//}
+	//else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
+	//{
+	//	*usInF &= ~(0x01 << 1);
+	//}
 
-	if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
-	{
-		*usInF |= (0x01 << 2);								// 리코일러 댄서롤 상승/하강 스위치
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwRcDcRlUpDn();
-	}
-	else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
-	{
-		*usInF &= ~(0x01 << 2);
-	}
+	//if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
+	//{
+	//	*usInF |= (0x01 << 2);								// 리코일러 댄서롤 상승/하강 스위치
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwRcDcRlUpDn();
+	//}
+	//else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
+	//{
+	//	*usInF &= ~(0x01 << 2);
+	//}
 
-	if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
-	{
-		*usInF |= (0x01 << 3);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
-	{
-		*usInF &= ~(0x01 << 3);
-		// No Use....
-	}
+	//if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
+	//{
+	//	*usInF |= (0x01 << 3);								// SPARE
+	//														// No Use....
+	//}
+	//else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
+	//{
+	//	*usInF &= ~(0x01 << 3);
+	//	// No Use....
+	//}
 
-	if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
-	{
-		*usInF |= (0x01 << 4);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
-	{
-		*usInF &= ~(0x01 << 4);
-		// No Use....
-	}
+	//if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
+	//{
+	//	*usInF |= (0x01 << 4);								// SPARE
+	//														// No Use....
+	//}
+	//else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
+	//{
+	//	*usInF &= ~(0x01 << 4);
+	//	// No Use....
+	//}
 
-	if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
-	{
-		*usInF |= (0x01 << 5);								// 리코일러 제품 이음매(좌) 스위치
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwRcReelJoinL();
-	}
-	else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
-	{
-		*usInF &= ~(0x01 << 5);
-	}
+	//if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
+	//{
+	//	*usInF |= (0x01 << 5);								// 리코일러 제품 이음매(좌) 스위치
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwRcReelJoinL();
+	//}
+	//else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
+	//{
+	//	*usInF &= ~(0x01 << 5);
+	//}
 
-	if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
-	{
-		*usInF |= (0x01 << 6);								// 리코일러 제품 이음매(우) 스위치
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwRcReelJoinR();
-	}
-	else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
-	{
-		*usInF &= ~(0x01 << 6);
-	}
+	//if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
+	//{
+	//	*usInF |= (0x01 << 6);								// 리코일러 제품 이음매(우) 스위치
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwRcReelJoinR();
+	//}
+	//else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
+	//{
+	//	*usInF &= ~(0x01 << 6);
+	//}
 
-	if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
-	{
-		*usInF |= (0x01 << 7);								// 리코일러 제품휠 지지 스위치
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwRcReelWheel();
-	}
-	else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
-	{
-		*usInF &= ~(0x01 << 7);
-	}
+	//if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
+	//{
+	//	*usInF |= (0x01 << 7);								// 리코일러 제품휠 지지 스위치
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwRcReelWheel();
+	//}
+	//else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
+	//{
+	//	*usInF &= ~(0x01 << 7);
+	//}
 
-	if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
-	{
-		*usInF |= (0x01 << 8);								// 리코일러 간지척 클램프 스위치
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwRcPprChuck();
-	}
-	else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
-	{
-		*usInF &= ~(0x01 << 8);
-	}
+	//if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
+	//{
+	//	*usInF |= (0x01 << 8);								// 리코일러 간지척 클램프 스위치
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwRcPprChuck();
+	//}
+	//else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
+	//{
+	//	*usInF &= ~(0x01 << 8);
+	//}
 
-	if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
-	{
-		*usInF |= (0x01 << 9);								// 리코일러 간지휠 정회전 스위치
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_45);
-	}
-	else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
-	{
-		*usInF &= ~(0x01 << 9);
-		// 		if(m_pDlgMenu03)
-		// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_45);
-	}
+	//if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
+	//{
+	//	*usInF |= (0x01 << 9);								// 리코일러 간지휠 정회전 스위치
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_45);
+	//}
+	//else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
+	//{
+	//	*usInF &= ~(0x01 << 9);
+	//	// 		if(m_pDlgMenu03)
+	//	// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_45);
+	//}
 
-	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
-	{
-		*usInF |= (0x01 << 10);								// 리코일러 간지휠 역회전 스위치
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_46);
-	}
-	else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
-	{
-		*usInF &= ~(0x01 << 10);
-		// 		if(m_pDlgMenu03)
-		// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_46);
-	}
+	//if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
+	//{
+	//	*usInF |= (0x01 << 10);								// 리코일러 간지휠 역회전 스위치
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_46);
+	//}
+	//else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
+	//{
+	//	*usInF &= ~(0x01 << 10);
+	//	// 		if(m_pDlgMenu03)
+	//	// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_46);
+	//}
 
-	if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
-	{
-		*usInF |= (0x01 << 11);								// 리코일러 제품척 클램프 스위치
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwRcReelChuck();
-	}
-	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
-	{
-		*usInF &= ~(0x01 << 11);
-	}
+	//if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
+	//{
+	//	*usInF |= (0x01 << 11);								// 리코일러 제품척 클램프 스위치
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwRcReelChuck();
+	//}
+	//else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
+	//{
+	//	*usInF &= ~(0x01 << 11);
+	//}
 
-	if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
-	{
-		*usInF |= (0x01 << 12);								// 리코일러 제품휠 정회전 스위치
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_5);
-	}
-	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
-	{
-		*usInF &= ~(0x01 << 12);
-		// 		if(m_pDlgMenu03)
-		// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_5);
-	}
+	//if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
+	//{
+	//	*usInF |= (0x01 << 12);								// 리코일러 제품휠 정회전 스위치
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_5);
+	//}
+	//else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
+	//{
+	//	*usInF &= ~(0x01 << 12);
+	//	// 		if(m_pDlgMenu03)
+	//	// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_5);
+	//}
 
-	if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
-	{
-		*usInF |= (0x01 << 13);								// 리코일러 제품휠 역회전 스위치
-															// 		if(m_pDlgMenu03)
-															// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_6);
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
-	{
-		*usInF &= ~(0x01 << 13);
-		// 		if(m_pDlgMenu03)
-		// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_6);
-	}
+	//if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
+	//{
+	//	*usInF |= (0x01 << 13);								// 리코일러 제품휠 역회전 스위치
+	//														// 		if(m_pDlgMenu03)
+	//														// 			m_pDlgMenu03->SwMyBtnDown(IDC_CHK_6);
+	//}
+	//else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
+	//{
+	//	*usInF &= ~(0x01 << 13);
+	//	// 		if(m_pDlgMenu03)
+	//	// 			m_pDlgMenu03->SwMyBtnUp(IDC_CHK_6);
+	//}
 
-	// 	if((usIn & (0x01<<14)) && !(*usInF & (0x01<<14)))
-	// 	{
-	// 		*usInF |= (0x01<<14);								// 리코일러 제품 EPC원점 스위치
-	// 		m_bSwStopNow = TRUE;
-	// 		if(m_pDlgMenu03)
-	// 			m_pDlgMenu03->SwStop();
-	// 	}
-	// 	else if(!(usIn & (0x01<<14)) && (*usInF & (0x01<<14)))
-	// 	{
-	// 		*usInF &= ~(0x01<<14);								
-	// 	}
+	//// 	if((usIn & (0x01<<14)) && !(*usInF & (0x01<<14)))
+	//// 	{
+	//// 		*usInF |= (0x01<<14);								// 리코일러 제품 EPC원점 스위치
+	//// 		m_bSwStopNow = TRUE;
+	//// 		if(m_pDlgMenu03)
+	//// 			m_pDlgMenu03->SwStop();
+	//// 	}
+	//// 	else if(!(usIn & (0x01<<14)) && (*usInF & (0x01<<14)))
+	//// 	{
+	//// 		*usInF &= ~(0x01<<14);								
+	//// 	}
 
-	if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
-	{
-		*usInF |= (0x01 << 15);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
-	{
-		*usInF &= ~(0x01 << 15);
-		// No Use....
-	}
+	//if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
+	//{
+	//	*usInF |= (0x01 << 15);								// SPARE
+	//														// No Use....
+	//}
+	//else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
+	//{
+	//	*usInF &= ~(0x01 << 15);
+	//	// No Use....
+	//}
 }
 
 void CGvisR2R_LaserView::DoRcSens1()
 {
-	if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
-		return;
-
-	// 	unsigned short usIn = pDoc->m_pMpeIo[5];
-	// 	unsigned short *usInF = &pDoc->m_pMpeIoF[5];
-	unsigned short usIn = 0;
-	unsigned short *usInF = NULL;
-
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
-	{
-		*usInF |= (0x01 << 0);								// 리코일러 간지모터조절 1
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-	}
-
-	if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
-	{
-		*usInF |= (0x01 << 1);								// 리코일러 간지모터조절 2
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
-	{
-		*usInF &= ~(0x01 << 1);
-	}
-
-	if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
-	{
-		*usInF |= (0x01 << 2);								// 리코일러 간지모터조절 3
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
-	{
-		*usInF &= ~(0x01 << 2);
-	}
-
-	if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
-	{
-		*usInF |= (0x01 << 3);								// 리코일러 간지모터조절 4
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
-	{
-		*usInF &= ~(0x01 << 3);
-	}
-
-	if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
-	{
-		*usInF |= (0x01 << 4);								// 리코일러 제품모터조절 1
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
-	{
-		*usInF &= ~(0x01 << 4);
-	}
-
-	if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
-	{
-		*usInF |= (0x01 << 5);								// 리코일러 제품모터조절 2
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
-	{
-		*usInF &= ~(0x01 << 5);
-	}
-
-	if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
-	{
-		*usInF |= (0x01 << 6);								// 리코일러 제품모터조절 3
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
-	{
-		*usInF &= ~(0x01 << 6);
-	}
-
-	if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
-	{
-		*usInF |= (0x01 << 7);								// 리코일러 제품모터조절 4
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
-	{
-		*usInF &= ~(0x01 << 7);
-	}
-
-	if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
-	{
-		*usInF |= (0x01 << 8);								// 리코일러 제품 EPC POS 리미트 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
-	{
-		*usInF &= ~(0x01 << 8);
-	}
-
-	if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
-	{
-		*usInF |= (0x01 << 9);								// 리코일러 제품 EPC NEG 리미트 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
-	{
-		*usInF &= ~(0x01 << 9);
-	}
-
-	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
-	{
-		*usInF |= (0x01 << 10);								// 리코일러 제품 EPC 원점 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
-	{
-		*usInF &= ~(0x01 << 10);
-	}
-
-	if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
-	{
-		*usInF |= (0x01 << 11);								// 리코일러 전면 도어 센서(좌)
-		pDoc->Status.bDoorRe[DOOR_FL_RC] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
-	{
-		*usInF &= ~(0x01 << 11);
-		pDoc->Status.bDoorRe[DOOR_FL_RC] = FALSE;
-	}
-
-	if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
-	{
-		*usInF |= (0x01 << 12);								// 리코일러 전면 도어 센서(우)
-		pDoc->Status.bDoorRe[DOOR_FR_RC] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
-	{
-		*usInF &= ~(0x01 << 12);
-		pDoc->Status.bDoorRe[DOOR_FR_RC] = FALSE;
-	}
-
-	if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
-	{
-		*usInF |= (0x01 << 13);								// 리코일러 측면 도어 센서
-		pDoc->Status.bDoorRe[DOOR_S_RC] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
-	{
-		*usInF &= ~(0x01 << 13);
-		pDoc->Status.bDoorRe[DOOR_S_RC] = FALSE;
-	}
-
-	if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
-	{
-		*usInF |= (0x01 << 14);								// 리코일러 후면 도어 센서(좌)
-		pDoc->Status.bDoorRe[DOOR_BL_RC] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
-	{
-		*usInF &= ~(0x01 << 14);
-		pDoc->Status.bDoorRe[DOOR_BL_RC] = FALSE;
-	}
-
-	if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
-	{
-		*usInF |= (0x01 << 15);								// 리코일러 후면 도어 센서(우)
-		pDoc->Status.bDoorRe[DOOR_BR_RC] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
-	{
-		*usInF &= ~(0x01 << 15);
-		pDoc->Status.bDoorRe[DOOR_BR_RC] = FALSE;
-	}
-}
-
-void CGvisR2R_LaserView::DoRcSens2()
-{
-	if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
-		return;
-
-	// 	unsigned short usIn = pDoc->m_pMpeIo[6];
-	// 	unsigned short *usInF = &pDoc->m_pMpeIoF[6];
-	unsigned short usIn = 0;
-	unsigned short *usInF = NULL;
-
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
-	{
-		*usInF |= (0x01 << 0);								// 리코일러 간지텐션 POS 리미트 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-	}
-
-	if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
-	{
-		*usInF |= (0x01 << 1);								// 리코일러 간지텐션 상한 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
-	{
-		*usInF &= ~(0x01 << 1);
-	}
-
-	if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
-	{
-		*usInF |= (0x01 << 2);								// 리코일러 간지텐션 2/3 지점 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
-	{
-		*usInF &= ~(0x01 << 2);
-	}
-
-	if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
-	{
-		*usInF |= (0x01 << 3);								// 리코일러 간지텐션 1/3 지점 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
-	{
-		*usInF &= ~(0x01 << 3);
-	}
-
-	if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
-	{
-		*usInF |= (0x01 << 4);								// 리코일러 간지텐션 하한 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
-	{
-		*usInF &= ~(0x01 << 4);
-	}
-
-	if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
-	{
-		*usInF |= (0x01 << 5);								// 리코일러 간지텐션 NEG 리미트 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
-	{
-		*usInF &= ~(0x01 << 5);
-	}
-
-	if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
-	{
-		*usInF |= (0x01 << 6);								// 리코일러 간지척 진공 스위치
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
-	{
-		*usInF &= ~(0x01 << 6);
-	}
-
-	if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
-	{
-		*usInF |= (0x01 << 7);								// 리코일러 간지버퍼 압력 스위치
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
-	{
-		*usInF &= ~(0x01 << 7);
-	}
-
-	if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
-	{
-		*usInF |= (0x01 << 8);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
-	{
-		*usInF &= ~(0x01 << 8);
-		// No Use....
-	}
-
-	if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
-	{
-		*usInF |= (0x01 << 9);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
-	{
-		*usInF &= ~(0x01 << 9);
-		// No Use....
-	}
-
-	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
-	{
-		*usInF |= (0x01 << 10);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
-	{
-		*usInF &= ~(0x01 << 10);
-		// No Use....
-	}
-
-	if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
-	{
-		*usInF |= (0x01 << 11);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
-	{
-		*usInF &= ~(0x01 << 11);
-		// No Use....
-	}
-
-	if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
-	{
-		*usInF |= (0x01 << 12);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
-	{
-		*usInF &= ~(0x01 << 12);
-		// No Use....
-	}
-
-	if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
-	{
-		*usInF |= (0x01 << 13);								// SPARE
-															// No Use....
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
-	{
-		*usInF &= ~(0x01 << 13);
-		// No Use....
-	}
-
-	if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
-	{
-		*usInF |= (0x01 << 14);								// 리코일러 댄서롤 상승 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
-	{
-		*usInF &= ~(0x01 << 14);
-	}
-
-	if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
-	{
-		*usInF |= (0x01 << 15);								// 리코일러 댄서롤 하강 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
-	{
-		*usInF &= ~(0x01 << 15);
-	}
+//	if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
+//		return;
+//
+//	// 	unsigned short usIn = pDoc->m_pMpeIo[5];
+//	// 	unsigned short *usInF = &pDoc->m_pMpeIoF[5];
+//	unsigned short usIn = 0;
+//	unsigned short *usInF = NULL;
+//
+//	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
+//	{
+//		*usInF |= (0x01 << 0);								// 리코일러 간지모터조절 1
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+//	{
+//		*usInF &= ~(0x01 << 0);
+//	}
+//
+//	if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
+//	{
+//		*usInF |= (0x01 << 1);								// 리코일러 간지모터조절 2
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
+//	{
+//		*usInF &= ~(0x01 << 1);
+//	}
+//
+//	if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
+//	{
+//		*usInF |= (0x01 << 2);								// 리코일러 간지모터조절 3
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
+//	{
+//		*usInF &= ~(0x01 << 2);
+//	}
+//
+//	if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
+//	{
+//		*usInF |= (0x01 << 3);								// 리코일러 간지모터조절 4
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
+//	{
+//		*usInF &= ~(0x01 << 3);
+//	}
+//
+//	if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
+//	{
+//		*usInF |= (0x01 << 4);								// 리코일러 제품모터조절 1
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
+//	{
+//		*usInF &= ~(0x01 << 4);
+//	}
+//
+//	if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
+//	{
+//		*usInF |= (0x01 << 5);								// 리코일러 제품모터조절 2
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
+//	{
+//		*usInF &= ~(0x01 << 5);
+//	}
+//
+//	if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
+//	{
+//		*usInF |= (0x01 << 6);								// 리코일러 제품모터조절 3
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
+//	{
+//		*usInF &= ~(0x01 << 6);
+//	}
+//
+//	if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
+//	{
+//		*usInF |= (0x01 << 7);								// 리코일러 제품모터조절 4
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
+//	{
+//		*usInF &= ~(0x01 << 7);
+//	}
+//
+//	if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
+//	{
+//		*usInF |= (0x01 << 8);								// 리코일러 제품 EPC POS 리미트 센서
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
+//	{
+//		*usInF &= ~(0x01 << 8);
+//	}
+//
+//	if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
+//	{
+//		*usInF |= (0x01 << 9);								// 리코일러 제품 EPC NEG 리미트 센서
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
+//	{
+//		*usInF &= ~(0x01 << 9);
+//	}
+//
+//	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
+//	{
+//		*usInF |= (0x01 << 10);								// 리코일러 제품 EPC 원점 센서
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
+//	{
+//		*usInF &= ~(0x01 << 10);
+//	}
+//
+//	if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
+//	{
+//		*usInF |= (0x01 << 11);								// 리코일러 전면 도어 센서(좌)
+//		pDoc->Status.bDoorRe[DOOR_FL_RC] = TRUE;
+//	}
+//	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
+//	{
+//		*usInF &= ~(0x01 << 11);
+//		pDoc->Status.bDoorRe[DOOR_FL_RC] = FALSE;
+//	}
+//
+//	if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
+//	{
+//		*usInF |= (0x01 << 12);								// 리코일러 전면 도어 센서(우)
+//		pDoc->Status.bDoorRe[DOOR_FR_RC] = TRUE;
+//	}
+//	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
+//	{
+//		*usInF &= ~(0x01 << 12);
+//		pDoc->Status.bDoorRe[DOOR_FR_RC] = FALSE;
+//	}
+//
+//	if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
+//	{
+//		*usInF |= (0x01 << 13);								// 리코일러 측면 도어 센서
+//		pDoc->Status.bDoorRe[DOOR_S_RC] = TRUE;
+//	}
+//	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
+//	{
+//		*usInF &= ~(0x01 << 13);
+//		pDoc->Status.bDoorRe[DOOR_S_RC] = FALSE;
+//	}
+//
+//	if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
+//	{
+//		*usInF |= (0x01 << 14);								// 리코일러 후면 도어 센서(좌)
+//		pDoc->Status.bDoorRe[DOOR_BL_RC] = TRUE;
+//	}
+//	else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
+//	{
+//		*usInF &= ~(0x01 << 14);
+//		pDoc->Status.bDoorRe[DOOR_BL_RC] = FALSE;
+//	}
+//
+//	if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
+//	{
+//		*usInF |= (0x01 << 15);								// 리코일러 후면 도어 센서(우)
+//		pDoc->Status.bDoorRe[DOOR_BR_RC] = TRUE;
+//	}
+//	else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
+//	{
+//		*usInF &= ~(0x01 << 15);
+//		pDoc->Status.bDoorRe[DOOR_BR_RC] = FALSE;
+//	}
+//}
+//
+//void CGvisR2R_LaserView::DoRcSens2()
+//{
+//	if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
+//		return;
+//
+//	// 	unsigned short usIn = pDoc->m_pMpeIo[6];
+//	// 	unsigned short *usInF = &pDoc->m_pMpeIoF[6];
+//	unsigned short usIn = 0;
+//	unsigned short *usInF = NULL;
+//
+//	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
+//	{
+//		*usInF |= (0x01 << 0);								// 리코일러 간지텐션 POS 리미트 센서
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+//	{
+//		*usInF &= ~(0x01 << 0);
+//	}
+//
+//	if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
+//	{
+//		*usInF |= (0x01 << 1);								// 리코일러 간지텐션 상한 센서
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
+//	{
+//		*usInF &= ~(0x01 << 1);
+//	}
+//
+//	if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
+//	{
+//		*usInF |= (0x01 << 2);								// 리코일러 간지텐션 2/3 지점 센서
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
+//	{
+//		*usInF &= ~(0x01 << 2);
+//	}
+//
+//	if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
+//	{
+//		*usInF |= (0x01 << 3);								// 리코일러 간지텐션 1/3 지점 센서
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
+//	{
+//		*usInF &= ~(0x01 << 3);
+//	}
+//
+//	if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
+//	{
+//		*usInF |= (0x01 << 4);								// 리코일러 간지텐션 하한 센서
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
+//	{
+//		*usInF &= ~(0x01 << 4);
+//	}
+//
+//	if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
+//	{
+//		*usInF |= (0x01 << 5);								// 리코일러 간지텐션 NEG 리미트 센서
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
+//	{
+//		*usInF &= ~(0x01 << 5);
+//	}
+//
+//	if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
+//	{
+//		*usInF |= (0x01 << 6);								// 리코일러 간지척 진공 스위치
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
+//	{
+//		*usInF &= ~(0x01 << 6);
+//	}
+//
+//	if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
+//	{
+//		*usInF |= (0x01 << 7);								// 리코일러 간지버퍼 압력 스위치
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
+//	{
+//		*usInF &= ~(0x01 << 7);
+//	}
+//
+//	if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
+//	{
+//		*usInF |= (0x01 << 8);								// SPARE
+//															// No Use....
+//	}
+//	else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
+//	{
+//		*usInF &= ~(0x01 << 8);
+//		// No Use....
+//	}
+//
+//	if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
+//	{
+//		*usInF |= (0x01 << 9);								// SPARE
+//															// No Use....
+//	}
+//	else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
+//	{
+//		*usInF &= ~(0x01 << 9);
+//		// No Use....
+//	}
+//
+//	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
+//	{
+//		*usInF |= (0x01 << 10);								// SPARE
+//															// No Use....
+//	}
+//	else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
+//	{
+//		*usInF &= ~(0x01 << 10);
+//		// No Use....
+//	}
+//
+//	if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
+//	{
+//		*usInF |= (0x01 << 11);								// SPARE
+//															// No Use....
+//	}
+//	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
+//	{
+//		*usInF &= ~(0x01 << 11);
+//		// No Use....
+//	}
+//
+//	if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
+//	{
+//		*usInF |= (0x01 << 12);								// SPARE
+//															// No Use....
+//	}
+//	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
+//	{
+//		*usInF &= ~(0x01 << 12);
+//		// No Use....
+//	}
+//
+//	if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
+//	{
+//		*usInF |= (0x01 << 13);								// SPARE
+//															// No Use....
+//	}
+//	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
+//	{
+//		*usInF &= ~(0x01 << 13);
+//		// No Use....
+//	}
+//
+//	if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
+//	{
+//		*usInF |= (0x01 << 14);								// 리코일러 댄서롤 상승 센서
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
+//	{
+//		*usInF &= ~(0x01 << 14);
+//	}
+//
+//	if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
+//	{
+//		*usInF |= (0x01 << 15);								// 리코일러 댄서롤 하강 센서
+//															// Late....
+//	}
+//	else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
+//	{
+//		*usInF &= ~(0x01 << 15);
+//	}
 }
 
 void CGvisR2R_LaserView::DoRcSens3()
 {
-	if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
-		return;
+	//if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
+	//	return;
 
-	// 	unsigned short usIn = pDoc->m_pMpeIo[7];
-	// 	unsigned short *usInF = &pDoc->m_pMpeIoF[7];
-	unsigned short usIn = 0;
-	unsigned short *usInF = NULL;
+	//// 	unsigned short usIn = pDoc->m_pMpeIo[7];
+	//// 	unsigned short *usInF = &pDoc->m_pMpeIoF[7];
+	//unsigned short usIn = 0;
+	//unsigned short *usInF = NULL;
 
-	if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
-	{
-		*usInF |= (0x01 << 0);								// 리코일러 댄서롤 POS 리미트 센서
-		pDoc->Status.bSensLmtBufRc[LMT_POS] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
-	{
-		*usInF &= ~(0x01 << 0);
-		pDoc->Status.bSensLmtBufRc[LMT_POS] = FALSE;
-	}
+	//if ((usIn & (0x01 << 0)) && !(*usInF & (0x01 << 0)))
+	//{
+	//	*usInF |= (0x01 << 0);								// 리코일러 댄서롤 POS 리미트 센서
+	//	pDoc->Status.bSensLmtBufRc[LMT_POS] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 0)) && (*usInF & (0x01 << 0)))
+	//{
+	//	*usInF &= ~(0x01 << 0);
+	//	pDoc->Status.bSensLmtBufRc[LMT_POS] = FALSE;
+	//}
 
-	if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
-	{
-		*usInF |= (0x01 << 1);								// 리코일러 댄서롤 상한 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
-	{
-		*usInF &= ~(0x01 << 1);
-	}
+	//if ((usIn & (0x01 << 1)) && !(*usInF & (0x01 << 1)))
+	//{
+	//	*usInF |= (0x01 << 1);								// 리코일러 댄서롤 상한 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 1)) && (*usInF & (0x01 << 1)))
+	//{
+	//	*usInF &= ~(0x01 << 1);
+	//}
 
-	if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
-	{
-		*usInF |= (0x01 << 2);								// 리코일러 댄서롤 2/3 지점 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
-	{
-		*usInF &= ~(0x01 << 2);
-	}
+	//if ((usIn & (0x01 << 2)) && !(*usInF & (0x01 << 2)))
+	//{
+	//	*usInF |= (0x01 << 2);								// 리코일러 댄서롤 2/3 지점 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 2)) && (*usInF & (0x01 << 2)))
+	//{
+	//	*usInF &= ~(0x01 << 2);
+	//}
 
-	if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
-	{
-		*usInF |= (0x01 << 3);								// 리코일러 댄서롤 1/3 지점 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
-	{
-		*usInF &= ~(0x01 << 3);
-	}
+	//if ((usIn & (0x01 << 3)) && !(*usInF & (0x01 << 3)))
+	//{
+	//	*usInF |= (0x01 << 3);								// 리코일러 댄서롤 1/3 지점 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 3)) && (*usInF & (0x01 << 3)))
+	//{
+	//	*usInF &= ~(0x01 << 3);
+	//}
 
-	if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
-	{
-		*usInF |= (0x01 << 4);								// 리코일러 댄서롤 하한 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
-	{
-		*usInF &= ~(0x01 << 4);
-	}
+	//if ((usIn & (0x01 << 4)) && !(*usInF & (0x01 << 4)))
+	//{
+	//	*usInF |= (0x01 << 4);								// 리코일러 댄서롤 하한 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 4)) && (*usInF & (0x01 << 4)))
+	//{
+	//	*usInF &= ~(0x01 << 4);
+	//}
 
-	if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
-	{
-		*usInF |= (0x01 << 5);								// 리코일러 댄서롤 NEG 리미트 센서
-		pDoc->Status.bSensLmtBufRc[LMT_NEG] = TRUE;
-	}
-	else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
-	{
-		*usInF &= ~(0x01 << 5);
-		pDoc->Status.bSensLmtBufRc[LMT_NEG] = FALSE;
-	}
+	//if ((usIn & (0x01 << 5)) && !(*usInF & (0x01 << 5)))
+	//{
+	//	*usInF |= (0x01 << 5);								// 리코일러 댄서롤 NEG 리미트 센서
+	//	pDoc->Status.bSensLmtBufRc[LMT_NEG] = TRUE;
+	//}
+	//else if (!(usIn & (0x01 << 5)) && (*usInF & (0x01 << 5)))
+	//{
+	//	*usInF &= ~(0x01 << 5);
+	//	pDoc->Status.bSensLmtBufRc[LMT_NEG] = FALSE;
+	//}
 
-	if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
-	{
-		*usInF |= (0x01 << 6);								// 리코일러 제품척 진공 스위치
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
-	{
-		*usInF &= ~(0x01 << 6);
-	}
+	//if ((usIn & (0x01 << 6)) && !(*usInF & (0x01 << 6)))
+	//{
+	//	*usInF |= (0x01 << 6);								// 리코일러 제품척 진공 스위치
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 6)) && (*usInF & (0x01 << 6)))
+	//{
+	//	*usInF &= ~(0x01 << 6);
+	//}
 
-	if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
-	{
-		*usInF |= (0x01 << 7);								// 리코일러 메인 에어 
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
-	{
-		*usInF &= ~(0x01 << 7);
-	}
+	//if ((usIn & (0x01 << 7)) && !(*usInF & (0x01 << 7)))
+	//{
+	//	*usInF |= (0x01 << 7);								// 리코일러 메인 에어 
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 7)) && (*usInF & (0x01 << 7)))
+	//{
+	//	*usInF &= ~(0x01 << 7);
+	//}
 
-	if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
-	{
-		*usInF |= (0x01 << 8);								// 리코일러 제품휠 지지 상승 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
-	{
-		*usInF &= ~(0x01 << 8);
-	}
+	//if ((usIn & (0x01 << 8)) && !(*usInF & (0x01 << 8)))
+	//{
+	//	*usInF |= (0x01 << 8);								// 리코일러 제품휠 지지 상승 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 8)) && (*usInF & (0x01 << 8)))
+	//{
+	//	*usInF &= ~(0x01 << 8);
+	//}
 
-	if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
-	{
-		*usInF |= (0x01 << 9);								// 리코일러 제품휠 지지 하강 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
-	{
-		*usInF &= ~(0x01 << 9);
-	}
+	//if ((usIn & (0x01 << 9)) && !(*usInF & (0x01 << 9)))
+	//{
+	//	*usInF |= (0x01 << 9);								// 리코일러 제품휠 지지 하강 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 9)) && (*usInF & (0x01 << 9)))
+	//{
+	//	*usInF &= ~(0x01 << 9);
+	//}
 
-	if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
-	{
-		*usInF |= (0x01 << 10);								// 리코일러 제품 이음매(좌) 상승 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
-	{
-		*usInF &= ~(0x01 << 10);
-	}
+	//if ((usIn & (0x01 << 10)) && !(*usInF & (0x01 << 10)))
+	//{
+	//	*usInF |= (0x01 << 10);								// 리코일러 제품 이음매(좌) 상승 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 10)) && (*usInF & (0x01 << 10)))
+	//{
+	//	*usInF &= ~(0x01 << 10);
+	//}
 
-	if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
-	{
-		*usInF |= (0x01 << 11);								// 리코일러 제품 이음매(좌) 하강 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
-	{
-		*usInF &= ~(0x01 << 11);
-	}
+	//if ((usIn & (0x01 << 11)) && !(*usInF & (0x01 << 11)))
+	//{
+	//	*usInF |= (0x01 << 11);								// 리코일러 제품 이음매(좌) 하강 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 11)) && (*usInF & (0x01 << 11)))
+	//{
+	//	*usInF &= ~(0x01 << 11);
+	//}
 
-	if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
-	{
-		*usInF |= (0x01 << 12);								// 리코일러 제품 이음매(우) 상승 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
-	{
-		*usInF &= ~(0x01 << 12);
-	}
+	//if ((usIn & (0x01 << 12)) && !(*usInF & (0x01 << 12)))
+	//{
+	//	*usInF |= (0x01 << 12);								// 리코일러 제품 이음매(우) 상승 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 12)) && (*usInF & (0x01 << 12)))
+	//{
+	//	*usInF &= ~(0x01 << 12);
+	//}
 
-	if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
-	{
-		*usInF |= (0x01 << 13);								// 리코일러 제품 이음매(우) 하강 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
-	{
-		*usInF &= ~(0x01 << 13);
-	}
+	//if ((usIn & (0x01 << 13)) && !(*usInF & (0x01 << 13)))
+	//{
+	//	*usInF |= (0x01 << 13);								// 리코일러 제품 이음매(우) 하강 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 13)) && (*usInF & (0x01 << 13)))
+	//{
+	//	*usInF &= ~(0x01 << 13);
+	//}
 
-	if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
-	{
-		*usInF |= (0x01 << 14);								// 리코일러 제품 잔량 감지 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
-	{
-		*usInF &= ~(0x01 << 14);
-	}
+	//if ((usIn & (0x01 << 14)) && !(*usInF & (0x01 << 14)))
+	//{
+	//	*usInF |= (0x01 << 14);								// 리코일러 제품 잔량 감지 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 14)) && (*usInF & (0x01 << 14)))
+	//{
+	//	*usInF &= ~(0x01 << 14);
+	//}
 
-	if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
-	{
-		*usInF |= (0x01 << 15);								// 리코일러 제품휠 지지 정위치 센서
-															// Late....
-	}
-	else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
-	{
-		*usInF &= ~(0x01 << 15);
-	}
+	//if ((usIn & (0x01 << 15)) && !(*usInF & (0x01 << 15)))
+	//{
+	//	*usInF |= (0x01 << 15);								// 리코일러 제품휠 지지 정위치 센서
+	//														// Late....
+	//}
+	//else if (!(usIn & (0x01 << 15)) && (*usInF & (0x01 << 15)))
+	//{
+	//	*usInF &= ~(0x01 << 15);
+	//}
 }
 
 void CGvisR2R_LaserView::SetAoiFdPitch(double dPitch)
 {
 	pDoc->SetAoiFdPitch(dPitch);
 	// 	m_pMotion->SetLeadPitch(AXIS_AOIFD, dPitch);
-	long lData = long(dPitch*1000.0);
-	pView->m_pMpe->Write(_T("ML45012"), lData); // 검사부 Feeding 롤러 Lead Pitch
-	pView->m_pMpe->Write(_T("ML45020"), lData); // 각인부 Feeding 롤러 Lead Pitch
+	//long lData = long(dPitch*1000.0);
+	//pView->m_pMpe->Write(_T("ML45012"), lData); // 검사부 Feeding 롤러 Lead Pitch
+	//pView->m_pMpe->Write(_T("ML45020"), lData); // 각인부 Feeding 롤러 Lead Pitch
 }
 
 void CGvisR2R_LaserView::SetMkFdPitch(double dPitch)
 {
 	pDoc->SetMkFdPitch(dPitch);
-	// 	m_pMotion->SetLeadPitch(AXIS_MKFD, dPitch);
-	long lData = long(dPitch*1000.0);
-	pView->m_pMpe->Write(_T("ML45014"), lData); // 마킹부 Feeding 롤러 Lead Pitch
+	//// 	m_pMotion->SetLeadPitch(AXIS_MKFD, dPitch);
+	//long lData = long(dPitch*1000.0);
+	//pView->m_pMpe->Write(_T("ML45014"), lData); // 마킹부 Feeding 롤러 Lead Pitch
 }
 
 void CGvisR2R_LaserView::SetBufInitPos(double dPos)
@@ -7763,35 +7763,35 @@ void CGvisR2R_LaserView::MoveMk(double dOffset)
 
 BOOL CGvisR2R_LaserView::IsMkFd()
 {
-	if (m_nShareDnCnt > 0)
-	{
-		if (!(m_nShareDnCnt % 2))
-		{
-			if (pDoc->m_pMpeSignal[5] & (0x01 << 1))	// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF)
-				return TRUE;
-			return FALSE;
-		}
-	}
-	else
-	{
-		if (m_nShareUpCnt > 0)
-		{
-			if (!(m_nShareUpCnt % 2))
-			{
-				if (pDoc->m_pMpeSignal[5] & (0x01 << 1))	// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF)
-					return TRUE;
-				return FALSE;
-			}
-		}
-	}
+	//if (m_nShareDnCnt > 0)
+	//{
+	//	if (!(m_nShareDnCnt % 2))
+	//	{
+	//		if (pDoc->m_pMpeSignal[5] & (0x01 << 1))	// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF)
+	//			return TRUE;
+	//		return FALSE;
+	//	}
+	//}
+	//else
+	//{
+	//	if (m_nShareUpCnt > 0)
+	//	{
+	//		if (!(m_nShareUpCnt % 2))
+	//		{
+	//			if (pDoc->m_pMpeSignal[5] & (0x01 << 1))	// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF)
+	//				return TRUE;
+	//			return FALSE;
+	//		}
+	//	}
+	//}
 
 	return TRUE;
 }
 
 BOOL CGvisR2R_LaserView::IsAoiFd()
 {
-	if (pDoc->m_pMpeSignal[5] & (0x01 >> 0))	// 검사부 피딩 ON (PLC가 피딩완료 후 OFF)
-		return TRUE;
+	//if (pDoc->m_pMpeSignal[5] & (0x01 >> 0))	// 검사부 피딩 ON (PLC가 피딩완료 후 OFF)
+	//	return TRUE;
 	return FALSE;
 }
 
@@ -7826,13 +7826,13 @@ int CGvisR2R_LaserView::GetCycTime()
 
 BOOL CGvisR2R_LaserView::IsMkFdDone()
 {
-	if (m_nShareDnCnt > 0)
-	{
-		if (m_nShareDnCnt % 2)
-			return TRUE;
-	}
-	if (!(pDoc->m_pMpeSignal[5] & (0x01 << 1)))	// 마킹부 피딩 ON (PLC가 피딩완료 후 OFF)
-		return TRUE;
+	//if (m_nShareDnCnt > 0)
+	//{
+	//	if (m_nShareDnCnt % 2)
+	//		return TRUE;
+	//}
+	//if (!(pDoc->m_pMpeSignal[5] & (0x01 << 1)))	// 마킹부 피딩 ON (PLC가 피딩완료 후 OFF)
+	//	return TRUE;
 	return FALSE;
 
 	// 	if(!pView->m_pMotion)
@@ -7849,8 +7849,8 @@ BOOL CGvisR2R_LaserView::IsMkFdDone()
 
 BOOL CGvisR2R_LaserView::IsAoiFdDone()
 {
-	if (!(pDoc->m_pMpeSignal[5] & (0x01 << 0)))	// 검사부 피딩 ON (PLC가 피딩완료 후 OFF)
-		return TRUE;
+	//if (!(pDoc->m_pMpeSignal[5] & (0x01 << 0)))	// 검사부 피딩 ON (PLC가 피딩완료 후 OFF)
+	//	return TRUE;
 	return FALSE;
 
 	// 	if(!pView->m_pMotion)
@@ -7882,10 +7882,11 @@ double CGvisR2R_LaserView::GetMkInitDist()
 double CGvisR2R_LaserView::GetMkRemain()
 {
 	// 	double dRemain = _tstof(pDoc->WorkingInfo.LastJob.sDistAoiMk) - m_dEnc[AXIS_RENC];
-	double dCurPosMkFd = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
-	double dInitD0 = _tstof(pDoc->WorkingInfo.Motion.sFdAoiAoiDistShot) * _tstof(pDoc->WorkingInfo.LastJob.sOnePnlLen);
-	double dRemain = _tstof(pDoc->WorkingInfo.Motion.sFdMkAoiInitDist) + dInitD0 - dCurPosMkFd;
-	return dRemain;
+	//double dCurPosMkFd = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
+	//double dInitD0 = _tstof(pDoc->WorkingInfo.Motion.sFdAoiAoiDistShot) * _tstof(pDoc->WorkingInfo.LastJob.sOnePnlLen);
+	//double dRemain = _tstof(pDoc->WorkingInfo.Motion.sFdMkAoiInitDist) + dInitD0 - dCurPosMkFd;
+	//return dRemain;
+	return 0.0;
 }
 
 void CGvisR2R_LaserView::UpdateWorking()
@@ -8052,87 +8053,87 @@ void CGvisR2R_LaserView::DispLotTime()
 
 BOOL CGvisR2R_LaserView::IsTest()
 {
-	if (!pDoc->m_pMpeIo)
-		return FALSE;
+	//if (!pDoc->m_pMpeIo)
+	//	return FALSE;
 
-	// MpeIO
-	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	//// MpeIO
+	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	BOOL bOn0 = (pDoc->m_pMpeIo[nInSeg + 10] & 0x01 << 8) ? TRUE : FALSE; //[34] 검사부 상 검사 시작 <-> Y4368 I/F
-	BOOL bOn1 = (pDoc->m_pMpeIo[nInSeg + 14] & 0x01 << 8) ? TRUE : FALSE; //[38] 검사부 하 검사 시작 <-> Y4468 I/F
+	//BOOL bOn0 = (pDoc->m_pMpeIo[nInSeg + 10] & 0x01 << 8) ? TRUE : FALSE; //[34] 검사부 상 검사 시작 <-> Y4368 I/F
+	//BOOL bOn1 = (pDoc->m_pMpeIo[nInSeg + 14] & 0x01 << 8) ? TRUE : FALSE; //[38] 검사부 하 검사 시작 <-> Y4468 I/F
 
-	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	if (bDualTest)
-	{
-		if (bOn0 || bOn1)
-			return TRUE;
-	}
-	else
-	{
-		if (bOn0)
-			return TRUE;
-	}
+	//BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	//if (bDualTest)
+	//{
+	//	if (bOn0 || bOn1)
+	//		return TRUE;
+	//}
+	//else
+	//{
+	//	if (bOn0)
+	//		return TRUE;
+	//}
 
 	return FALSE;
 }
 
 BOOL CGvisR2R_LaserView::IsTestUp()
 {
-	if (!pDoc->m_pMpeIo)
-		return FALSE;
+	//if (!pDoc->m_pMpeIo)
+	//	return FALSE;
 
-	// MpeIO
-	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	//// MpeIO
+	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	BOOL bOn0 = (pDoc->m_pMpeIo[nInSeg + 10] & 0x01 << 8) ? TRUE : FALSE; //[34] 검사부 상 검사 시작 <-> Y4368 I/F
-	if (bOn0)
-		return TRUE;
+	//BOOL bOn0 = (pDoc->m_pMpeIo[nInSeg + 10] & 0x01 << 8) ? TRUE : FALSE; //[34] 검사부 상 검사 시작 <-> Y4368 I/F
+	//if (bOn0)
+	//	return TRUE;
 	return FALSE;
 }
 
 BOOL CGvisR2R_LaserView::IsTestDn()
 {
-	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	if (!bDualTest)
-		return FALSE;
+	//BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	//if (!bDualTest)
+	//	return FALSE;
 
-	if (!pDoc->m_pMpeIo)
-		return FALSE;
+	//if (!pDoc->m_pMpeIo)
+	//	return FALSE;
 
-	// MpeIO
-	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	//// MpeIO
+	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	BOOL bOn1 = (pDoc->m_pMpeIo[nInSeg + 14] & 0x01 << 8) ? TRUE : FALSE; //[38] 검사부 하 검사 시작 <-> Y4468 I/F
-	if (bOn1)
-		return TRUE;
+	//BOOL bOn1 = (pDoc->m_pMpeIo[nInSeg + 14] & 0x01 << 8) ? TRUE : FALSE; //[38] 검사부 하 검사 시작 <-> Y4468 I/F
+	//if (bOn1)
+	//	return TRUE;
 	return FALSE;
 }
 
 BOOL CGvisR2R_LaserView::IsAoiTblVac()
 {
-	if (!pDoc->m_pMpeIo)
-		return FALSE;
+	//if (!pDoc->m_pMpeIo)
+	//	return FALSE;
 
-	// MpeIO
-	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	//// MpeIO
+	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	BOOL bOn0 = (pDoc->m_pMpeIo[nInSeg + 10] & 0x01 << 9) ? TRUE : FALSE; //[34] 검사부 상 검사 테이블 진공 SOL <-> Y4469 I/F
-	BOOL bOn1 = (pDoc->m_pMpeIo[nInSeg + 14] & 0x01 << 9) ? TRUE : FALSE; //[38] 검사부 하 검사 테이블 진공 SOL <-> Y4469 I/F
-	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	if (bDualTest)
-	{
-		if (bOn0 || bOn1)
-			return TRUE;
-	}
-	else
-	{
-		if (bOn0)
-			return TRUE;
-	}
+	//BOOL bOn0 = (pDoc->m_pMpeIo[nInSeg + 10] & 0x01 << 9) ? TRUE : FALSE; //[34] 검사부 상 검사 테이블 진공 SOL <-> Y4469 I/F
+	//BOOL bOn1 = (pDoc->m_pMpeIo[nInSeg + 14] & 0x01 << 9) ? TRUE : FALSE; //[38] 검사부 하 검사 테이블 진공 SOL <-> Y4469 I/F
+	//BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	//if (bDualTest)
+	//{
+	//	if (bOn0 || bOn1)
+	//		return TRUE;
+	//}
+	//else
+	//{
+	//	if (bOn0)
+	//		return TRUE;
+	//}
 	return FALSE;
 }
 
@@ -8176,73 +8177,73 @@ BOOL CGvisR2R_LaserView::IsAoiTblVac()
 
 BOOL CGvisR2R_LaserView::IsTestDone()
 {
-	BOOL bOn0 = (pDoc->m_pMpeI[10] & (0x01 << 8)) ? TRUE : FALSE;	// 검사부 상 검사 완료 <-> X4328 I/F
-	BOOL bOn1 = (pDoc->m_pMpeI[14] & (0x01 << 8)) ? TRUE : FALSE;	// 검사부 하 검사 완료 <-> X4428 I/F
-	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	if (bDualTest)
-	{
-		if (bOn0 && bOn1)
-			return TRUE;
-	}
-	else
-	{
-		if (bOn0)
-			return TRUE;
-	}
+	//BOOL bOn0 = (pDoc->m_pMpeI[10] & (0x01 << 8)) ? TRUE : FALSE;	// 검사부 상 검사 완료 <-> X4328 I/F
+	//BOOL bOn1 = (pDoc->m_pMpeI[14] & (0x01 << 8)) ? TRUE : FALSE;	// 검사부 하 검사 완료 <-> X4428 I/F
+	//BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	//if (bDualTest)
+	//{
+	//	if (bOn0 && bOn1)
+	//		return TRUE;
+	//}
+	//else
+	//{
+	//	if (bOn0)
+	//		return TRUE;
+	//}
 
-	double dCurPosMkFd = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
-	double dTgtFd = _tstof(pDoc->WorkingInfo.Motion.sFdAoiAoiDistShot) * _tstof(pDoc->WorkingInfo.Motion.sAoiFdDist);
-	if (dCurPosMkFd + 10.0 < dTgtFd)//-_tstof(pDoc->WorkingInfo.Motion.sAoiFdDist))
-	{
-		if (bOn0)
-			return TRUE;
-	}
+	//double dCurPosMkFd = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
+	//double dTgtFd = _tstof(pDoc->WorkingInfo.Motion.sFdAoiAoiDistShot) * _tstof(pDoc->WorkingInfo.Motion.sAoiFdDist);
+	//if (dCurPosMkFd + 10.0 < dTgtFd)//-_tstof(pDoc->WorkingInfo.Motion.sAoiFdDist))
+	//{
+	//	if (bOn0)
+	//		return TRUE;
+	//}
 	return FALSE;
 }
 
 BOOL CGvisR2R_LaserView::IsAoiTblVacDone()
 {
-	BOOL bOn0 = (pDoc->m_pMpeI[10] & (0x01 << 9)) ? TRUE : FALSE;	// 검사부 상 테이블 진공 완료 <-> X4329 I/F
-	BOOL bOn1 = (pDoc->m_pMpeI[14] & (0x01 << 9)) ? TRUE : FALSE;	// 검사부 하 테이블 진공 완료 <-> X4329 I/F
-	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	if (bDualTest)
-	{
-		if (bOn0 && bOn1)
-			return TRUE;
-	}
-	else
-	{
-		if (bOn0)
-			return TRUE;
-	}
+	//BOOL bOn0 = (pDoc->m_pMpeI[10] & (0x01 << 9)) ? TRUE : FALSE;	// 검사부 상 테이블 진공 완료 <-> X4329 I/F
+	//BOOL bOn1 = (pDoc->m_pMpeI[14] & (0x01 << 9)) ? TRUE : FALSE;	// 검사부 하 테이블 진공 완료 <-> X4329 I/F
+	//BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	//if (bDualTest)
+	//{
+	//	if (bOn0 && bOn1)
+	//		return TRUE;
+	//}
+	//else
+	//{
+	//	if (bOn0)
+	//		return TRUE;
+	//}
 
-	double dCurPosMkFd = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
-	double dTgtFd = _tstof(pDoc->WorkingInfo.Motion.sFdAoiAoiDistShot) * _tstof(pDoc->WorkingInfo.Motion.sAoiFdDist);
-	if (dCurPosMkFd + 10.0 < dTgtFd)//-_tstof(pDoc->WorkingInfo.Motion.sAoiFdDist))
-	{
-		if (bOn0)
-			return TRUE;
-	}
+	//double dCurPosMkFd = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
+	//double dTgtFd = _tstof(pDoc->WorkingInfo.Motion.sFdAoiAoiDistShot) * _tstof(pDoc->WorkingInfo.Motion.sAoiFdDist);
+	//if (dCurPosMkFd + 10.0 < dTgtFd)//-_tstof(pDoc->WorkingInfo.Motion.sAoiFdDist))
+	//{
+	//	if (bOn0)
+	//		return TRUE;
+	//}
 	return FALSE;
 }
 
 BOOL CGvisR2R_LaserView::IsTestDoneUp()
 {
-	BOOL bOn0 = (pDoc->m_pMpeI[10] & (0x01 << 8)) ? TRUE : FALSE;	// 검사부 상 검사 완료 <-> X4328 I/F
-	if (bOn0)
-		return TRUE;
+	//BOOL bOn0 = (pDoc->m_pMpeI[10] & (0x01 << 8)) ? TRUE : FALSE;	// 검사부 상 검사 완료 <-> X4328 I/F
+	//if (bOn0)
+	//	return TRUE;
 	return FALSE;
 }
 
 BOOL CGvisR2R_LaserView::IsTestDoneDn()
 {
-	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	if (!bDualTest)
-		return TRUE;
+	//BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	//if (!bDualTest)
+	//	return TRUE;
 
-	BOOL bOn1 = (pDoc->m_pMpeI[14] & (0x01 << 8)) ? TRUE : FALSE;	// 검사부 하 검사 완료 <-> X4428 I/F
-	if (bOn1)
-		return TRUE;
+	//BOOL bOn1 = (pDoc->m_pMpeI[14] & (0x01 << 8)) ? TRUE : FALSE;	// 검사부 하 검사 완료 <-> X4428 I/F
+	//if (bOn1)
+	//	return TRUE;
 	//return FALSE;
 	return TRUE;
 }
@@ -11349,26 +11350,30 @@ BOOL CGvisR2R_LaserView::IsReview1()
 
 BOOL CGvisR2R_LaserView::IsJogRtDn()
 {
-	BOOL bOn = pDoc->m_pMpeI[4] & (0x01 << 10) ? TRUE : FALSE;	// 마킹부 JOG 버튼(우)
-	return bOn;
+	//BOOL bOn = pDoc->m_pMpeI[4] & (0x01 << 10) ? TRUE : FALSE;	// 마킹부 JOG 버튼(우)
+	//return bOn;
+	return FALSE;
 }
 
 BOOL CGvisR2R_LaserView::IsJogRtUp()
 {
-	BOOL bOn = pDoc->m_pMpeI[4] & (0x01 << 10) ? FALSE : TRUE;	// 마킹부 JOG 버튼(우)
-	return bOn;
+	//BOOL bOn = pDoc->m_pMpeI[4] & (0x01 << 10) ? FALSE : TRUE;	// 마킹부 JOG 버튼(우)
+	//return bOn;
+	return FALSE;
 }
 
 BOOL CGvisR2R_LaserView::IsJogRtDn0()
 {
-	BOOL bOn = pDoc->m_pMpeI[4] & (0x01 << 10) ? TRUE : FALSE;	// 마킹부 JOG 버튼(우)
-	return bOn;
+	//BOOL bOn = pDoc->m_pMpeI[4] & (0x01 << 10) ? TRUE : FALSE;	// 마킹부 JOG 버튼(우)
+	//return bOn;
+	return FALSE;
 }
 
 BOOL CGvisR2R_LaserView::IsJogRtUp0()
 {
-	BOOL bOn = pDoc->m_pMpeI[4] & (0x01 << 10) ? FALSE : TRUE;	// 마킹부 JOG 버튼(우)
-	return bOn;
+	//BOOL bOn = pDoc->m_pMpeI[4] & (0x01 << 10) ? FALSE : TRUE;	// 마킹부 JOG 버튼(우)
+	//return bOn;
+	return FALSE;
 }
 
 //BOOL CGvisR2R_LaserView::IsJogRtDn1()
@@ -12856,34 +12861,34 @@ BOOL CGvisR2R_LaserView::IsRdyTest()
 
 BOOL CGvisR2R_LaserView::IsRdyTest0()
 {
-	BOOL bOn0 = (pDoc->m_pMpeI[10] & (0x01 << 11)) ? TRUE : FALSE;		// 검사부 상 자동 운전 <-> X432B I/F
-	BOOL bOn1 = (pDoc->m_pMpeI[10] & (0x01 << 9)) ? TRUE : FALSE;		// 검사부 상 테이블 진공 완료 <-> X4329 I/F
+	//BOOL bOn0 = (pDoc->m_pMpeI[10] & (0x01 << 11)) ? TRUE : FALSE;		// 검사부 상 자동 운전 <-> X432B I/F
+	//BOOL bOn1 = (pDoc->m_pMpeI[10] & (0x01 << 9)) ? TRUE : FALSE;		// 검사부 상 테이블 진공 완료 <-> X4329 I/F
 
-	if (bOn0 && bOn1)
-		return TRUE;
+	//if (bOn0 && bOn1)
+	//	return TRUE;
 	return FALSE;
 }
 
 BOOL CGvisR2R_LaserView::IsRdyTest1()
 {
-	BOOL bOn0 = (pDoc->m_pMpeI[14] & (0x01 << 11)) ? TRUE : FALSE;		// 검사부 하 자동 운전 <-> X442B I/F
-	BOOL bOn1 = (pDoc->m_pMpeI[14] & (0x01 << 9)) ? TRUE : FALSE;		// 검사부 하 테이블 진공 완료 <-> X4329 I/F
-	double dCurPosMkFd = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
-	double dTgtFd = _tstof(pDoc->WorkingInfo.Motion.sFdAoiAoiDistShot) * _tstof(pDoc->WorkingInfo.Motion.sAoiFdDist);
-	if (dCurPosMkFd > dTgtFd - _tstof(pDoc->WorkingInfo.Motion.sAoiFdDist) / 2.0)
-	{
-		BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-		if (bDualTest)
-		{
-			if (bOn0 && bOn1)
-				return TRUE;
-		}
-		else
-		{
-			if (bOn0)
-				return TRUE;
-		}
-	}
+	//BOOL bOn0 = (pDoc->m_pMpeI[14] & (0x01 << 11)) ? TRUE : FALSE;		// 검사부 하 자동 운전 <-> X442B I/F
+	//BOOL bOn1 = (pDoc->m_pMpeI[14] & (0x01 << 9)) ? TRUE : FALSE;		// 검사부 하 테이블 진공 완료 <-> X4329 I/F
+	//double dCurPosMkFd = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
+	//double dTgtFd = _tstof(pDoc->WorkingInfo.Motion.sFdAoiAoiDistShot) * _tstof(pDoc->WorkingInfo.Motion.sAoiFdDist);
+	//if (dCurPosMkFd > dTgtFd - _tstof(pDoc->WorkingInfo.Motion.sAoiFdDist) / 2.0)
+	//{
+	//	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	//	if (bDualTest)
+	//	{
+	//		if (bOn0 && bOn1)
+	//			return TRUE;
+	//	}
+	//	else
+	//	{
+	//		if (bOn0)
+	//			return TRUE;
+	//	}
+	//}
 
 	return FALSE;
 }
@@ -12910,87 +12915,87 @@ BOOL CGvisR2R_LaserView::IsRdyTest1()
 
 void CGvisR2R_LaserView::SetPlcParam()
 {
-	//long lData;
-	//IoWrite(_T("ML45006"), long(_tstof(pDoc->WorkingInfo.LastJob.sTempPauseLen)*1000.0));	// 일시정지 길이 (단위 M * 1000)
-	pView->m_pMpe->Write(_T("ML45006"), long(_tstof(pDoc->WorkingInfo.LastJob.sTempPauseLen)*1000.0));
-	//IoWrite(_T("ML45002"), long(_tstof(pDoc->WorkingInfo.LastJob.sLotSepLen)*1000.0));	// Lot 분리 길이 (단위 M * 1000)
-	pView->m_pMpe->Write(_T("ML45002"), long(_tstof(pDoc->WorkingInfo.LastJob.sLotSepLen)*1000.0));
-	//IoWrite(_T("ML45004"), long(_tstof(pDoc->WorkingInfo.LastJob.sLotCutPosLen)*1000.0));	// Lot 분리 후 절단위치 (단위 M * 1000)
-	pView->m_pMpe->Write(_T("ML45004"), long(_tstof(pDoc->WorkingInfo.LastJob.sLotCutPosLen)*1000.0));
-	pView->m_pMpe->Write(_T("ML45126"), (long)_tstoi(pDoc->WorkingInfo.LastJob.sSampleTestShotNum));	// 샘플검사 Shot수
-
-	if (pDoc->WorkingInfo.LastJob.bTempPause)
-	{
-		//pView->IoWrite(_T("MB440183"), 1);	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
-		pView->m_pMpe->Write(_T("MB440183"), 1);
-		pView->ChkTempStop(TRUE);
-	}
-	else
-	{
-		//pView->IoWrite(_T("MB440183"), 0);	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
-		pView->m_pMpe->Write(_T("MB440183"), 0);
-		pView->ChkTempStop(FALSE);
-	}
-
-	if (pDoc->WorkingInfo.LastJob.bLotSep)
-	{
-		pView->SetLotLastShot();
-		pView->m_pMpe->Write(_T("MB440184"), 1);
-		//pView->IoWrite(_T("MB440184"), 1);	// 로트분리사용(PC가 On시키고, PC가 확인하고 Off시킴)-20141031
-	}
-	else
-		pView->m_pMpe->Write(_T("MB440184"), 0);
-	//pView->IoWrite(_T("MB440184"), 0);	// 로트분리사용(PC가 On시키고, PC가 확인하고 Off시킴)-20141031
-
-	pView->m_pMpe->Write(_T("MB44017A"), (pDoc->WorkingInfo.LastJob.bDualTest) ? 0 : 1);		// 단면 검사 On
-	pView->m_pMpe->Write(_T("MB44017B"), (pDoc->WorkingInfo.LastJob.bSampleTest) ? 1 : 0);		// Sample 검사 On
-	pView->m_pMpe->Write(_T("MB44017D"), (pDoc->WorkingInfo.LastJob.bOneMetal) ? 1 : 0);		// One Metal On
-	pView->m_pMpe->Write(_T("MB44017C"), (pDoc->WorkingInfo.LastJob.bTwoMetal) ? 1 : 0);		// Two Metal On
-	pView->m_pMpe->Write(_T("MB44017E"), (pDoc->WorkingInfo.LastJob.bCore150Recoiler) ? 1 : 0);	// Recoiler Core 150mm On
-	pView->m_pMpe->Write(_T("MB44017F"), (pDoc->WorkingInfo.LastJob.bCore150Uncoiler) ? 1 : 0);	// Uncoiler Core 150mm On
-
-	pView->m_pMpe->Write(_T("MB44010E"), (pDoc->WorkingInfo.LastJob.bUseAoiUpCleanRoler ? 1 : 0));
-	pView->m_pMpe->Write(_T("MB44010F"), (pDoc->WorkingInfo.LastJob.bUseAoiDnCleanRoler ? 1 : 0));
+//	//long lData;
+//	//IoWrite(_T("ML45006"), long(_tstof(pDoc->WorkingInfo.LastJob.sTempPauseLen)*1000.0));	// 일시정지 길이 (단위 M * 1000)
+//	pView->m_pMpe->Write(_T("ML45006"), long(_tstof(pDoc->WorkingInfo.LastJob.sTempPauseLen)*1000.0));
+//	//IoWrite(_T("ML45002"), long(_tstof(pDoc->WorkingInfo.LastJob.sLotSepLen)*1000.0));	// Lot 분리 길이 (단위 M * 1000)
+//	pView->m_pMpe->Write(_T("ML45002"), long(_tstof(pDoc->WorkingInfo.LastJob.sLotSepLen)*1000.0));
+//	//IoWrite(_T("ML45004"), long(_tstof(pDoc->WorkingInfo.LastJob.sLotCutPosLen)*1000.0));	// Lot 분리 후 절단위치 (단위 M * 1000)
+//	pView->m_pMpe->Write(_T("ML45004"), long(_tstof(pDoc->WorkingInfo.LastJob.sLotCutPosLen)*1000.0));
+//	pView->m_pMpe->Write(_T("ML45126"), (long)_tstoi(pDoc->WorkingInfo.LastJob.sSampleTestShotNum));	// 샘플검사 Shot수
+//
+//	if (pDoc->WorkingInfo.LastJob.bTempPause)
+//	{
+//		//pView->IoWrite(_T("MB440183"), 1);	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
+//		pView->m_pMpe->Write(_T("MB440183"), 1);
+//		pView->ChkTempStop(TRUE);
+//	}
+//	else
+//	{
+//		//pView->IoWrite(_T("MB440183"), 0);	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
+//		pView->m_pMpe->Write(_T("MB440183"), 0);
+//		pView->ChkTempStop(FALSE);
+//	}
+//
+//	if (pDoc->WorkingInfo.LastJob.bLotSep)
+//	{
+//		pView->SetLotLastShot();
+//		pView->m_pMpe->Write(_T("MB440184"), 1);
+//		//pView->IoWrite(_T("MB440184"), 1);	// 로트분리사용(PC가 On시키고, PC가 확인하고 Off시킴)-20141031
+//	}
+//	else
+//		pView->m_pMpe->Write(_T("MB440184"), 0);
+//	//pView->IoWrite(_T("MB440184"), 0);	// 로트분리사용(PC가 On시키고, PC가 확인하고 Off시킴)-20141031
+//
+//	pView->m_pMpe->Write(_T("MB44017A"), (pDoc->WorkingInfo.LastJob.bDualTest) ? 0 : 1);		// 단면 검사 On
+//	pView->m_pMpe->Write(_T("MB44017B"), (pDoc->WorkingInfo.LastJob.bSampleTest) ? 1 : 0);		// Sample 검사 On
+//	pView->m_pMpe->Write(_T("MB44017D"), (pDoc->WorkingInfo.LastJob.bOneMetal) ? 1 : 0);		// One Metal On
+//	pView->m_pMpe->Write(_T("MB44017C"), (pDoc->WorkingInfo.LastJob.bTwoMetal) ? 1 : 0);		// Two Metal On
+//	pView->m_pMpe->Write(_T("MB44017E"), (pDoc->WorkingInfo.LastJob.bCore150Recoiler) ? 1 : 0);	// Recoiler Core 150mm On
+//	pView->m_pMpe->Write(_T("MB44017F"), (pDoc->WorkingInfo.LastJob.bCore150Uncoiler) ? 1 : 0);	// Uncoiler Core 150mm On
+//
+//	pView->m_pMpe->Write(_T("MB44010E"), (pDoc->WorkingInfo.LastJob.bUseAoiUpCleanRoler ? 1 : 0));
+//	pView->m_pMpe->Write(_T("MB44010F"), (pDoc->WorkingInfo.LastJob.bUseAoiDnCleanRoler ? 1 : 0));
 }
 
 void CGvisR2R_LaserView::InitIoWrite()
 {
-	//IoWrite(_T("MB44015E"), 0); // 부저1 On  (PC가 ON, OFF) - 20141020
-	pView->m_pMpe->Write(_T("MB44015E"), 0);
-	//IoWrite(_T("MB44015F"), 0); // 부저2 On  (PC가 ON, OFF) - 20141020
-	pView->m_pMpe->Write(_T("MB44015F"), 0);
-
-	//IoWrite(_T("MB003828"), 0); // 검사부 상 검사 시작 <-> Y4368 I/F
-	pView->m_pMpe->Write(_T("MB003828"), 0);
-	//IoWrite(_T("MB003829"), 0); // 검사부 상 검사 테이블 진공 SOL <-> Y4369 I/F
-	pView->m_pMpe->Write(_T("MB003829"), 0);
-	//IoWrite(_T("MB00382A"), 0); // 검사부 상 Reset <-> Y436A I/F
-	pView->m_pMpe->Write(_T("MB00382A"), 0);
-	//IoWrite(_T("MB00382B"), 0); // 마킹부 Lot End <-> Y436B I/F
-	pView->m_pMpe->Write(_T("MB00382B"), 0);
-
-	//IoWrite(_T("MB003928"), 0); // 검사부 하 검사 시작 <-> Y4468 I/F
-	pView->m_pMpe->Write(_T("MB003928"), 0);
-	//IoWrite(_T("MB003929"), 0); // 검사부 하 검사 테이블 진공 SOL <-> Y4369 I/F
-	pView->m_pMpe->Write(_T("MB003929"), 0);
-	//IoWrite(_T("MB00392A"), 0); // 검사부 하 Reset <-> Y436A I/F
-	pView->m_pMpe->Write(_T("MB00392A"), 0);
-	//IoWrite(_T("MB00392B"), 0); // 마킹부 Lot End <-> Y436B I/F
-	pView->m_pMpe->Write(_T("MB00392B"), 0);
-
-	//IoWrite(_T("MB44015D"), 0); // 자동 초기 운전상태(PC가 On/Off 시킴, PLC가 운전램프를 윙크동작, on->off시 운전램프 on, 다시 운전스위치가 눌러지면 off) - 20141017
-	pView->m_pMpe->Write(_T("MB44015D"), 0);
-	//IoWrite(_T("ML45064"), 0); // 검사부 Feeding 롤러 Offset(*1000, +:더 보냄, -덜 보냄, PC가 쓰고 PLC에서 지움)
-	pView->m_pMpe->Write(_T("ML45064"), 0);
-	//IoWrite(_T("ML45066"), 0); // 마킹부 Feeding 롤러 Offset(*1000, +:더 보냄, -덜 보냄, PC가 쓰고 PLC에서 지움)
-	pView->m_pMpe->Write(_T("ML45066"), 0);
-
-	//IoWrite(_T("MB600000"), 0); // PC가 PLC의 Alarm 발생여부를 확인
-	pView->m_pMpe->Write(_T("MB600000"), 0);
-	//IoWrite(_T("MB600008"), 0); // PC가 PLC의 Alarm 발생여부를 확인
-	pView->m_pMpe->Write(_T("MB600008"), 0);
-	//IoWrite(_T("ML60002"), 0); // 알람이 발생한 페이지 지정(PLC가 표시 할 알람의 페이지를 가리킴).
-	pView->m_pMpe->Write(_T("ML60002"), 0);
+//	//IoWrite(_T("MB44015E"), 0); // 부저1 On  (PC가 ON, OFF) - 20141020
+//	pView->m_pMpe->Write(_T("MB44015E"), 0);
+//	//IoWrite(_T("MB44015F"), 0); // 부저2 On  (PC가 ON, OFF) - 20141020
+//	pView->m_pMpe->Write(_T("MB44015F"), 0);
+//
+//	//IoWrite(_T("MB003828"), 0); // 검사부 상 검사 시작 <-> Y4368 I/F
+//	pView->m_pMpe->Write(_T("MB003828"), 0);
+//	//IoWrite(_T("MB003829"), 0); // 검사부 상 검사 테이블 진공 SOL <-> Y4369 I/F
+//	pView->m_pMpe->Write(_T("MB003829"), 0);
+//	//IoWrite(_T("MB00382A"), 0); // 검사부 상 Reset <-> Y436A I/F
+//	pView->m_pMpe->Write(_T("MB00382A"), 0);
+//	//IoWrite(_T("MB00382B"), 0); // 마킹부 Lot End <-> Y436B I/F
+//	pView->m_pMpe->Write(_T("MB00382B"), 0);
+//
+//	//IoWrite(_T("MB003928"), 0); // 검사부 하 검사 시작 <-> Y4468 I/F
+//	pView->m_pMpe->Write(_T("MB003928"), 0);
+//	//IoWrite(_T("MB003929"), 0); // 검사부 하 검사 테이블 진공 SOL <-> Y4369 I/F
+//	pView->m_pMpe->Write(_T("MB003929"), 0);
+//	//IoWrite(_T("MB00392A"), 0); // 검사부 하 Reset <-> Y436A I/F
+//	pView->m_pMpe->Write(_T("MB00392A"), 0);
+//	//IoWrite(_T("MB00392B"), 0); // 마킹부 Lot End <-> Y436B I/F
+//	pView->m_pMpe->Write(_T("MB00392B"), 0);
+//
+//	//IoWrite(_T("MB44015D"), 0); // 자동 초기 운전상태(PC가 On/Off 시킴, PLC가 운전램프를 윙크동작, on->off시 운전램프 on, 다시 운전스위치가 눌러지면 off) - 20141017
+//	pView->m_pMpe->Write(_T("MB44015D"), 0);
+//	//IoWrite(_T("ML45064"), 0); // 검사부 Feeding 롤러 Offset(*1000, +:더 보냄, -덜 보냄, PC가 쓰고 PLC에서 지움)
+//	pView->m_pMpe->Write(_T("ML45064"), 0);
+//	//IoWrite(_T("ML45066"), 0); // 마킹부 Feeding 롤러 Offset(*1000, +:더 보냄, -덜 보냄, PC가 쓰고 PLC에서 지움)
+//	pView->m_pMpe->Write(_T("ML45066"), 0);
+//
+//	//IoWrite(_T("MB600000"), 0); // PC가 PLC의 Alarm 발생여부를 확인
+//	pView->m_pMpe->Write(_T("MB600000"), 0);
+//	//IoWrite(_T("MB600008"), 0); // PC가 PLC의 Alarm 발생여부를 확인
+//	pView->m_pMpe->Write(_T("MB600008"), 0);
+//	//IoWrite(_T("ML60002"), 0); // 알람이 발생한 페이지 지정(PLC가 표시 할 알람의 페이지를 가리킴).
+//	pView->m_pMpe->Write(_T("ML60002"), 0);
 }
 
 
@@ -13094,208 +13099,208 @@ BOOL CGvisR2R_LaserView::IsLastJob(int nAoi) // 0 : AOI-Up , 1 : AOI-Dn , 2 : AO
 
 void CGvisR2R_LaserView::MonDispMain()
 {
-	BOOL bDispStop = TRUE;
+	//BOOL bDispStop = TRUE;
 
-	if (pDoc->m_pMpeSignal[2] & (0x01 << 0))		// 운전중(PLC가 PC에 알려주는 설비 상태) - 20141031
-	{
-		if (m_sDispMain != _T("운전중"))
-			DispMain(_T("운전중"), RGB_GREEN);
-	}
+	//if (pDoc->m_pMpeSignal[2] & (0x01 << 0))		// 운전중(PLC가 PC에 알려주는 설비 상태) - 20141031
+	//{
+	//	if (m_sDispMain != _T("운전중"))
+	//		DispMain(_T("운전중"), RGB_GREEN);
+	//}
 
-	if (pDoc->m_pMpeSignal[2] & (0x01 << 2))		// 운전준비(PLC가 PC에 알려주는 설비 상태) - 20141031
-	{
-		bDispStop = FALSE;
-		//if(!WatiDispMain(10))
-		{
-			if (m_sDispMain != _T("운전준비"))
-			{
-				DispMain(_T("운전준비"), RGB_GREEN);
-			}
-		}
-	}
-	else
-	{
-		if (pDoc->m_pMpeSignal[2] & (0x01 << 3))		// 초기운전(PLC가 PC에 알려주는 설비 상태) - 20141031
-		{
-			bDispStop = FALSE;
-			//if(!WatiDispMain(10))
-			{
-				if (pDoc->WorkingInfo.LastJob.bSampleTest)
-				{
-					if (pDoc->WorkingInfo.LastJob.bDualTest)
-					{
-						if (m_sDispMain != _T("양면샘플"))
-						{
-							DispMain(_T("양면샘플"), RGB_GREEN);
-						}
-						else
-						{
-							;
-						}
-					}
-					else
-					{
-						if (m_sDispMain != _T("단면샘플"))
-						{
-							DispMain(_T("단면샘플"), RGB_GREEN);
-						}
-						else
-						{
-							;
-						}
-					}
-				}
-				else if (pDoc->WorkingInfo.LastJob.bDualTest)
-				{
-					if (m_sDispMain != _T("양면검사"))
-					{
-						DispMain(_T("양면검사"), RGB_GREEN);
-					}
-					else
-					{
-						;
-					}
-				}
-				else
-				{
-					if (m_sDispMain != _T("단면검사"))
-					{
-						DispMain(_T("단면검사"), RGB_GREEN);
-					}
-					else
-					{
-						;
-					}
-					//if(m_sDispMain != _T("초기운전")
-					//DispMain(_T("초기운전", RGB_GREEN);
-				}
-			}
-		}
-		else
-		{
-			if (m_sDispMain != _T("운전준비"))
-				bDispStop = TRUE;
-			else
-				bDispStop = FALSE;
-		}
-	}
+	//if (pDoc->m_pMpeSignal[2] & (0x01 << 2))		// 운전준비(PLC가 PC에 알려주는 설비 상태) - 20141031
+	//{
+	//	bDispStop = FALSE;
+	//	//if(!WatiDispMain(10))
+	//	{
+	//		if (m_sDispMain != _T("운전준비"))
+	//		{
+	//			DispMain(_T("운전준비"), RGB_GREEN);
+	//		}
+	//	}
+	//}
+	//else
+	//{
+	//	if (pDoc->m_pMpeSignal[2] & (0x01 << 3))		// 초기운전(PLC가 PC에 알려주는 설비 상태) - 20141031
+	//	{
+	//		bDispStop = FALSE;
+	//		//if(!WatiDispMain(10))
+	//		{
+	//			if (pDoc->WorkingInfo.LastJob.bSampleTest)
+	//			{
+	//				if (pDoc->WorkingInfo.LastJob.bDualTest)
+	//				{
+	//					if (m_sDispMain != _T("양면샘플"))
+	//					{
+	//						DispMain(_T("양면샘플"), RGB_GREEN);
+	//					}
+	//					else
+	//					{
+	//						;
+	//					}
+	//				}
+	//				else
+	//				{
+	//					if (m_sDispMain != _T("단면샘플"))
+	//					{
+	//						DispMain(_T("단면샘플"), RGB_GREEN);
+	//					}
+	//					else
+	//					{
+	//						;
+	//					}
+	//				}
+	//			}
+	//			else if (pDoc->WorkingInfo.LastJob.bDualTest)
+	//			{
+	//				if (m_sDispMain != _T("양면검사"))
+	//				{
+	//					DispMain(_T("양면검사"), RGB_GREEN);
+	//				}
+	//				else
+	//				{
+	//					;
+	//				}
+	//			}
+	//			else
+	//			{
+	//				if (m_sDispMain != _T("단면검사"))
+	//				{
+	//					DispMain(_T("단면검사"), RGB_GREEN);
+	//				}
+	//				else
+	//				{
+	//					;
+	//				}
+	//				//if(m_sDispMain != _T("초기운전")
+	//				//DispMain(_T("초기운전", RGB_GREEN);
+	//			}
+	//		}
+	//	}
+	//	else
+	//	{
+	//		if (m_sDispMain != _T("운전준비"))
+	//			bDispStop = TRUE;
+	//		else
+	//			bDispStop = FALSE;
+	//	}
+	//}
 
 
-	if (pDoc->m_pMpeSignal[2] & (0x01 << 1))		// 정지(PLC가 PC에 알려주는 설비 상태) - 20141031
-	{
-		if (bDispStop)
-		{
-			if (m_sDispMain != _T("정 지"))
-			{
-				pView->DispStsBar(_T("정지-44"), 0);
-				DispMain(_T("정 지"), RGB_RED);
-			}
-		}
-	}
+	//if (pDoc->m_pMpeSignal[2] & (0x01 << 1))		// 정지(PLC가 PC에 알려주는 설비 상태) - 20141031
+	//{
+	//	if (bDispStop)
+	//	{
+	//		if (m_sDispMain != _T("정 지"))
+	//		{
+	//			pView->DispStsBar(_T("정지-44"), 0);
+	//			DispMain(_T("정 지"), RGB_RED);
+	//		}
+	//	}
+	//}
 
 }
 
 void CGvisR2R_LaserView::MonPlcAlm()
 {
-	BOOL bMon, bClr;
-	long lOn = m_pMpe->Read(_T("ML60000"));
+	//BOOL bMon, bClr;
+	//long lOn = m_pMpe->Read(_T("ML60000"));
 
-	bMon = lOn & (0x01 << 0);
-	bClr = lOn & (0x01 << 1);
-	if (bMon)
-		PlcAlm(bMon, 0);
-	else if (bClr)
-		PlcAlm(0, bClr);
-	else
-		PlcAlm(bMon, bClr);
+	//bMon = lOn & (0x01 << 0);
+	//bClr = lOn & (0x01 << 1);
+	//if (bMon)
+	//	PlcAlm(bMon, 0);
+	//else if (bClr)
+	//	PlcAlm(0, bClr);
+	//else
+	//	PlcAlm(bMon, bClr);
 
-	if (!pDoc->m_sAlmMsg.IsEmpty())
-	{
-		if (pDoc->m_sAlmMsg != pDoc->m_sPrevAlmMsg)
-		{
-			pDoc->m_sPrevAlmMsg = pDoc->m_sAlmMsg;
-			CycleStop();
-		}
-	}
+	//if (!pDoc->m_sAlmMsg.IsEmpty())
+	//{
+	//	if (pDoc->m_sAlmMsg != pDoc->m_sPrevAlmMsg)
+	//	{
+	//		pDoc->m_sPrevAlmMsg = pDoc->m_sAlmMsg;
+	//		CycleStop();
+	//	}
+	//}
 }
 
 void CGvisR2R_LaserView::PlcAlm(BOOL bMon, BOOL bClr)
 {
-	if (bMon && !m_nMonAlmF)
-	{
-		m_nMonAlmF = 1;
-		//		ResetMonAlm();
-		FindAlarm();
-		m_pMpe->Write(_T("MB600008"), 1);
-	}
-	else if (!bMon && m_nMonAlmF)
-	{
-		m_nMonAlmF = 0;
-		ResetMonAlm();
-	}
+	//if (bMon && !m_nMonAlmF)
+	//{
+	//	m_nMonAlmF = 1;
+	//	//		ResetMonAlm();
+	//	FindAlarm();
+	//	m_pMpe->Write(_T("MB600008"), 1);
+	//}
+	//else if (!bMon && m_nMonAlmF)
+	//{
+	//	m_nMonAlmF = 0;
+	//	ResetMonAlm();
+	//}
 
 
-	if (bClr && !m_nClrAlmF)
-	{
-		m_nClrAlmF = 1;
-		ClrAlarm();
-		m_pMpe->Write(_T("MB600009"), 1);
-		//		ResetClear();
-	}
-	else if (!bClr && m_nClrAlmF)
-	{
-		m_nClrAlmF = 0;
-		ResetClear();
-	}
+	//if (bClr && !m_nClrAlmF)
+	//{
+	//	m_nClrAlmF = 1;
+	//	ClrAlarm();
+	//	m_pMpe->Write(_T("MB600009"), 1);
+	//	//		ResetClear();
+	//}
+	//else if (!bClr && m_nClrAlmF)
+	//{
+	//	m_nClrAlmF = 0;
+	//	ResetClear();
+	//}
 }
 
 void CGvisR2R_LaserView::FindAlarm()
 {
-	// 알람이 발생한 페이지
-	long lAlmPage = -1;
-	lAlmPage = m_pMpe->Read(_T("ML60002"));
+	//// 알람이 발생한 페이지
+	//long lAlmPage = -1;
+	//lAlmPage = m_pMpe->Read(_T("ML60002"));
 
-	//char szData[200];
-	TCHAR szData[200];
-	CString str1, str2, str3, strM, str, strH = _T("");
+	////char szData[200];
+	//TCHAR szData[200];
+	//CString str1, str2, str3, strM, str, strH = _T("");
 
-	str1.Format(_T("%d"), lAlmPage);
-	str2 = _T("Address");
-	if (0 < ::GetPrivateProfileString(str1, str2, NULL, szData, sizeof(szData), PATH_ALARM))
-		strM = CString(szData);
-	else
-		strM = _T("");
+	//str1.Format(_T("%d"), lAlmPage);
+	//str2 = _T("Address");
+	//if (0 < ::GetPrivateProfileString(str1, str2, NULL, szData, sizeof(szData), PATH_ALARM))
+	//	strM = CString(szData);
+	//else
+	//	strM = _T("");
 
-	if (strM.IsEmpty())
-		return;
+	//if (strM.IsEmpty())
+	//	return;
 
-	long lAlm = m_pMpe->Read(strM); // lAlm : (32Bits << Row)
-	for (int i = 0; i < 32; i++)
-	{
-		if (lAlm & (0x01 << i))
-		{
-			str3.Format(_T("%d"), i);
-			if (0 < ::GetPrivateProfileString(str1, str3, NULL, szData, sizeof(szData), PATH_ALARM))
-				strH = CString(szData);
-			else
-				strH = _T("");
+	//long lAlm = m_pMpe->Read(strM); // lAlm : (32Bits << Row)
+	//for (int i = 0; i < 32; i++)
+	//{
+	//	if (lAlm & (0x01 << i))
+	//	{
+	//		str3.Format(_T("%d"), i);
+	//		if (0 < ::GetPrivateProfileString(str1, str3, NULL, szData, sizeof(szData), PATH_ALARM))
+	//			strH = CString(szData);
+	//		else
+	//			strH = _T("");
 
-			if (str.IsEmpty())
-				str = strH;
-			else
-			{
-				str += _T("\r\n");
-				str += strH;
-			}
-		}
-	}
+	//		if (str.IsEmpty())
+	//			str = strH;
+	//		else
+	//		{
+	//			str += _T("\r\n");
+	//			str += strH;
+	//		}
+	//	}
+	//}
 
-	pDoc->m_sAlmMsg = strH;
+	//pDoc->m_sAlmMsg = strH;
 }
 
 void CGvisR2R_LaserView::ResetMonAlm()
 {
-	m_pMpe->Write(_T("MB600008"), 0);
+	//m_pMpe->Write(_T("MB600008"), 0);
 }
 
 void CGvisR2R_LaserView::ClrAlarm()
@@ -13309,7 +13314,7 @@ void CGvisR2R_LaserView::ClrAlarm()
 
 void CGvisR2R_LaserView::ResetClear()
 {
-	m_pMpe->Write(_T("MB600009"), 0);
+	//m_pMpe->Write(_T("MB600009"), 0);
 }
 
 void CGvisR2R_LaserView::ChkTempStop(BOOL bChk)
@@ -14265,27 +14270,27 @@ void CGvisR2R_LaserView::MoveEngrave(double dOffset)
 
 BOOL CGvisR2R_LaserView::IsEngraveFd()
 {
-	if (m_nShareDnCnt > 0)
-	{
-		if (!(m_nShareDnCnt % 2))
-		{
-			if (pDoc->m_pMpeSignal[5] & (0x01 << 1))	// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF)
-				return TRUE;
-			return FALSE;
-		}
-	}
-	else
-	{
-		if (m_nShareUpCnt > 0)
-		{
-			if (!(m_nShareUpCnt % 2))
-			{
-				if (pDoc->m_pMpeSignal[5] & (0x01 << 1))	// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF)
-					return TRUE;
-				return FALSE;
-			}
-		}
-	}
+	//if (m_nShareDnCnt > 0)
+	//{
+	//	if (!(m_nShareDnCnt % 2))
+	//	{
+	//		if (pDoc->m_pMpeSignal[5] & (0x01 << 1))	// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF)
+	//			return TRUE;
+	//		return FALSE;
+	//	}
+	//}
+	//else
+	//{
+	//	if (m_nShareUpCnt > 0)
+	//	{
+	//		if (!(m_nShareUpCnt % 2))
+	//		{
+	//			if (pDoc->m_pMpeSignal[5] & (0x01 << 1))	// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF)
+	//				return TRUE;
+	//			return FALSE;
+	//		}
+	//	}
+	//}
 
 	return TRUE;
 }
@@ -14306,9 +14311,10 @@ double CGvisR2R_LaserView::GetAoiInitDist()
 
 double CGvisR2R_LaserView::GetAoiRemain()
 {
-	double dCurPosEngraveFd = (double)pDoc->m_pMpeData[1][0];	// ML44052	,	각인부 Feeding 엔코더 값(단위 mm)
-	double dRemain = _tstof(pDoc->WorkingInfo.Motion.sFdEngraveAoiInitDist) - dCurPosEngraveFd;
-	return dRemain;
+	//double dCurPosEngraveFd = (double)pDoc->m_pMpeData[1][0];	// ML44052	,	각인부 Feeding 엔코더 값(단위 mm)
+	//double dRemain = _tstof(pDoc->WorkingInfo.Motion.sFdEngraveAoiInitDist) - dCurPosEngraveFd;
+	//return dRemain;
+	return 0.0;
 }
 
 LRESULT CGvisR2R_LaserView::wmClientReceivedMdx(WPARAM wParam, LPARAM lParam)

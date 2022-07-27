@@ -2716,10 +2716,10 @@ void CDlgMenu02::OnStnClickedStc225()
 
 void CDlgMenu02::DispBufEnc()
 {
-	CString str;
-	double dBufEnc = (double)pDoc->m_pMpeData[1][1] / 1000.0;	// 각인부 버퍼 엔코더 값(단위 mm * 1000)
-	str.Format(_T("%.1f"), dBufEnc);
-	myStcData[25].SetText(str);			// IDC_STC_BUF_POS1
+	//CString str;
+	//double dBufEnc = (double)pDoc->m_pMpeData[1][1] / 1000.0;	// 각인부 버퍼 엔코더 값(단위 mm * 1000)
+	//str.Format(_T("%.1f"), dBufEnc);
+	//myStcData[25].SetText(str);			// IDC_STC_BUF_POS1
 }
 
 
@@ -2732,8 +2732,8 @@ void CDlgMenu02::OnBnClickedBtnBuffInitSave1()
 	if (IDNO == pView->MsgBox(_T("Do you want to save Buffer Position?"), 0, MB_YESNO))
 		return;
 
-	double dBufEnc = (double)pDoc->m_pMpeData[1][1] / 1000.0;	// 마킹부 버퍼 엔코더 값(단위 mm * 1000)
-	pView->SetBufInitPos(dBufEnc);	// ML45016	,	버퍼 관련 설정 롤러 초기위치(단위 mm * 1000)
+	//double dBufEnc = (double)pDoc->m_pMpeData[1][1] / 1000.0;	// 마킹부 버퍼 엔코더 값(단위 mm * 1000)
+	//pView->SetBufInitPos(dBufEnc);	// ML45016	,	버퍼 관련 설정 롤러 초기위치(단위 mm * 1000)
 }
 
 
@@ -3314,128 +3314,128 @@ void CDlgMenu02::OnBnClickedBtnLaserAdjustCcw2()
 void CDlgMenu02::OnBnClickedBtnShotRemainCw()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	BOOL bOn = (pDoc->m_pMpeSignal[7] & (0x01 << 15)) > 0 ? TRUE : FALSE;	// 각인부 Remain 피딩 CW ON (PLC가 피딩완료 후 OFF)
-	if (bOn)
-	{
-		pView->MsgBox(_T("각인부 Remain 피딩 중입니다."));
-		//AfxMessageBox(_T("각인부 Remain 피딩 중입니다."));
-		return;
-	}
+	//BOOL bOn = (pDoc->m_pMpeSignal[7] & (0x01 << 15)) > 0 ? TRUE : FALSE;	// 각인부 Remain 피딩 CW ON (PLC가 피딩완료 후 OFF)
+	//if (bOn)
+	//{
+	//	pView->MsgBox(_T("각인부 Remain 피딩 중입니다."));
+	//	//AfxMessageBox(_T("각인부 Remain 피딩 중입니다."));
+	//	return;
+	//}
 
-	if (pView->m_pMpe)
-		pView->m_pMpe->Write(_T("MB44018F"), 1);							// 각인부 Remain 피딩 CW ON (PLC가 피딩완료 후 OFF)
+	//if (pView->m_pMpe)
+	//	pView->m_pMpe->Write(_T("MB44018F"), 1);							// 각인부 Remain 피딩 CW ON (PLC가 피딩완료 후 OFF)
 }
 
 
 void CDlgMenu02::OnBnClickedBtnShotRemainCcw()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	BOOL bOn = (pDoc->m_pMpeSignal[7] & (0x01 << 14)) > 0 ? TRUE : FALSE;	// 각인부 Remain 피딩 CCW ON (PLC가 피딩완료 후 OFF)
-	if (bOn)
-	{
-		pView->MsgBox(_T("각인부 Remain 피딩 중입니다."));
-		//AfxMessageBox(_T("각인부 Remain 피딩 중입니다."));
-		return;
-	}
+	//BOOL bOn = (pDoc->m_pMpeSignal[7] & (0x01 << 14)) > 0 ? TRUE : FALSE;	// 각인부 Remain 피딩 CCW ON (PLC가 피딩완료 후 OFF)
+	//if (bOn)
+	//{
+	//	pView->MsgBox(_T("각인부 Remain 피딩 중입니다."));
+	//	//AfxMessageBox(_T("각인부 Remain 피딩 중입니다."));
+	//	return;
+	//}
 
-	if (pView->m_pMpe)
-		pView->m_pMpe->Write(_T("MB44018E"), 1);							// 각인부 Remain 피딩 CCW ON (PLC가 피딩완료 후 OFF)
+	//if (pView->m_pMpe)
+	//	pView->m_pMpe->Write(_T("MB44018E"), 1);							// 각인부 Remain 피딩 CCW ON (PLC가 피딩완료 후 OFF)
 }
 
 
 void CDlgMenu02::OnBnClickedBtnOffsetEngraveCw()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	BOOL bOn = (pDoc->m_pMpeSignal[7] & (0x01 << 13)) > 0 ? TRUE : FALSE;	// 각인부 2D Camera 피딩 CW ON (PLC가 피딩완료 후 OFF)
-	if (bOn)
-	{
-		pView->MsgBox(_T("각인부 2D Camera 피딩 중입니다."));
-		//AfxMessageBox(_T("각인부 2D Camera 피딩 중입니다."));
-		return;
-	}
+	//BOOL bOn = (pDoc->m_pMpeSignal[7] & (0x01 << 13)) > 0 ? TRUE : FALSE;	// 각인부 2D Camera 피딩 CW ON (PLC가 피딩완료 후 OFF)
+	//if (bOn)
+	//{
+	//	pView->MsgBox(_T("각인부 2D Camera 피딩 중입니다."));
+	//	//AfxMessageBox(_T("각인부 2D Camera 피딩 중입니다."));
+	//	return;
+	//}
 
-	if (pView->m_pMpe)
-		pView->m_pMpe->Write(_T("MB44018D"), 1);							// 각인부 2D Camera 피딩 CW ON (PLC가 피딩완료 후 OFF)
+	//if (pView->m_pMpe)
+	//	pView->m_pMpe->Write(_T("MB44018D"), 1);							// 각인부 2D Camera 피딩 CW ON (PLC가 피딩완료 후 OFF)
 }
 
 
 void CDlgMenu02::OnBnClickedBtnOffsetEngraveCcw()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	BOOL bOn = (pDoc->m_pMpeSignal[7] & (0x01 << 12)) > 0 ? TRUE : FALSE;	// 각인부 2D Camera 피딩 CCW ON (PLC가 피딩완료 후 OFF)
-	if (bOn)
-	{
-		pView->MsgBox(_T("각인부 2D Camera 피딩 중입니다."));
-		//AfxMessageBox(_T("각인부 2D Camera 피딩 중입니다."));
-		return;
-	}
+	//BOOL bOn = (pDoc->m_pMpeSignal[7] & (0x01 << 12)) > 0 ? TRUE : FALSE;	// 각인부 2D Camera 피딩 CCW ON (PLC가 피딩완료 후 OFF)
+	//if (bOn)
+	//{
+	//	pView->MsgBox(_T("각인부 2D Camera 피딩 중입니다."));
+	//	//AfxMessageBox(_T("각인부 2D Camera 피딩 중입니다."));
+	//	return;
+	//}
 
-	if (pView->m_pMpe)
-		pView->m_pMpe->Write(_T("MB44018C"), 1);							// 각인부 2D Camera 피딩 CCW ON (PLC가 피딩완료 후 OFF)
+	//if (pView->m_pMpe)
+	//	pView->m_pMpe->Write(_T("MB44018C"), 1);							// 각인부 2D Camera 피딩 CCW ON (PLC가 피딩완료 후 OFF)
 }
 
 
 void CDlgMenu02::OnBnClickedBtnOffsetAoiCw()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	BOOL bOn = (pDoc->m_pMpeSignal[7] & (0x01 << 11)) > 0 ? TRUE : FALSE;	// AOI 2D Camera 피딩 CW ON (PLC가 피딩완료 후 OFF)
-	if (bOn)
-	{
-		pView->MsgBox(_T("AOI 2D Camera 피딩 중입니다."));
-		//AfxMessageBox(_T("AOI 2D Camera 피딩 중입니다."));
-		return;
-	}
+	//BOOL bOn = (pDoc->m_pMpeSignal[7] & (0x01 << 11)) > 0 ? TRUE : FALSE;	// AOI 2D Camera 피딩 CW ON (PLC가 피딩완료 후 OFF)
+	//if (bOn)
+	//{
+	//	pView->MsgBox(_T("AOI 2D Camera 피딩 중입니다."));
+	//	//AfxMessageBox(_T("AOI 2D Camera 피딩 중입니다."));
+	//	return;
+	//}
 
-	if (pView->m_pMpe)
-		pView->m_pMpe->Write(_T("MB44018B"), 1);							// AOI 2D Camera 피딩 CW ON (PLC가 피딩완료 후 OFF)
+	//if (pView->m_pMpe)
+	//	pView->m_pMpe->Write(_T("MB44018B"), 1);							// AOI 2D Camera 피딩 CW ON (PLC가 피딩완료 후 OFF)
 }
 
 
 void CDlgMenu02::OnBnClickedBtnOffsetAoiCcw()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	BOOL bOn = (pDoc->m_pMpeSignal[7] & (0x01 << 10)) > 0 ? TRUE : FALSE;	// AOI 2D Camera 피딩 CCW ON (PLC가 피딩완료 후 OFF)
-	if (bOn)
-	{
-		pView->MsgBox(_T("AOI 2D Camera 피딩 중입니다."));
-		//AfxMessageBox(_T("AOI 2D Camera 피딩 중입니다."));
-		return;
-	}
+	//BOOL bOn = (pDoc->m_pMpeSignal[7] & (0x01 << 10)) > 0 ? TRUE : FALSE;	// AOI 2D Camera 피딩 CCW ON (PLC가 피딩완료 후 OFF)
+	//if (bOn)
+	//{
+	//	pView->MsgBox(_T("AOI 2D Camera 피딩 중입니다."));
+	//	//AfxMessageBox(_T("AOI 2D Camera 피딩 중입니다."));
+	//	return;
+	//}
 
-	if (pView->m_pMpe)
-		pView->m_pMpe->Write(_T("MB44018A"), 1);							// AOI 2D Camera 피딩 CCW ON (PLC가 피딩완료 후 OFF)
+	//if (pView->m_pMpe)
+	//	pView->m_pMpe->Write(_T("MB44018A"), 1);							// AOI 2D Camera 피딩 CCW ON (PLC가 피딩완료 후 OFF)
 }
 
 
 void CDlgMenu02::OnBnClickedBtnOffsetMkCw()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	BOOL bOn = (pDoc->m_pMpeSignal[7] & (0x01 << 9)) > 0 ? TRUE : FALSE;	// 마킹부 2D Camera 피딩 CW ON (PLC가 피딩완료 후 OFF)
-	if (bOn)
-	{
-		pView->MsgBox(_T("마킹부 2D Camera 피딩 중입니다."));
-		//AfxMessageBox(_T("마킹부 2D Camera 피딩 중입니다."));
-		return;
-	}
+	//BOOL bOn = (pDoc->m_pMpeSignal[7] & (0x01 << 9)) > 0 ? TRUE : FALSE;	// 마킹부 2D Camera 피딩 CW ON (PLC가 피딩완료 후 OFF)
+	//if (bOn)
+	//{
+	//	pView->MsgBox(_T("마킹부 2D Camera 피딩 중입니다."));
+	//	//AfxMessageBox(_T("마킹부 2D Camera 피딩 중입니다."));
+	//	return;
+	//}
 
-	if (pView->m_pMpe)
-		pView->m_pMpe->Write(_T("MB440189"), 1);							// 마킹부 2D Camera 피딩 CW ON (PLC가 피딩완료 후 OFF)
+	//if (pView->m_pMpe)
+	//	pView->m_pMpe->Write(_T("MB440189"), 1);							// 마킹부 2D Camera 피딩 CW ON (PLC가 피딩완료 후 OFF)
 }
 
 
 void CDlgMenu02::OnBnClickedBtnOffsetMkCcw()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	BOOL bOn = (pDoc->m_pMpeSignal[7] & (0x01 << 8)) > 0 ? TRUE : FALSE;	// 마킹부 2D Camera 피딩 CCW ON (PLC가 피딩완료 후 OFF)
-	if (bOn)
-	{
-		pView->MsgBox(_T("마킹부 2D Camera 피딩 중입니다."));
-		//AfxMessageBox(_T("마킹부 2D Camera 피딩 중입니다."));
-		return;
-	}
+	//BOOL bOn = (pDoc->m_pMpeSignal[7] & (0x01 << 8)) > 0 ? TRUE : FALSE;	// 마킹부 2D Camera 피딩 CCW ON (PLC가 피딩완료 후 OFF)
+	//if (bOn)
+	//{
+	//	pView->MsgBox(_T("마킹부 2D Camera 피딩 중입니다."));
+	//	//AfxMessageBox(_T("마킹부 2D Camera 피딩 중입니다."));
+	//	return;
+	//}
 
-	if (pView->m_pMpe)
-		pView->m_pMpe->Write(_T("MB440188"), 1);							// 마킹부 2D Camera 피딩 CCW ON (PLC가 피딩완료 후 OFF)
+	//if (pView->m_pMpe)
+	//	pView->m_pMpe->Write(_T("MB440188"), 1);							// 마킹부 2D Camera 피딩 CCW ON (PLC가 피딩완료 후 OFF)
 }
 
 

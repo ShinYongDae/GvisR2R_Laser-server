@@ -3913,17 +3913,17 @@ void CEngrave::SetMkBuffInitPos()
 
 void CEngrave::SetMkBuffCurrPos()
 {
-	if (!pDoc)
-		return;
+	//if (!pDoc)
+	//	return;
 
-	SOCKET_DATA SocketData;
-	SocketData.nCmdCode = _SetData;
+	//SOCKET_DATA SocketData;
+	//SocketData.nCmdCode = _SetData;
 
-	SocketData.nMsgID = _MkBuffCurrPos;
-	double dBufEnc = (double)pDoc->m_pMpeData[0][1] / 1000.0;	// 마킹부 버퍼 엔코더 값(단위 mm * 1000)
-																//sprintf(SocketData.strData, "%.1f", dBufEnc);
-	SocketData.fData1 = (float)dBufEnc;
-	SendCommand(SocketData);
+	//SocketData.nMsgID = _MkBuffCurrPos;
+	//double dBufEnc = (double)pDoc->m_pMpeData[0][1] / 1000.0;	// 마킹부 버퍼 엔코더 값(단위 mm * 1000)
+	//															//sprintf(SocketData.strData, "%.1f", dBufEnc);
+	//SocketData.fData1 = (float)dBufEnc;
+	//SendCommand(SocketData);
 }
 
 void CEngrave::SetMkNumLf()
