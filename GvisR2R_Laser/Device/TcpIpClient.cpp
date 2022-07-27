@@ -96,7 +96,8 @@ int CTcpIpClient::Running()
 	}
 	else if (GetServerID() == ID_ENGRAVE)
 	{
-		return ReadCommData(m_SocketData, sizeof(m_SocketData), 50000);
+		return ReadCommData(m_SocketData, sizeof(m_SocketData), INFINITE);
+		//return ReadCommData(m_SocketData, sizeof(m_SocketData), 50000);
 	}
 }
 
@@ -127,10 +128,10 @@ int CTcpIpClient::ReadCommData(SOCKET_DATA &SocketData, DWORD dwSize, DWORD dwTi
 	{
 		sMsg = _T("Fail to connect.");
 		::SendMessage(m_hParentWnd, WM_CLIENT_RECEIVED, (WPARAM)GetServerID(), (LPARAM)(LPCTSTR)sMsg);
-		::PostMessage(m_hParentWnd, WM_CLIENT_CLOSED, (WPARAM)GetServerID(), (LPARAM)0);
+		//::PostMessage(m_hParentWnd, WM_CLIENT_CLOSED, (WPARAM)GetServerID(), (LPARAM)0);
 
 		::LeaveCriticalSection(&m_sc);
-		return 0; // Terminate Thread
+		return -1; // Server is failed.
 	}
 
 	OnEvent(EVT_CONSUCCESS);
@@ -274,10 +275,10 @@ int CTcpIpClient::ReadComm()
 	{
 		sMsg = _T("Fail to connect.");
 		::SendMessage(m_hParentWnd, WM_CLIENT_RECEIVED, (WPARAM)GetServerID(), (LPARAM)(LPCTSTR)sMsg);
-		::PostMessage(m_hParentWnd, WM_CLIENT_CLOSED, (WPARAM)GetServerID(), (LPARAM)0);
+		//::PostMessage(m_hParentWnd, WM_CLIENT_CLOSED, (WPARAM)GetServerID(), (LPARAM)0);
 
 		::LeaveCriticalSection(&m_sc);
-		return 0; // Terminate Thread
+		return -1; // Server is failed.
 	}
 
 	OnEvent(EVT_CONSUCCESS);

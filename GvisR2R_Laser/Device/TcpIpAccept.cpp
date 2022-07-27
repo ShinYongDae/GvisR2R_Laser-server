@@ -194,7 +194,8 @@ int CTcpIpAccept::Running()
 	}
 	else if (GetServerID() == ID_ENGRAVE)
 	{
-		return ReadCommData(m_SocketData, sizeof(m_SocketData), 50000);
+		return ReadCommData(m_SocketData, sizeof(m_SocketData), INFINITE);
+		//return ReadCommData(m_SocketData, sizeof(m_SocketData), 50000);
 	}
 
 	return 0; // Terminate Thread
@@ -369,7 +370,8 @@ int CTcpIpAccept::ReadComm()
 	int i = 0;
 
 	DWORD	dwBytes = 0L;
-	DWORD	dwTimeout = 5000;
+	DWORD	dwTimeout = INFINITE;
+	//DWORD	dwTimeout = 5000;
 
 	while (IsOpen() && !m_bStop)
 	{
