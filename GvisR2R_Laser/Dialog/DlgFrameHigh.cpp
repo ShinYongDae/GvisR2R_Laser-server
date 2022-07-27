@@ -531,10 +531,11 @@ void CDlgFrameHigh::DispSigAoi()
 		return;
 
 	BOOL bOn;
-	bOn = pView->IsConnectedMdx();									// In - Device TCP/IP 연결
-	if (bOn && myLabel[0].GetImageBk() != LBL_IMG_DN)
+
+	bOn	= pView->IsConnectedMk();									// In - 마킹부 TCP/IP 연결
+	if(bOn && myLabel[0].GetImageBk() != LBL_IMG_DN)
 		myLabel[0].SetImageBk(LBL_IMG_DN);
-	else if (!bOn && myLabel[0].GetImageBk() != LBL_IMG_UP)
+	else if(!bOn && myLabel[0].GetImageBk() != LBL_IMG_UP)
 		myLabel[0].SetImageBk(LBL_IMG_UP);
 
 	bOn	= pView->IsConnectedSr();									// In - Device TCP/IP 연결
@@ -543,10 +544,10 @@ void CDlgFrameHigh::DispSigAoi()
 	else if(!bOn && myLabel[1].GetImageBk() != LBL_IMG_UP)
 		myLabel[1].SetImageBk(LBL_IMG_UP);
 
-	bOn	= pView->IsConnectedMk();									// In - 마킹부 TCP/IP 연결
-	if(bOn && myLabel[2].GetImageBk() != LBL_IMG_DN)
+	bOn = pView->IsConnectedMdx();									// In - Device TCP/IP 연결
+	if (bOn && myLabel[2].GetImageBk() != LBL_IMG_DN)
 		myLabel[2].SetImageBk(LBL_IMG_DN);
-	else if(!bOn && myLabel[2].GetImageBk() != LBL_IMG_UP)
+	else if (!bOn && myLabel[2].GetImageBk() != LBL_IMG_UP)
 		myLabel[2].SetImageBk(LBL_IMG_UP);
 }
 

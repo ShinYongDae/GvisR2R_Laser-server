@@ -768,9 +768,10 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 			break;
 		case 21:
 			m_nStepInitView++;
-			//			MoveMkInitPos();
+			//MoveMkInitPos();
 			InitPLC();
 			SetPlcParam();
+			TcpIpInit();
 			m_bTIM_DISP_STATUS = TRUE;
 			SetTimer(TIM_DISP_STATUS, 100, NULL);
 			break;
@@ -1331,6 +1332,35 @@ BOOL CGvisR2R_LaserView::InitAct()
 	return TRUE;
 }
 
+BOOL CGvisR2R_LaserView::TcpIpInit()
+{
+#ifdef USE_MDX2500
+	if (!m_pMdx2500)
+	{
+		m_pMdx2500 = new CMdx2500(pDoc->WorkingInfo.System.sIpClient[ID_MDX2500], pDoc->WorkingInfo.System.sIpServer[ID_MDX2500], pDoc->WorkingInfo.System.sPort[ID_MDX2500], this);
+		//m_pMdx2500->SetHwnd(this->GetSafeHwnd());
+	}
+#endif
+
+#ifdef USE_SR1000W
+	if (!m_pSr1000w)
+	{
+		m_pSr1000w = new CSr1000w(pDoc->WorkingInfo.System.sIpClient[ID_SR1000W], pDoc->WorkingInfo.System.sIpServer[ID_SR1000W], pDoc->WorkingInfo.System.sPort[ID_SR1000W], this);
+		//m_pSr1000w->SetHwnd(this->GetSafeHwnd());
+	}
+#endif
+
+#ifdef USE_TCPIP
+	if (!m_pEngrave)
+	{
+		m_pEngrave = new CEngrave(pDoc->WorkingInfo.System.sIpClient[ID_PUNCH], pDoc->WorkingInfo.System.sIpServer[ID_ENGRAVE], pDoc->WorkingInfo.System.sPort[ID_ENGRAVE], this);
+		m_pEngrave->SetHwnd(this->GetSafeHwnd());
+	}
+#endif
+
+	return TRUE;
+}
+
 BOOL CGvisR2R_LaserView::HwInit()
 {
 	if (m_pLight)
@@ -1369,29 +1399,29 @@ BOOL CGvisR2R_LaserView::HwInit()
 
 	//StartClient_MDX2500(pDoc->WorkingInfo.System.sIpClient[0], pDoc->WorkingInfo.System.sIpServer[0], pDoc->WorkingInfo.System.sPort[0]);
 	//StartClient_SR1000W(pDoc->WorkingInfo.System.sIpClient[1], pDoc->WorkingInfo.System.sIpServer[1], pDoc->WorkingInfo.System.sPort[1]);
-#ifdef USE_MDX2500
-	if (!m_pMdx2500)
-	{
-		m_pMdx2500 = new CMdx2500(pDoc->WorkingInfo.System.sIpClient[ID_MDX2500], pDoc->WorkingInfo.System.sIpServer[ID_MDX2500], pDoc->WorkingInfo.System.sPort[ID_MDX2500], this);
-		//m_pMdx2500->SetHwnd(this->GetSafeHwnd());
-	}
-#endif
-
-#ifdef USE_SR1000W
-	if (!m_pSr1000w)
-	{
-		m_pSr1000w = new CSr1000w(pDoc->WorkingInfo.System.sIpClient[ID_SR1000W], pDoc->WorkingInfo.System.sIpServer[ID_SR1000W], pDoc->WorkingInfo.System.sPort[ID_SR1000W], this);
-		//m_pSr1000w->SetHwnd(this->GetSafeHwnd());
-	}
-#endif
-
-#ifdef USE_TCPIP
-	if (!m_pEngrave)
-	{
-		m_pEngrave = new CEngrave(pDoc->WorkingInfo.System.sIpClient[ID_PUNCH], pDoc->WorkingInfo.System.sIpServer[ID_ENGRAVE], pDoc->WorkingInfo.System.sPort[ID_ENGRAVE], this);
-		m_pEngrave->SetHwnd(this->GetSafeHwnd());
-	}
-#endif
+//#ifdef USE_MDX2500
+//	if (!m_pMdx2500)
+//	{
+//		m_pMdx2500 = new CMdx2500(pDoc->WorkingInfo.System.sIpClient[ID_MDX2500], pDoc->WorkingInfo.System.sIpServer[ID_MDX2500], pDoc->WorkingInfo.System.sPort[ID_MDX2500], this);
+//		//m_pMdx2500->SetHwnd(this->GetSafeHwnd());
+//	}
+//#endif
+//
+//#ifdef USE_SR1000W
+//	if (!m_pSr1000w)
+//	{
+//		m_pSr1000w = new CSr1000w(pDoc->WorkingInfo.System.sIpClient[ID_SR1000W], pDoc->WorkingInfo.System.sIpServer[ID_SR1000W], pDoc->WorkingInfo.System.sPort[ID_SR1000W], this);
+//		//m_pSr1000w->SetHwnd(this->GetSafeHwnd());
+//	}
+//#endif
+//
+//#ifdef USE_TCPIP
+//	if (!m_pEngrave)
+//	{
+//		m_pEngrave = new CEngrave(pDoc->WorkingInfo.System.sIpClient[ID_PUNCH], pDoc->WorkingInfo.System.sIpServer[ID_ENGRAVE], pDoc->WorkingInfo.System.sPort[ID_ENGRAVE], this);
+//		m_pEngrave->SetHwnd(this->GetSafeHwnd());
+//	}
+//#endif
 
 	return TRUE;
 }
