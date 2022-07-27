@@ -55,7 +55,198 @@ public:
 	void Close();
 
 	// General Function
-	BOOL SendCommand(int nAcceptId, SOCKET_DATA SocketData);
+	//BOOL SendCommand(int nAcceptId, SOCKET_DATA SocketData);
+	BOOL SendCommand(SOCKET_DATA SocketData, BOOL bWait = FALSE);
+
+
+	// Communcation
+
+	void GetSysInfo(SOCKET_DATA SockData);
+	void GetOpInfo(SOCKET_DATA SockData);
+	void GetInfo(SOCKET_DATA SockData);
+	void GetTotRatio(SOCKET_DATA SockData);
+	void GetStTime(SOCKET_DATA SockData);
+	void GetRunTime(SOCKET_DATA SockData);
+	void GetEdTime(SOCKET_DATA SockData);
+	void GetStripRatio(SOCKET_DATA SockData);
+	void GetDef(SOCKET_DATA SockData);
+	void Get2DReader(SOCKET_DATA SockData);
+	void GetEngInfo(SOCKET_DATA SockData);
+	void GetFdInfo(SOCKET_DATA SockData);
+	void GetAoiInfo(SOCKET_DATA SockData);
+	void GetMkInfo(SOCKET_DATA SockData);
+	void GetMkInfoLf(SOCKET_DATA SockData);
+	void GetMkInfoRt(SOCKET_DATA SockData);
+
+	BOOL SetSysInfo();
+	void SetOpInfo();
+	void SetInfo();
+	void SetTotRatio();
+	void SetStTime();
+	void SetRunTime();
+	void SetEdTime();
+	void SetStripRatio();
+	void SetDef();
+	void Set2DReader();
+	void SetEngInfo();
+	void SetFdInfo();
+	void SetAoiInfo();
+	void SetMkInfo();
+	void SetMkInfoLf();
+	void SetMkInfoRt();
+
+	// Communcation - Sub Item
+
+	// SetOpInfo()
+	void SetOpName();
+	void SetDualTest();
+	void SetSampleTest();
+	void SetSampleShotNum();
+	void SetTestMode();
+	void SetRecoilerCcw();
+	void SetUncoilerCcw();
+	void SetAlignMethode();
+	void SetDoorRecoiler();
+	void SetDoorAoiUp();
+	void SetDoorAoiDn();
+	void SetDoorMk();
+	void SetDoorEngrave();
+	void SetDoorUncoiler();
+	void SetSaftyMk();
+	void SetCleannerAoiUp();
+	void SetCleannerAoiDn();
+	void SetUltraSonicAoiDn();
+	void SetUltraSonicEngrave();
+	void SetTotReelLen();
+	void SetOnePnlLen();
+	void SetTempPause();
+	void SetTempStopLen();
+	void SetLotCut();
+	void SetLotCutLen();
+	void SetLotCutPosLen();
+	void SetLmtTotYld();
+	void SetLmtPatlYld();
+	void SetStripOutRatio();
+	void SetCustomNeedRatio();
+	void SetNumRangeFixDef();
+	void SetNumContFixDef();
+	void SetUltraSonicStTim();
+
+	// SetInfo()
+	void SetModelUpName();
+	void SetModelDnName();
+	void SetLotUpName();
+	void SetLotDnName();
+	void SetLayerUpName();
+	void SetLayerDnName();
+	void SetOrderNum();
+	void SetShotNum();
+	void SetTotOpRto();
+	void SetTotVel();
+	void SetPartVel();
+	void SetMkDoneLen();
+	void SetAoiDnDoneLen();
+	void SetAoiUpDoneLen();
+	void SetLotSerial();
+	void SetMkVerfyLen();
+
+	// SetTotRatio()
+	void SetDefNumUp();
+	void SetDefRtoUp();
+	void SetGoodNumUp();
+	void SetGoodRtoUp();
+	void SetTestNumUp();
+	void SetDefNumDn();
+	void SetDefRtoDn();
+	void SetGoodNumDn();
+	void SetGoodRtoDn();
+	void SetTestNumDn();
+	void SetDefNumTot();
+	void SetDefRtoTot();
+	void SetGoodNumTot();
+	void SetGoodRtoTot();
+	void SetTestNumTot();
+
+	// Set2DReader()
+	void Set2DEngLen();
+	void Set2DAoiLen();
+	void Set2DMkLen();
+	void Set2DMoveVel();
+	void Set2DMoveAcc();
+	void Set2DOneShotLen();
+
+	// SetEngInfo()
+	void SetEngLeadPitch();
+	void SetEngPushOffLen();
+	void SetEngTqVal();
+	void SetEngAoiLen();
+	void SetEngFdDiffMax();
+	void SetEngFdDiffRng();
+	void SetEngFdDiffNum();
+	void SetEngBuffInitPos();
+	void SetEngBuffCurrPos();
+
+	// SetFdInfo()
+	void SetFdVel();
+	void SetFdAcc();
+	void SetOnePnlVel();
+	void SetOnePnlAcc();
+	void SetFdDiffMax();
+	void SetFdDiffRng();
+	void SetFdDiffNum();
+
+	// SetAoiInfo()
+	void SetAoiLeadPitch();
+	void SetAoiPushOffLen();
+	void SetAoiTqVal();
+	void SetAoiBuffShotNum();
+	void SetAoiMkLen();
+
+	// SetMkInfo()
+	void SetMkLeadPitch();
+	void SetMkPushOffLen();
+	void SetMkBuffInitPos();
+	void SetMkBuffCurrPos();
+	void SetMkNumLf();
+	void SetMkNumRt();
+	void SetMkMaxNumLf();
+	void SetMkMaxNumRt();
+
+	// SetMkInfoLf()
+	void SetMkInitPosLf();
+	void SetMkInitVelLf();
+	void SetMkInitAccLf();
+	void SetMkFnlPosLf();
+	void SetMkFnlVelLf();
+	void SetMkFnlAccLf();
+	void SetMkFnlTqLf();
+	void SetMkHgtPosX1Lf();
+	void SetMkHgtPosY1Lf();
+	void SetMkHgtPosX2Lf();
+	void SetMkHgtPosY2Lf();
+	void SetMkHgtPosX3Lf();
+	void SetMkHgtPosY3Lf();
+	void SetMkHgtPosX4Lf();
+	void SetMkHgtPosY4Lf();
+
+	// SetMkInfoRt()
+	void SetMkInitPosRt();
+	void SetMkInitVelRt();
+	void SetMkInitAccRt();
+	void SetMkFnlPosRt();
+	void SetMkFnlVelRt();
+	void SetMkFnlAccRt();
+	void SetMkFnlTqRt();
+	void SetMkHgtPosX1Rt();
+	void SetMkHgtPosY1Rt();
+	void SetMkHgtPosX2Rt();
+	void SetMkHgtPosY2Rt();
+	void SetMkHgtPosX3Rt();
+	void SetMkHgtPosY3Rt();
+	void SetMkHgtPosX4Rt();
+	void SetMkHgtPosY4Rt();
+
+	// End for SetSysInfo()
 
 protected:
 	afx_msg LRESULT wmAcceptReceived(WPARAM wParam, LPARAM lParam);

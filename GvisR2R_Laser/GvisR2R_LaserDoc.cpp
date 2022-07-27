@@ -197,6 +197,7 @@ CGvisR2R_LaserDoc::CGvisR2R_LaserDoc()
 	m_sTestOrderNum = _T("");
 	m_sTestShotNum = _T("");
 
+	// Communcation
 	m_nBad[0] = 0; m_nBad[1] = 0; m_nBad[2] = 0;
 	m_nGood[0] = 0; m_nGood[1] = 0; m_nGood[2] = 0;	
 	m_dBadRatio[0] = 0.0; m_dBadRatio[1] = 0.0; m_dBadRatio[2] = 0.0;

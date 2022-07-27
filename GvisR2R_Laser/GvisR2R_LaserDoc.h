@@ -91,6 +91,7 @@ public:
 	CString m_sOrderNum, m_sShotNum;
 	CString m_sTestOrderNum, m_sTestShotNum;
 
+	// Communcation
 	int m_nBad[3], m_nGood[3];					// [0]: Up, [1]: Dn, [2]: Total
 	double m_dBadRatio[3], m_dGoodRatio[3];		// [0]: Up, [1]: Dn, [2]: Total
 	int m_nTestNum[3];							// [0]: Up, [1]: Dn, [2]: Total
