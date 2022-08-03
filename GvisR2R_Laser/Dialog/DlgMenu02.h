@@ -169,6 +169,7 @@ public:
 	BOOL Disp2dCode();
 	void WaitResponse();
 
+	void UpdateData();
 
 // Dialog Data
 	//{{AFX_DATA(CDlgMenu02)

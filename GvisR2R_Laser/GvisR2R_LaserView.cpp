@@ -9148,7 +9148,7 @@ void CGvisR2R_LaserView::ModelChange(int nAoi) // 0 : AOI-Up , 1 : AOI-Dn
 		pView->SetPathAtBufUp();
 		if (pView->m_pDlgMenu01)
 		{
-			pView->m_pDlgMenu01->UpdateInfo();
+			pView->m_pDlgMenu01->UpdateData();
 			if (pView->m_nSelRmap == RMAP_UP || pView->m_nSelRmap == RMAP_ALLUP)
 				pView->m_pDlgMenu01->OpenReelmap(pView->m_nSelRmap);
 		}
@@ -9162,7 +9162,7 @@ void CGvisR2R_LaserView::ModelChange(int nAoi) // 0 : AOI-Up , 1 : AOI-Dn
 		pView->SetPathAtBufDn();
 		if (pView->m_pDlgMenu01)
 		{
-			pView->m_pDlgMenu01->UpdateInfo();
+			pView->m_pDlgMenu01->UpdateData();
 			if (pView->m_nSelRmap == RMAP_DN || pView->m_nSelRmap == RMAP_ALLDN)
 				pView->m_pDlgMenu01->OpenReelmap(pView->m_nSelRmap);
 		}
@@ -10639,7 +10639,7 @@ BOOL CGvisR2R_LaserView::UpdateReelmap(int nSerial)
 void CGvisR2R_LaserView::InitInfo()
 {
 	if (m_pDlgMenu01)
-		m_pDlgMenu01->UpdateInfo();
+		m_pDlgMenu01->UpdateData();
 
 	if (m_pDlgMenu05)
 	{
@@ -10661,7 +10661,7 @@ void CGvisR2R_LaserView::InitReelmap()
 	pDoc->InitReelmap();
 	pDoc->SetReelmap(ROT_NONE);
 	// 	pDoc->SetReelmap(ROT_CCW_90);
-	pDoc->UpdateInfo();
+	pDoc->UpdateData();
 }
 
 void CGvisR2R_LaserView::InitReelmapUp()
@@ -10669,7 +10669,7 @@ void CGvisR2R_LaserView::InitReelmapUp()
 	pDoc->InitReelmapUp();
 	pDoc->SetReelmap(ROT_NONE);
 	// 	pDoc->SetReelmap(ROT_CCW_90);
-	pDoc->UpdateInfo();
+	pDoc->UpdateData();
 }
 
 void CGvisR2R_LaserView::InitReelmapDn()
@@ -10681,7 +10681,7 @@ void CGvisR2R_LaserView::InitReelmapDn()
 	pDoc->InitReelmapDn();
 	pDoc->SetReelmap(ROT_NONE);
 	// 	pDoc->SetReelmap(ROT_CCW_90);
-	pDoc->UpdateInfo();
+	pDoc->UpdateData();
 }
 
 // void CGvisR2R_LaserView::LoadMstInfo()
@@ -11202,7 +11202,7 @@ BOOL CGvisR2R_LaserView::IsChkTmpStop()
 			// 			m_dTempPauseLen += m_dTempPauseLen;
 			pDoc->WorkingInfo.LastJob.bTempPause = FALSE;
 			if (m_pDlgMenu01)
-				m_pDlgMenu01->UpdateInfo();
+				m_pDlgMenu01->UpdateData();
 			return TRUE;
 		}
 	}
@@ -11224,7 +11224,7 @@ BOOL CGvisR2R_LaserView::IsVerify()
 		{
 			pDoc->WorkingInfo.LastJob.bVerify = FALSE;
 			if (m_pDlgMenu01)
-				m_pDlgMenu01->UpdateInfo();
+				m_pDlgMenu01->UpdateData();
 		}
 	}
 
@@ -13479,7 +13479,7 @@ BOOL CGvisR2R_LaserView::ChkLotCutPos()
 			::WritePrivateProfileString(_T("Last Job"), _T("Use Lot seperate"), _T("0"), PATH_WORKING_INFO);
 
 			if (m_pDlgMenu01)
-				m_pDlgMenu01->UpdateInfo();
+				m_pDlgMenu01->UpdateData();
 
 			return TRUE;
 		}
@@ -14378,24 +14378,35 @@ LRESULT CGvisR2R_LaserView::wmServerReceived(WPARAM wParam, LPARAM lParam)
 		//	m_pEngrave->SendCommand(nAcceptId, sSockData);
 		//}
 		break;
+	case _GetData:
+		break;
+	case _SetSig:
+		if (m_pEngrave)
+			m_pEngrave->GetSysSignal(rSockData);
+
+		if (m_pDlgMenu03)
+			m_pDlgMenu03->UpdateSignal();
+		break;
 	case _SetData:
 		if (m_pEngrave)
-		{
-			m_pEngrave->GetSysInfo(rSockData);
-		}
+			m_pEngrave->GetSysData(rSockData);
+
+		if (m_pDlgMenu01)
+			m_pDlgMenu01->UpdateData();
+
+		//if (m_pDlgMenu02)
+		//	m_pDlgMenu02->UpdateData();
+
+		if (m_pDlgMenu03)
+			m_pDlgMenu03->UpdateData();
+
+		if (m_pDlgMenu04)
+			m_pDlgMenu04->UpdateData();
 		break;
 	default:
 		break;
 	}
 
-	if (m_pDlgMenu01)
-		m_pDlgMenu01->UpdateInfo();
-
-	if (m_pDlgMenu03)
-		m_pDlgMenu03->UpdateInfo();
-
-	if (m_pDlgMenu04)
-		m_pDlgMenu04->UpdateInfo();
 
 	return (LRESULT)1;
 }

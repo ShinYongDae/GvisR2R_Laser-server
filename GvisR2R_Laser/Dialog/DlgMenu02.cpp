@@ -3492,3 +3492,7 @@ void CDlgMenu02::WaitResponse()
 	}
 }
 
+void CDlgMenu02::UpdateData()
+{
+	Disp();
+}

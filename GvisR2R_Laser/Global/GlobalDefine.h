@@ -1148,6 +1148,153 @@ struct stMkIo
 	stMpeIo MpeIo, MpeSignal, MpeData;
 };
 
+struct stBtnMain
+{
+	BOOL Ready, Run, Reset, Stop, Auto, Manual;
+	stBtnMain()
+	{
+		Ready = FALSE; Run = FALSE; Reset = FALSE; Stop = FALSE;
+		Auto = FALSE; Manual = FALSE;
+	}
+};
+
+struct stBtnTqMotor
+{
+	BOOL Mk, Aoi, Eng;
+	stBtnTqMotor()
+	{
+		Mk = FALSE; Aoi = FALSE; Eng = FALSE;
+	}
+};
+
+struct stBtnInductMotor
+{
+	BOOL Uc, Rc;
+	stBtnInductMotor()
+	{
+		Uc = FALSE; Rc = FALSE;
+	}
+};
+
+struct stBtnCore150
+{
+	BOOL Uc, Rc;
+	stBtnCore150()
+	{
+		Uc = FALSE; Rc = FALSE;
+	}
+};
+
+struct stBtnEtc
+{
+	BOOL BufR, EmgAoi;
+	stBtnEtc()
+	{
+		BufR = FALSE; EmgAoi = FALSE;
+	}
+};
+
+struct stBtnRecoiler
+{
+	BOOL Relation, FdCw, FdCcw, ReelChuck;
+	BOOL DcRlUpDn, ReelJoinL, ReelJoinR, ReelJoinVac;
+	BOOL PprChuck, PprCw, PprCcw, Rewine, RewineReelPpr;
+	stBtnRecoiler()
+	{
+		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; ReelChuck = FALSE;
+		DcRlUpDn = FALSE; ReelJoinL = FALSE; ReelJoinR = FALSE; ReelJoinVac = FALSE;
+		PprChuck = FALSE; PprCw = FALSE; PprCcw = FALSE; Rewine = FALSE; RewineReelPpr = FALSE;
+	}
+};
+
+struct stBtnPunch
+{
+	BOOL Relation, FdCw, FdCcw, FdVac;
+	BOOL PushUp, TblBlw, TblVac, FdClp;
+	BOOL TqClp, MvOne, LsrPt;
+	BOOL DcRSol;
+	stBtnPunch()
+	{
+		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; FdVac = FALSE;
+		PushUp = FALSE; TblBlw = FALSE; TblVac = FALSE; FdClp = FALSE;
+		TqClp = FALSE; MvOne = FALSE; LsrPt = FALSE;
+		DcRSol = FALSE;
+	}
+};
+
+struct stBtnAOIDn
+{
+	BOOL Relation, FdCw, FdCcw, FdVac;
+	BOOL PushUp, TblBlw, TblVac, FdClp;
+	BOOL TqClp, MvOne, LsrPt;
+	BOOL ClrRoll, SonicBlw, Test, Reset, LotEnd;
+	stBtnAOIDn()
+	{
+		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; FdVac = FALSE;
+		PushUp = FALSE; TblBlw = FALSE; TblVac = FALSE; FdClp = FALSE;
+		TqClp = FALSE; MvOne = FALSE; LsrPt = FALSE;
+		ClrRoll = FALSE; SonicBlw = FALSE; Test = FALSE; Reset = FALSE; LotEnd = FALSE;
+	}
+};
+
+struct stBtnAOIUp
+{
+	BOOL Relation, FdCw, FdCcw, FdVac;
+	BOOL PushUp, TblBlw, TblVac, FdClp;
+	BOOL TqClp, MvOne, LsrPt;
+	BOOL ClrRoll, TqVac, Test, Reset, LotEnd;
+	stBtnAOIUp()
+	{
+		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; FdVac = FALSE;
+		PushUp = FALSE; TblBlw = FALSE; TblVac = FALSE; FdClp = FALSE;
+		TqClp = FALSE; MvOne = FALSE; LsrPt = FALSE;
+		ClrRoll = FALSE; TqVac = FALSE; Test = FALSE; Reset = FALSE; LotEnd = FALSE;
+	}
+};
+
+struct stBtnEngrave
+{
+	BOOL Relation, FdCw, FdCcw, FdVac;
+	BOOL PushUp, TblBlw, TblVac, FdClp;
+	BOOL TqClp, MvOne, LsrPt;
+	BOOL DcRSol, SonicBlw;
+	stBtnEngrave()
+	{
+		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; FdVac = FALSE;
+		PushUp = FALSE; TblBlw = FALSE; TblVac = FALSE; FdClp = FALSE;
+		TqClp = FALSE; MvOne = FALSE; LsrPt = FALSE;
+		DcRSol = FALSE; DcRSol = SonicBlw;
+	}
+};
+
+struct stBtnUncoiler
+{
+	BOOL Relation, FdCw, FdCcw, ReelChuck;
+	BOOL DcRlUpDn, ReelJoinL, ReelJoinR, ReelJoinVac;
+	BOOL PprChuck, PprCw, PprCcw, ClRlUpDn, ClRlPshUpDn;
+	stBtnUncoiler()
+	{
+		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; ReelChuck = FALSE;
+		DcRlUpDn = FALSE; ReelJoinL = FALSE; ReelJoinR = FALSE; ReelJoinVac = FALSE;
+		PprChuck = FALSE; PprCw = FALSE; PprCcw = FALSE; ClRlUpDn = FALSE; ClRlPshUpDn = FALSE;
+	}
+};
+
+struct stBtnStatus
+{
+	stBtnMain Main;
+	stBtnTqMotor Tq;
+	stBtnInductMotor Induct;
+	stBtnCore150 Core150;
+	stBtnEtc Etc;
+	stBtnRecoiler Rc;
+	stBtnPunch Mk;
+	stBtnAOIDn AoiDn;
+	stBtnAOIUp AoiUp;
+	stBtnEngrave Eng;
+	stBtnUncoiler Uc;
+};
+
 typedef enum {
 	DOOR_FL_MK = 0, DOOR_FR_MK = 1,
 	DOOR_BL_MK = 2, DOOR_BR_MK = 3

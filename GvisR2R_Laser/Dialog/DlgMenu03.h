@@ -74,6 +74,15 @@ class CDlgMenu03 : public CDialog
 	void InitGroup();
 
 	void Disp();
+	void DispMain();
+	void DispRecoiler();
+	void DispPunch();
+	void DispAoiDn();
+	void DispAoiUp();
+	void DispEngrave();
+	void DispUncoiler();
+
+
 // 	void MyBtnDown(int nCtrlID);
 // 	void MyBtnUp(int nCtrlID);
 	void ChkDoneMkAoi();
@@ -269,7 +278,8 @@ public:
 	void SetEngraveCleanner(BOOL bOn);
 	void SetAoiDnCleanner(BOOL bOn);
 
-	void UpdateInfo();
+	void UpdateData();
+	void UpdateSignal();
 
 // Dialog Data
 	//{{AFX_DATA(CDlgMenu03)

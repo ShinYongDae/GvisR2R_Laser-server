@@ -60,7 +60,7 @@ public:
 	afx_msg LRESULT OnMyBtnDown(WPARAM wPara, LPARAM lPara);
 	afx_msg LRESULT OnMyBtnUp(WPARAM wPara, LPARAM lPara);
 
-	void UpdateInfo();
+	void UpdateData();
 
 // Dialog Data
 	//{{AFX_DATA(CDlgMenu04)

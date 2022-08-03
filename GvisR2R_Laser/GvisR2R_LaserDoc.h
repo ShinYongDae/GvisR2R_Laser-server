@@ -45,6 +45,7 @@ public:
 	stMkIo MkIo;
 	stWorkingInfo WorkingInfo;
 	stStatus Status;								// Status 입력신호
+	stBtnStatus BtnStatus;
 
 	CReelMap* m_pReelMap;
 	CReelMap *m_pReelMapUp, *m_pReelMapDn, *m_pReelMapAllUp, *m_pReelMapAllDn;
@@ -129,7 +130,7 @@ public:
 	BOOL LoadSignalInfo();
 	BOOL LoadDataInfo();
 	BOOL LoadMySpec();
-	void UpdateInfo();
+	void UpdateData();
 	int GetLastSerial();
 	int GetLotSerial();
 	void SetMkPnt(int nCam);	// Pin위치에 의한 정렬.

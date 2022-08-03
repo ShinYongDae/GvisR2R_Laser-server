@@ -47,7 +47,7 @@ public:
 	void AtDlgShow();
 	void AtDlgHide();
 
-	void UpdateInfo();
+	void UpdateData();
 
 // Dialog Data
 	//{{AFX_DATA(CDlgInfo)

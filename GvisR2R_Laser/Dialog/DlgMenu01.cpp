@@ -156,7 +156,7 @@ void CDlgMenu01::OnShowWindow(BOOL bShow, UINT nStatus)
 void CDlgMenu01::AtDlgShow()
 {
 	LoadImg();
-	UpdateInfo();
+	UpdateData();
 
 	if(pDoc->WorkingInfo.LastJob.nMergingLayer==0) 	// [0]:AOI-Up , [1]:AOI-Dn
 	{
@@ -275,7 +275,7 @@ BOOL CDlgMenu01::OnInitDialog()
 	SetPnlDefNum();
 	//InitMkInfo();
 	
-	UpdateInfo();
+	UpdateData();
 	pView->DispStsBar(_T("정지-1"), 0);
 	pView->DispMain(_T("정 지"), RGB_RED);
 	EnableBtn(TRUE);
@@ -2217,7 +2217,7 @@ void CDlgMenu01::ChkUserInfo(BOOL bOn)
 	}
 	else
 	{
-		UpdateInfo();
+		UpdateData();
 	}
 
 	myBtn[1].SetCheck(bOn);
@@ -2709,7 +2709,7 @@ void CDlgMenu01::ResetSerial()
 	}
 }
 
-void CDlgMenu01::UpdateInfo()
+void CDlgMenu01::UpdateData()
 {
 	CString sVal;
 

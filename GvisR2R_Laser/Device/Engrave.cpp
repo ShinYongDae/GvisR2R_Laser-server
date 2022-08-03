@@ -418,10 +418,423 @@ BOOL CEngrave::IsConnected()
 	//return FALSE;
 }
 
+// Communcation
 
-// Start for GetSysInfo()
+void CEngrave::GetSysSignal(SOCKET_DATA SockData)
+{
+	GetSignalMain(SockData);
+	GetSignalTorqueMotor(SockData);
+	GetSignalInductionMotor(SockData);
+	GetSignalCore150mm(SockData);
+	GetSignalEtc(SockData);
+	GetSignalRecoiler(SockData);
+	GetSignalPunch(SockData);
+	GetSignalAOIDn(SockData);
+	GetSignalAOIUp(SockData);
+	GetSignalEngrave(SockData);
+	GetSignalUncoiler(SockData);
+}
 
-void CEngrave::GetSysInfo(SOCKET_DATA SockData)
+void CEngrave::GetSignalMain(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+	CString sVal;
+
+	switch (nMsgId)
+	{
+	case _Ready:
+		pDoc->BtnStatus.Main.Ready  = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _Run:
+		pDoc->BtnStatus.Main.Run  = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _Reset:
+		pDoc->BtnStatus.Main.Reset = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _Stop:
+		pDoc->BtnStatus.Main.Stop = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _Auto:
+		pDoc->BtnStatus.Main.Auto = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _Manual:
+		pDoc->BtnStatus.Main.Manual = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	}
+}
+
+void CEngrave::GetSignalTorqueMotor(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+	CString sVal;
+
+	switch (nMsgId)
+	{
+	case _MkTq:
+		pDoc->BtnStatus.Tq.Mk = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _AoiTq:
+		pDoc->BtnStatus.Tq.Aoi = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _EngTq:
+		pDoc->BtnStatus.Tq.Eng = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	}
+}
+
+void CEngrave::GetSignalInductionMotor(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+	CString sVal;
+
+	switch (nMsgId)
+	{
+	case _CcwModRe:
+		pDoc->BtnStatus.Induct.Rc = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _CcwModUn:
+		pDoc->BtnStatus.Induct.Uc = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	}
+}
+
+void CEngrave::GetSignalCore150mm(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+	CString sVal;
+
+	switch (nMsgId)
+	{
+	case _Core150Re:
+		pDoc->BtnStatus.Core150.Rc = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _Core150Un:
+		pDoc->BtnStatus.Core150.Uc = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	}
+}
+
+void CEngrave::GetSignalEtc(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+	CString sVal;
+
+	switch (nMsgId)
+	{
+	case _EmgAoi:
+		pDoc->BtnStatus.Etc.EmgAoi = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	}
+}
+
+void CEngrave::GetSignalRecoiler(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+	CString sVal;
+
+	switch (nMsgId)
+	{
+	case _Relation:
+		pDoc->BtnStatus.Rc.Relation = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _MvCwRe:
+		pDoc->BtnStatus.Rc.FdCw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _MvCcwRe:
+		pDoc->BtnStatus.Rc.FdCcw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PrdChuckRe:
+		pDoc->BtnStatus.Rc.ReelChuck = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _DancerUpRe:
+		pDoc->BtnStatus.Rc.DcRlUpDn = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PasteUpLfRe:
+		pDoc->BtnStatus.Rc.ReelJoinL = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PasteUpRtRe:
+		pDoc->BtnStatus.Rc.ReelJoinR = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PasteVacRe:
+		pDoc->BtnStatus.Rc.ReelJoinVac = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PprChuckRe:
+		pDoc->BtnStatus.Rc.PprChuck = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PprCwRe:
+		pDoc->BtnStatus.Rc.PprCw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PprCcwRe:
+		pDoc->BtnStatus.Rc.PprCcw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _DoRe:
+		pDoc->BtnStatus.Rc.Rewine = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PrdPprRe:
+		pDoc->BtnStatus.Rc.RewineReelPpr = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	}
+}
+
+void CEngrave::GetSignalPunch(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+	CString sVal;
+
+	switch (nMsgId)
+	{
+	case _Relation:
+		pDoc->BtnStatus.Mk.Relation = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _MvCwMk:
+		pDoc->BtnStatus.Mk.FdCw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _MvCcwMk:
+		pDoc->BtnStatus.Mk.FdCcw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _FdVacMk:
+		pDoc->BtnStatus.Mk.FdVac = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PushUpMk:
+		pDoc->BtnStatus.Mk.PushUp = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _TblBlwMk:
+		pDoc->BtnStatus.Mk.TblBlw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _TblVacMk:
+		pDoc->BtnStatus.Mk.TblVac = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _FdClampMk:
+		pDoc->BtnStatus.Mk.FdClp = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _TensClampMk:
+		pDoc->BtnStatus.Mk.TqClp = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _OnePnlMk:
+		pDoc->BtnStatus.Mk.MvOne = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _DancerUpMk:
+		pDoc->BtnStatus.Mk.DcRSol = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	}
+}
+
+void CEngrave::GetSignalAOIDn(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+	CString sVal;
+
+	switch (nMsgId)
+	{
+	case _Relation:
+		pDoc->BtnStatus.AoiDn.Relation = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _MvCwAoiDn:
+		pDoc->BtnStatus.AoiDn.FdCw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _MvCcwAoiDn:
+		pDoc->BtnStatus.AoiDn.FdCcw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _FdVacAoiDn:
+		pDoc->BtnStatus.AoiDn.FdVac = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PushUpAoiDn:
+		pDoc->BtnStatus.AoiDn.PushUp = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _TblBlwAoiDn:
+		pDoc->BtnStatus.AoiDn.TblBlw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _TblVacAoiDn:
+		pDoc->BtnStatus.AoiDn.TblVac = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _FdClampAoiDn:
+		pDoc->BtnStatus.AoiDn.FdClp = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _TensClampAoiDn:
+		pDoc->BtnStatus.AoiDn.TqClp = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _OnePnlAoiDn:
+		pDoc->BtnStatus.AoiDn.MvOne = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _ClrRollAoiDn:
+		pDoc->BtnStatus.AoiDn.ClrRoll = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _ClrSonicAoiDn:
+		pDoc->BtnStatus.AoiDn.SonicBlw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _TestAoiDn:
+		pDoc->BtnStatus.AoiDn.Test = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _ResetAoiDn:
+		pDoc->BtnStatus.AoiDn.Reset = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _LotEndAoiDn:
+		pDoc->BtnStatus.AoiDn.LotEnd = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	}
+}
+
+void CEngrave::GetSignalAOIUp(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+	CString sVal;
+
+	switch (nMsgId)
+	{
+	case _Relation:
+		pDoc->BtnStatus.AoiUp.Relation = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _MvCwAoiUp:
+		pDoc->BtnStatus.AoiUp.FdCw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _MvCcwAoiUp:
+		pDoc->BtnStatus.AoiUp.FdCcw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _FdVacAoiUp:
+		pDoc->BtnStatus.AoiUp.FdVac = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PushUpAoiUp:
+		pDoc->BtnStatus.AoiUp.PushUp = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _TblBlwAoiUp:
+		pDoc->BtnStatus.AoiUp.TblBlw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _TblVacAoiUp:
+		pDoc->BtnStatus.AoiUp.TblVac = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _FdClampAoiUp:
+		pDoc->BtnStatus.AoiUp.FdClp = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _TensClampAoiUp:
+		pDoc->BtnStatus.AoiUp.TqClp = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _OnePnlAoiUp:
+		pDoc->BtnStatus.AoiUp.MvOne = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _ClrRollAoiUp:
+		pDoc->BtnStatus.AoiUp.ClrRoll = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _TestAoiUp:
+		pDoc->BtnStatus.AoiUp.Test = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _ResetAoiUp:
+		pDoc->BtnStatus.AoiUp.Reset = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _LotEndAoiUp:
+		pDoc->BtnStatus.AoiUp.LotEnd = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	}
+}
+
+void CEngrave::GetSignalEngrave(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+	CString sVal;
+
+	switch (nMsgId)
+	{
+	case _Relation:
+		pDoc->BtnStatus.Eng.Relation = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _MvCwEng:
+		pDoc->BtnStatus.Eng.FdCw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _MvCcwEng:
+		pDoc->BtnStatus.Eng.FdCcw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _FdVacEng:
+		pDoc->BtnStatus.Eng.FdVac = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PushUpEng:
+		pDoc->BtnStatus.Eng.PushUp = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _TblBlwEng:
+		pDoc->BtnStatus.Eng.TblBlw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _TblVacEng:
+		pDoc->BtnStatus.Eng.TblVac = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _FdClampEng:
+		pDoc->BtnStatus.Eng.FdClp = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _TensClampEng:
+		pDoc->BtnStatus.Eng.TqClp = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _OnePnlEng:
+		pDoc->BtnStatus.Eng.MvOne = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _DancerUpEng:
+		pDoc->BtnStatus.Eng.DcRSol = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _ClrSonicEng:
+		pDoc->BtnStatus.Eng.SonicBlw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	}
+}
+
+void CEngrave::GetSignalUncoiler(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+	CString sVal;
+
+	switch (nMsgId)
+	{
+	case _Relation:
+		pDoc->BtnStatus.Uc.Relation = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _MvCwUn:
+		pDoc->BtnStatus.Uc.FdCw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _MvCcwUn:
+		pDoc->BtnStatus.Uc.FdCcw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PrdChuckUn:
+		pDoc->BtnStatus.Uc.ReelChuck = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _DancerUpUn:
+		pDoc->BtnStatus.Uc.DcRlUpDn = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PasteUpLfUn:
+		pDoc->BtnStatus.Uc.ReelJoinL = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PasteUpRtUn:
+		pDoc->BtnStatus.Uc.ReelJoinR = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PasteVacUn:
+		pDoc->BtnStatus.Uc.ReelJoinVac = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PprChuckUn:
+		pDoc->BtnStatus.Uc.PprChuck = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PprCwUn:
+		pDoc->BtnStatus.Uc.PprCw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _PprCcwUn:
+		pDoc->BtnStatus.Uc.PprCcw = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _ClrRollUpUn:
+		pDoc->BtnStatus.Uc.ClRlUpDn = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	case _ClrRollPushUn:
+		pDoc->BtnStatus.Uc.ClRlPshUpDn = (SockData.nData1 > 0) ? TRUE : FALSE;
+		break;
+	}
+}
+
+// Start for GetSysData()
+
+void CEngrave::GetSysData(SOCKET_DATA SockData)
 {
 	GetOpInfo(SockData);
 	GetInfo(SockData);
@@ -1133,11 +1546,11 @@ void CEngrave::GetMkInfoRt(SOCKET_DATA SockData)
 	}
 }
 
-// End for GetSysInfo()
+// End for GetSysData()
 
-// Start for SetSysInfo()
+// Start for SetSysData()
 
-BOOL CEngrave::SetSysInfo()
+BOOL CEngrave::SetSysData()
 {
 	if (!IsRunning())
 	{
@@ -4402,4 +4815,4 @@ void CEngrave::SetMkHgtPosY4Rt()
 	SendCommand(SocketData);
 }
 
-// End for SetSysInfo()
+// End for SetSysData()

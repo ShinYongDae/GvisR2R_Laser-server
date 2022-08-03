@@ -36,7 +36,7 @@ CDlgInfo::CDlgInfo(CWnd* pParent /*=NULL*/)
 CDlgInfo::~CDlgInfo()
 {
 	if (pView->m_pDlgMenu01)
-		pView->m_pDlgMenu01->UpdateInfo();
+		pView->m_pDlgMenu01->UpdateData();
 }
 
 void CDlgInfo::DoDataExchange(CDataExchange* pDX)
@@ -1115,7 +1115,7 @@ void CDlgInfo::OnBtnExit()
 {
 	// TODO: Add your control notification handler code here
 	if (pView->m_pDlgMenu01)
-		pView->m_pDlgMenu01->UpdateInfo();
+		pView->m_pDlgMenu01->UpdateData();
 
 	OnOK();
 }
@@ -1526,7 +1526,7 @@ void CDlgInfo::OnBnClickedChk1188()
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Engrave Cleanner"), sData, PATH_WORKING_INFO);
 }
 
-void CDlgInfo::UpdateInfo()
+void CDlgInfo::UpdateData()
 {
 	Disp();
 }

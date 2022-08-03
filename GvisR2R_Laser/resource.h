@@ -982,10 +982,14 @@
 #define IDC_STC_SERIAL_ST               1356
 #define IDC_STC_000_9                   1356
 #define IDC_STATIC_FROMTO               1357
+#define IDC_STC_000_10                  1357
 #define IDC_STC_SRL_ED                  1358
+#define IDC_CHK_87                      1358
 #define IDC_STC_SERIAL_ED               1359
+#define IDC_STC_000_11                  1359
 #define IDC_BTN_MK_ALL                  1360
 #define IDC_BTN_SAVE2                   1360
+#define IDC_CHK_88                      1360
 #define IDC_CHK_MK_1                    1361
 #define IDC_BTN_SAVE3                   1361
 #define IDC_CHK_MK_2                    1362

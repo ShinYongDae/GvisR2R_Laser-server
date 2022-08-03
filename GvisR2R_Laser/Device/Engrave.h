@@ -61,7 +61,22 @@ public:
 
 	// Communcation
 
-	void GetSysInfo(SOCKET_DATA SockData);
+	// GetSysSignal
+	void GetSysSignal(SOCKET_DATA SockData);
+	void GetSignalMain(SOCKET_DATA SockData);
+	void GetSignalTorqueMotor(SOCKET_DATA SockData);
+	void GetSignalInductionMotor(SOCKET_DATA SockData);
+	void GetSignalCore150mm(SOCKET_DATA SockData);
+	void GetSignalEtc(SOCKET_DATA SockData);
+	void GetSignalRecoiler(SOCKET_DATA SockData);
+	void GetSignalPunch(SOCKET_DATA SockData);
+	void GetSignalAOIDn(SOCKET_DATA SockData);
+	void GetSignalAOIUp(SOCKET_DATA SockData);
+	void GetSignalEngrave(SOCKET_DATA SockData);
+	void GetSignalUncoiler(SOCKET_DATA SockData);
+
+	// GetSysData
+	void GetSysData(SOCKET_DATA SockData);
 	void GetOpInfo(SOCKET_DATA SockData);
 	void GetInfo(SOCKET_DATA SockData);
 	void GetTotRatio(SOCKET_DATA SockData);
@@ -78,7 +93,7 @@ public:
 	void GetMkInfoLf(SOCKET_DATA SockData);
 	void GetMkInfoRt(SOCKET_DATA SockData);
 
-	BOOL SetSysInfo();
+	BOOL SetSysData();
 	void SetOpInfo();
 	void SetInfo();
 	void SetTotRatio();
@@ -246,7 +261,7 @@ public:
 	void SetMkHgtPosX4Rt();
 	void SetMkHgtPosY4Rt();
 
-	// End for SetSysInfo()
+	// End for SetSysData()
 
 protected:
 	afx_msg LRESULT wmAcceptReceived(WPARAM wParam, LPARAM lParam);

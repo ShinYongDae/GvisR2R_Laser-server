@@ -431,7 +431,7 @@ void CGvisR2R_LaserDoc::Dump(CDumpContext& dc) const
 // CGvisR2R_LaserDoc ¸í·É
 
 
-void CGvisR2R_LaserDoc::UpdateInfo()
+void CGvisR2R_LaserDoc::UpdateData()
 {
 	if (!m_pReelMap)
 		return;
@@ -4250,7 +4250,7 @@ BOOL CGvisR2R_LaserDoc::GetAoiInfoUp(int nSerial, int *pNewLot, BOOL bFromBuf) /
 			pView->SetPathAtBufUp();
 			if (pView->m_pDlgMenu01)
 			{
-				pView->m_pDlgMenu01->UpdateInfo();
+				pView->m_pDlgMenu01->UpdateData();
 				if (pView->m_nSelRmap == RMAP_UP || pView->m_nSelRmap == RMAP_ALLUP)
 					pView->m_pDlgMenu01->OpenReelmap(pView->m_nSelRmap);
 			}
@@ -4398,7 +4398,7 @@ BOOL CGvisR2R_LaserDoc::GetAoiInfoDn(int nSerial, int *pNewLot, BOOL bFromBuf) /
 			pView->SetPathAtBufDn();
 			if (pView->m_pDlgMenu01)
 			{
-				pView->m_pDlgMenu01->UpdateInfo();
+				pView->m_pDlgMenu01->UpdateData();
 				if (pView->m_nSelRmap == RMAP_DN || pView->m_nSelRmap == RMAP_ALLDN)
 					pView->m_pDlgMenu01->OpenReelmap(pView->m_nSelRmap);
 			}
