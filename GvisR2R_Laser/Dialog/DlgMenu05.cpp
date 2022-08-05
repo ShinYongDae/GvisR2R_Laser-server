@@ -41,7 +41,7 @@ CDlgMenu05::CDlgMenu05(CWnd* pParent /*=NULL*/)
 	m_sEditRst = _T("");
 	m_sRmapPath = _T("");
 	m_nSerialSt = 0;
-	m_nMarkedShot = m_nSerialEd = 0;
+	m_nCompletedShot = m_nMarkedShot = m_nSerialEd = 0;
 
 	m_pDlgUtil01 = NULL;
 }
@@ -1451,6 +1451,7 @@ void CDlgMenu05::DisplayReelMapData()
 		DsipMsg.Format(_T("파일이 존재하지 않습니다.\r\n%s"), strReelMapPath);
 		AfxMessageBox(DsipMsg);
 	}
+
 	if(pRtn)
 		delete pRtn;
 	GetDlgItem(IDC_EDIT_RESULT)->SetWindowText(strReelMapData);
@@ -1638,6 +1639,7 @@ CString CDlgMenu05::LoadFile(CString sPath)
 	//파일을 불러옴. 
 	//strcpy(FileD, sPath);
 	_stprintf(FileD, TEXT("%s"), sPath);
+	
 	char* pRtn = NULL;
 	if((fp = fopen(pRtn=TCHARToChar(FileD), "r")) != NULL)
 	{
@@ -1854,6 +1856,11 @@ void CDlgMenu05::OnSelchangeComboLayer()
 			sVal.Format(_T("%d"), m_nSerialSt);
 		myStcSerialSt.SetText(sVal);
 
+		if (0 < ::GetPrivateProfileString(_T("Info"), _T("Completed Shot"), NULL, szData, sizeof(szData), m_sRmapPath))
+			m_nCompletedShot = _tstoi(szData); 
+		else
+			m_nCompletedShot = 0; // Failed.
+
 		if (0 < ::GetPrivateProfileString(_T("Info"), _T("Marked Shot"), NULL, szData, sizeof(szData), m_sRmapPath))
 			m_nMarkedShot = _tstoi(szData); 
 		else
@@ -1862,7 +1869,7 @@ void CDlgMenu05::OnSelchangeComboLayer()
 		if (0 < ::GetPrivateProfileString(_T("Info"), _T("End Serial"), NULL, szData, sizeof(szData), m_sRmapPath))
 			m_nSerialEd = _tstoi(szData);
 		else
-			m_nSerialEd = m_nMarkedShot;
+			m_nSerialEd = (m_nMarkedShot > m_nCompletedShot) ? m_nMarkedShot : m_nCompletedShot;
 
 		sVal = _T("");
 		if(m_nSerialEd > 0)

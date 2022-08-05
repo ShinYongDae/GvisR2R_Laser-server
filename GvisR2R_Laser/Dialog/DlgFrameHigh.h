@@ -60,6 +60,7 @@ public:
 
 	void SetMkLastShot(int nSerial);
 	void SetAoiLastShot(int nAoi, int nSerial);
+
 	void SetDualTest(BOOL bOn=TRUE);
 
 	void SetEngraveLastShot(int nSerial);

@@ -55,6 +55,7 @@ public:
 	BOOL IsStandStill();
 	BOOL IsAmpReady();
 	BOOL IsAmpFault();
+	BOOL IsGroupMotion();
 	double GetState();
 	BOOL CheckAxisDone();
 	BOOL ClearStatus();

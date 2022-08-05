@@ -6,6 +6,10 @@
 
 class CMainFrame : public CFrameWnd
 {
+	int m_ProgressID;
+	BOOL m_bProgressCreated;
+	CProgressCtrl m_Progress;
+
 	BOOL m_bLockDispStsBar;
 	CString m_sDispMsg[10];
 
@@ -21,6 +25,8 @@ public:
 // 작업입니다.
 public:
 	void DispStatusBar(CString strMsg, int nStatusBarID);
+	void CreateProgressBar();
+	void IncProgress(int nVal = 0);
 
 // 재정의입니다.
 public:
@@ -46,6 +52,7 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnDestroy();
 	virtual BOOL DestroyWindow();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnClose();
 	afx_msg void OnAppMinimize();
 	afx_msg void OnDatabaseConnection();

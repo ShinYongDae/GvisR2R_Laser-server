@@ -32,7 +32,10 @@ class CMotion : public CWnd
 	void FreeAll();
 	void LoadParam();
 	BOOL LoadErrMapFile(CString sPath);
-
+	BOOL InitNmcBoard();
+	void SetConfigure();
+	void SetMotionParam();
+	BOOL CreateObject();
 // Construction
 public:
 	CMotion(CWnd* pParent=NULL);
@@ -153,6 +156,9 @@ public:
 	BOOL SetCollision(double dCollisionMargin);
 	//BOOL ChkCollision();
 	void GetData(long *addressActPos1, long *addressActPos2, long *addressDifferenceStored);
+
+	void MotionAbortAll();
+	BOOL MotionAbort(int nMsId);
 
 
 // Overrides

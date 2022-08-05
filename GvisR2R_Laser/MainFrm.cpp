@@ -53,6 +53,7 @@ CMainFrame::CMainFrame()
 {
 	// TODO: 여기에 멤버 초기화 코드를 추가합니다.
 	pFrm = this;
+	m_bProgressCreated = FALSE; // status bar에 Progress bar control 생성 플래그 초기화 
 
 	m_bLockDispStsBar = FALSE;
 	for (int i = 0; i < 10; i++)
@@ -89,6 +90,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndStatusBar.SetPaneInfo(5, ID_SEPARATOR, SBPS_NORMAL, nScreenWidth * 3 / 60);
 	m_wndStatusBar.SetPaneInfo(6, ID_SEPARATOR, SBPS_NORMAL, nScreenWidth * 2 / 60);
 	m_wndStatusBar.SetPaneInfo(7, ID_SEPARATOR, SBPS_NORMAL, nScreenWidth * 6 / 60);
+
+	//CreateProgressBar(); // statusbar에 Progress bar control 생성
+	//m_Progress.SetPos(0);
 
 	return 0;
 }
@@ -226,6 +230,51 @@ BOOL CMainFrame::DestroyWindow()
 
 	return CFrameWnd::DestroyWindow();
 }
+
+void CMainFrame::CreateProgressBar()
+{
+	if (m_bProgressCreated == FALSE)
+	{
+		RECT MyRect;
+		m_ProgressID = m_wndStatusBar.CommandToIndex(ID_INDICATOR_PROGRESS_PANE);
+
+		m_wndStatusBar.GetItemRect(m_ProgressID, &MyRect);
+
+		//Create the progress control
+		m_Progress.Create(WS_VISIBLE | WS_CHILD, MyRect, &m_wndStatusBar, 1);
+
+		m_Progress.SetRange(0, 100); //Set the range to between 0 and 100
+		m_Progress.SetStep(1); // Set the step amount
+		m_bProgressCreated = TRUE;
+	}
+}
+
+void CMainFrame::IncProgress(int nVal)
+{
+	// 	return;
+
+	if (nVal == 0)
+		m_Progress.StepIt();
+	else
+		m_Progress.SetPos(nVal);
+}
+
+
+void CMainFrame::OnSize(UINT nType, int cx, int cy)
+{
+	CFrameWnd::OnSize(nType, cx, cy);
+
+	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+
+	if (m_bProgressCreated)
+	{
+		RECT rc;
+		m_wndStatusBar.GetItemRect(m_ProgressID, &rc);
+		// Reposition the progress control correctly!
+		m_Progress.SetWindowPos(&wndTop, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, 0);
+	} 
+}
+
 
 
 void CMainFrame::OnClose()

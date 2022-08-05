@@ -79,6 +79,11 @@ class CNmcDevice : public CWnd
 	int m_nTotalMotion;
 	int m_nTotalAxis;
 
+	void SaveLog(CString strMsg);
+
+	CWindowVersion m_cWindowVersionCollect;
+	tpOs GetWindowVersion();
+
 public:
 // Construction
 
@@ -86,6 +91,7 @@ public:
 
 // Attributes
 public: 
+	CCriticalSection m_csLogLock;
 
 	int m_nRTAFSeqIndex;
 	//structRTAFInfo* m_pRTAFPointArr;
@@ -129,14 +135,11 @@ public:
 	CString GetTriggerEncCnt(int nEcatAddr, int nSdoIdx);
 	int GetTriggerEnc(int nEcatAddr, int nSdoIdx);
 
-	void UnGroup2Ax(int nBdNum, int nGroupNum);
-	int UnGroup2Ax(int nGroupNum);
 	//void StopSequence();
 	int Grouping2Ax(int nBdNum, int nGroupNum, int nAxisNumX, int nAxisNumY);
 	bool BufferInit();
 	BOOL IsGroupStatusStandby();
 	BOOL IsListMotion();
-	BOOL IsInterpolationMotion();
 	int GetAddListNum();
 
 	double Len2Pulse(int nIdxMotor, double fLength);
@@ -154,6 +157,10 @@ public:
 	int GetErrorCompensationType();
 	BOOL InitErrMap();
 	*/
+	BOOL IsInterpolationMotion(int nId);
+	int UnGroup2Ax(int nGroupNum);
+	void UnGroup2Ax(int nBdNum, int nGroupNum);
+
 	BOOL TwoStartPosMove(int nMsId0, int nMsId1, double fPos0, double fPos1, double fVel, double fAcc, double fDec, BOOL bAbs = ABS, BOOL bWait = WAIT, int bMotionType = S_CURVE, BOOL bOptimize = OPTIMIZED);
 	BOOL TwoStartPosMove(int nMsId0, int nMsId1, double fPos0, double fPos1, double fVelRatio = 100.0, BOOL bAbs = TRUE, BOOL bWait = TRUE, int bMotionType = S_CURVE, BOOL bOptimize = OPTIMIZED);
 	int DisableGroup2Ax(int nGroupNum);
@@ -181,6 +188,8 @@ public:
 	BOOL IsLimit(int nMotionId, int nDir);
 	BOOL Abort(int nMotionId);
 	long GetState(int nMotionId);
+
+	BOOL CheckNmcConnection();// TRUE: OK , FALSE: Error
 
 // Overrides
 	// ClassWizard generated virtual function overrides

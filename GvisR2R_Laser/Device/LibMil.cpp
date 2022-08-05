@@ -378,9 +378,12 @@ void CLibMil::BufPutColor2d0(long nSzX, long nSzY, TCHAR* pSrc)
 #else
 	MbufPutColor2d(MilImageCam, M_PACKED + M_BGR24, M_ALL_BANDS, 0, 0, nSzX, nSzY, pSrc);
 #endif
-	MimRotate(MilImageCam, MilImageCamRotate, 180.0, M_DEFAULT, M_DEFAULT, M_DEFAULT, M_DEFAULT, M_DEFAULT);
-	MimFlip(MilImageCamRotate, MilImageCamFlip, M_FLIP_HORIZONTAL, M_DEFAULT);
-	MbufCopyColor(MilImageCamFlip, MilImage[0]->m_MilImage, M_RED);
+	//MimRotate(MilImageCam, MilImageCamRotate, 180.0, M_DEFAULT, M_DEFAULT, M_DEFAULT, M_DEFAULT, M_DEFAULT);
+	//MimFlip(MilImageCamRotate, MilImageCamFlip, M_FLIP_HORIZONTAL, M_DEFAULT);
+	//MimFlip(MilImageCamRotate, MilImageCamFlip, M_FLIP_VERTICAL, M_DEFAULT);
+	//MbufCopyColor(MilImageCamFlip, MilImage[0]->m_MilImage, M_RED);
+
+	MbufCopyColor(MilImageCam, MilImage[0]->m_MilImage, M_RED);
 
 //	MbufSave(_T("C:\\test.TIF", MilImage));
 }
@@ -395,9 +398,11 @@ void CLibMil::BufPutColor2d1(long nSzX, long nSzY, TCHAR* pSrc)
 #else
 	MbufPutColor2d(MilImageCam, M_PACKED+M_BGR24, M_ALL_BANDS, 0, 0, nSzX, nSzY, pSrc);
 #endif
-	MimRotate(MilImageCam, MilImageCamRotate, 180.0, M_DEFAULT, M_DEFAULT, M_DEFAULT, M_DEFAULT, M_DEFAULT);
-	MimFlip(MilImageCamRotate, MilImageCamFlip, M_FLIP_HORIZONTAL, M_DEFAULT);
-	MbufCopyColor(MilImageCamFlip, MilImage[0]->m_MilImage, M_RED);
+	//MimRotate(MilImageCam, MilImageCamRotate, 180.0, M_DEFAULT, M_DEFAULT, M_DEFAULT, M_DEFAULT, M_DEFAULT);
+	//MimFlip(MilImageCamRotate, MilImageCamFlip, M_FLIP_HORIZONTAL, M_DEFAULT);
+	//MbufCopyColor(MilImageCamFlip, MilImage[0]->m_MilImage, M_RED);
+
+	MbufCopyColor(MilImageCam, MilImage[0]->m_MilImage, M_RED);
 
 //	MbufSave(_T("C:\\test.TIF", MilImage));
 }
@@ -557,6 +562,8 @@ BOOL CLibMil::ClearLiveOverlay()
 
 BOOL CLibMil::ClearCenterMarkArea(long XStart, long YStart, long XEnd, long YEnd)
 {
+	if (!MilDraw[0])
+		return FALSE;
 	BOOL bRtn = MilDraw[0]->DrawRectFill(MilDisplay[0]->m_lOverlayColor, XStart, YStart, XEnd, YEnd);
 	return bRtn;
 }
@@ -565,6 +572,7 @@ BOOL CLibMil::DrawCross(double ForegroundColor, long XCenter, long YCenter, long
 {
 	BOOL bRtn = TRUE;
 #ifdef USE_MIL
+	if (MilDraw[0])
 	bRtn = MilDraw[0]->DrawCross(ForegroundColor, XCenter, YCenter, XSize, YSize, XCenterSpace, YCenterSpace);
 #endif
 	return bRtn;
@@ -572,12 +580,14 @@ BOOL CLibMil::DrawCross(double ForegroundColor, long XCenter, long YCenter, long
 
 void CLibMil::SetTextFontScale(double dFontScaleX, double dFontScaleY)
 {
+	if (MilDraw[0])
 	MilDraw[0]->SetTextFontScale(dFontScaleX, dFontScaleY);	
 }
 
 void CLibMil::SetTextFont(long FontName)
 {
 	m_lFontName = FontName;
+	if (MilDraw[0])
 	MilDraw[0]->SetTextFont(FontName);	
 }
 
@@ -587,13 +597,17 @@ void CLibMil::DrawText(CString str, long lX, long lY, long lColor)
 	//strcpy(szText, str);
 	TCHAR szText[MAX_PATH];
 	wsprintf(szText, TEXT("%s"), str);
+	if (MilDraw[0])
 	MilDraw[0]->SetDrawColor(lColor);
+	if (MilDraw[0])
 	MilDraw[0]->SetDrawBackColor(MilDisplay[0]->m_lOverlayColor);
+	if (MilDraw[0])
 	MilDraw[0]->DrawText(lX, lY, szText);
 }
 
 void CLibMil::SetDrawColor(long lForegroundColor)
 {
+	if(MilDraw[0])
 	MilDraw[0]->SetDrawColor(lForegroundColor);
 }
 
@@ -696,6 +710,9 @@ void CLibMil::PatternMatchingAlloc(MIL_ID MilImage, double dScore)
 
 BOOL CLibMil::PatternMatchingAction(MIL_ID MilImage, BOOL bDraw)//, 
 {
+	if (!MilDraw[0])
+		return FALSE;
+
 	BOOL bRtn = TRUE;
 	MIL_ID MilPatternMatchingResultDisplayBuffer = MilDisplay[0]->m_MilDisplayOverlay;
 	MIL_ID GraphContextId = MilDraw[0]->m_MilGraphicContextID;

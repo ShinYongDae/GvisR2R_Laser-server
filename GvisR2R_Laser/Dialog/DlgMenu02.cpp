@@ -448,67 +448,102 @@ void CDlgMenu02::InitBtn()
 {
 	myBtn[0].SubclassDlgItem(IDC_CHK_LT_ON, this);
 	myBtn[0].SetHwnd(this->GetSafeHwnd(), IDC_CHK_LT_ON);
+	myBtn[0].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[1].SubclassDlgItem(IDC_BTN_LT_UP, this);
 	myBtn[1].SetHwnd(this->GetSafeHwnd(), IDC_BTN_LT_UP);
 	myBtn[1].SetBoarder(FALSE);
+
 	myBtn[2].SubclassDlgItem(IDC_BTN_LT_DN, this);
 	myBtn[2].SetHwnd(this->GetSafeHwnd(), IDC_BTN_LT_DN);
 	myBtn[2].SetBoarder(FALSE);
+
 	myBtn[3].SubclassDlgItem(IDC_BTN_PIN_MOVE, this);
 	myBtn[3].SetHwnd(this->GetSafeHwnd(), IDC_BTN_PIN_MOVE);
+
 	myBtn[4].SubclassDlgItem(IDC_BTN_PIN_SAVE, this);
 	myBtn[4].SetHwnd(this->GetSafeHwnd(), IDC_BTN_PIN_SAVE);
+
 	myBtn[5].SubclassDlgItem(IDC_BTN_HOME_MOVE, this);
 	myBtn[5].SetHwnd(this->GetSafeHwnd(), IDC_BTN_HOME_MOVE);
+
 	myBtn[6].SubclassDlgItem(IDC_BTN_JOG_UP, this);
 	myBtn[6].SetHwnd(this->GetSafeHwnd(), IDC_BTN_JOG_UP);
 	myBtn[6].SetBoarder(FALSE);
+
 	myBtn[7].SubclassDlgItem(IDC_BTN_JOG_DN, this);
 	myBtn[7].SetHwnd(this->GetSafeHwnd(), IDC_BTN_JOG_DN);
 	myBtn[7].SetBoarder(FALSE);
+
 	myBtn[8].SubclassDlgItem(IDC_BTN_JOG_LF, this);
 	myBtn[8].SetHwnd(this->GetSafeHwnd(), IDC_BTN_JOG_LF);
 	myBtn[8].SetBoarder(FALSE);
+
 	myBtn[9].SubclassDlgItem(IDC_BTN_JOG_RT, this);
 	myBtn[9].SetHwnd(this->GetSafeHwnd(), IDC_BTN_JOG_RT);
 	myBtn[9].SetBoarder(FALSE);
+
 	myBtn[10].SubclassDlgItem(IDC_CHK_JOG_VF, this);
 	myBtn[10].SetHwnd(this->GetSafeHwnd(), IDC_CHK_JOG_VF);
+	myBtn[10].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[11].SubclassDlgItem(IDC_CHK_JOG_F, this);
 	myBtn[11].SetHwnd(this->GetSafeHwnd(), IDC_CHK_JOG_F);
+	myBtn[11].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[12].SubclassDlgItem(IDC_CHK_JOG_N, this);
 	myBtn[12].SetHwnd(this->GetSafeHwnd(), IDC_CHK_JOG_N);
+	myBtn[12].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[13].SubclassDlgItem(IDC_CHK_JOG_S, this);
 	myBtn[13].SetHwnd(this->GetSafeHwnd(), IDC_CHK_JOG_S);
+	myBtn[13].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[14].SubclassDlgItem(IDC_CHK_JOG_VS, this);
 	myBtn[14].SetHwnd(this->GetSafeHwnd(), IDC_CHK_JOG_VS);
+	myBtn[14].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[15].SubclassDlgItem(IDC_BTN_ALIGN, this);
 	myBtn[15].SetHwnd(this->GetSafeHwnd(), IDC_BTN_ALIGN);
+
 	myBtn[16].SubclassDlgItem(IDC_CHK_RES_POS_ST, this);
 	myBtn[16].SetHwnd(this->GetSafeHwnd(), IDC_CHK_RES_POS_ST);
+	myBtn[16].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[17].SubclassDlgItem(IDC_BTN_START_SAVE, this);
 	myBtn[17].SetHwnd(this->GetSafeHwnd(), IDC_BTN_START_SAVE);
+
 	myBtn[18].SubclassDlgItem(IDC_CHK_MK_OFFSET_ST, this);
 	myBtn[18].SetHwnd(this->GetSafeHwnd(), IDC_CHK_MK_OFFSET_ST);
+	myBtn[18].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[19].SubclassDlgItem(IDC_CHK_MK_OFFSET_ED, this);
 	myBtn[19].SetHwnd(this->GetSafeHwnd(), IDC_CHK_MK_OFFSET_ED);
+	myBtn[19].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[20].SubclassDlgItem(IDC_BTN_ALIGN_MOVE, this);
 	myBtn[20].SetHwnd(this->GetSafeHwnd(), IDC_BTN_ALIGN_MOVE);
+
 	myBtn[21].SubclassDlgItem(IDC_BTN_GRAB, this);
 	myBtn[21].SetHwnd(this->GetSafeHwnd(), IDC_BTN_GRAB);
 
 	myBtn[22].SubclassDlgItem(IDC_BTN_OFFSET_ENGRAVE_CW, this);
 	myBtn[22].SetHwnd(this->GetSafeHwnd(), IDC_BTN_OFFSET_ENGRAVE_CW);
+
 	myBtn[23].SubclassDlgItem(IDC_BTN_LASER_ADJUST_LF, this);
 	myBtn[23].SetHwnd(this->GetSafeHwnd(), IDC_BTN_LASER_ADJUST_LF);
+
 	myBtn[24].SubclassDlgItem(IDC_BTN_LASER_ALIGN, this);
 	myBtn[24].SetHwnd(this->GetSafeHwnd(), IDC_BTN_LASER_ALIGN);
 	myBtn[24].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[25].SubclassDlgItem(IDC_BTN_LASER_MARKING, this);
 	myBtn[25].SetHwnd(this->GetSafeHwnd(), IDC_BTN_LASER_MARKING);
 	myBtn[25].SetBtnType(BTN_TYPE_CHECK);
+
 	myBtn[26].SubclassDlgItem(IDC_BTN_2D_READING, this);
 	myBtn[26].SetHwnd(this->GetSafeHwnd(), IDC_BTN_2D_READING);
+
 	//myBtn[27].SubclassDlgItem(IDC_BTN_FEED_SHOT_OFFSET, this);
 	//myBtn[27].SetHwnd(this->GetSafeHwnd(), IDC_BTN_FEED_SHOT_OFFSET);
 	myBtn[27].SubclassDlgItem(IDC_BTN_SHOT_REMAIN_CW, this);
@@ -517,26 +552,35 @@ void CDlgMenu02::InitBtn()
 	myBtn[28].SubclassDlgItem(IDC_BTN_BUFF_UP1, this);
 	myBtn[28].SetHwnd(this->GetSafeHwnd(), IDC_BTN_BUFF_UP1);
 	myBtn[28].SetBoarder(FALSE);
+
 	myBtn[29].SubclassDlgItem(IDC_BTN_BUFF_DN1, this);
 	myBtn[29].SetHwnd(this->GetSafeHwnd(), IDC_BTN_BUFF_DN1);
 	myBtn[29].SetBoarder(FALSE);
+
 	myBtn[30].SubclassDlgItem(IDC_BTN_BUFF_HOME1, this);
 	myBtn[30].SetHwnd(this->GetSafeHwnd(), IDC_BTN_BUFF_HOME1);
+
 	myBtn[31].SubclassDlgItem(IDC_BTN_BUFF_INIT_MOVE1, this);
 	myBtn[31].SetHwnd(this->GetSafeHwnd(), IDC_BTN_BUFF_INIT_MOVE1);
+
 	myBtn[32].SubclassDlgItem(IDC_BTN_BUFF_INIT_SAVE1, this);
 	myBtn[32].SetHwnd(this->GetSafeHwnd(), IDC_BTN_BUFF_INIT_SAVE1);
 
 	myBtn[33].SubclassDlgItem(IDC_BTN_OFFSET_ENGRAVE_CCW, this);
 	myBtn[33].SetHwnd(this->GetSafeHwnd(), IDC_BTN_OFFSET_ENGRAVE_CCW);
+
 	myBtn[34].SubclassDlgItem(IDC_BTN_OFFSET_AOI_CW, this);
 	myBtn[34].SetHwnd(this->GetSafeHwnd(), IDC_BTN_OFFSET_AOI_CW);
+
 	myBtn[35].SubclassDlgItem(IDC_BTN_OFFSET_AOI_CCW, this);
 	myBtn[35].SetHwnd(this->GetSafeHwnd(), IDC_BTN_OFFSET_AOI_CCW);
+
 	myBtn[36].SubclassDlgItem(IDC_BTN_OFFSET_MK_CW, this);
 	myBtn[36].SetHwnd(this->GetSafeHwnd(), IDC_BTN_OFFSET_MK_CW);
+
 	myBtn[37].SubclassDlgItem(IDC_BTN_OFFSET_MK_CCW, this);
 	myBtn[37].SetHwnd(this->GetSafeHwnd(), IDC_BTN_OFFSET_MK_CCW);
+
 	myBtn[38].SubclassDlgItem(IDC_BTN_LASER_ADJUST_RT, this);
 	myBtn[38].SetHwnd(this->GetSafeHwnd(), IDC_BTN_LASER_ADJUST_RT);
 
@@ -545,14 +589,19 @@ void CDlgMenu02::InitBtn()
 
 	myBtn[40].SubclassDlgItem(IDC_BTN_LASER_ADJUST_UP, this);
 	myBtn[40].SetHwnd(this->GetSafeHwnd(), IDC_BTN_LASER_ADJUST_UP);
+
 	myBtn[41].SubclassDlgItem(IDC_BTN_LASER_ADJUST_DN, this);
 	myBtn[41].SetHwnd(this->GetSafeHwnd(), IDC_BTN_LASER_ADJUST_DN);
+
 	myBtn[42].SubclassDlgItem(IDC_BTN_LASER_ADJUST_CW2, this);
 	myBtn[42].SetHwnd(this->GetSafeHwnd(), IDC_BTN_LASER_ADJUST_CW2);
+
 	myBtn[43].SubclassDlgItem(IDC_BTN_LASER_ADJUST_CCW2, this);
 	myBtn[43].SetHwnd(this->GetSafeHwnd(), IDC_BTN_LASER_ADJUST_CCW2);
+
 	myBtn[44].SubclassDlgItem(IDC_BTN_SHOT_REMAIN_CCW, this);
 	myBtn[44].SetHwnd(this->GetSafeHwnd(), IDC_BTN_SHOT_REMAIN_CCW);
+
 	int i;
 	for(i=0; i<MAX_MENU02_BTN; i++)
 	{
@@ -1366,8 +1415,7 @@ BOOL CDlgMenu02::MovePos(int nPos)
 			if(!pView->m_pMotion->Move(MS_X0Y0, pPos, fVel, fAcc, fAcc))
 			{
 				if(!pView->m_pMotion->Move(MS_X0Y0, pPos, fVel, fAcc, fAcc))
-					pView->MsgBox(_T("Move XY Error..."));
-					//AfxMessageBox(_T("Move XY Error..."));
+					AfxMessageBox(_T("Move XY Error..."));
 			}
 		}
 
@@ -1450,8 +1498,7 @@ BOOL CDlgMenu02::MovePinPos()
 			if(!pView->m_pMotion->Move(MS_X0Y0, pPos, fVel, fAcc, fAcc))
 			{
 				if(!pView->m_pMotion->Move(MS_X0Y0, pPos, fVel, fAcc, fAcc))
-					pView->MsgBox(_T("Move XY Error..."));
-					//AfxMessageBox(_T("Move XY Error..."));
+					AfxMessageBox(_T("Move XY Error..."));
 			}
 		}
 
@@ -1558,6 +1605,17 @@ void CDlgMenu02::OnBtnPinSave()
 	if(pView->m_nMkStAuto > MK_ST+11 && pView->m_nMkStAuto < MK_ST+29)
 		pView->m_nMkStAuto = MK_ST+11;
 
+ 	if(pDoc->m_pSpecLocal)
+ 	{
+ 		pDoc->SetMkPnt(CAM_LF);
+// 		if(myBtn[16].GetCheck())
+// 		{
+// 			if(m_pDlgUtil03)
+// 				m_pDlgUtil03->Disp(ROT_NONE);
+// // 				m_pDlgUtil03->Disp(ROT_CCW_90);
+// 		}
+ 	}
+
 }
 
 
@@ -1604,8 +1662,7 @@ void CDlgMenu02::OnBtnHomeMove()
 			if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, fVel, fAcc, fAcc))
 			{
 				if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, fVel, fAcc, fAcc))
-					pView->MsgBox(_T("Move XY Error..."));
-					//AfxMessageBox(_T("Move XY Error..."));
+					AfxMessageBox(_T("Move XY Error..."));
 			}
 		}
 	}
@@ -1655,12 +1712,15 @@ void CDlgMenu02::OnChkResPosSt()
 	myBtn[16].EnableWindow(FALSE);
 
 	pView->m_pVision[0]->CalcCameraPixelSize();
-#endif
+
 	myBtn[16].EnableWindow(TRUE);
 	myBtn[16].SetCheck(FALSE);	//	IDC_CHK_RES_POS_ST
 
 	myStcData[1].SetText(pDoc->WorkingInfo.Vision[0].sResX);
 	myStcData[2].SetText(pDoc->WorkingInfo.Vision[0].sResY);
+#else
+	return;
+#endif
 }
 
 
@@ -2320,6 +2380,7 @@ void CDlgMenu02::MarkingOff()
 
 void CDlgMenu02::DispCenterMark()
 {
+#ifdef USE_VISION
 	if (pView->m_pVision[0])
 	{
 		pView->m_pVision[0]->DrawCross();
@@ -2329,6 +2390,7 @@ void CDlgMenu02::DispCenterMark()
 	{
 		pView->m_pVision[1]->DrawCross();
 	}
+#endif
 }
 
 void CDlgMenu02::DispAxisPos()
@@ -2430,6 +2492,42 @@ void CDlgMenu02::ChgModelDn()
 BOOL CDlgMenu02::PreTranslateMessage(MSG* pMsg) 
 {
 	// TODO: Add your specialized code here and/or call the base class
+#ifdef USE_VISION
+	if(pView->m_pVision[0] && pView->m_pVision[1] && pView->m_pMotion)
+	{
+		CString sMsg;
+		int nCamSzX, nCamSzY;
+		pView->m_pVision[0]->GetCameraSize(nCamSzX, nCamSzY);
+
+		double dResX, dResY;
+		double dCenterX[2] = { 323, 963 };
+		double dCenterY[2] = { 318, 318 };
+		double pPos[2];
+
+		if(pMsg->message == WM_LBUTTONDBLCLK && GetDlgItem(IDC_STC_VISION)->GetSafeHwnd() == pMsg->hwnd)
+		{
+			dResX = _tstof(pDoc->WorkingInfo.Vision[0].sResX);
+			dResY = _tstof(pDoc->WorkingInfo.Vision[0].sResY);
+			sMsg.Format(_T("%d,%d"), pMsg->pt.x, pMsg->pt.y);
+			pFrm->DispStatusBar(sMsg, 6);
+
+			double fLen, fVel, fAcc, fJerk;
+			fLen = 1.0 * sqrt(((pMsg->pt.x - dCenterX[0]) * dResX * (pMsg->pt.x - dCenterX[0]) * dResX) + ((pMsg->pt.y - dCenterY[0]) * dResY * (pMsg->pt.y - dCenterY[0]) * dResY));
+			if (fLen > 0.001)
+			{
+				pView->m_pMotion->GetSpeedProfile(TRAPEZOIDAL, AXIS_X0, fLen, fVel, fAcc, fJerk);
+
+				pPos[0] = pView->m_dEnc[AXIS_X0] + (1.0 * (pMsg->pt.x - dCenterX[0]) * dResX);
+				pPos[1] = pView->m_dEnc[AXIS_Y0] + (1.0 * (pMsg->pt.y - dCenterY[0]) * dResY);
+				if (!pView->m_pMotion->Move(MS_X0Y0, pPos, fVel, fAcc, fAcc))
+				{
+					if (!pView->m_pMotion->Move(MS_X0Y0, pPos, fVel, fAcc, fAcc))
+						AfxMessageBox(_T("Move X0Y0 Error..."));
+				}
+			}
+		}
+	}
+#endif
 	if (pMsg->message != WM_KEYDOWN)
 		return CDialog::PreTranslateMessage(pMsg);
 

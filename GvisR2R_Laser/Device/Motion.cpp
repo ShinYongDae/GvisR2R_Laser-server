@@ -97,6 +97,9 @@ CMotion::CMotion(CWnd* pParent)
 
 CMotion::~CMotion()
 {
+	MotionAbortAll();
+	Sleep(300);
+
 	FreeAll();
 }
 
@@ -1118,9 +1121,142 @@ BOOL CMotion::InitBoard()
 			return FALSE;
 		}
 	}
+	return InitNmcBoard();
 #endif
 	return TRUE;
 }
+
+
+BOOL CMotion::InitNmcBoard()
+{
+#ifdef USE_NMC
+	if (!m_pMotionCard)
+	{
+
+		m_pMotionCard = new CNmcDevice((CWnd *)this);
+
+		if (!m_pMotionCard)
+		{
+			//delete m_pMotionCard;
+			return FALSE;
+		}
+
+	}
+
+	if (m_pMotionCard)
+	{
+		m_pMotionCard->InitDevice(1); // 1 is Number Of NMMC Board.
+		Sleep(100);
+	}
+	else
+		return FALSE;
+
+	if (!m_pMotionCard->CheckNmcConnection())
+	{
+		AfxMessageBox(_T("이더캣 통신이 불안정합니다. 노드 끊김 감지, 이더캣 장치의 상태 및 케이블 결속 상태를 재확인하고 프로그램을 다시 실행하십시오. 프로그램이 종료됩니다"), MB_ICONSTOP | MB_SYSTEMMODAL | MB_SETFOREGROUND | MB_TOPMOST);
+		return FALSE;
+	}
+
+	if (CreateObject())
+	{
+		SetConfigure();
+		//WriteData(0x01 << DO_MC);
+		//Sleep(100);
+		m_pMotionCard->RestoreSwEmergency();	// -1: Fault , 1: Emergency Signal Off complete, 2: Previous Emergency Signal Off-state, 3: Normal
+	}
+#endif
+
+
+	return TRUE;
+}
+
+BOOL CMotion::CreateObject()
+{
+#ifdef USE_NMC
+	for (int nAxis = 0; nAxis < m_nTotAxis; nAxis++)
+	{
+		if (m_pMotionCard)
+			m_pMotionCard->CreateAxis(nAxis);
+	}
+#endif
+	return TRUE;
+}
+
+//BOOL CMotion::ReadBit(BYTE cBit, BOOL bInput)
+//{
+//	//return (m_pMotionCard->ReadBit(cBit, bInput));
+//#ifdef USE_NMC
+//	if (bInput)
+//	{
+//		return m_pMotionCard->ReadIn((long)cBit);
+//	}
+//	else
+//	{
+//		return m_pMotionCard->ReadOut((long)cBit);
+//	}
+//
+//	return FALSE;
+//#else
+//	return TRUE;
+//#endif
+//}
+
+//unsigned long CMotion::ReadAllBit(BOOL bInput)
+//{
+//	//return (m_pMotionCard->ReadAllBit(bInput));
+//
+//	long nData;
+//
+//#ifdef USE_NMC
+//
+//	if (bInput)
+//	{
+//		m_pMotionCard->In32(&nData);
+//		return ((unsigned long)nData);
+//	}
+//	else
+//	{
+//		nData = m_pMotionCard->ReadOut();
+//		return ((unsigned long)nData);
+//	}
+//
+//#endif
+//	return 0L;
+//}
+
+//void CMotion::WriteData(long lData)
+//{
+//#ifdef USE_NMC
+//	m_pMotionCard->Out32(lData);
+//#endif
+//}
+
+//void CMotion::WriteBit(BYTE cBit, BOOL bOn)
+//{
+//#ifdef USE_NMC
+//	m_pMotionCard->OutBit((long)cBit, bOn);
+//#endif
+//}
+
+void CMotion::SetConfigure()
+{
+#ifdef USE_NMC
+	if (!m_pMotionCard)
+		return;
+
+	m_pMotionCard->SetConfigure(m_nBoardId, m_nDevIdIoIn, m_nDevIdIoOut, m_nOffsetAxisID);
+	SetMotionParam();
+#endif
+}
+
+void CMotion::SetMotionParam()
+{
+#ifdef USE_NMC
+	if (m_pMotionCard)
+		m_pMotionCard->SetParam();
+#endif
+}
+
 
 BOOL CMotion::AmpReset(int nMsId)
 {
@@ -2024,4 +2160,19 @@ void CMotion::GetData(long *addressActPos1, long *addressActPos2, long *addressD
 	*addressActPos2 = (long)m_pMotionCard->GetActualPosition(AXIS_X1);
 #endif
 	*addressDifferenceStored = (lDiff = *addressActPos1 - *addressActPos2) > 0 ? lDiff : -lDiff;
+}
+void CMotion::MotionAbortAll()
+{
+	for (int nAxisId = 0; nAxisId < MAX_AXIS; nAxisId++)
+	{
+		MotionAbort(nAxisId);	// equalize Command position and Actual Position
+	}
+}
+
+BOOL CMotion::MotionAbort(int nMsId)
+{
+	if (nMsId >= MAX_AXIS)
+		return FALSE;
+
+	return Abort(nMsId);
 }

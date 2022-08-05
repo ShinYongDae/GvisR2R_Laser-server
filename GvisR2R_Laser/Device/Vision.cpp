@@ -74,7 +74,7 @@ CVision::CVision(int nIdx, MIL_ID MilSysId, HWND *hCtrl, CWnd* pParent /*=NULL*/
 
 	m_pMilDispPin = NULL;
 	m_pMilBufPin = NULL;
-	m_pMilDispAlign = NULL;
+// 	m_pMilDispAlign = NULL;
 	m_pMilBufAlign = NULL;
 	m_pMilPinOverlay = NULL;
 	m_pMilPinOverlayDelete = NULL;	
@@ -237,11 +237,11 @@ CVision::~CVision()
 		m_pMilBufAlign = NULL;
 	}
 
-	if(m_pMilDispAlign)
-	{
-		delete m_pMilDispAlign;
-		m_pMilDispAlign = NULL;
-	}
+	//if(m_pMilDispAlign)
+	//{
+	//	delete m_pMilDispAlign;
+	//	m_pMilDispAlign = NULL;
+	//}
 
 	// Temperary Buf for Pcs View
 // 	if(MilBufPcsTemp != M_NULL)
@@ -2510,8 +2510,10 @@ void CVision::LoadAlignBuf()
 	if (!MilAlignImgBuf[0])
 		return;
 
-	if(VicFileLoadFromMem(MilAlignImgBuf[0], pDoc->m_Master[0].m_pAlignImg[0], tdat))
+	if (pDoc->m_Master[0].m_pAlignImg[0])
 	{
+		if (VicFileLoadFromMem(MilAlignImgBuf[0], pDoc->m_Master[0].m_pAlignImg[0], tdat))
+		{
 
 		MbufChild2d(MilAlignImgBuf[0], (1024-ALIGN_IMG_DISP_SIZEX)/2, (1024-ALIGN_IMG_DISP_SIZEY)/2, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignCld);
 		MbufChild2d(MilBufAlignTemp[0], 0, 0, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignTempCld);
@@ -2530,13 +2532,16 @@ void CVision::LoadAlignBuf()
 			MbufFree(MilBufAlignCld);
 			MilBufAlignCld = M_NULL;
 		}
+		}
 	}
 
 	if (!MilAlignImgBuf[1])
 		return;
 
-	if(VicFileLoadFromMem(MilAlignImgBuf[1], pDoc->m_Master[0].m_pAlignImg[1], tdat))
+	if (pDoc->m_Master[0].m_pAlignImg[1])
 	{
+		if (VicFileLoadFromMem(MilAlignImgBuf[1], pDoc->m_Master[0].m_pAlignImg[1], tdat))
+		{
 
 		MbufChild2d(MilAlignImgBuf[1], (1024-ALIGN_IMG_DISP_SIZEX)/2, (1024-ALIGN_IMG_DISP_SIZEY)/2, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignCld);
 		MbufChild2d(MilBufAlignTemp[1], 0, 0, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignTempCld);
@@ -2555,13 +2560,16 @@ void CVision::LoadAlignBuf()
 			MbufFree(MilBufAlignCld);
 			MilBufAlignCld = M_NULL;
 		}
+		}
 	}
 
 	if (!MilAlignImgBuf[2])
 		return;
 
-	if (VicFileLoadFromMem(MilAlignImgBuf[2], pDoc->m_Master[0].m_pAlignImg[2], tdat))
+	if (pDoc->m_Master[0].m_pAlignImg[2])
 	{
+		if (VicFileLoadFromMem(MilAlignImgBuf[2], pDoc->m_Master[0].m_pAlignImg[2], tdat))
+		{
 
 		MbufChild2d(MilAlignImgBuf[2], (1024 - ALIGN_IMG_DISP_SIZEX) / 2, (1024 - ALIGN_IMG_DISP_SIZEY) / 2, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignCld);
 		MbufChild2d(MilBufAlignTemp[2], 0, 0, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignTempCld);
@@ -2580,11 +2588,14 @@ void CVision::LoadAlignBuf()
 			MbufFree(MilBufAlignCld);
 			MilBufAlignCld = M_NULL;
 		}
+		}
 	}
 
 	if (!MilAlignImgBuf[3])
 		return;
 
+	if (pDoc->m_Master[0].m_pAlignImg[3])
+	{
 	if (VicFileLoadFromMem(MilAlignImgBuf[3], pDoc->m_Master[0].m_pAlignImg[3], tdat))
 	{
 
@@ -2605,6 +2616,7 @@ void CVision::LoadAlignBuf()
 			MbufFree(MilBufAlignCld);
 			MilBufAlignCld = M_NULL;
 		}
+	}
 	}
 }
 
@@ -2901,6 +2913,14 @@ double CVision::CalcCameraPixelSize()
 	}
 #endif
 
+#ifdef USE_IRAYPLE
+	if (!pView->m_pMotion || !m_pIRayple)
+	{
+		dVal = 0.0;
+		return dVal;
+	}
+#endif
+
 	double pTgtPos[2], dCurrX, dCurrY;
 	pTgtPos[1] = pView->m_pMotion->m_dPinPosY[m_nIdx];
 	pTgtPos[0] = pView->m_pMotion->m_dPinPosX[m_nIdx];
@@ -2913,8 +2933,7 @@ double CVision::CalcCameraPixelSize()
 		{
 			//if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, 0.3, ABS, WAIT))
 			if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, 0.3, ABS, WAIT))
-				pView->MsgBox(_T("Move XY Error..."));
-				//AfxMessageBox(_T("Move XY Error..."));
+				AfxMessageBox(_T("Move XY Error..."));
 		}
 		else
 		{
@@ -2925,8 +2944,7 @@ double CVision::CalcCameraPixelSize()
 				pView->m_pMotion->GetSpeedProfile(TRAPEZOIDAL, AXIS_X0, fLen, fVel, fAcc, fJerk);
 				//if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, fVel, fAcc, fAcc))
 				if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, fVel, fAcc, fAcc))
-					pView->MsgBox(_T("Move XY Error..."));
-					//AfxMessageBox(_T("Move XY Error..."));
+					AfxMessageBox(_T("Move XY Error..."));
 			}
 		}
 	}
@@ -2964,6 +2982,10 @@ double CVision::CalcCameraPixelSize()
 
 #ifdef USE_CREVIS
 	MilGrabImg = m_pMil->AllocBuf((long)m_pCrevis[0]->GetImgWidth(), (long)m_pCrevis[0]->GetImgHeight(), 8L+M_UNSIGNED, M_IMAGE+M_DISP+M_PROC);
+#endif
+
+#ifdef USE_IRAYPLE
+	MilGrabImg = m_pMil->AllocBuf((long)m_pIRayple->GetImgWidth(), (long)m_pIRayple->GetImgHeight(), 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
 #endif
 
 
@@ -3006,6 +3028,22 @@ double CVision::CalcCameraPixelSize()
 	int nSizeY = m_pCrevis[0]->GetImgHeight();
 	MilGrabImg->ChildBuffer2d(nSizeX*3/8, nSizeY*3/8, nSizeX*2/8, nSizeY*2/8);
 
+#endif
+
+#ifdef USE_IRAYPLE
+	// 	if(m_pIds->OneshotGrab(MilGrabImg, GRAB_COLOR_GREEN) == FALSE)
+	if (m_pIRayple->OneshotGrab() == FALSE || m_pMil->OneshotGrab(MilGrabImg->m_MilImage, GRAB_COLOR_COLOR) == FALSE)
+	{
+		if (MilGrabImg)
+			delete MilGrabImg;
+
+		pView->MsgBox(_T("Image Grab Fail !!"));
+		//AfxMessageBox(_T("Image Grab Fail !!"));
+		dVal = 0.0;
+		return dVal;
+	}
+
+	MilGrabImg->ChildBuffer2d(m_pIRayple->GetImgWidth() * 3 / 8, m_pIRayple->GetImgHeight() * 3 / 8, m_pIRayple->GetImgWidth() * 2 / 8, m_pIRayple->GetImgHeight() * 2 / 8);
 #endif
 
 //	m_pMil->PatternMatchingAlloc(MilGrabImg->m_MilImageChild);
@@ -3054,10 +3092,27 @@ double CVision::CalcCameraPixelSize()
 		Sleep(100);
 #endif
 
+#ifdef USE_IRAYPLE
+		//if(m_pIds->OneshotGrab(MilGrabImg, GRAB_COLOR_GREEN) == FALSE)
+		if (m_pIRayple->OneshotGrab() == FALSE || m_pMil->OneshotGrab(MilGrabImg->m_MilImage, GRAB_COLOR_COLOR) == FALSE)
+		{
+			if (MilGrabImg)
+				delete MilGrabImg;
+			//m_pMil->GmfFree();
+			m_pMil->PatternMatchingFree();
+
+			pView->MsgBox(_T("Image Grab Fail !!"));
+			//AfxMessageBox(_T("Image Grab Fail !!"));
+			dVal = 0.0;
+			return dVal;
+		}
+#endif
+
 #ifdef _DEBUG
 // 		// Grab Image Save
 // 		sprintf(szFileName, "C:\\CalcCameraPixelSize-target0.tif");
 // 		MilGrabImg->BufferSave(szFileName);
+		MbufSave(_T("C:\\CalcCameraPixelSize-target0.tif"), MilGrabImg->m_MilImage);
 #endif
 
 		//m_pMil->GmfFind(MilGrabImg->m_MilImage);
@@ -3098,8 +3153,7 @@ double CVision::CalcCameraPixelSize()
 		{
 			//if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, 0.3, ABS, WAIT))
 			if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, 0.3, ABS, WAIT))
-				pView->MsgBox(_T("Move XY Error..."));
-				//AfxMessageBox(_T("Move XY Error..."));
+				AfxMessageBox(_T("Move XY Error..."));
 		}
 		else
 		{
@@ -3110,8 +3164,7 @@ double CVision::CalcCameraPixelSize()
 				pView->m_pMotion->GetSpeedProfile(TRAPEZOIDAL, AXIS_X0, fLen, fVel, fAcc, fJerk);
 				//if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, fVel/10.0, fAcc/10.0, fAcc/10.0))
 				if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, fVel/10.0, fAcc/10.0, fAcc/10.0))
-					pView->MsgBox(_T("Move XY Error..."));
-					//AfxMessageBox(_T("Move XY Error..."));
+					AfxMessageBox(_T("Move XY Error..."));
 			}
 		}
 	}
@@ -3183,10 +3236,27 @@ double CVision::CalcCameraPixelSize()
 		Sleep(100);
 #endif
 
+#ifdef USE_IRAYPLE
+		//if(m_pIds->OneshotGrab(MilGrabImg, GRAB_COLOR_GREEN) == FALSE)
+		if (m_pIRayple->OneshotGrab() == FALSE || m_pMil->OneshotGrab(MilGrabImg->m_MilImage, GRAB_COLOR_COLOR) == FALSE)
+		{
+			if (MilGrabImg)
+				delete MilGrabImg;
+			m_pMil->PatternMatchingFree();
+
+			pView->MsgBox(_T("Image Grab Fail !!"));
+			//AfxMessageBox(_T("Image Grab Fail !!"));
+			dVal = 0.0;
+			return dVal;
+		}
+#endif
+
+
 #ifdef _DEBUG
 // 		// Grab Image Save
 // 		sprintf(szFileName, "C:\\CalcCameraPixelSize-target1.tif");
 // 		MilGrabImg->BufferSave(szFileName);
+		MbufSave(_T("C:\\CalcCameraPixelSize-target1.tif"), MilGrabImg->m_MilImage);
 #endif
 
 		//m_pMil->GmfFind(MilGrabImg->m_MilImage);
@@ -3229,6 +3299,12 @@ double CVision::CalcCameraPixelSize()
 #endif
 
 #ifdef USE_CREVIS
+	dPixelSizeX = fptMoveDistance.x / fabs(fptCameraPos[1].x-fptCameraPos[0].x);
+	dPixelSizeY = fptMoveDistance.y / fabs(fptCameraPos[1].y-fptCameraPos[0].y);
+	//m_pIds->CalcPixelSize(fabs(fptCameraPos[1].x-fptCameraPos[0].x), fabs(fptCameraPos[1].y-fptCameraPos[0].y), fptMoveDistance.x, fptMoveDistance.y);
+#endif
+
+#ifdef USE_IRAYPLE
 	dPixelSizeX = fptMoveDistance.x / fabs(fptCameraPos[1].x-fptCameraPos[0].x);
 	dPixelSizeY = fptMoveDistance.y / fabs(fptCameraPos[1].y-fptCameraPos[0].y);
 	//m_pIds->CalcPixelSize(fabs(fptCameraPos[1].x-fptCameraPos[0].x), fabs(fptCameraPos[1].y-fptCameraPos[0].y), fptMoveDistance.x, fptMoveDistance.y);
@@ -3321,7 +3397,8 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 		//Sleep(30);
 		//StopLive();
 		//Sleep(100);
-
+		if(m_pIRayple->OneshotGrab())
+		{ 
 		if (m_pMil->OneshotGrab(MilGrabImg->m_MilImage, GRAB_COLOR_COLOR) == FALSE)
 		{
 			m_pMil->PatternMatchingFree();
@@ -3343,6 +3420,7 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 			//Sleep(30);
 
 			return FALSE;
+		}
 		}
 
 		//StartLive();
@@ -3821,23 +3899,26 @@ BOOL CVision::Grab(int nPos, BOOL bDraw)
 	dPosY=0.0;
 
 #ifdef USE_IRAYPLE
-	GrabIRayple(nPos, bDraw);
+	return GrabIRayple(nPos, bDraw);
 #endif
 
 #ifdef USE_IDS
-	GrabIds(nPos, bDraw);
+	return GrabIds(nPos, bDraw);
 #endif
 
 #ifdef USE_CREVIS
-	GrabCrevis(nPos, bDraw);
+	return GrabCrevis(nPos, bDraw);
 #endif
 	
 	return TRUE;
 }
 
-
 void CVision::GetCameraSize(int &nX, int &nY)
 {
+#ifdef USE_IRAYPLE
+	return GetIRaypleSize(nX, nY);
+#endif
+
 #ifdef USE_IDS
 	if(m_pIds)
 	{
@@ -3849,6 +3930,17 @@ void CVision::GetCameraSize(int &nX, int &nY)
 	if(m_pCrevis)
 	{
 		GetCrevisSize(nX, nY);
+	}
+#endif
+}
+
+void CVision::GetIRaypleSize(int &nX, int &nY)
+{
+#ifdef USE_IRAYPLE
+	if(m_pIRayple)
+	{
+		nX = m_pIRayple->GetImgWidth();
+		nY = m_pIRayple->GetImgHeight();
 	}
 #endif
 }
@@ -3942,6 +4034,57 @@ BOOL CVision::ClearPinCenterMarkArea(int nCenterX, int nCenterY, int nLineLength
 	m_nPinCtrY = nCenterY;
 	m_nPinCrsLen = nLineLength;
 	
+	return TRUE;
+}
+
+BOOL CVision::SaveMkImg(CString sPath)
+{
+#ifdef USE_IRAYPLE
+	m_cs.Lock();
+	CLibMilBuf *MilGrabImg = NULL;
+	if (m_pMil)
+		MilGrabImg = m_pMil->AllocBuf((long)m_pIRayple->GetImgWidth(), (long)m_pIRayple->GetImgHeight(), 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
+
+	if (m_pIRayple->OneshotGrab() == FALSE)
+	{
+		//pView->MsgBox(_T("Image Grab Fail !!"));
+		AfxMessageBox(_T("m_pIRayple->OneshotGrab() Fail !!"));
+		if (MilGrabImg)
+			delete MilGrabImg;
+		m_cs.Unlock();
+		return FALSE;
+	}
+	else if(m_pMil->OneshotGrab(MilGrabImg->m_MilImage, GRAB_COLOR_COLOR) == FALSE)
+	{
+		//pView->MsgBox(_T("Image Grab Fail !!"));
+		AfxMessageBox(_T("m_pMil->OneshotGrab Fail !!"));
+		if (MilGrabImg)
+			delete MilGrabImg;
+		m_cs.Unlock();
+		return FALSE;
+	}
+
+	//if (m_pMil)
+	//	MilOriginDisp = m_pMil->AllocBuf(PIN_IMG_DISP_SIZEX, PIN_IMG_DISP_SIZEY, 1L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
+	//MimResize(MilPinImgBuf, MilOriginDisp->m_MilImage, (double)PIN_IMG_DISP_SIZEX / 1024.0, (double)PIN_IMG_DISP_SIZEY / 1024.0, M_DEFAULT);
+
+	if(MilGrabImg && MilGrabImg->m_MilImage)
+		MbufSave(sPath, MilGrabImg->m_MilImage);
+	else
+	{
+		AfxMessageBox(_T("MbufSave() Fail !!"));
+		if (MilGrabImg)
+			delete MilGrabImg;
+		m_cs.Unlock();
+		return FALSE;
+	}
+	//MilGrabImg->ChildBuffer2d(m_pIRayple->GetImgWidth() / 2 - 100, m_pIRayple->GetImgHeight() / 2 - 100, 200, 200);
+	//MbufSave(sPath, MilGrabImg->m_MilImageChild);
+
+	if (MilGrabImg)
+		delete MilGrabImg;
+	m_cs.Unlock();
+#endif
 	return TRUE;
 }
 

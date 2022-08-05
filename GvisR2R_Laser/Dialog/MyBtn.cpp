@@ -294,6 +294,7 @@ BEGIN_MESSAGE_MAP(CMyBtn, CButton)
 	ON_WM_LBUTTONUP()
 	ON_WM_DRAWITEM()
 	//}}AFX_MSG_MAP
+	ON_WM_LBUTTONDBLCLK()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////

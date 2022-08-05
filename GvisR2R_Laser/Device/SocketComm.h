@@ -120,7 +120,7 @@ typedef std::list<SockAddrIn> CSockAddrList;
 
 class CSocketComm
 {
-	BOOL m_bConnected;	// Connection is done.
+	//BOOL m_bConnected;	// Connection is done.
 	CString m_strLastError;
 	int m_nServer;
 
@@ -171,6 +171,7 @@ public:
 protected:
 	HANDLE		m_hComm;		// Serial Comm handle
 	HANDLE		m_hThread;		// Thread Comm handle
+	BOOL		m_bConnected;	// Connection is done.
 
 protected:
 

@@ -51,6 +51,7 @@ class CDlgMenu01 : public CDialog
 	BOOL m_bWinkMk[2]; // [nCam]
 	BOOL m_bTIM_WINK_MK_L, m_bTIM_WINK_MK_R;
 	BOOL m_bLowPartialSpd;
+	int m_nSerialDispMkInfo;
 
 	void LoadImg();
 	void DelImg();

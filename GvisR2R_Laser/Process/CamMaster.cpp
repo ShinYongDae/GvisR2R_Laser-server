@@ -696,11 +696,11 @@ BOOL CCamMaster::LoadStripPieceRegion_Binary()	//20121120-ndy for PairPanel
 
 	file.Read((void *)&PieceRgnNum, sizeof(int));
 	file.Read((void *)&m_nCornerNum, sizeof(int));
-	file.Read((void *)&nDummy, sizeof(int));	// reserved
-	file.Read((void *)&nDummy, sizeof(int));	// reserved
-	file.Read((void *)&nDummy, sizeof(int));	// reserved
-	file.Read((void *)&nDummy, sizeof(int));	// reserved
-	file.Read((void *)&nDummy, sizeof(int));	// reserved
+	file.Read((void *)&m_nDummy[0], sizeof(int));	// reserved
+	file.Read((void *)&m_nDummy[1], sizeof(int));	// reserved
+	file.Read((void *)&m_nDummy[2], sizeof(int));	// reserved
+	file.Read((void *)&m_nDummy[3], sizeof(int));	// reserved
+	file.Read((void *)&m_nDummy[4], sizeof(int));	// reserved
 
 												// Init. Buffers
 	for (i = 0; i < FrameRgnNum; i++)
@@ -755,25 +755,25 @@ BOOL CCamMaster::LoadStripPieceRegion_Binary()	//20121120-ndy for PairPanel
 	for (j = 0; j < FrameRgnNum; j++)
 	{
 		// 4. Set Strip Info.
-		file.Read((void *)&nDummy, sizeof(int));	// Strip ID
-		file.Read((void *)&nDummy, sizeof(int));	// reserved
-		file.Read((void *)&nDummy, sizeof(int));	// reserved
+		file.Read((void *)&FrameRgnID[j].nId, sizeof(int));								// Strip ID
 
-		//file.Read((void *)&FrameRgnID[j].Row, sizeof(int));	// reserved
-		//file.Read((void *)&FrameRgnID[j].Col, sizeof(int));	// reserved
+		//file.Read((void *)&nDummy, sizeof(int));			// reserved
+		//file.Read((void *)&nDummy, sizeof(int));			// reserved
+		file.Read((void *)&FrameRgnID[j].Row, sizeof(int));						// Row
+		file.Read((void *)&FrameRgnID[j].Col, sizeof(int));						// Col
 
-		file.Read((void *)&nDummy, sizeof(int));	// reserved
-		file.Read((void *)&(FrameRgnPix[j]), sizeof(REGIONS_FRAME));
+		file.Read((void *)&m_nDummy[5], sizeof(int));							// Rotation Info (0 : 0  1 : 90  2 : 180  3 : 270 [Degree])
+		file.Read((void *)&(FrameRgnPix[j]), sizeof(REGIONS_FRAME));			// (int * 6)
 
 		// 5. Set Piece Info.
-		file.Read((void *)&nPieceNum, sizeof(int));
+		file.Read((void *)&m_nPieceNum[j], sizeof(int));
 
-		for (i = 0; i < nPieceNum; i++)
+		for (i = 0; i < m_nPieceNum[j]; i++)
 		{
-			file.Read((void *)&nDummy, sizeof(int));	// Piece ID
+			file.Read((void *)&PieceRgnPix[i + nPieceCount].nId, sizeof(int));	// Piece ID
 			file.Read((void *)&PieceRgnPix[i + nPieceCount].Row, sizeof(int));	// Row
 			file.Read((void *)&PieceRgnPix[i + nPieceCount].Col, sizeof(int));	// Col
-			file.Read((void *)&nDummy, sizeof(int));	// reserved
+			file.Read((void *)&m_nDummy[6 + i + nPieceCount], sizeof(int));							// Rotation Info (0 : 0  1 : 90  2 : 180  3 : 270 [Degree])
 
 			////////////////////////////////////////////////////////////////////////////////////////////////
 			// Set Piece position
@@ -794,7 +794,7 @@ BOOL CCamMaster::LoadStripPieceRegion_Binary()	//20121120-ndy for PairPanel
 				PieceRgnPix[i + nPieceCount].iEndY = max(PieceRgnPix[i + nPieceCount].iEndY, PolygonPoints[i + nPieceCount][k].y);
 			}
 		}
-		nPieceCount += nPieceNum;
+		nPieceCount += m_nPieceNum[j];
 
 	}// for(j = 0; j < FrameRgnNum; j++)
 
@@ -866,6 +866,127 @@ BOOL CCamMaster::LoadStripPieceRegion_Binary()	//20121120-ndy for PairPanel
 
 	file.Close();
 
+
+	return TRUE;
+}
+
+BOOL CCamMaster::WriteStripPieceRegion_Text(CString sBasePath, CString sLot)
+{
+	if (!pDoc->WorkingInfo.System.bStripPcsRgnBin)
+		return FALSE;
+
+	CString sModel = m_sModel;
+	CString sLayer = m_sLayer;
+	CString sMsg = _T("");
+	CFileFind finder;
+	CString sPath;
+
+	// Make Directory...
+	sPath.Format(_T("%s"), sBasePath);
+	int pos = sPath.ReverseFind('\\');
+	if (pos != -1)
+		sPath.Delete(pos, sPath.GetLength() - pos);
+
+	if (!pDoc->DirectoryExists(sPath))
+		CreateDirectory(sPath, NULL);
+
+	if (sModel.IsEmpty() || sLot.IsEmpty() || sLayer.IsEmpty())
+	{
+		sMsg.Format(_T("모델이나 로뜨 또는 레이어명이 없습니다."));
+		AfxMessageBox(sMsg);
+		return FALSE;
+	}
+
+	sPath.Format(_T("%s%s"), sBasePath, sModel);
+	if (!pDoc->DirectoryExists(sPath))
+		CreateDirectory(sPath, NULL);
+
+	sPath.Format(_T("%s%s\\%s"), sBasePath, sModel, sLot);
+
+	if (!pDoc->DirectoryExists(sPath))
+		CreateDirectory(sPath, NULL);
+
+	sPath.Format(_T("%s%s\\%s\\%s"), sBasePath, sModel, sLot, sLayer);
+	if (!pDoc->DirectoryExists(sPath))
+		CreateDirectory(sPath, NULL);
+
+	// Write WriteStripPieceRegion_Text...
+	sPath.Format(_T("%s%s\\%s\\%s\\strpcs.txt"), sBasePath, sModel, sLot, sLayer);
+
+	int		i, j, k;
+	CString strTitle, strSubTitle, sData;
+
+	sData.Format(_T("%d"), FrameRgnNum);
+	WritePrivateProfileString(_T("STRIPFRAME INFO"), _T("NumOfStripFrame"), sData, sPath);
+	sData.Format(_T("%d"), PieceRgnNum);
+	WritePrivateProfileString(_T("STRIPFRAME INFO"), _T("NumOfTotalPiece"), sData, sPath);
+	sData.Format(_T("%d"), m_nCornerNum);
+	WritePrivateProfileString(_T("STRIPFRAME INFO"), _T("NumOfPieceCorner"), sData, sPath);
+	sData.Format(_T("%d"), m_nDummy[0]);
+	WritePrivateProfileString(_T("STRIPFRAME INFO"), _T("nDummy[0]"), sData, sPath);
+	sData.Format(_T("%d"), m_nDummy[1]);
+	WritePrivateProfileString(_T("STRIPFRAME INFO"), _T("nDummy[1]"), sData, sPath);
+	sData.Format(_T("%d"), m_nDummy[2]);
+	WritePrivateProfileString(_T("STRIPFRAME INFO"), _T("nDummy[2]"), sData, sPath);
+	sData.Format(_T("%d"), m_nDummy[3]);
+	WritePrivateProfileString(_T("STRIPFRAME INFO"), _T("nDummy[3]"), sData, sPath);
+	sData.Format(_T("%d"), m_nDummy[4]);
+	WritePrivateProfileString(_T("STRIPFRAME INFO"), _T("nDummy[4]"), sData, sPath);
+
+	int nPieceCount = 0;
+	for (j = 0; j < FrameRgnNum; j++)
+	{
+		// 4. Set Strip Info.
+		strTitle.Format(_T("STRIPFRAME%d"), j);
+
+		sData.Format(_T("%d"), FrameRgnID[j].nId);
+		WritePrivateProfileString(strTitle, _T("StripID"), sData, sPath);
+		sData.Format(_T("%d"), FrameRgnID[j].Row);
+		WritePrivateProfileString(strTitle, _T("StripRow"), sData, sPath);
+		sData.Format(_T("%d"), FrameRgnID[j].Col);
+		WritePrivateProfileString(strTitle, _T("StripCol"), sData, sPath);
+		sData.Format(_T("%d"), m_nDummy[5]);
+		WritePrivateProfileString(strTitle, _T("StripRotation"), sData, sPath); // Rotation Info (0 : 0  1 : 90  2 : 180  3 : 270 [Degree])
+		sData.Format(_T("%d, %d, %d, %d"), FrameRgnPix[j].iStartX, FrameRgnPix[j].iStartY, FrameRgnPix[j].iEndX, FrameRgnPix[j].iEndY);
+		WritePrivateProfileString(strTitle, _T("StripRect"), sData, sPath);
+		sData.Format(_T("%d"), FrameRgnPix[j].FMirror);
+		WritePrivateProfileString(strTitle, _T("StripMirror"), sData, sPath);	//0 : 원본 1 : 상하미러  2 : 좌우미러.
+		sData.Format(_T("%d"), FrameRgnPix[j].FRotate);
+		WritePrivateProfileString(strTitle, _T("StripRotate"), sData, sPath);	//0 : 0도  1 : 90도  2 : 180도  3 : 270도
+
+		// 5. Set Piece Info.
+		sData.Format(_T("%d"), m_nPieceNum[j]);
+		WritePrivateProfileString(strTitle, _T("NumOfPiece"), sData, sPath);
+		for (i = 0; i < m_nPieceNum[j]; i++)
+		{
+			strSubTitle.Format(_T("Piece%dID"), i);
+			sData.Format(_T("%d"), PieceRgnPix[i + nPieceCount].nId);
+			WritePrivateProfileString(strTitle, strSubTitle, sData, sPath);
+			strSubTitle.Format(_T("Piece%dRow"), i);
+			sData.Format(_T("%d"), PieceRgnPix[i + nPieceCount].Row);
+			WritePrivateProfileString(strTitle, strSubTitle, sData, sPath);
+			strSubTitle.Format(_T("Piece%dCol"), i);
+			sData.Format(_T("%d"), PieceRgnPix[i + nPieceCount].Col);
+			WritePrivateProfileString(strTitle, strSubTitle, sData, sPath);
+			strSubTitle.Format(_T("Piece%dDummy"), i);
+			sData.Format(_T("%d"), m_nDummy[6 + i + nPieceCount]);
+			WritePrivateProfileString(strTitle, strSubTitle, sData, sPath);	//0 : 0도  1 : 90도  2 : 180도  3 : 270도
+
+			// Set Piece position
+			for (k = 0; k < m_nCornerNum; k++)
+			{
+				strSubTitle.Format(_T("Piece%dPoint%d"), i, k);
+				sData.Format(_T("%d, %d"), PolygonPoints[i + nPieceCount][k].x, PolygonPoints[i + nPieceCount][k].y);
+				WritePrivateProfileString(strTitle, strSubTitle, sData, sPath);
+			}
+			strSubTitle.Format(_T("Piece%dRotate"), i);
+			sData.Format(_T("%d"), PieceRgnPix[i + nPieceCount].FRotate);
+			WritePrivateProfileString(strTitle, strSubTitle, sData, sPath);
+
+		}
+		nPieceCount += m_nPieceNum[j];
+
+	}// for(j = 0; j < FrameRgnNum; j++)
 
 	return TRUE;
 }

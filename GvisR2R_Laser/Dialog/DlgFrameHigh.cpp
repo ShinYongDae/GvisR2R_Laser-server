@@ -417,7 +417,7 @@ void CDlgFrameHigh::ChkMenu03()
 void CDlgFrameHigh::OnChkMenu04() 
 {
 	// TODO: Add your control notification handler code here
-	int nRtn = pView->MyPassword(_T("\r\n            비밀번호를 입력하세요...."));
+	int nRtn = pView->MyPassword(_T("\r\n           비밀번호를 입력하세요..."));
 	if(nRtn)
 	{
 		if(myChkMenu04.GetCheck())

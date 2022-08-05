@@ -30,7 +30,7 @@ class CDlgMenu05 : public CDialog
 
 	CMyStatic myStcLot, myStcSerialSt, myStcSerialEd, myStcFromTo, myStcProc;
 	CString m_sEditRst;//, m_sRmapPath; 
-	int m_nSerialSt, m_nSerialEd, m_nMarkedShot;
+	int m_nSerialSt, m_nSerialEd, m_nMarkedShot, m_nCompletedShot;
 	int m_nNodeX, m_nNodeY;
 
 	CDlgUtil01 *m_pDlgUtil01;

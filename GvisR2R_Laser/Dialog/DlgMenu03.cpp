@@ -219,6 +219,8 @@ void CDlgMenu03::LoadImg()
 		case 73:	// 정회전-Engraving
 		case 74:	// 역회전-Engraving
 		case 83:	// TorqueMotor-Engraving
+		case 85:	// 초음파세정기-Engrave
+		case 86:	// 초음파세정기-AOI_DN
 			myBtn[i].LoadBkImage(IMG_CIR_GRN_OFF_DlgMenu03, BTN_IMG_UP);
 			myBtn[i].LoadBkImage(IMG_CIR_GRN_ON_DlgMenu03, BTN_IMG_DN);
 			break;
@@ -335,8 +337,8 @@ BOOL CDlgMenu03::OnInitDialog()
 	//GetDlgItem(IDC_STC_12_64)->ShowWindow(SW_HIDE);
 	//GetDlgItem(IDC_CHK_81)->ShowWindow(SW_HIDE);	// LaserPoint-Engraving
 
-//	pView->SetSynqIO();
-// 	SetJogSpd(m_nFdSpd);
+	//pView->SetSynqIO();
+	//SetJogSpd(m_nFdSpd);
 
 
 	
@@ -389,102 +391,103 @@ void CDlgMenu03::InitGroup()
 void CDlgMenu03::InitBtn()
 {
 	// Main
-	myBtn[0].SubclassDlgItem(IDC_CHK_0, this);
+	myBtn[0].SubclassDlgItem(IDC_CHK_0, this);			// Run
 	myBtn[0].SetHwnd(this->GetSafeHwnd(), IDC_CHK_0);
 	myBtn[0].SetBoarder(FALSE);
-// 	myBtn[0].SetBtnType(BTN_TYPE_CHECK);
-	myBtn[0].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[34].SubclassDlgItem(IDC_CHK_34, this);
+	myBtn[34].SubclassDlgItem(IDC_CHK_34, this);		// 운전준비
 	myBtn[34].SetHwnd(this->GetSafeHwnd(), IDC_CHK_34);
 	myBtn[34].SetBoarder(FALSE);
-// 	myBtn[34].SetBtnType(BTN_TYPE_CHECK);
-	myBtn[34].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[33].SubclassDlgItem(IDC_CHK_33, this);
+	myBtn[33].SubclassDlgItem(IDC_CHK_33, this);		// Stop
 	myBtn[33].SetHwnd(this->GetSafeHwnd(), IDC_CHK_33);
 	myBtn[33].SetBoarder(FALSE);
-// 	myBtn[33].SetBtnType(BTN_TYPE_CHECK);
-	myBtn[33].SetBtnType(BTN_TYPE_DEFAULT);
-
-	myBtn[1].SubclassDlgItem(IDC_CHK_1, this);
+	myBtn[1].SubclassDlgItem(IDC_CHK_1, this);			// Reset
 	myBtn[1].SetHwnd(this->GetSafeHwnd(), IDC_CHK_1);
 	myBtn[1].SetBoarder(FALSE);
-// 	myBtn[1].SetBtnType(BTN_TYPE_CHECK);
-	myBtn[1].SetBtnType(BTN_TYPE_DEFAULT);
 
 	// Torque Motor
-	myBtn[2].SubclassDlgItem(IDC_CHK_2, this);
+	myBtn[2].SubclassDlgItem(IDC_CHK_2, this);			// 펀칭부
 	myBtn[2].SetHwnd(this->GetSafeHwnd(), IDC_CHK_2);
 	myBtn[2].SetBoarder(FALSE);
-// 	myBtn[2].SetBtnType(BTN_TYPE_CHECK);
-	myBtn[2].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[3].SubclassDlgItem(IDC_CHK_3, this);
+	myBtn[3].SubclassDlgItem(IDC_CHK_3, this);			// 검사부
 	myBtn[3].SetHwnd(this->GetSafeHwnd(), IDC_CHK_3);
 	myBtn[3].SetBoarder(FALSE);
-// 	myBtn[3].SetBtnType(BTN_TYPE_CHECK);
-	myBtn[3].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[83].SubclassDlgItem(IDC_CHK_84, this);
+	myBtn[83].SubclassDlgItem(IDC_CHK_84, this);		// 각인부
 	myBtn[83].SetHwnd(this->GetSafeHwnd(), IDC_CHK_84);
 	myBtn[83].SetBoarder(FALSE);
-// 	myBtn[83].SetBtnType(BTN_TYPE_CHECK);
-	myBtn[83].SetBtnType(BTN_TYPE_DEFAULT);
+
+	// 세정기
+	myBtn[85].SubclassDlgItem(IDC_CHK_87, this);		// 세정기 - 각인부
+	myBtn[85].SetHwnd(this->GetSafeHwnd(), IDC_CHK_87);
+	myBtn[85].SetBoarder(FALSE);
+
+	myBtn[86].SubclassDlgItem(IDC_CHK_88, this);		// 세정기 - AOI 하면
+	myBtn[86].SetHwnd(this->GetSafeHwnd(), IDC_CHK_88);
+	myBtn[86].SetBoarder(FALSE);
+
+	// Induction Motor
+	myBtn[68].SubclassDlgItem(IDC_CHK_68, this);		// Induction Motor - Recoiler\r역방향 ON
+	myBtn[68].SetHwnd(this->GetSafeHwnd(), IDC_CHK_68);
+	myBtn[68].SetBoarder(FALSE);
+
+	myBtn[69].SubclassDlgItem(IDC_CHK_69, this);		// Induction Motor - Uncoiler\r역방향 ON
+	myBtn[69].SetHwnd(this->GetSafeHwnd(), IDC_CHK_69);
+	myBtn[69].SetBoarder(FALSE);
+
+	// Core 150mm
+	myBtn[70].SubclassDlgItem(IDC_CHK_70, this);		// Core 150mm - Recoiler
+	myBtn[70].SetHwnd(this->GetSafeHwnd(), IDC_CHK_70);
+	myBtn[70].SetBoarder(FALSE);
+
+	myBtn[71].SubclassDlgItem(IDC_CHK_71, this);		// Core 150mm - Uncoiler
+	myBtn[71].SetHwnd(this->GetSafeHwnd(), IDC_CHK_71);
+	myBtn[71].SetBoarder(FALSE);
 
 	// Recoiler
-	myBtn[4].SubclassDlgItem(IDC_CHK_4, this);
+	myBtn[4].SubclassDlgItem(IDC_CHK_4, this);			// 연동선택
 	myBtn[4].SetHwnd(this->GetSafeHwnd(), IDC_CHK_4);
 	myBtn[4].SetBoarder(FALSE);
-// 	myBtn[4].SetBtnType(BTN_TYPE_CHECK);
-	myBtn[4].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[5].SubclassDlgItem(IDC_CHK_5, this);
+	myBtn[5].SubclassDlgItem(IDC_CHK_5, this);			// ◀정회전
 	myBtn[5].SetHwnd(this->GetSafeHwnd(), IDC_CHK_5);
 	myBtn[5].SetBoarder(FALSE);
-	myBtn[5].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[6].SubclassDlgItem(IDC_CHK_6, this);
+	myBtn[6].SubclassDlgItem(IDC_CHK_6, this);			// 역회전▶
 	myBtn[6].SetHwnd(this->GetSafeHwnd(), IDC_CHK_6);
 	myBtn[6].SetBoarder(FALSE);
-	myBtn[6].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[41].SubclassDlgItem(IDC_CHK_41, this);
+	myBtn[41].SubclassDlgItem(IDC_CHK_41, this);		// 제품척\r클램프
 	myBtn[41].SetHwnd(this->GetSafeHwnd(), IDC_CHK_41);
 	myBtn[41].SetBoarder(FALSE);
-	myBtn[41].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[42].SubclassDlgItem(IDC_CHK_42, this);
+	myBtn[42].SubclassDlgItem(IDC_CHK_42, this);		// 제품댄서롤\r상승/하강
 	myBtn[42].SetHwnd(this->GetSafeHwnd(), IDC_CHK_42);
 	myBtn[42].SetBoarder(FALSE);
-	myBtn[42].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[43].SubclassDlgItem(IDC_CHK_43, this);
+	myBtn[43].SubclassDlgItem(IDC_CHK_43, this);		// 제품이음매(좌)\r상승/하강
 	myBtn[43].SetHwnd(this->GetSafeHwnd(), IDC_CHK_43);
 	myBtn[43].SetBoarder(FALSE);
-	myBtn[43].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[7].SubclassDlgItem(IDC_CHK_7, this);
+	myBtn[7].SubclassDlgItem(IDC_CHK_7, this);			// 제품이음매(우)\r상승/하강
 	myBtn[7].SetHwnd(this->GetSafeHwnd(), IDC_CHK_7);
 	myBtn[7].SetBoarder(FALSE);
-	myBtn[7].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[8].SubclassDlgItem(IDC_CHK_8, this);
+	myBtn[8].SubclassDlgItem(IDC_CHK_8, this);			// 제품이음매\r진공
 	myBtn[8].SetHwnd(this->GetSafeHwnd(), IDC_CHK_8);
 	myBtn[8].SetBoarder(FALSE);
-	myBtn[8].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[44].SubclassDlgItem(IDC_CHK_44, this);
+	myBtn[44].SubclassDlgItem(IDC_CHK_44, this);		// 간지 척\r클램프
 	myBtn[44].SetHwnd(this->GetSafeHwnd(), IDC_CHK_44);
 	myBtn[44].SetBoarder(FALSE);
-	myBtn[44].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[45].SubclassDlgItem(IDC_CHK_45, this);
+	myBtn[45].SubclassDlgItem(IDC_CHK_45, this);		// 간지 휠\r◀정회전
 	myBtn[45].SetHwnd(this->GetSafeHwnd(), IDC_CHK_45);
 	myBtn[45].SetBoarder(FALSE);
-	myBtn[45].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[46].SubclassDlgItem(IDC_CHK_46, this);
+	myBtn[46].SubclassDlgItem(IDC_CHK_46, this);		// 간지 휠\r역회전▶
 	myBtn[46].SetHwnd(this->GetSafeHwnd(), IDC_CHK_46);
 	myBtn[46].SetBoarder(FALSE);
 	myBtn[46].SetBtnType(BTN_TYPE_DEFAULT);
@@ -492,342 +495,435 @@ void CDlgMenu03::InitBtn()
 	myBtn[47].SubclassDlgItem(IDC_CHK_47, this);			// Recoiler-정지
 	myBtn[47].SetHwnd(this->GetSafeHwnd(), IDC_CHK_47);
 	myBtn[47].SetBoarder(FALSE);
-	myBtn[47].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[66].SubclassDlgItem(IDC_CHK_66, this);
+	myBtn[66].SubclassDlgItem(IDC_CHK_66, this);		// Rewinder\r동작
 	myBtn[66].SetHwnd(this->GetSafeHwnd(), IDC_CHK_66);
 	myBtn[66].SetBoarder(FALSE);
-	myBtn[66].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[67].SubclassDlgItem(IDC_CHK_67, this);
+	myBtn[67].SubclassDlgItem(IDC_CHK_67, this);		// Rewinder\r제품&&간지
 	myBtn[67].SetHwnd(this->GetSafeHwnd(), IDC_CHK_67);
 	myBtn[67].SetBoarder(FALSE);
-	myBtn[67].SetBtnType(BTN_TYPE_DEFAULT);
 
 	// Punching
-	myBtn[9].SubclassDlgItem(IDC_CHK_9, this);
+	myBtn[9].SubclassDlgItem(IDC_CHK_9, this);			// 연동선택
 	myBtn[9].SetHwnd(this->GetSafeHwnd(), IDC_CHK_9);
 	myBtn[9].SetBoarder(FALSE);
-	myBtn[9].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[10].SubclassDlgItem(IDC_CHK_10, this);
+	myBtn[10].SubclassDlgItem(IDC_CHK_10, this);		// ◀정회전
 	myBtn[10].SetHwnd(this->GetSafeHwnd(), IDC_CHK_10);
 	myBtn[10].SetBoarder(FALSE);
-	myBtn[10].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[11].SubclassDlgItem(IDC_CHK_11, this);
+	myBtn[11].SubclassDlgItem(IDC_CHK_11, this);		// 역회전▶
 	myBtn[11].SetHwnd(this->GetSafeHwnd(), IDC_CHK_11);
 	myBtn[11].SetBoarder(FALSE);
-	myBtn[11].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[12].SubclassDlgItem(IDC_CHK_12, this);
+	myBtn[12].SubclassDlgItem(IDC_CHK_12, this);		// 피딩진공
 	myBtn[12].SetHwnd(this->GetSafeHwnd(), IDC_CHK_12);
 	myBtn[12].SetBoarder(FALSE);
-	myBtn[12].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[13].SubclassDlgItem(IDC_CHK_13, this);
+	myBtn[13].SubclassDlgItem(IDC_CHK_13, this);		// 제품푸쉬
 	myBtn[13].SetHwnd(this->GetSafeHwnd(), IDC_CHK_13);
 	myBtn[13].SetBoarder(FALSE);
-	myBtn[13].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[14].SubclassDlgItem(IDC_CHK_14, this);
+	myBtn[14].SubclassDlgItem(IDC_CHK_14, this);		// 테이블\r블로워
 	myBtn[14].SetHwnd(this->GetSafeHwnd(), IDC_CHK_14);
 	myBtn[14].SetBoarder(FALSE);
-	myBtn[14].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[15].SubclassDlgItem(IDC_CHK_15, this);
+	myBtn[15].SubclassDlgItem(IDC_CHK_15, this);		// 테이블\r진공
 	myBtn[15].SetHwnd(this->GetSafeHwnd(), IDC_CHK_15);
 	myBtn[15].SetBoarder(FALSE);
-	myBtn[15].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[51].SubclassDlgItem(IDC_CHK_51, this);
+	myBtn[51].SubclassDlgItem(IDC_CHK_51, this);		// 피딩\r클램프
 	myBtn[51].SetHwnd(this->GetSafeHwnd(), IDC_CHK_51);
 	myBtn[51].SetBoarder(FALSE);
-	myBtn[51].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[52].SubclassDlgItem(IDC_CHK_52, this);
+	myBtn[52].SubclassDlgItem(IDC_CHK_52, this);		// 텐션\r클램프
 	myBtn[52].SetHwnd(this->GetSafeHwnd(), IDC_CHK_52);
 	myBtn[52].SetBoarder(FALSE);
-	myBtn[52].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[16].SubclassDlgItem(IDC_CHK_16, this);
+	myBtn[16].SubclassDlgItem(IDC_CHK_16, this);		// 한판넬\r이송
 	myBtn[16].SetHwnd(this->GetSafeHwnd(), IDC_CHK_16);
 	myBtn[16].SetBoarder(FALSE);
-	myBtn[16].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[49].SubclassDlgItem(IDC_CHK_49, this);
+	myBtn[49].SubclassDlgItem(IDC_CHK_49, this);		// 레이져\r마크
 	myBtn[49].SetHwnd(this->GetSafeHwnd(), IDC_CHK_49);
 	myBtn[49].SetBoarder(FALSE);
-	myBtn[49].SetBtnType(BTN_TYPE_DEFAULT);
+
+	myBtn[48].SubclassDlgItem(IDC_CHK_48, this);		// 댄서롤\r상승 / 하강
+	myBtn[48].SetHwnd(this->GetSafeHwnd(), IDC_CHK_48);
+	myBtn[48].SetBoarder(FALSE);
 
 	// AOI 상면.	
-	myBtn[17].SubclassDlgItem(IDC_CHK_17, this);
+	myBtn[17].SubclassDlgItem(IDC_CHK_17, this);		// 연동선택
 	myBtn[17].SetHwnd(this->GetSafeHwnd(), IDC_CHK_17);
 	myBtn[17].SetBoarder(FALSE);
-	myBtn[17].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[18].SubclassDlgItem(IDC_CHK_18, this);
+	myBtn[18].SubclassDlgItem(IDC_CHK_18, this);		// ◀정회전
 	myBtn[18].SetHwnd(this->GetSafeHwnd(), IDC_CHK_18);
 	myBtn[18].SetBoarder(FALSE);
-	myBtn[18].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[19].SubclassDlgItem(IDC_CHK_19, this);
+	myBtn[19].SubclassDlgItem(IDC_CHK_19, this);		// 역회전▶
 	myBtn[19].SetHwnd(this->GetSafeHwnd(), IDC_CHK_19);
 	myBtn[19].SetBoarder(FALSE);
-	myBtn[19].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[20].SubclassDlgItem(IDC_CHK_20, this);
+	myBtn[20].SubclassDlgItem(IDC_CHK_20, this);		// 피딩진공
 	myBtn[20].SetHwnd(this->GetSafeHwnd(), IDC_CHK_20);
 	myBtn[20].SetBoarder(FALSE);
-	myBtn[20].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[21].SubclassDlgItem(IDC_CHK_21, this);
+	myBtn[21].SubclassDlgItem(IDC_CHK_21, this);		// 제품푸쉬
 	myBtn[21].SetHwnd(this->GetSafeHwnd(), IDC_CHK_21);
 	myBtn[21].SetBoarder(FALSE);
-	myBtn[21].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[22].SubclassDlgItem(IDC_CHK_22, this);
+	myBtn[22].SubclassDlgItem(IDC_CHK_22, this);		// 테이블\r블로워
 	myBtn[22].SetHwnd(this->GetSafeHwnd(), IDC_CHK_22);
 	myBtn[22].SetBoarder(FALSE);
-	myBtn[22].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[23].SubclassDlgItem(IDC_CHK_23, this);
+	myBtn[23].SubclassDlgItem(IDC_CHK_23, this);		// 테이블\r진공
 	myBtn[23].SetHwnd(this->GetSafeHwnd(), IDC_CHK_23);
 	myBtn[23].SetBoarder(FALSE);
-	myBtn[23].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[53].SubclassDlgItem(IDC_CHK_53, this);
+	myBtn[53].SubclassDlgItem(IDC_CHK_53, this);		// 피딩\r클램프
 	myBtn[53].SetHwnd(this->GetSafeHwnd(), IDC_CHK_53);
 	myBtn[53].SetBoarder(FALSE);
-	myBtn[53].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[54].SubclassDlgItem(IDC_CHK_54, this);
+	myBtn[54].SubclassDlgItem(IDC_CHK_54, this);		// 텐션\r클램프
 	myBtn[54].SetHwnd(this->GetSafeHwnd(), IDC_CHK_54);
 	myBtn[54].SetBoarder(FALSE);
-	myBtn[54].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[24].SubclassDlgItem(IDC_CHK_24, this);
+	myBtn[24].SubclassDlgItem(IDC_CHK_24, this);		// 한판넬\r이송
 	myBtn[24].SetHwnd(this->GetSafeHwnd(), IDC_CHK_24);
 	myBtn[24].SetBoarder(FALSE);
-	myBtn[24].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[50].SubclassDlgItem(IDC_CHK_50, this);
+	myBtn[50].SubclassDlgItem(IDC_CHK_50, this);		// 레이져\r마크
 	myBtn[50].SetHwnd(this->GetSafeHwnd(), IDC_CHK_50);
 	myBtn[50].SetBoarder(FALSE);
-	myBtn[50].SetBtnType(BTN_TYPE_DEFAULT);
 
 	// Uncoiler
-	myBtn[25].SubclassDlgItem(IDC_CHK_25, this);
+	myBtn[25].SubclassDlgItem(IDC_CHK_25, this);		// 연동선택
 	myBtn[25].SetHwnd(this->GetSafeHwnd(), IDC_CHK_25);
 	myBtn[25].SetBoarder(FALSE);
-	myBtn[25].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[26].SubclassDlgItem(IDC_CHK_26, this);
+	myBtn[26].SubclassDlgItem(IDC_CHK_26, this);		// ◀정회전
 	myBtn[26].SetHwnd(this->GetSafeHwnd(), IDC_CHK_26);
 	myBtn[26].SetBoarder(FALSE);
-	myBtn[26].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[27].SubclassDlgItem(IDC_CHK_27, this);
+	myBtn[27].SubclassDlgItem(IDC_CHK_27, this);		// 역회전▶
 	myBtn[27].SetHwnd(this->GetSafeHwnd(), IDC_CHK_27);
 	myBtn[27].SetBoarder(FALSE);
-	myBtn[27].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[28].SubclassDlgItem(IDC_CHK_28, this);
+	myBtn[28].SubclassDlgItem(IDC_CHK_28, this);		// 제품댄서롤\r상승/하강
 	myBtn[28].SetHwnd(this->GetSafeHwnd(), IDC_CHK_28);
 	myBtn[28].SetBoarder(FALSE);
-	myBtn[28].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[29].SubclassDlgItem(IDC_CHK_29, this);
+	myBtn[29].SubclassDlgItem(IDC_CHK_29, this);		// 클린롤러\r상승/하강
 	myBtn[29].SetHwnd(this->GetSafeHwnd(), IDC_CHK_29);
 	myBtn[29].SetBoarder(FALSE);
-	myBtn[29].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[30].SubclassDlgItem(IDC_CHK_30, this);
+	myBtn[30].SubclassDlgItem(IDC_CHK_30, this);		// 제품이음매(좌)\r상승/하강
 	myBtn[30].SetHwnd(this->GetSafeHwnd(), IDC_CHK_30);
 	myBtn[30].SetBoarder(FALSE);
-	myBtn[30].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[31].SubclassDlgItem(IDC_CHK_31, this);
+	myBtn[31].SubclassDlgItem(IDC_CHK_31, this);		// 간지 척\r클램프
 	myBtn[31].SetHwnd(this->GetSafeHwnd(), IDC_CHK_31);
 	myBtn[31].SetBoarder(FALSE);
-	myBtn[31].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[32].SubclassDlgItem(IDC_CHK_32, this);
+	myBtn[32].SubclassDlgItem(IDC_CHK_32, this);		// 간지 휠\r◀정회전
 	myBtn[32].SetHwnd(this->GetSafeHwnd(), IDC_CHK_32);
 	myBtn[32].SetBoarder(FALSE);
-	myBtn[32].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[35].SubclassDlgItem(IDC_CHK_35, this);
+	myBtn[35].SubclassDlgItem(IDC_CHK_35, this);		// 제품척\r클램프
 	myBtn[35].SetHwnd(this->GetSafeHwnd(), IDC_CHK_35);
 	myBtn[35].SetBoarder(FALSE);
-	myBtn[35].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[36].SubclassDlgItem(IDC_CHK_36, this);
+	myBtn[36].SubclassDlgItem(IDC_CHK_36, this);		// 클린롤러누름\r상승/하강
 	myBtn[36].SetHwnd(this->GetSafeHwnd(), IDC_CHK_36);
 	myBtn[36].SetBoarder(FALSE);
-	myBtn[36].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[37].SubclassDlgItem(IDC_CHK_37, this);
+	myBtn[37].SubclassDlgItem(IDC_CHK_37, this);		// 제품이음매(우)\r상승/하강
 	myBtn[37].SetHwnd(this->GetSafeHwnd(), IDC_CHK_37);
-	myBtn[37].SetBoarder(FALSE);
-	myBtn[37].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[37].SetBoarder(FALSE);		
 
-	myBtn[38].SubclassDlgItem(IDC_CHK_38, this);
+	myBtn[38].SubclassDlgItem(IDC_CHK_38, this);		// 제품이음매\r진공
 	myBtn[38].SetHwnd(this->GetSafeHwnd(), IDC_CHK_38);
 	myBtn[38].SetBoarder(FALSE);
-	myBtn[38].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[39].SubclassDlgItem(IDC_CHK_39, this);
+	myBtn[39].SubclassDlgItem(IDC_CHK_39, this);		// 간지 휠\r역회전▶
 	myBtn[39].SetHwnd(this->GetSafeHwnd(), IDC_CHK_39);
 	myBtn[39].SetBoarder(FALSE);
-	myBtn[39].SetBtnType(BTN_TYPE_DEFAULT);
 
 	myBtn[40].SubclassDlgItem(IDC_CHK_40, this);			// Uncoiler-정지
 	myBtn[40].SetHwnd(this->GetSafeHwnd(), IDC_CHK_40);
 	myBtn[40].SetBoarder(FALSE);
-	myBtn[40].SetBtnType(BTN_TYPE_DEFAULT);
-
-	myBtn[48].SubclassDlgItem(IDC_CHK_48, this);
-	myBtn[48].SetHwnd(this->GetSafeHwnd(), IDC_CHK_48);
-	myBtn[48].SetBoarder(FALSE);
-	myBtn[48].SetBtnType(BTN_TYPE_DEFAULT);
 
 	// AOI 하면.
-	myBtn[55].SubclassDlgItem(IDC_CHK_55, this);
+	myBtn[55].SubclassDlgItem(IDC_CHK_55, this);		// 연동선택
 	myBtn[55].SetHwnd(this->GetSafeHwnd(), IDC_CHK_55);
 	myBtn[55].SetBoarder(FALSE);
-	myBtn[55].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[56].SubclassDlgItem(IDC_CHK_56, this);
+	myBtn[56].SubclassDlgItem(IDC_CHK_56, this);		// ◀정회전
 	myBtn[56].SetHwnd(this->GetSafeHwnd(), IDC_CHK_56);
 	myBtn[56].SetBoarder(FALSE);
-	myBtn[56].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[57].SubclassDlgItem(IDC_CHK_57, this);
+	myBtn[57].SubclassDlgItem(IDC_CHK_57, this);		// 역회전▶
 	myBtn[57].SetHwnd(this->GetSafeHwnd(), IDC_CHK_57);
 	myBtn[57].SetBoarder(FALSE);
-	myBtn[57].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[58].SubclassDlgItem(IDC_CHK_58, this);
+	myBtn[58].SubclassDlgItem(IDC_CHK_58, this);		// 피딩진공
 	myBtn[58].SetHwnd(this->GetSafeHwnd(), IDC_CHK_58);
 	myBtn[58].SetBoarder(FALSE);
-	myBtn[58].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[59].SubclassDlgItem(IDC_CHK_59, this);
+	myBtn[59].SubclassDlgItem(IDC_CHK_59, this);		// 제품푸쉬
 	myBtn[59].SetHwnd(this->GetSafeHwnd(), IDC_CHK_59);
 	myBtn[59].SetBoarder(FALSE);
-	myBtn[59].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[60].SubclassDlgItem(IDC_CHK_60, this);
+	myBtn[60].SubclassDlgItem(IDC_CHK_60, this);		// 테이블\r블로워
 	myBtn[60].SetHwnd(this->GetSafeHwnd(), IDC_CHK_60);
 	myBtn[60].SetBoarder(FALSE);
-	myBtn[60].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[61].SubclassDlgItem(IDC_CHK_61, this);
+	myBtn[61].SubclassDlgItem(IDC_CHK_61, this);		// 테이블\r진공
 	myBtn[61].SetHwnd(this->GetSafeHwnd(), IDC_CHK_61);
 	myBtn[61].SetBoarder(FALSE);
-	myBtn[61].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[62].SubclassDlgItem(IDC_CHK_64, this);
+	myBtn[62].SubclassDlgItem(IDC_CHK_64, this);		// 피딩\r클램프
 	myBtn[62].SetHwnd(this->GetSafeHwnd(), IDC_CHK_64);
 	myBtn[62].SetBoarder(FALSE);
-	myBtn[62].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[63].SubclassDlgItem(IDC_CHK_65, this);
+	myBtn[63].SubclassDlgItem(IDC_CHK_65, this);		// 텐션\r클램프
 	myBtn[63].SetHwnd(this->GetSafeHwnd(), IDC_CHK_65);
 	myBtn[63].SetBoarder(FALSE);
-	myBtn[63].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[64].SubclassDlgItem(IDC_CHK_62, this);
+	myBtn[64].SubclassDlgItem(IDC_CHK_62, this);		// 한판넬\r이송
 	myBtn[64].SetHwnd(this->GetSafeHwnd(), IDC_CHK_62);
 	myBtn[64].SetBoarder(FALSE);
-	myBtn[64].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[65].SubclassDlgItem(IDC_CHK_63, this);
+	myBtn[65].SubclassDlgItem(IDC_CHK_63, this);		// 레이져\r마크
 	myBtn[65].SetHwnd(this->GetSafeHwnd(), IDC_CHK_63);
 	myBtn[65].SetBoarder(FALSE);
-	myBtn[65].SetBtnType(BTN_TYPE_DEFAULT);
-
-	myBtn[68].SubclassDlgItem(IDC_CHK_68, this);
-	myBtn[68].SetHwnd(this->GetSafeHwnd(), IDC_CHK_68);
-	myBtn[68].SetBoarder(FALSE);
-	myBtn[68].SetBtnType(BTN_TYPE_CHECK);
-
-	myBtn[69].SubclassDlgItem(IDC_CHK_69, this);
-	myBtn[69].SetHwnd(this->GetSafeHwnd(), IDC_CHK_69);
-	myBtn[69].SetBoarder(FALSE);
-	myBtn[69].SetBtnType(BTN_TYPE_CHECK);
-
-	myBtn[70].SubclassDlgItem(IDC_CHK_70, this);
-	myBtn[70].SetHwnd(this->GetSafeHwnd(), IDC_CHK_70);
-	myBtn[70].SetBoarder(FALSE);
-	myBtn[70].SetBtnType(BTN_TYPE_CHECK);
-
-	myBtn[71].SubclassDlgItem(IDC_CHK_71, this);
-	myBtn[71].SetHwnd(this->GetSafeHwnd(), IDC_CHK_71);
-	myBtn[71].SetBoarder(FALSE);
-	myBtn[71].SetBtnType(BTN_TYPE_CHECK);
 
 	// Engraving
-	myBtn[72].SubclassDlgItem(IDC_CHK_72, this);
+	myBtn[72].SubclassDlgItem(IDC_CHK_72, this);		// 연동선택
 	myBtn[72].SetHwnd(this->GetSafeHwnd(), IDC_CHK_72);
 	myBtn[72].SetBoarder(FALSE);
-	myBtn[72].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[73].SubclassDlgItem(IDC_CHK_73, this);
+	myBtn[73].SubclassDlgItem(IDC_CHK_73, this);		// ◀정회전
 	myBtn[73].SetHwnd(this->GetSafeHwnd(), IDC_CHK_73);
 	myBtn[73].SetBoarder(FALSE);
-	myBtn[73].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[74].SubclassDlgItem(IDC_CHK_74, this);
+	myBtn[74].SubclassDlgItem(IDC_CHK_74, this);		// 역회전▶
 	myBtn[74].SetHwnd(this->GetSafeHwnd(), IDC_CHK_74);
 	myBtn[74].SetBoarder(FALSE);
-	myBtn[74].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[75].SubclassDlgItem(IDC_CHK_75, this);
+	myBtn[75].SubclassDlgItem(IDC_CHK_75, this);		// 피딩진공
 	myBtn[75].SetHwnd(this->GetSafeHwnd(), IDC_CHK_75);
 	myBtn[75].SetBoarder(FALSE);
-	myBtn[75].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[76].SubclassDlgItem(IDC_CHK_76, this);
+	myBtn[76].SubclassDlgItem(IDC_CHK_76, this);		// 제품푸쉬
 	myBtn[76].SetHwnd(this->GetSafeHwnd(), IDC_CHK_76);
 	myBtn[76].SetBoarder(FALSE);
-	myBtn[76].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[77].SubclassDlgItem(IDC_CHK_77, this);
+	myBtn[77].SubclassDlgItem(IDC_CHK_77, this);		// 테이블\r블로워
 	myBtn[77].SetHwnd(this->GetSafeHwnd(), IDC_CHK_77);
 	myBtn[77].SetBoarder(FALSE);
-	myBtn[77].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[78].SubclassDlgItem(IDC_CHK_78, this);
+	myBtn[78].SubclassDlgItem(IDC_CHK_78, this);		// 테이블\r진공
 	myBtn[78].SetHwnd(this->GetSafeHwnd(), IDC_CHK_78);
 	myBtn[78].SetBoarder(FALSE);
-	myBtn[78].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[79].SubclassDlgItem(IDC_CHK_82, this);
+	myBtn[79].SubclassDlgItem(IDC_CHK_82, this);		// 피딩\r클램프
 	myBtn[79].SetHwnd(this->GetSafeHwnd(), IDC_CHK_82);
 	myBtn[79].SetBoarder(FALSE);
-	myBtn[79].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[80].SubclassDlgItem(IDC_CHK_83, this);
+	myBtn[80].SubclassDlgItem(IDC_CHK_83, this);		// 텐션\r클램프
 	myBtn[80].SetHwnd(this->GetSafeHwnd(), IDC_CHK_83);
 	myBtn[80].SetBoarder(FALSE);
-	myBtn[80].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[81].SubclassDlgItem(IDC_CHK_79, this);
+	myBtn[81].SubclassDlgItem(IDC_CHK_79, this);		// 한판넬\r이송
 	myBtn[81].SetHwnd(this->GetSafeHwnd(), IDC_CHK_79);
 	myBtn[81].SetBoarder(FALSE);
-	myBtn[81].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[82].SubclassDlgItem(IDC_CHK_81, this);
+	myBtn[82].SubclassDlgItem(IDC_CHK_81, this);		// 레이져\r마크
 	myBtn[82].SetHwnd(this->GetSafeHwnd(), IDC_CHK_81);
 	myBtn[82].SetBoarder(FALSE);
-	myBtn[82].SetBtnType(BTN_TYPE_DEFAULT);
 
-	myBtn[84].SubclassDlgItem(IDC_CHK_80, this);
+	myBtn[84].SubclassDlgItem(IDC_CHK_80, this);		// 댄서롤\r상승/하강
 	myBtn[84].SetHwnd(this->GetSafeHwnd(), IDC_CHK_80);
 	myBtn[84].SetBoarder(FALSE);
+
+#ifdef USE_MPE
+	myBtn[0].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[1].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[2].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[3].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[4].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[5].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[6].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[7].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[8].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[9].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[10].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[11].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[12].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[13].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[14].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[15].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[16].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[17].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[18].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[19].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[20].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[21].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[22].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[23].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[24].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[25].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[26].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[27].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[28].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[29].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[30].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[31].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[32].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[33].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[34].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[35].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[36].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[37].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[38].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[39].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[40].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[41].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[42].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[43].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[44].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[45].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[47].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[48].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[49].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[50].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[51].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[52].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[53].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[54].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[55].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[56].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[57].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[58].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[59].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[60].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[61].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[62].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[63].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[64].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[65].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[66].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[67].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[68].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[69].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[70].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[71].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[72].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[73].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[74].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[75].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[76].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[77].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[78].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[79].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[80].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[81].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[82].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[83].SetBtnType(BTN_TYPE_DEFAULT);
 	myBtn[84].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[85].SetBtnType(BTN_TYPE_DEFAULT);
+	myBtn[86].SetBtnType(BTN_TYPE_DEFAULT);
+#else
+	myBtn[0].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[1].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[2].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[3].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[4].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[5].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[6].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[7].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[8].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[9].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[10].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[11].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[12].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[13].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[14].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[15].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[16].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[17].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[18].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[19].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[20].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[21].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[22].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[23].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[24].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[25].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[26].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[27].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[28].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[29].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[30].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[31].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[32].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[33].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[34].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[35].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[36].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[37].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[38].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[39].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[40].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[41].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[42].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[43].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[44].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[45].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[47].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[48].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[49].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[50].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[51].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[52].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[53].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[54].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[55].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[56].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[57].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[58].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[59].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[60].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[61].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[62].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[63].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[64].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[65].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[66].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[67].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[68].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[69].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[70].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[71].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[72].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[73].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[74].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[75].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[76].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[77].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[78].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[79].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[80].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[81].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[82].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[83].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[84].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[85].SetBtnType(BTN_TYPE_CHECK);
+	myBtn[86].SetBtnType(BTN_TYPE_CHECK);
+#endif
 
 	int i;
 	for(i=0; i<MAX_MENU03_BTN; i++)
@@ -938,8 +1034,6 @@ void CDlgMenu03::InitStatic()
 	myStcTitle[45].SubclassDlgItem(IDC_STC_12_30, this);	// 간지휠역회전
 	myStcTitle[46].SubclassDlgItem(IDC_STC_12_31, this);	// 정지
 
-
-
 	// Engraving
 	myStcTitle[79].SubclassDlgItem(IDC_STC_20_2, this);		// 연동선택
 	myStcTitle[80].SubclassDlgItem(IDC_STC_12_58, this);	// 정회전
@@ -954,7 +1048,11 @@ void CDlgMenu03::InitStatic()
 	myStcTitle[89].SubclassDlgItem(IDC_STC_12_66, this);	// 피딩클램프
 	myStcTitle[90].SubclassDlgItem(IDC_STC_12_65, this);	// 텐션클램프
 
-	for(int i=0; i<MAX_MENU03_STC; i++)
+	// 세정기
+	myStcTitle[91].SubclassDlgItem(IDC_STC_000_10, this);	// 각인부 세정기
+	myStcTitle[92].SubclassDlgItem(IDC_STC_000_11, this);	// AOI(하) 세정기
+
+	for (int i = 0; i < MAX_MENU03_STC; i++)
 	{
 		myStcTitle[i].SetFontName(_T("Arial"));
 		myStcTitle[i].SetFontSize(12);
@@ -974,7 +1072,6 @@ void CDlgMenu03::Disp()
 	DispEngrave();
 	DispUncoiler();
 }
-
 
 void CDlgMenu03::DispMain()
 {
@@ -1343,7 +1440,6 @@ void CDlgMenu03::DispAoiUp()
 		myBtn[50].SetCheck(bOn);
 }
 
-
 void CDlgMenu03::DispEngrave()
 {
 	BOOL bOn;
@@ -1486,33 +1582,36 @@ void CDlgMenu03::OnTimer(UINT_PTR nIDEvent)//(UINT nIDEvent)
 	{
 		KillTimer(TIM_CHK_DONE_MKAOI);
 
-		//if(!(pDoc->m_pMpeSignal[5] & (0x01<<1)) && !(pDoc->m_pMpeSignal[5] & (0x01<<0)))	// 마킹부 피딩 ON (PLC가 피딩완료 후 OFF) && 검사부 피딩 ON (PLC가 피딩완료 후 OFF)
-		//{
-		//	m_bTIM_CHK_DONE_MKAOI = FALSE;
-		//}
-
-		//if(m_bTIM_CHK_DONE_MKAOI)
-		//	SetTimer(TIM_CHK_DONE_MKAOI, 100, NULL);
+#ifdef USE_MPE
+		if(!(pDoc->m_pMpeSignal[5] & (0x01<<1)) && !(pDoc->m_pMpeSignal[5] & (0x01<<0)))	// 마킹부 피딩 ON (PLC가 피딩완료 후 OFF) && 검사부 피딩 ON (PLC가 피딩완료 후 OFF)
+		{
+			m_bTIM_CHK_DONE_MKAOI = FALSE;
+		}
+#endif
+		if(m_bTIM_CHK_DONE_MKAOI)
+			SetTimer(TIM_CHK_DONE_MKAOI, 100, NULL);
 	}
 	if(nIDEvent == TIM_CHK_DONE_MK)
 	{
 		KillTimer(TIM_CHK_DONE_MK);
 
-		//if(!(pDoc->m_pMpeSignal[5] & (0x01<<1)))	// 마킹부 피딩 ON (PLC가 피딩완료 후 OFF)
-		//	m_bTIM_CHK_DONE_MK = FALSE;
-
-		//if(m_bTIM_CHK_DONE_MK)
-		//	SetTimer(TIM_CHK_DONE_MK, 100, NULL);
+#ifdef USE_MPE
+		if(!(pDoc->m_pMpeSignal[5] & (0x01<<1)))	// 마킹부 피딩 ON (PLC가 피딩완료 후 OFF)
+			m_bTIM_CHK_DONE_MK = FALSE;
+#endif
+		if(m_bTIM_CHK_DONE_MK)
+			SetTimer(TIM_CHK_DONE_MK, 100, NULL);
 	}
 	if(nIDEvent == TIM_CHK_DONE_AOI)
 	{
 		KillTimer(TIM_CHK_DONE_AOI);
 
-		//if(!(pDoc->m_pMpeSignal[5] & (0x01<<0)))	// 검사부 피딩 ON (PLC가 피딩완료 후 OFF)
-		//	m_bTIM_CHK_DONE_AOI = FALSE;
-
-		//if(m_bTIM_CHK_DONE_AOI)
-		//	SetTimer(TIM_CHK_DONE_AOI, 100, NULL);
+#ifdef USE_MPE
+		if(!(pDoc->m_pMpeSignal[5] & (0x01<<0)))	// 검사부 피딩 ON (PLC가 피딩완료 후 OFF)
+			m_bTIM_CHK_DONE_AOI = FALSE;
+#endif
+		if(m_bTIM_CHK_DONE_AOI)
+			SetTimer(TIM_CHK_DONE_AOI, 100, NULL);
 	}
 
 	if(nIDEvent == TIM_CHK_MREG)
@@ -1525,65 +1624,71 @@ void CDlgMenu03::OnTimer(UINT_PTR nIDEvent)//(UINT nIDEvent)
 	{
 		KillTimer(TIM_CHK_DONE_BUF_HOME);
 
-		//if(pDoc->m_pMpeSignal[4] & (0x01<<2))	// 마킹부 버퍼롤러 홈동작 ON (PLC가 홈동작 완료 후 OFF)
-		//{
-		//	pView->GetDispMsg(strMsg, strTitle);
-		//	if(strMsg != _T("Searching Buffer Home Position...") || strTitle != _T("Homming"))
-		//		pView->DispMsg(_T("Searching Buffer Home Position..."), _T("Homming"), RGB_GREEN, DELAY_TIME_MSG);
-		//}
-		//else
-		//{
-		//	m_bTIM_CHK_DONE_BUF_HOME = FALSE;
-		//	pView->m_bBufHomeDone = TRUE;
-		//	pView->ClrDispMsg();
-		//}
-		//if(m_bTIM_CHK_DONE_BUF_HOME)
-		//	SetTimer(TIM_CHK_DONE_BUF_HOME, 100, NULL);
+#ifdef USE_MPE
+		if(pDoc->m_pMpeSignal[4] & (0x01<<2))	// 마킹부 버퍼롤러 홈동작 ON (PLC가 홈동작 완료 후 OFF)
+		{
+			pView->GetDispMsg(strMsg, strTitle);
+			if(strMsg != _T("Searching Buffer Home Position...") || strTitle != _T("Homming"))
+				pView->DispMsg(_T("Searching Buffer Home Position..."), _T("Homming"), RGB_GREEN, DELAY_TIME_MSG);
+		}
+		else
+		{
+			m_bTIM_CHK_DONE_BUF_HOME = FALSE;
+			pView->m_bBufHomeDone = TRUE;
+			pView->ClrDispMsg();
+		}
+#endif
+		if(m_bTIM_CHK_DONE_BUF_HOME)
+			SetTimer(TIM_CHK_DONE_BUF_HOME, 100, NULL);
 	}
 	
 	if(nIDEvent == TIM_CHK_DONE_BUF_INIT)
 	{
 		KillTimer(TIM_CHK_DONE_BUF_INIT);
 
-		//if(pDoc->m_pMpeSignal[4] & (0x01<<10))	// 마킹부 버퍼 초기위치 이동(PC가 ON, PLC가 OFF)
-		//{
-		//	pView->GetDispMsg(strMsg, strTitle);
-		//	if(strMsg != _T("Searching Buffer Initial Position...") || strTitle != _T("Moving"))
-		//		pView->DispMsg(_T("Searching Buffer Initial Position..."), _T("Moving"), RGB_GREEN, DELAY_TIME_MSG);
-		//}
-		//else
-		//{
-		//	m_bTIM_CHK_DONE_BUF_INIT = FALSE;
-		//	pView->ClrDispMsg();
-		//}
-		//if(m_bTIM_CHK_DONE_BUF_INIT)
-		//	SetTimer(TIM_CHK_DONE_BUF_INIT, 100, NULL);
+#ifdef USE_MPE
+		if(pDoc->m_pMpeSignal[4] & (0x01<<10))	// 마킹부 버퍼 초기위치 이동(PC가 ON, PLC가 OFF)
+		{
+			pView->GetDispMsg(strMsg, strTitle);
+			if(strMsg != _T("Searching Buffer Initial Position...") || strTitle != _T("Moving"))
+				pView->DispMsg(_T("Searching Buffer Initial Position..."), _T("Moving"), RGB_GREEN, DELAY_TIME_MSG);
+		}
+		else
+		{
+			m_bTIM_CHK_DONE_BUF_INIT = FALSE;
+			pView->ClrDispMsg();
+		}
+#endif
+		if(m_bTIM_CHK_DONE_BUF_INIT)
+			SetTimer(TIM_CHK_DONE_BUF_INIT, 100, NULL);
 	}
 	
 	if(nIDEvent == TIM_CHK_DONE_READY)
 	{
 		KillTimer(TIM_CHK_DONE_READY);
 
-		//if(pDoc->m_pMpeSignal[0] & (0x01<<0))	// PLC 운전준비 완료(PC가 확인하고 Reset시킴.)
-		//{
-		//	m_bTIM_CHK_DONE_READY = FALSE;
-		//	//pView->ClrDispMsg();
-		//	pView->m_bReadyDone = TRUE;
-		//	if(pView->m_pMpe)
-		//		pView->m_pMpe->Write(_T("MB440100"), 0);	// PLC 운전준비 완료(PC가 확인하고 Reset시킴.)
-		//}
-		//else
-		//{
-		//	pView->GetDispMsg(strMsg, strTitle);
-		//	if(strMsg != _T("Searching Buffer Home Position...") || strTitle != _T("Homming"))
-		//	{
-		//		pView->m_bReadyDone = FALSE;
-		//		//pView->MsgBox("Searching Buffer Home Position...");
-		//		//pView->DispMsg(_T("Searching Buffer Home Position..."), _T("Homming"), RGB_GREEN, DELAY_TIME_MSG);
-		//	}
-		//}
-		//if(m_bTIM_CHK_DONE_READY)
-		//	SetTimer(TIM_CHK_DONE_READY, 100, NULL);
+#ifdef USE_MPE
+		if(pDoc->m_pMpeSignal[0] & (0x01<<0))	// PLC 운전준비 완료(PC가 확인하고 Reset시킴.)
+		{
+			m_bTIM_CHK_DONE_READY = FALSE;
+			//pView->ClrDispMsg();
+			pView->m_bReadyDone = TRUE;
+			if(pView->m_pMpe)
+				pView->m_pMpe->Write(_T("MB440100"), 0);	// PLC 운전준비 완료(PC가 확인하고 Reset시킴.)
+		}
+		else
+		{
+			pView->GetDispMsg(strMsg, strTitle);
+			if(strMsg != _T("Searching Buffer Home Position...") || strTitle != _T("Homming"))
+			{
+				pView->m_bReadyDone = FALSE;
+				//pView->MsgBox("Searching Buffer Home Position...");
+				//pView->DispMsg(_T("Searching Buffer Home Position..."), _T("Homming"), RGB_GREEN, DELAY_TIME_MSG);
+			}
+		}
+#endif
+		if(m_bTIM_CHK_DONE_READY)
+			SetTimer(TIM_CHK_DONE_READY, 100, NULL);
 	}
 	
 // 	if(nIDEvent == TIM_SET_RC_RELATION)
@@ -1631,16 +1736,810 @@ void CDlgMenu03::OnTimer(UINT_PTR nIDEvent)//(UINT nIDEvent)
 	{
 		KillTimer(TIM_CHK_DONE_ENGRAVE);
 
-		//if (!(pDoc->m_pMpeSignal[6] & (0x01 << 12)))	// 각인부 피딩 CW ON (PLC가 피딩완료 후 OFF) - MB44017C
-		//	m_bTIM_CHK_DONE_ENGRAVE = FALSE;
-
-		//if (m_bTIM_CHK_DONE_ENGRAVE)
-		//	SetTimer(TIM_CHK_DONE_ENGRAVE, 100, NULL);
+#ifdef USE_MPE
+		if (!(pDoc->m_pMpeSignal[6] & (0x01 << 12)))	// 각인부 피딩 CW ON (PLC가 피딩완료 후 OFF) - MB44017C
+			m_bTIM_CHK_DONE_ENGRAVE = FALSE;
+#endif
+		if (m_bTIM_CHK_DONE_ENGRAVE)
+			SetTimer(TIM_CHK_DONE_ENGRAVE, 100, NULL);
 	}
 
 	CDialog::OnTimer(nIDEvent);
 }
 
+LRESULT CDlgMenu03::OnMyBtnDown(WPARAM wPara, LPARAM lPara)
+{
+	int nCtrlID = (int)lPara;
+
+	SwMyBtnDown(nCtrlID);
+	return 0L;
+}
+
+LRESULT CDlgMenu03::OnMyBtnUp(WPARAM wPara, LPARAM lPara)
+{
+	int nCtrlID = (int)lPara;
+
+	SwMyBtnUp(nCtrlID);
+	return 0L;
+}
+
+void CDlgMenu03::SwMyBtnDown(int nCtrlID)
+{
+	if (!pView)
+		return;
+
+	long lData = 1; BOOL bData = TRUE;
+
+	if (nCtrlID != IDC_CHK_33 && nCtrlID != IDC_CHK_0)		// 마킹부 정지 스위치 , 마킹부 운전 스위치
+	{
+		if (!pDoc->Status.bManual)
+		{
+			pView->DispMsg(_T("수동 모드가 아닙니다."), _T("주의"), RGB_YELLOW);
+			return;
+		}
+	}
+
+#ifdef USE_ENGRAVE
+	if (!pView->m_pEngrave)
+		return;
+#endif
+
+#ifdef USE_MPE
+	if (!pView->m_pMpe)
+		return;
+#endif
+
+	SwMpeBtn(nCtrlID, lData);
+	SwEngraveBtn(nCtrlID, bData);
+}
+
+void CDlgMenu03::SwMyBtnUp(int nCtrlID)
+{
+	if (!pView)
+		return;
+
+	long lData = 0; BOOL bData = FALSE;
+
+	if (nCtrlID != IDC_CHK_33 && nCtrlID != IDC_CHK_0)		// 마킹부 정지 스위치 , 마킹부 운전 스위치
+	{
+		if (!pDoc->Status.bManual)
+		{
+			pView->DispMsg(_T("수동 모드가 아닙니다."), _T("주의"), RGB_YELLOW);
+			return;
+		}
+	}
+
+#ifdef USE_ENGRAVE
+	if (!pView->m_pEngrave)
+		return;
+#endif
+
+#ifdef USE_MPE
+	if (!pView->m_pMpe)
+		return;
+#endif
+
+	SwMpeBtn(nCtrlID, lData);
+	SwEngraveBtn(nCtrlID, bData);
+}
+
+void CDlgMenu03::SwMpeBtn(int nCtrlID, long lData)
+{
+#ifdef USE_MPE	
+	switch (nCtrlID)
+	{
+		// Main
+	case IDC_CHK_34:		// 마킹부 운전준비 스위치
+		pView->m_pMpe->Write(_T("MB005503"), lData);
+		break;
+	case IDC_CHK_0:			// 마킹부 운전 스위치
+		pView->m_pMpe->Write(_T("MB005501"), lData);
+		break;
+	case IDC_CHK_1:			// 마킹부 리셋 스위치	
+		pView->m_pMpe->Write(_T("MB005504"), lData);
+		break;
+	case IDC_CHK_33:		// 마킹부 정지 스위치
+		pView->m_pMpe->Write(_T("MB005502"), lData);
+		break;
+
+		// Recoiler
+	case IDC_CHK_4:			// 리코일러 연동 온/오프 스위치
+		pView->m_pMpe->Write(_T("MB005801"), lData);
+		break;
+	case IDC_CHK_5:			// 리코일러 제품휠 정회전 스위치
+		pView->m_pMpe->Write(_T("MB00580C"), lData);
+		break;
+	case IDC_CHK_6:			// 리코일러 제품휠 역회전 스위치
+		pView->m_pMpe->Write(_T("MB00580D"), lData);
+		break;
+	case IDC_CHK_41:		// 리코일러 제품척 클램프 스위치
+		pView->m_pMpe->Write(_T("MB00580B"), lData);
+		break;
+	case IDC_CHK_42:		// 리코일러 댄서롤 상승/하강 스위치
+		pView->m_pMpe->Write(_T("MB005802"), lData);
+		break;
+	case IDC_CHK_43:		// 리코일러 제품 이음매(상/좌) 스위치
+		pView->m_pMpe->Write(_T("MB005805"), lData);
+		break;
+	case IDC_CHK_7:			// 리코일러 제품 이음매(하/우) 스위치
+		pView->m_pMpe->Write(_T("MB005806"), lData);
+		break;
+	case IDC_CHK_8:			// 리코일러 제품 이음매 진공 스위치
+		pView->m_pMpe->Write(_T("MB00580F"), lData);
+		break;
+	case IDC_CHK_44:		// 리코일러 간지척 클램프 스위치
+		pView->m_pMpe->Write(_T("MB005808"), lData);
+		break;
+	case IDC_CHK_45:		// 리코일러 간지휠 정회전 스위치
+		pView->m_pMpe->Write(_T("MB005809"), lData);
+		break;
+	case IDC_CHK_46:		// 리코일러 간지휠 역회전 스위치
+		pView->m_pMpe->Write(_T("MB00580A"), lData);
+		break;
+	case IDC_CHK_66:		// 리코일러 Rewinder 동작 스위치
+		pView->m_pMpe->Write(_T("MB005803"), lData);
+		break;
+	case IDC_CHK_67:		// 리코일러 Rewinder 제품 & 간지 스위치
+		pView->m_pMpe->Write(_T("MB005804"), lData);
+		break;
+
+		// Marking
+	case IDC_CHK_9:			// 마킹부 연동 온/오프 스위치
+		pView->m_pMpe->Write(_T("MB005511"), lData);
+		break;
+	case IDC_CHK_10:		// 마킹부 피딩 정회전 스위치
+		pView->m_pMpe->Write(_T("MB005513"), lData);
+		break;
+	case IDC_CHK_11:		// 마킹부 피딩 역회전 스위치
+		pView->m_pMpe->Write(_T("MB005514"), lData);
+		break;
+	case IDC_CHK_12:		// 마킹부 피딩 진공 스위치
+		pView->m_pMpe->Write(_T("MB005515"), lData);
+		break;
+	case IDC_CHK_13:		// 마킹부 제품푸쉬 스위치 // (토크 진공 스위치) - X
+		pView->m_pMpe->Write(_T("MB005516"), lData);
+		break;
+	case IDC_CHK_14:		// 마킹부 테이블 브로워 스위치
+		pView->m_pMpe->Write(_T("MB005512"), lData);
+		break;
+	case IDC_CHK_15:		// 마킹부 테이블 진공 스위치
+		pView->m_pMpe->Write(_T("MB005517"), lData);
+		break;
+	case IDC_CHK_51:		// 마킹부 피딩 클램프 스위치
+		pView->m_pMpe->Write(_T("MB005519"), lData);
+		break;
+	case IDC_CHK_52:		// 마킹부 텐션 클램프 스위치
+		pView->m_pMpe->Write(_T("MB00551A"), lData);
+		break;
+
+		// AOI 하면 검사	
+	case IDC_CHK_55:		// 검사부 하 연동 온/오프 스위치
+		pView->m_pMpe->Write(_T("MB005701"), lData);
+		break;
+	case IDC_CHK_56:		// 검사부 하 피딩 정회전 스위치
+		pView->m_pMpe->Write(_T("MB005703"), lData);
+		break;
+	case IDC_CHK_57:		// 검사부 하 피딩 역회전 스위치
+		pView->m_pMpe->Write(_T("MB005704"), lData);
+		break;
+	case IDC_CHK_58:		// 검사부 하 피딩 진공 스위치
+		pView->m_pMpe->Write(_T("MB005705"), lData);
+		break;
+	case IDC_CHK_59:		// 검사부 하 제품푸쉬 스위치 // (토크 진공 스위치) - X
+		pView->m_pMpe->Write(_T("MB005706"), lData);
+		break;
+	case IDC_CHK_60:		// 검사부 하 테이블 브로워 스위치
+		pView->m_pMpe->Write(_T("MB005702"), lData);
+		break;
+	case IDC_CHK_61:		// 검사부 하 테이블 진공 스위치
+		pView->m_pMpe->Write(_T("MB005707"), lData);
+		break;
+	case IDC_CHK_64:		// 검사부 하 피딩 클램프 스위치
+		pView->m_pMpe->Write(_T("MB005709"), lData);
+		break;
+	case IDC_CHK_65:		// 검사부 하 텐션 클램프 스위치
+		pView->m_pMpe->Write(_T("MB00570A"), lData);
+		break;
+
+		// AOI 상면 검사
+	case IDC_CHK_17:		// 검사부 상 연동 온/오프 스위치
+		pView->m_pMpe->Write(_T("MB005601"), lData);
+		break;
+	case IDC_CHK_18:		// 검사부 상 피딩 정회전 스위치
+		pView->m_pMpe->Write(_T("MB005603"), lData);
+		break;
+	case IDC_CHK_19:		// 검사부 상 피딩 역회전 스위치
+		pView->m_pMpe->Write(_T("MB005604"), lData);
+		break;
+	case IDC_CHK_20:		// 검사부 상 피딩 진공 스위치
+		pView->m_pMpe->Write(_T("MB005605"), lData);
+		break;
+	case IDC_CHK_21:		// 검사부 상 제품푸쉬 스위치 // (토크 진공 스위치) - X
+		pView->m_pMpe->Write(_T("MB005606"), lData);
+		break;
+	case IDC_CHK_22:		// 검사부 상 테이블 브로워 스위치
+		pView->m_pMpe->Write(_T("MB005602"), lData);
+		break;
+	case IDC_CHK_23:		// 검사부 상 테이블 진공 스위치
+		pView->m_pMpe->Write(_T("MB005607"), lData);
+		break;
+	case IDC_CHK_53:		// 검사부 상 피딩 클램프 스위치
+		pView->m_pMpe->Write(_T("MB005609"), lData);
+		break;
+	case IDC_CHK_54:		// 검사부 상 텐션 클램프 스위치
+		pView->m_pMpe->Write(_T("MB00560A"), lData);
+		break;
+
+		// Uncoiler
+	case IDC_CHK_25:		// 언코일러 연동 온/오프 스위치
+		pView->m_pMpe->Write(_T("MB005401"), lData);
+		break;
+	case IDC_CHK_26:		// 언코일러 제품휠 정회전 스위치
+		pView->m_pMpe->Write(_T("MB00540C"), lData);
+		break;
+	case IDC_CHK_27:		// 언코일러 제품휠 역회전 스위치
+		pView->m_pMpe->Write(_T("MB00540D"), lData);
+		break;
+	case IDC_CHK_35:		// 언코일러 제품척 클램프 스위치
+		pView->m_pMpe->Write(_T("MB00540B"), lData);
+		break;
+	case IDC_CHK_28:		// 언코일러 댄서롤 상승/하강 스위치
+		pView->m_pMpe->Write(_T("MB005402"), lData);
+		break;
+	case IDC_CHK_30:		// 언코일러 제품 이음매(상/좌) 스위치
+		pView->m_pMpe->Write(_T("MB005405"), lData);
+		break;
+	case IDC_CHK_37:		// 언코일러 제품 이음매(하/우) 스위치
+		pView->m_pMpe->Write(_T("MB005406"), lData);
+		break;
+	case IDC_CHK_38:		// 언코일러 제품 이음매 진공 스위치
+		pView->m_pMpe->Write(_T("MB00540F"), lData);
+		break;
+	case IDC_CHK_31:		// 언코일러 간지척 클램프 스위치
+		pView->m_pMpe->Write(_T("MB005408"), lData);
+		break;
+	case IDC_CHK_32:		// 언코일러 간지휠 정회전 스위치
+		pView->m_pMpe->Write(_T("MB005409"), lData);
+		break;
+	case IDC_CHK_39:		// 언코일러 간지휠 역회전 스위치
+		pView->m_pMpe->Write(_T("MB00540A"), lData);
+		break;
+	case IDC_CHK_29:		// 언코일러 클린롤러 상승/하강 스위치
+		pView->m_pMpe->Write(_T("MB005403"), lData);
+		break;
+	case IDC_CHK_36:		// 언코일러 클린롤러누름 상승/하강 스위치
+		pView->m_pMpe->Write(_T("MB005404"), lData);
+		break;
+
+	// Torque Motor
+	case IDC_CHK_2:		// 마킹부 텐션 ON (PC가 ON/OFF시킴)
+		if (!(pDoc->m_pMpeSignal[4] & (0x01 << 5)))
+		{
+			pDoc->WorkingInfo.Motion.bMkTq = TRUE;
+			pView->m_pMpe->Write(_T("MB440155"), 1);
+		}
+		else
+		{
+			pDoc->WorkingInfo.Motion.bMkTq = FALSE;
+			pView->m_pMpe->Write(_T("MB440155"), 0);
+		}
+		break;
+	case IDC_CHK_3:		// 검사부 텐션 ON (PC가 ON/OFF시킴)
+		if (!(pDoc->m_pMpeSignal[4] & (0x01 << 6)))
+		{
+			pDoc->WorkingInfo.Motion.bAoiTq = TRUE;
+			pView->m_pMpe->Write(_T("MB440156"), 1);
+		}
+		else
+		{
+			pDoc->WorkingInfo.Motion.bAoiTq = FALSE;
+			pView->m_pMpe->Write(_T("MB440156"), 0);
+		}
+		break;
+	case IDC_CHK_84:	// 각인부 텐션 ON (PC가 ON/OFF시킴)
+		if (!(pDoc->m_pMpeSignal[4] & (0x01 << 4)))
+		{
+			pDoc->WorkingInfo.Motion.bEngraveTq = TRUE;
+			pView->m_pMpe->Write(_T("MB440154"), 1);
+		}
+		else
+		{
+			pDoc->WorkingInfo.Motion.bEngraveTq = FALSE;
+			pView->m_pMpe->Write(_T("MB440154"), 0);
+		}
+		break;
+
+		// [각인부 세정기]
+	case IDC_CHK_87:	// 각인부 세정기 ON (PC가 ON/OFF시킴)
+		if (!(pDoc->WorkingInfo.LastJob.bEngraveCleanner))
+		{
+			pDoc->WorkingInfo.LastJob.bEngraveCleanner = TRUE;
+			pView->m_pMpe->Write(_T("MB44014E"), 1);
+		}
+		else
+		{
+			pDoc->WorkingInfo.LastJob.bEngraveCleanner = FALSE;
+			pView->m_pMpe->Write(_T("MB44014E"), 0);
+		}
+		break;
+		//if (!(pDoc->m_pMpeSignal[5] & (0x01 << 14)))
+		//{
+		//	pDoc->WorkingInfo.LastJob.bEngraveCleanner = TRUE;
+		//	pView->m_pMpe->Write(_T("MB44014E"), 1);
+		//}
+		//else
+		//{
+		//	pDoc->WorkingInfo.LastJob.bEngraveCleanner = FALSE;
+		//	pView->m_pMpe->Write(_T("MB44014E"), 0);
+		//}
+		//break;
+
+		// [AOI(하) 세정기]
+	case IDC_CHK_88:	// AOI(하) 세정기 ON (PC가 ON/OFF시킴)
+		if (!(pDoc->WorkingInfo.LastJob.bAoiDnCleanner))
+		{
+			pDoc->WorkingInfo.LastJob.bAoiDnCleanner = TRUE;
+			pView->m_pMpe->Write(_T("MB44014F"), 1);
+		}
+		else
+		{
+			pDoc->WorkingInfo.LastJob.bAoiDnCleanner = FALSE;
+			pView->m_pMpe->Write(_T("MB44014F"), 0);
+		}
+		break;
+		//if (!(pDoc->m_pMpeSignal[5] & (0x01 << 15)))
+		//{
+		//	pDoc->WorkingInfo.LastJob.bAoiDnCleanner = TRUE;
+		//	pView->m_pMpe->Write(_T("MB44014F"), 1);
+		//}
+		//else
+		//{
+		//	pDoc->WorkingInfo.LastJob.bAoiDnCleanner = FALSE;
+		//	pView->m_pMpe->Write(_T("MB44014F"), 0);
+		//}
+		//break;
+
+
+		// [One Metal]
+	case IDC_CHK_68:
+		pView->SetTwoMetal(FALSE, TRUE);
+		break;
+
+		// [Two Metal]
+	case IDC_CHK_69:
+		pView->SetTwoMetal(TRUE, TRUE);
+		break;
+
+		// [Core 150mm] - Recoiler
+	case IDC_CHK_70:
+		SetCore150mmRecoiler(TRUE);
+		break;
+
+		// [Core 150mm] - Uncoiler
+	case IDC_CHK_71:
+		SetCore150mmUncoiler(TRUE);
+		break;
+	}
+#else
+	switch (nCtrlID)
+	{
+		// Torque Motor
+	case IDC_CHK_2:		// 마킹부 텐션 ON (PC가 ON/OFF시킴)
+		if (!pDoc->WorkingInfo.Motion.bMkTq)
+			pDoc->WorkingInfo.Motion.bMkTq = TRUE;
+		else
+			pDoc->WorkingInfo.Motion.bMkTq = FALSE;
+		break;
+	case IDC_CHK_3:		// 검사부 텐션 ON (PC가 ON/OFF시킴)
+		if (!pDoc->WorkingInfo.Motion.bAoiTq)
+			pDoc->WorkingInfo.Motion.bAoiTq = TRUE;
+		else
+			pDoc->WorkingInfo.Motion.bAoiTq = FALSE;
+		break;
+	case IDC_CHK_84:	// 각인부 텐션 ON (PC가 ON/OFF시킴)
+		if (!pDoc->WorkingInfo.Motion.bEngraveTq)
+			pDoc->WorkingInfo.Motion.bEngraveTq = TRUE;
+		else
+			pDoc->WorkingInfo.Motion.bEngraveTq = FALSE;
+		break;
+
+		// [각인부 세정기]
+	case IDC_CHK_87:	// 각인부 세정기 ON (PC가 ON/OFF시킴)
+		if (!pDoc->WorkingInfo.LastJob.bEngraveCleanner)
+			pDoc->WorkingInfo.LastJob.bEngraveCleanner = TRUE;
+		else
+			pDoc->WorkingInfo.LastJob.bEngraveCleanner = FALSE;
+		break;
+
+		// [AOI(하) 세정기]
+	case IDC_CHK_88:	// AOI(하) 세정기 ON (PC가 ON/OFF시킴)
+		if (!pDoc->WorkingInfo.LastJob.bAoiDnCleanner)
+			pDoc->WorkingInfo.LastJob.bAoiDnCleanner = TRUE;
+		else
+			pDoc->WorkingInfo.LastJob.bAoiDnCleanner = FALSE;
+		break;
+	}
+#endif
+}
+
+void CDlgMenu03::SwEngraveBtn(int nCtrlID, BOOL bOn)
+{
+#ifdef USE_ENGRAVE
+	switch (nCtrlID)
+	{
+		// [Main]
+	case IDC_CHK_34:		// 마킹부 운전준비 스위치 "MB005503"
+		pView->m_pEngrave->SwReady(bOn);
+		pDoc->BtnStatus.Main.Ready = bOn;
+		break;
+	case IDC_CHK_0:			// 마킹부 운전 스위치 "MB005501"
+		pView->m_pEngrave->SwRun(bOn);
+		pDoc->BtnStatus.Main.Run = bOn;
+		break;
+	case IDC_CHK_1:			// 마킹부 리셋 스위치 "MB005504"
+		pView->m_pEngrave->SwReset(bOn);
+		pDoc->BtnStatus.Main.Reset = bOn;
+		break;
+	case IDC_CHK_33:		// 마킹부 정지 스위치 "MB005502"
+		pView->m_pEngrave->SwStop(bOn);
+		pDoc->BtnStatus.Main.Stop = bOn;
+		break;
+		//case IDC_CHK_:		// 마킹부 자동(ON)/수동(OFF) 스위치 "MB005505"
+		//	pView->m_pEngrave->SwAuto(bOn);
+		//	pView->m_pEngrave->SwManual(!bOn);
+		//	pDoc->BtnStatus.Main.Auto = bOn;
+		//	pDoc->BtnStatus.Main.Manual = !bOn;
+		//	break;
+
+		// [Torque Motor]
+	case IDC_CHK_2:		// 마킹부 텐션 ON (PC가 ON/OFF시킴) "MB440155"
+		pView->m_pEngrave->SwMkTq(bOn); // pDoc->WorkingInfo.Motion.bMkTq
+		pDoc->WorkingInfo.Motion.bMkTq = pDoc->BtnStatus.Tq.Mk = bOn;
+		break;
+	case IDC_CHK_3:		// 검사부 텐션 ON (PC가 ON/OFF시킴) "MB440156"
+		pView->m_pEngrave->SwAoiTq(bOn); // pDoc->WorkingInfo.Motion.bAoiTq
+		pDoc->WorkingInfo.Motion.bAoiTq = pDoc->BtnStatus.Tq.Aoi = bOn;
+		break;
+	case IDC_CHK_84:	// 각인부 텐션 ON (PC가 ON/OFF시킴) "MB440154"
+		pView->m_pEngrave->SwEngTq(bOn); // pDoc->WorkingInfo.Motion.bEngraveTq
+		pDoc->WorkingInfo.Motion.bEngraveTq = pDoc->BtnStatus.Tq.Eng = bOn;
+		break;
+
+		// [Induction Motor}
+	case IDC_CHK_68:	// One Metal		//pView->SetTwoMetal(FALSE, TRUE);
+		pView->m_pEngrave->SwRcInductionCcw(bOn);
+		pDoc->WorkingInfo.LastJob.bOneMetal = pDoc->BtnStatus.Induct.Rc = bOn;
+		break;
+
+	case IDC_CHK_69:	// Two Metal		//pView->SetTwoMetal(TRUE, TRUE);
+		pView->m_pEngrave->SwUcInductionCcw(bOn);
+		pDoc->WorkingInfo.LastJob.bTwoMetal = pDoc->BtnStatus.Induct.Uc = bOn;
+		break;
+
+		// [Core 150mm]
+	case IDC_CHK_70:	// Recoiler		//SetCore150mmRecoiler(TRUE);
+		pView->m_pEngrave->SwRcCore150mm(bOn);
+		pDoc->BtnStatus.Core150.Rc = bOn;
+		break;
+
+	case IDC_CHK_71:	// Uncoiler		//SetCore150mmUncoiler(TRUE);
+		pView->m_pEngrave->SwUcCore150mm(bOn);
+		pDoc->BtnStatus.Core150.Uc = bOn;
+		break;
+
+		// Recoiler
+	case IDC_CHK_4:			// 리코일러 연동 온/오프 스위치 "MB005801"
+		pView->m_pEngrave->SwRcRelation(bOn);
+		pDoc->BtnStatus.Rc.Relation = bOn;
+		break;
+	case IDC_CHK_5:			// 리코일러 제품휠 정회전 스위치 "MB00580C"
+		pView->m_pEngrave->SwRcFdCw(bOn);
+		pDoc->BtnStatus.Rc.FdCw = bOn;
+		break;
+	case IDC_CHK_6:			// 리코일러 제품휠 역회전 스위치 "MB00580D"
+		pView->m_pEngrave->SwRcFdCcw(bOn);
+		pDoc->BtnStatus.Rc.FdCcw = bOn;
+		break;
+	case IDC_CHK_41:		// 리코일러 제품척 클램프 스위치 "MB00580B"
+		pView->m_pEngrave->SwRcReelChuck(bOn);
+		pDoc->BtnStatus.Rc.ReelChuck = bOn;
+		break;
+	case IDC_CHK_42:		// 리코일러 댄서롤 상승/하강 스위치 "MB005802"
+		pView->m_pEngrave->SwRcDcRlUpDn(bOn);
+		pDoc->BtnStatus.Rc.DcRlUpDn = bOn;
+		break;
+	case IDC_CHK_43:		// 리코일러 제품 이음매(상/좌) 스위치 "MB005805"
+		pView->m_pEngrave->SwRcReelJoinL(bOn);
+		pDoc->BtnStatus.Rc.ReelJoinL = bOn;
+		break;
+	case IDC_CHK_7:			// 리코일러 제품 이음매(하/우) 스위치 "MB005806"
+		pView->m_pEngrave->SwRcReelJoinR(bOn);
+		pDoc->BtnStatus.Rc.ReelJoinR = bOn;
+		break;
+	case IDC_CHK_8:			// 리코일러 제품 이음매 진공 스위치 "MB00580F"
+		pView->m_pEngrave->SwRcReelJoinVac(bOn);
+		pDoc->BtnStatus.Rc.ReelJoinVac = bOn;
+		break;
+	case IDC_CHK_44:		// 리코일러 간지척 클램프 스위치 "MB005808"
+		pView->m_pEngrave->SwRcPaperChuck(bOn);
+		pDoc->BtnStatus.Rc.PprChuck = bOn;
+		break;
+	case IDC_CHK_45:		// 리코일러 간지휠 정회전 스위치 "MB005809"
+		pView->m_pEngrave->SwRcPaperCw(bOn);
+		pDoc->BtnStatus.Rc.PprCw = bOn;
+		break;
+	case IDC_CHK_46:		// 리코일러 간지휠 역회전 스위치 "MB00580A"
+		pView->m_pEngrave->SwRcPaperCcw(bOn);
+		pDoc->BtnStatus.Rc.PprCcw = bOn;
+		break;
+	case IDC_CHK_66:		// 리코일러 Rewinder 동작 스위치 "MB005803"
+		pView->m_pEngrave->SwRcRewinder(bOn);
+		pDoc->BtnStatus.Rc.Rewine = bOn;
+		break;
+	case IDC_CHK_67:		// 리코일러 Rewinder 제품 & 간지 스위치 "MB005804"
+		pView->m_pEngrave->SwRcRewinderReelPaper(bOn);
+		pDoc->BtnStatus.Rc.RewineReelPpr = bOn;
+		break;
+
+		// Punching
+	case IDC_CHK_9:			// 마킹부 연동 온/오프 스위치 "MB005511"
+		pView->m_pEngrave->SwMkRelation(bOn);
+		pDoc->BtnStatus.Mk.Relation = bOn;
+		break;
+	case IDC_CHK_10:		// 마킹부 피딩 정회전 스위치 "MB005513"
+		pView->m_pEngrave->SwMkFdCw(bOn);
+		pDoc->BtnStatus.Mk.FdCw = bOn;
+		break;
+	case IDC_CHK_11:		// 마킹부 피딩 역회전 스위치 "MB005514"
+		pView->m_pEngrave->SwMkFdCcw(bOn);
+		pDoc->BtnStatus.Mk.FdCcw = bOn;
+		break;
+	case IDC_CHK_12:		// 마킹부 피딩 진공 스위치 "MB005515"
+		pView->m_pEngrave->SwMkFdVac(bOn);
+		pDoc->BtnStatus.Mk.FdVac = bOn;
+		break;
+	case IDC_CHK_13:		// 마킹부 제품푸쉬 스위치 "MB005516" // (토크 진공 스위치) - X
+		pView->m_pEngrave->SwMkPushUp(bOn);
+		pDoc->BtnStatus.Mk.PushUp = bOn;
+		break;
+	case IDC_CHK_14:		// 마킹부 테이블 브로워 스위치 "MB005512"
+		pView->m_pEngrave->SwMkTblBlw(bOn);
+		pDoc->BtnStatus.Mk.TblBlw = bOn;
+		break;
+	case IDC_CHK_15:		// 마킹부 테이블 진공 스위치 "MB005517"
+		pView->m_pEngrave->SwMkTblVac(bOn);
+		pDoc->BtnStatus.Mk.TblVac = bOn;
+		break;
+	case IDC_CHK_51:		// 마킹부 피딩 클램프 스위치 "MB005519"
+		pView->m_pEngrave->SwMkFdClp(bOn);
+		pDoc->BtnStatus.Mk.FdClp = bOn;
+		break;
+	case IDC_CHK_52:		// 마킹부 텐션 클램프 스위치 "MB00551A"
+		pView->m_pEngrave->SwMkTqClp(bOn);
+		pDoc->BtnStatus.Mk.TqClp = bOn;
+		break;
+	case IDC_CHK_16:		// 마킹부 한판넬 이송 스위치 "MB440151"
+		pView->m_pEngrave->SwMkMvOne(bOn);
+		pDoc->BtnStatus.Mk.MvOne = bOn;
+		break;
+	case IDC_CHK_49:		// 마킹부 레이져마크 스위치 "MB005518"
+		pView->m_pEngrave->SwMkLsrPt(bOn);
+		pDoc->BtnStatus.Mk.LsrPt = bOn;
+		break;
+	case IDC_CHK_48:		// 마킹부 댄서롤 상승/하강 스위치 "MB00551B", "X421B"
+		pView->m_pEngrave->SwMkDcRSol(bOn);
+		pDoc->BtnStatus.Mk.DcRSol = bOn;
+		break;
+
+		// AOI 하면 검사	
+	case IDC_CHK_55:		// 검사부 하 연동 온/오프 스위치 "MB005701"
+		pView->m_pEngrave->SwAoiDnRelation(bOn);
+		pDoc->BtnStatus.AoiDn.Relation = bOn;
+		break;
+	case IDC_CHK_56:		// 검사부 하 피딩 정회전 스위치 "MB005703"
+		pView->m_pEngrave->SwAoiDnFdCw(bOn);
+		pDoc->BtnStatus.AoiDn.FdCw = bOn;
+		break;
+	case IDC_CHK_57:		// 검사부 하 피딩 역회전 스위치 "MB005704"
+		pView->m_pEngrave->SwAoiDnFdCcw(bOn);
+		pDoc->BtnStatus.AoiDn.FdCcw = bOn;
+		break;
+	case IDC_CHK_58:		// 검사부 하 피딩 진공 스위치 "MB005705"
+		pView->m_pEngrave->SwAoiDnFdVac(bOn);
+		pDoc->BtnStatus.AoiDn.FdVac = bOn;
+		break;
+	case IDC_CHK_59:		// 검사부 하 제품푸쉬 스위치 "MB005706" // (토크 진공 스위치) - X
+		pView->m_pEngrave->SwAoiDnPushUp(bOn);
+		pDoc->BtnStatus.AoiDn.PushUp = bOn;
+		break;
+	case IDC_CHK_60:		// 검사부 하 테이블 브로워 스위치 "MB005702"
+		pView->m_pEngrave->SwAoiDnTblBlw(bOn);
+		pDoc->BtnStatus.AoiDn.TblBlw = bOn;
+		break;
+	case IDC_CHK_61:		// 검사부 하 테이블 진공 스위치 "MB005707"
+		pView->m_pEngrave->SwAoiDnTblVac(bOn);
+		pDoc->BtnStatus.AoiDn.TblVac = bOn;
+		break;
+	case IDC_CHK_64:		// 검사부 하 피딩 클램프 스위치 "MB005709"
+		pView->m_pEngrave->SwAoiDnFdClp(bOn);
+		pDoc->BtnStatus.AoiDn.FdClp = bOn;
+		break;
+	case IDC_CHK_65:		// 검사부 하 텐션 클램프 스위치 "MB00570A"
+		pView->m_pEngrave->SwAoiDnTqClp(bOn);
+		pDoc->BtnStatus.AoiDn.TqClp = bOn;
+		break;
+	case IDC_CHK_62:		// 검사부 하 한판넬 이송 스위치 "MB440151"
+		pView->m_pEngrave->SwAoiDnMvOne(bOn);
+		pDoc->BtnStatus.AoiDn.MvOne = bOn;
+		break;
+	case IDC_CHK_63:		// 검사부 하 레이져마크 스위치 "MB005708"
+		pView->m_pEngrave->SwAoiDnLsrPt(bOn);
+		pDoc->BtnStatus.AoiDn.LsrPt = bOn;
+		break;
+	case IDC_CHK_88:		// 검사부 하 초음파 세정기 스위치 "MB44014F" //pDoc->WorkingInfo.LastJob.bAoiDnCleanner
+		pView->m_pEngrave->SwAoiDnSonicBlw(bOn);
+		pDoc->BtnStatus.AoiDn.SonicBlw = bOn;
+		break;
+
+
+		// AOI 상면 검사
+	case IDC_CHK_17:		// 검사부 상 연동 온/오프 스위치 "MB005601"
+		pView->m_pEngrave->SwAoiUpRelation(bOn);
+		pDoc->BtnStatus.AoiUp.Relation = bOn;
+		break;
+	case IDC_CHK_18:		// 검사부 상 피딩 정회전 스위치 "MB005603"
+		pView->m_pEngrave->SwAoiUpFdCw(bOn);
+		pDoc->BtnStatus.AoiUp.FdCw = bOn;
+		break;
+	case IDC_CHK_19:		// 검사부 상 피딩 역회전 스위치 "MB005604"
+		pView->m_pEngrave->SwAoiUpFdCcw(bOn);
+		pDoc->BtnStatus.AoiUp.FdCcw = bOn;
+		break;
+	case IDC_CHK_20:		// 검사부 상 피딩 진공 스위치 "MB005605"
+		pView->m_pEngrave->SwAoiUpFdVac(bOn);
+		pDoc->BtnStatus.AoiUp.FdVac = bOn;
+		break;
+	case IDC_CHK_21:		// 검사부 상 제품푸쉬 스위치 "MB005606" // (토크 진공 스위치) - X
+		pView->m_pEngrave->SwAoiUpPushUp(bOn);
+		pDoc->BtnStatus.AoiUp.PushUp = bOn;
+		break;
+	case IDC_CHK_22:		// 검사부 상 테이블 브로워 스위치 "MB005602"
+		pView->m_pEngrave->SwAoiUpTblBlw(bOn);
+		pDoc->BtnStatus.AoiUp.TblBlw = bOn;
+		break;
+	case IDC_CHK_23:		// 검사부 상 테이블 진공 스위치 "MB005607"
+		pView->m_pEngrave->SwAoiUpTblVac(bOn);
+		pDoc->BtnStatus.AoiUp.TblVac = bOn;
+		break;
+	case IDC_CHK_53:		// 검사부 상 피딩 클램프 스위치 "MB005609"
+		pView->m_pEngrave->SwAoiUpFdClp(bOn);
+		pDoc->BtnStatus.AoiUp.FdClp = bOn;
+		break;
+	case IDC_CHK_54:		// 검사부 상 텐션 클램프 스위치 "MB00560A"
+		pView->m_pEngrave->SwAoiUpTqClp(bOn);
+		pDoc->BtnStatus.AoiUp.TqClp = bOn;
+		break;
+	case IDC_CHK_24:		// 검사부 상 한판넬 이송 스위치  "MB440151"
+		pView->m_pEngrave->SwAoiUpMvOne(bOn);
+		pDoc->BtnStatus.AoiUp.MvOne = bOn;
+		break;
+	case IDC_CHK_50:		// 검사부 상 레이져마크 스위치 "MB005608"
+		pView->m_pEngrave->SwAoiUpLsrPt(bOn);
+		pDoc->BtnStatus.AoiUp.LsrPt = bOn;
+		break;
+
+		// 각인부
+	case IDC_CHK_72:			// 각인부 연동 온/오프 스위치
+		pView->m_pEngrave->SwEngRelation(bOn);
+		pDoc->BtnStatus.Eng.Relation = bOn;
+		break;
+	case IDC_CHK_73:		// 각인부 피딩 정회전 스위치
+		pView->m_pEngrave->SwEngFdCw(bOn);
+		pDoc->BtnStatus.Eng.FdCw = bOn;
+		break;
+	case IDC_CHK_74:		// 각인부 피딩 역회전 스위치
+		pView->m_pEngrave->SwEngFdCcw(bOn);
+		pDoc->BtnStatus.Eng.FdCcw = bOn;
+		break;
+	case IDC_CHK_75:		// 각인부 피딩 진공 스위치
+		pView->m_pEngrave->SwEngFdVac(bOn);
+		pDoc->BtnStatus.Eng.FdVac = bOn;
+		break;
+	case IDC_CHK_76:		// 각인부 제품푸쉬 스위치 // (토크 진공 스위치) - X
+		pView->m_pEngrave->SwEngPushUp(bOn);
+		pDoc->BtnStatus.Eng.PushUp = bOn;
+		break;
+	case IDC_CHK_77:		// 각인부 테이블 브로워 스위치
+		pView->m_pEngrave->SwEngTblBlw(bOn);
+		pDoc->BtnStatus.Eng.TblBlw = bOn;
+		break;
+	case IDC_CHK_78:		// 각인부 테이블 진공 스위치
+		pView->m_pEngrave->SwEngTblVac(bOn);
+		pDoc->BtnStatus.Eng.TblVac = bOn;
+		break;
+	case IDC_CHK_82:		// 각인부 피딩 클램프 스위치
+		pView->m_pEngrave->SwEngFdClp(bOn);
+		pDoc->BtnStatus.Eng.FdClp = bOn;
+		break;
+	case IDC_CHK_83:		// 각인부 텐션 클램프 스위치
+		pView->m_pEngrave->SwEngTqClp(bOn);
+		pDoc->BtnStatus.Eng.TqClp = bOn;
+		break;
+	case IDC_CHK_79:		// 각인부 한판넬 이송 스위치  "MB440151"
+		pView->m_pEngrave->SwEngMvOne(bOn);
+		pDoc->BtnStatus.Eng.MvOne = bOn;
+		break;
+	case IDC_CHK_81:		// 각인부 레이져마크 스위치 "" IDC_CHK_81
+		pView->m_pEngrave->SwEngLsrPt(bOn);
+		pDoc->BtnStatus.Eng.LsrPt = bOn;
+		break;
+	case IDC_CHK_80:		// 각인부 댄서롤 상승/하강 스위치
+		pView->m_pEngrave->SwEngDcRSol(bOn);
+		pDoc->BtnStatus.Eng.DcRSol = bOn;
+		break;
+	case IDC_CHK_87:		// 각인부 초음파 세정기 스위치 "MB44014E" pDoc->WorkingInfo.LastJob.bEngraveCleanner
+		pView->m_pEngrave->SwEngSonicBlw(bOn);
+		pDoc->BtnStatus.Eng.SonicBlw = bOn;
+		break;
+
+		// Uncoiler
+	case IDC_CHK_25:		// 언코일러 연동 온/오프 스위치 "MB005401"
+		pView->m_pEngrave->SwUcRelation(bOn);
+		pDoc->BtnStatus.Uc.Relation = bOn;
+		break;
+	case IDC_CHK_26:		// 언코일러 제품휠 정회전 스위치 "MB00540C"
+		pView->m_pEngrave->SwUcFdCw(bOn);
+		pDoc->BtnStatus.Uc.FdCw = bOn;
+		break;
+	case IDC_CHK_27:		// 언코일러 제품휠 역회전 스위치 "MB00540D"
+		pView->m_pEngrave->SwUcFdCcw(bOn);
+		pDoc->BtnStatus.Uc.FdCcw = bOn;
+		break;
+	case IDC_CHK_35:		// 언코일러 제품척 클램프 스위치 "MB00540B"
+		pView->m_pEngrave->SwUcReelChuck(bOn);
+		pDoc->BtnStatus.Uc.ReelChuck = bOn;
+		break;
+	case IDC_CHK_28:		// 언코일러 댄서롤 상승/하강 스위치 "MB005402"
+		pView->m_pEngrave->SwUcDcRlUpDn(bOn);
+		pDoc->BtnStatus.Uc.DcRlUpDn = bOn;
+		break;
+	case IDC_CHK_30:		// 언코일러 제품 이음매(상/좌) 스위치 "MB005405"
+		pView->m_pEngrave->SwUcReelJoinL(bOn);
+		pDoc->BtnStatus.Uc.ReelJoinL = bOn;
+		break;
+	case IDC_CHK_37:		// 언코일러 제품 이음매(하/우) 스위치 "MB005406"
+		pView->m_pEngrave->SwUcReelJoinR(bOn);
+		pDoc->BtnStatus.Uc.ReelJoinR = bOn;
+		break;
+	case IDC_CHK_38:		// 언코일러 제품 이음매 진공 스위치 "MB00540F"
+		pView->m_pEngrave->SwUcReelJoinVac(bOn);
+		pDoc->BtnStatus.Uc.ReelJoinVac = bOn;
+		break;
+	case IDC_CHK_31:		// 언코일러 간지척 클램프 스위치 "MB005408"
+		pView->m_pEngrave->SwUcPaperChuck(bOn);
+		pDoc->BtnStatus.Uc.PprChuck = bOn;
+		break;
+	case IDC_CHK_32:		// 언코일러 간지휠 정회전 스위치 "MB005409"
+		pView->m_pEngrave->SwUcPaperCw(bOn);
+		pDoc->BtnStatus.Uc.PprCw = bOn;
+		break;
+	case IDC_CHK_39:		// 언코일러 간지휠 역회전 스위치 "MB00540A"
+		pView->m_pEngrave->SwUcPaperCcw(bOn);
+		pDoc->BtnStatus.Uc.PprCcw = bOn;
+		break;
+	case IDC_CHK_29:		// 언코일러 클린롤러 상승/하강 스위치 "MB005403"
+		pView->m_pEngrave->SwUcClRlUpDn(bOn);
+		pDoc->BtnStatus.Uc.ClRlUpDn = bOn;
+		break;
+	case IDC_CHK_36:		// 언코일러 클린롤러누름 상승/하강 스위치 "MB005404"
+		pView->m_pEngrave->SwUcClRlPshUpDn(bOn);
+		pDoc->BtnStatus.Uc.ClRlPshUpDn = bOn;
+		break;
+	}
+#endif
+}
+
+/*
 LRESULT CDlgMenu03::OnMyBtnDown(WPARAM wPara, LPARAM lPara)
 {
 
@@ -2137,58 +3036,63 @@ LRESULT CDlgMenu03::OnMyBtnUp(WPARAM wPara, LPARAM lPara)
 //	SwMyBtnUp(nCtrlID);
 	return 0L;
 }
-
+*/
 
 BOOL CDlgMenu03::GetCw() 
 {
-	//if(!pDoc->m_pMpeIo)
-	//	return FALSE;
+	if(!pDoc->m_pMpeIo)
+		return FALSE;
 
-	//// MpeIO
-	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	// MpeIO
+	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	//if(pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<3))		//[29] 마킹부 피딩 정회전 스위치 램프
-	//	return TRUE;
-	//if(pDoc->m_pMpeIo[nInSeg + 8] & (0x01<<3))		//[32] 검사부 피딩 정회전 스위치 램프
-	//	return TRUE;
-
+#ifdef USE_MPE
+	if(pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<3))		//[29] 마킹부 피딩 정회전 스위치 램프
+		return TRUE;
+	if(pDoc->m_pMpeIo[nInSeg + 8] & (0x01<<3))		//[32] 검사부 피딩 정회전 스위치 램프
+		return TRUE;
+#endif
 	return FALSE;
 }
 
 void CDlgMenu03::SetCw(BOOL bOn) 
 {
 	long lData = 1;
+#ifdef USE_MPE
 	pView->m_pMpe->Write(_T("MB440161"), lData);	// 마킹부 피딩 ON (PLC가 피딩완료 후 OFF)
 	pView->m_pMpe->Write(_T("MB440160"), lData);	// 검사부 피딩 ON (PLC가 피딩완료 후 OFF)
-
+#endif
 }
 
 BOOL CDlgMenu03::GetCcw() 
 {
-	//if(!pDoc->m_pMpeIo)
-	//	return FALSE;
+	if(!pDoc->m_pMpeIo)
+		return FALSE;
 
-	//// MpeIO
-	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	// MpeIO
+	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	//if(pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<4))		//[29] 마킹부 피딩 역회전 스위치 램프 
-	//	return TRUE;
-	//if(pDoc->m_pMpeIo[nInSeg + 8] & (0x01<<4))		//[32] 검사부 피딩 역회전 스위치 램프
-	//	return TRUE;
-
+#ifdef USE_MPE
+	if(pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<4))		//[29] 마킹부 피딩 역회전 스위치 램프 
+		return TRUE;
+	if(pDoc->m_pMpeIo[nInSeg + 8] & (0x01<<4))		//[32] 검사부 피딩 역회전 스위치 램프
+		return TRUE;
+#endif
 	return FALSE;
 }
 
 void CDlgMenu03::SetCcw(BOOL bOn) 
 {
 	long lData = 1;
+#ifdef USE_MPE
 	if(pView->m_pMpe)
 	{
 		pView->m_pMpe->Write(_T("MB440161"), lData);	// 마킹부 피딩 ON (PLC가 피딩완료 후 OFF)
 		pView->m_pMpe->Write(_T("MB440160"), lData);	// 검사부 피딩 ON (PLC가 피딩완료 후 OFF)
 	}
+#endif
 }
 
 void CDlgMenu03::MoveMk(double dOffset)
@@ -2202,6 +3106,7 @@ void CDlgMenu03::MoveMk(double dOffset)
 	fAcc = pDoc->GetOnePnlAcc();
 	fTarget = fLen + dOffset;
 
+#ifdef USE_MPE
 	if(pView->m_pMpe)
 	{
 		long lData = (long)(fTarget * 1000.0);
@@ -2209,7 +3114,7 @@ void CDlgMenu03::MoveMk(double dOffset)
 
 		MoveMk();
 	}
-	
+#endif
 // 	if(pView->m_pMotion)
 // 	{
 // 		if(!pView->m_pMotion->Move(MS_MKFD, fTarget, fVel, fAcc, fAcc, INC, NO_WAIT))
@@ -2227,11 +3132,13 @@ void CDlgMenu03::TimMoveMk(int nDir)
 
 void CDlgMenu03::MoveMk(int nDir) 
 {
+#ifdef USE_MPE
 	if(pDoc->WorkingInfo.LastJob.bMkOnePnl)
 	{
 		if(pView->m_pMpe)
 			pView->m_pMpe->Write(_T("MB440161"), 1);	// 마킹부 피딩 ON (PLC가 피딩완료 후 OFF)
 	}
+#endif
 }
 
 void CDlgMenu03::StopMk() 
@@ -2257,6 +3164,7 @@ void CDlgMenu03::MoveAoi(double dOffset)
 	fAcc = pDoc->GetOnePnlAcc();
 	fTarget = fLen - dOffset;
 
+#ifdef USE_MPE
 	if(pView->m_pMpe)
 	{
  		long lData = (long)(fTarget * 1000.0);
@@ -2265,6 +3173,7 @@ void CDlgMenu03::MoveAoi(double dOffset)
 
 		MoveAoi();
 	}
+#endif
 } 
 
 void CDlgMenu03::TimMoveAoi(int nDir)
@@ -2274,11 +3183,13 @@ void CDlgMenu03::TimMoveAoi(int nDir)
 
 void CDlgMenu03::MoveAoi(int nDir) 
 {
+#ifdef USE_MPE
 	if(pDoc->WorkingInfo.LastJob.bAoiOnePnl)
 	{
 		if(pView->m_pMpe)
 			pView->m_pMpe->Write(_T("MB440160"), 1);	// 검사부 피딩 ON (PLC가 피딩완료 후 OFF)
 	}
+#endif
 }
 
 void CDlgMenu03::StopAoi() 
@@ -2349,25 +3260,26 @@ void CDlgMenu03::ChkDoneMkAoi()
 
 BOOL CDlgMenu03::GetRelation() 
 {
-	//if(!pDoc->m_pMpeIo)
-	//	return FALSE;
+	if(!pDoc->m_pMpeIo)
+		return FALSE;
 
-	//// MpeIO
-	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	// MpeIO
+	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	//if(!(pDoc->m_pMpeIo[nInSeg + 16] & (0x01<<1)))	//[40] 리코일러 연동 온/오프 스위치 램프
-	//	return FALSE;
-	//if(!(pDoc->m_pMpeIo[nInSeg] & (0x01<<1)))		//[24] 언코일러 연동 온/오프 스위치 램프
-	//	return FALSE;
+#ifdef USE_MPE
+	if(!(pDoc->m_pMpeIo[nInSeg + 16] & (0x01<<1)))	//[40] 리코일러 연동 온/오프 스위치 램프
+		return FALSE;
+	if(!(pDoc->m_pMpeIo[nInSeg] & (0x01<<1)))		//[24] 언코일러 연동 온/오프 스위치 램프
+		return FALSE;
 
-	//if(!(pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<1)))	//[29] 마킹부 연동 온/오프 스위치 램프
-	//	return FALSE;
-	//if(!(pDoc->m_pMpeIo[nInSeg + 8] & (0x01<<1)))	//[32] 검사부 상 연동 온/오프 스위치 램프
-	//	return FALSE;
-	//if(!(pDoc->m_pMpeIo[nInSeg + 12] & (0x01<<1)))	//[36] 검사부 하 연동 온/오프 스위치 램프
-	//	return FALSE;
-
+	if(!(pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<1)))	//[29] 마킹부 연동 온/오프 스위치 램프
+		return FALSE;
+	if(!(pDoc->m_pMpeIo[nInSeg + 8] & (0x01<<1)))	//[32] 검사부 상 연동 온/오프 스위치 램프
+		return FALSE;
+	if(!(pDoc->m_pMpeIo[nInSeg + 12] & (0x01<<1)))	//[36] 검사부 하 연동 온/오프 스위치 램프
+		return FALSE;
+#endif
 	return TRUE;
 }
 
@@ -2383,10 +3295,10 @@ BOOL CDlgMenu03::GetAoiOnePnl()
 
 BOOL CDlgMenu03::GetRun() 
 {
-	//if(!pDoc->m_pMpeIo)
-	//	return FALSE;
+	if(!pDoc->m_pMpeIo)
+		return FALSE;
 
-	////if(pDoc->m_pMpeIo[28] & (0x01<<1))	// 마킹부 운전 스위치 램프
+	//if(pDoc->m_pMpeIo[28] & (0x01<<1))	// 마킹부 운전 스위치 램프
 	if(pView->m_bSwRun) // 초기운전시 램프 On/Off
 		return TRUE;
 
@@ -2395,26 +3307,26 @@ BOOL CDlgMenu03::GetRun()
 
 BOOL CDlgMenu03::GetReady()
 {
-//	if(!pDoc->m_pMpeIo)
-//		return FALSE;
-//
-//	//if(pDoc->m_pMpeIo[28] & (0x01<<3))	// 마킹부 운전준비 스위치 램프
-//	//if(pDoc->m_pMpeSignal[0] & (0x01<<0))	// PLC 운전준비 완료(PC가 확인하고 Reset시킴.)
-////	if(pView->m_bReadyDone)
-//	{
-//		//pView->m_bReadyDone = TRUE;
-//		return TRUE;
-//	}
+	if(!pDoc->m_pMpeIo)
+		return FALSE;
+
+	//if(pDoc->m_pMpeIo[28] & (0x01<<3))	// 마킹부 운전준비 스위치 램프
+	//if(pDoc->m_pMpeSignal[0] & (0x01<<0))	// PLC 운전준비 완료(PC가 확인하고 Reset시킴.)
+	//if(pView->m_bReadyDone)
+	//{
+	//	pView->m_bReadyDone = TRUE;
+		return TRUE;
+	//}
 
 	return FALSE;
 }
 
 BOOL CDlgMenu03::GetReset()
 {
-//	if(!pDoc->m_pMpeIo)
-//		return FALSE;
-//
-//// 	if(pDoc->m_pMpeIo[28] & (0x01<<4))	//  마킹부 리셋 스위치 램프
+	if(!pDoc->m_pMpeIo)
+		return FALSE;
+
+ 	//if(pDoc->m_pMpeIo[28] & (0x01<<4))	//  마킹부 리셋 스위치 램프
 	if(pView->m_bSwReset)
 		return TRUE;
 
@@ -2454,8 +3366,10 @@ void CDlgMenu03::SetMkTq(BOOL bOn)
 // 			pView->m_pMotion->ServoOnOff(AXIS_MKTQ, OFF);		// Amp OFF
 // 	}
 // 
+#ifdef USE_MPE
 	if(pView->m_pMpe)
 		pView->m_pMpe->Write(_T("MB440155"), bOn?1:0);	// 마킹부 텐션 ON (PC가 ON/OFF시킴)
+#endif
 	CString sData, sPath=PATH_WORKING_INFO;
 	sData.Format(_T("%d"), pDoc->WorkingInfo.Motion.bMkTq?1:0);
 	::WritePrivateProfileString(_T("Motion"), _T("MARKING_TENSION_SERVO_TORQUE_ON"), sData, sPath);
@@ -2476,8 +3390,10 @@ void CDlgMenu03::SetAoiTq(BOOL bOn)
 // 			pView->m_pMotion->ServoOnOff(AXIS_AOITQ, OFF);		// Amp OFF
 // 	}
 // 
+#ifdef USE_MPE
 	if(pView->m_pMpe)
 		pView->m_pMpe->Write(_T("MB440156"), bOn?1:0);	// 검사부 텐션 ON (PC가 ON/OFF시킴)
+#endif
 	CString sData, sPath=PATH_WORKING_INFO;
 	sData.Format(_T("%d"), pDoc->WorkingInfo.Motion.bAoiTq?1:0);
 	::WritePrivateProfileString(_T("Motion"), _T("AOI_TENSION_SERVO_TORQUE_ON"), sData, sPath);	
@@ -2485,8 +3401,10 @@ void CDlgMenu03::SetAoiTq(BOOL bOn)
 
 void CDlgMenu03::SetEngraveTq(BOOL bOn)
 {
+#ifdef USE_MPE
 	if(pView->m_pMpe)
 		pView->m_pMpe->Write(_T("MB440154"), bOn?1:0);	// 검사부 텐션 ON (PC가 ON/OFF시킴)
+#endif
 	CString sData, sPath=PATH_WORKING_INFO;
 	sData.Format(_T("%d"), pDoc->WorkingInfo.Motion.bEngraveTq?1:0);
 	::WritePrivateProfileString(_T("Motion"), _T("ENGRAVE_TENSION_SERVO_TORQUE_ON"), sData, sPath);	
@@ -2494,9 +3412,10 @@ void CDlgMenu03::SetEngraveTq(BOOL bOn)
 
 void CDlgMenu03::SetMkOnePnl(BOOL bOn)
 {
+#ifdef USE_MPE
 	//pView->IoWrite("MB440151", bOn?1:0);	// 한판넬 이송상태 ON (PC가 ON, OFF)
 	pView->m_pMpe->Write(_T("MB440151"), bOn?1:0);
-
+#endif
 	CString sData, sPath=PATH_WORKING_INFO;
 	pDoc->WorkingInfo.LastJob.bMkOnePnl = bOn;
 	sData.Format(_T("%d"), pDoc->WorkingInfo.LastJob.bMkOnePnl?1:0);
@@ -2506,8 +3425,9 @@ void CDlgMenu03::SetMkOnePnl(BOOL bOn)
 
 void CDlgMenu03::SetEngraveCleanner(BOOL bOn)
 {
+#ifdef USE_MPE
 	pView->m_pMpe->Write(_T("MB44014E"), bOn ? 1 : 0); // [각인부 세정기]
-
+#endif
 	CString sData, sPath = PATH_WORKING_INFO;
 	pDoc->WorkingInfo.LastJob.bEngraveCleanner = bOn;
 	sData.Format(_T("%d"), pDoc->WorkingInfo.LastJob.bEngraveCleanner ? 1 : 0);
@@ -2516,8 +3436,9 @@ void CDlgMenu03::SetEngraveCleanner(BOOL bOn)
 
 void CDlgMenu03::SetAoiDnCleanner(BOOL bOn)
 {
+#ifdef USE_MPE
 	pView->m_pMpe->Write(_T("MB44014F"), bOn ? 1 : 0); // [AOI(하) 세정기]
-
+#endif
 	CString sData, sPath = PATH_WORKING_INFO;
 	pDoc->WorkingInfo.LastJob.bAoiDnCleanner = bOn;
 	sData.Format(_T("%d"), pDoc->WorkingInfo.LastJob.bAoiDnCleanner ? 1 : 0);
@@ -2526,9 +3447,10 @@ void CDlgMenu03::SetAoiDnCleanner(BOOL bOn)
 
 void CDlgMenu03::SetAoiOnePnl(BOOL bOn)
 {
+#ifdef USE_MPE
 	//pView->IoWrite("MB440151", bOn?1:0);	// 한판넬 이송상태 ON (PC가 ON, OFF)
 	pView->m_pMpe->Write(_T("MB440151"), bOn?1:0);
-
+#endif
 	CString sData, sPath=PATH_WORKING_INFO;
 	pDoc->WorkingInfo.LastJob.bAoiOnePnl = bOn;
 	sData.Format(_T("%d"), pDoc->WorkingInfo.LastJob.bAoiOnePnl?1:0);
@@ -2772,9 +3694,10 @@ void CDlgMenu03::SwStop()
 		pView->DispStsBar(_T("정지-3"), 0);
 		pView->DispMain(_T("정 지"), RGB_RED);
 	pView->TowerLamp(RGB_RED, TRUE, FALSE);
+#ifdef USE_MPE
 	//pView->IoWrite("MB440162", 1); // 마킹부 정지 스위치 램프 ON(PC가 On/Off시킴)  - 20141021
 	pView->m_pMpe->Write(_T("MB440162"), 1);
-
+#endif
 	pView->ClrDispMsg();
 }
 
@@ -2904,17 +3827,18 @@ void CDlgMenu03::SwMkRelation()
 
 BOOL CDlgMenu03::IsMkTblBlw()
 {
-	//if (!pDoc->m_pMpeIo)
-	//	return FALSE;
+	if (!pDoc->m_pMpeIo)
+		return FALSE;
 
-	//// MpeIO
-	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	// MpeIO
+	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	//BOOL bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<2);		//[29] 마킹부 테이블 브로워 스위치 램프
-	//return bOn;
-
-	return FALSE;
+	BOOL bOn = FALSE;
+#ifdef USE_MPE
+	bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<2);		//[29] 마킹부 테이블 브로워 스위치 램프
+#endif
+	return bOn;
 }
 
 void CDlgMenu03::SwMkTblBlw(BOOL bOn)
@@ -2943,16 +3867,18 @@ void CDlgMenu03::SwMkTblBlw()
 
 BOOL CDlgMenu03::IsMkFdVac()
 {
-	//if (!pDoc->m_pMpeIo)
-	//	return FALSE;
+	if (!pDoc->m_pMpeIo)
+		return FALSE;
 
-	//// MpeIO
-	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	// MpeIO
+	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	//BOOL bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<5);	//[29] MB003715,	Y4255	,	마킹부 피딩 진공 스위치 램프
-	//return bOn;
-	return FALSE;
+	BOOL bOn = FALSE;
+#ifdef USE_MPE
+	bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<5);	//[29] MB003715,	Y4255	,	마킹부 피딩 진공 스위치 램프
+#endif
+	return bOn;
 }
 
 void CDlgMenu03::SwMkFdVac(BOOL bOn)
@@ -2986,16 +3912,18 @@ void CDlgMenu03::SwMkFdVac()
 
 BOOL CDlgMenu03::IsMkTqVac()
 {
-	//if (!pDoc->m_pMpeIo)
-	//	return FALSE;
+	if (!pDoc->m_pMpeIo)
+		return FALSE;
 
-	//// MpeIO
-	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	// MpeIO
+	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	//BOOL bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<6);		//[29] MB003716,	Y4256	,	마킹부 토크 진공 스위치 램프
-	//return bOn;
-	return FALSE;
+	BOOL bOn = FALSE;
+#ifdef USE_MPE
+	bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<6);		//[29] MB003716,	Y4256	,	마킹부 토크 진공 스위치 램프
+#endif
+	return bOn;
 }
 
 void CDlgMenu03::SwMkTqVac(BOOL bOn)
@@ -3029,16 +3957,18 @@ void CDlgMenu03::SwMkTqVac()
 
 BOOL CDlgMenu03::IsMkTblVac() 
 {
-	//if (!pDoc->m_pMpeIo)
-	//	return FALSE;
+	if (!pDoc->m_pMpeIo)
+		return FALSE;
 
-	//// MpeIO
-	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	// MpeIO
+	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	//BOOL bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<7);		//[29] MB003717,	Y4257	,	마킹부 테이블 진공 스위치 램프
-	//return bOn;
-	return FALSE;
+	BOOL bOn = FALSE;
+#ifdef USE_MPE
+	bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<7);		//[29] MB003717,	Y4257	,	마킹부 테이블 진공 스위치 램프
+#endif
+	return bOn;
 }
 
 void CDlgMenu03::SwMkTblVac(BOOL bOn) 
@@ -3135,16 +4065,18 @@ void CDlgMenu03::SwMkFdClp()
 
 BOOL CDlgMenu03::IsBufRolSol() 
 {
-	//if (!pDoc->m_pMpeIo)
-	//	return FALSE;
+	if (!pDoc->m_pMpeIo)
+		return FALSE;
 
-	//// MpeIO
-	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	// MpeIO
+	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	//BOOL bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<11);		//[29] MB00371B,	Y425B	,	마킹부 댄서롤 상승/하강 스위치 램프
-	//return bOn;
-	return FALSE;
+	BOOL bOn = FALSE;
+#ifdef USE_MPE
+	bOn = pDoc->m_pMpeIo[nInSeg + 5] & (0x01<<11);		//[29] MB00371B,	Y425B	,	마킹부 댄서롤 상승/하강 스위치 램프
+#endif
+	return bOn;
 }
 
 void CDlgMenu03::SwBufRolSol(BOOL bOn) 
@@ -3257,9 +4189,11 @@ void CDlgMenu03::SwAoiTblBlw()
 
 BOOL CDlgMenu03::IsAoiFdVac()
 {
-	//BOOL bOn = pDoc->m_pMpeI[9] & (0x01<<4);
-	//return bOn;
-	return FALSE;
+	BOOL bOn = FALSE;
+#ifdef USE_MPE
+	bOn = pDoc->m_pMpeIb[9] & (0x01<<4);
+#endif
+	return bOn;
 }
 
 void CDlgMenu03::SwAoiFdVac(BOOL bOn) 
@@ -3324,56 +4258,57 @@ BOOL CDlgMenu03::IsAoiLdRun()
 {
 	BOOL bRtn = TRUE;
 
- //	BOOL bOn0 = (pDoc->m_pMpeI[10] & (0x01<<11)) ? TRUE : FALSE;		// 검사부 상 자동 운전 <-> X432B I/F
- //	BOOL bOn1 = (pDoc->m_pMpeI[14] & (0x01<<11)) ? TRUE : FALSE;		// 검사부 하 자동 운전 <-> X442B I/F
+#ifdef USE_MPE
+	BOOL bOn0 = (pDoc->m_pMpeIb[10] & (0x01 << 11)) ? TRUE : FALSE;		// 검사부 상 자동 운전 <-> X432B I/F
+ 	BOOL bOn1 = (pDoc->m_pMpeIb[14] & (0x01<<11)) ? TRUE : FALSE;		// 검사부 하 자동 운전 <-> X442B I/F
 
-	//BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	//if(bDualTest)
-	//{
-	//	if((pView->m_AoiLdRun & 0x03) == 0x03)
-	//	{
-	//		if(!bOn0 || !bOn1)
-	//			bRtn = FALSE;
-	//	}
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	if(bDualTest)
+	{
+		if((pView->m_AoiLdRun & 0x03) == 0x03)
+		{
+			if(!bOn0 || !bOn1)
+				bRtn = FALSE;
+		}
 
-	//	if(bOn0)
-	//		pView->m_AoiLdRun |= (0x01<<0);
-	//	else 
-	//		pView->m_AoiLdRun &= ~(0x01<<0);
+		if(bOn0)
+			pView->m_AoiLdRun |= (0x01<<0);
+		else 
+			pView->m_AoiLdRun &= ~(0x01<<0);
 
-	//	if(bOn1)
-	//		pView->m_AoiLdRun |= (0x01<<1);
-	//	else 
-	//		pView->m_AoiLdRun &= ~(0x01<<1);
-
-
-	//	if(bOn0 && bOn1)
-	//		return TRUE;
-	//	else if(bOn0 && !bOn1)
-	//		return FALSE;
-	//	else if(!bOn0 && !bOn1)
-	//		return FALSE;
-	//}
-	//else
-	//{
-	//	if((pView->m_AoiLdRun & 0x03) == 0x03)
-	//	{
-	//		if(!bOn0)
-	//			bRtn = FALSE;
-	//	}
-
-	//	if(bOn0)
-	//		pView->m_AoiLdRun |= (0x01<<0);
-	//	else 
-	//		pView->m_AoiLdRun &= ~(0x01<<0);
+		if(bOn1)
+			pView->m_AoiLdRun |= (0x01<<1);
+		else 
+			pView->m_AoiLdRun &= ~(0x01<<1);
 
 
-	//	if(bOn0)
-	//		return TRUE;
+		if(bOn0 && bOn1)
+			return TRUE;
+		else if(bOn0 && !bOn1)
+			return FALSE;
+		else if(!bOn0 && !bOn1)
+			return FALSE;
+	}
+	else
+	{
+		if((pView->m_AoiLdRun & 0x03) == 0x03)
+		{
+			if(!bOn0)
+				bRtn = FALSE;
+		}
 
-	//	return FALSE;
-	//}
+		if(bOn0)
+			pView->m_AoiLdRun |= (0x01<<0);
+		else 
+			pView->m_AoiLdRun &= ~(0x01<<0);
 
+
+		if(bOn0)
+			return TRUE;
+
+		return FALSE;
+	}
+#endif
 	return bRtn;
 }
 
@@ -3410,18 +4345,22 @@ void CDlgMenu03::SwAoiReset(BOOL bOn)
 {
 	if(bOn)
 	{
+#ifdef USE_MPE
 		//pView->IoWrite("MB00382A", 1); // 검사부 상 Reset <-> Y436A I/F
 		pView->m_pMpe->Write(_T("MB00382A"), 1);
 		//pView->IoWrite("MB00392A", 1); // 검사부 하 Reset <-> Y446A I/F
 		pView->m_pMpe->Write(_T("MB00392A"), 1);
+#endif
 		SetTimer(TIM_AOI_RESET_OFF, 500, NULL);
 	}
 	else
 	{
+#ifdef USE_MPE
 		//pView->IoWrite("MB00382A", 0); // 검사부 상 Reset <-> Y436A I/F
 		pView->m_pMpe->Write(_T("MB00382A"), 0);
 		//pView->IoWrite("MB00392A", 0); // 검사부 하 Reset <-> Y446A I/F
 		pView->m_pMpe->Write(_T("MB00392A"), 0);
+#endif
 	}
 
 // 	if(bOn)
@@ -4112,8 +5051,9 @@ void CDlgMenu03::OnChk62()
 
 void CDlgMenu03::SetCore150mmRecoiler(BOOL bOn)
 {
+#ifdef USE_MPE
 	pView->m_pMpe->Write(_T("MB44017E"), bOn?1:0);
-
+#endif
 	CString sData, sPath=PATH_WORKING_INFO;
 	pDoc->WorkingInfo.LastJob.bCore150Recoiler = bOn;
 	sData.Format(_T("%d"), pDoc->WorkingInfo.LastJob.bCore150Recoiler?1:0);
@@ -4122,8 +5062,9 @@ void CDlgMenu03::SetCore150mmRecoiler(BOOL bOn)
 
 void CDlgMenu03::SetCore150mmUncoiler(BOOL bOn)
 {
+#ifdef USE_MPE
 	pView->m_pMpe->Write(_T("MB44017F"), bOn?1:0);
-
+#endif
 	CString sData, sPath=PATH_WORKING_INFO;
 	pDoc->WorkingInfo.LastJob.bCore150Uncoiler = bOn;
 	sData.Format(_T("%d"), pDoc->WorkingInfo.LastJob.bCore150Uncoiler?1:0);
@@ -4261,9 +5202,10 @@ BOOL CDlgMenu03::OnEraseBkgnd(CDC* pDC)
 
 void CDlgMenu03::SetEngraveOnePnl(BOOL bOn)
 {
+#ifdef USE_MPE
 	//pView->IoWrite("MB440151", bOn?1:0);	// 한판넬 이송상태 ON (PC가 ON, OFF)
 	pView->m_pMpe->Write(_T("MB440151"), bOn ? 1 : 0);
-
+#endif
 	CString sData, sPath = PATH_WORKING_INFO;
 	pDoc->WorkingInfo.LastJob.bEngraveOnePnl = bOn;
 	sData.Format(_T("%d"), pDoc->WorkingInfo.LastJob.bEngraveOnePnl ? 1 : 0);
@@ -4292,9 +5234,10 @@ void CDlgMenu03::MoveEngrave(double dOffset)
 
 	if (pView->m_pMpe)
 	{
+#ifdef USE_MPE
 		long lData = (long)(fTarget * 1000.0);
 		pView->m_pMpe->Write(_T("ML45078"), lData);	// 각인부 Feeding 롤러 Offset(*1000, +:더 보냄, -덜 보냄, PC가 쓰고 PLC에서 지움)
-
+#endif
 		MoveEngrave();
 	}
 }
@@ -4303,8 +5246,10 @@ void CDlgMenu03::MoveEngrave(int nDir)
 {
 	if (pDoc->WorkingInfo.LastJob.bEngraveOnePnl)
 	{
+#ifdef USE_MPE
 		if (pView->m_pMpe)
 			pView->m_pMpe->Write(_T("MB44017C"), 1);	// 각인부 피딩 CW ON (PLC가 피딩완료 후 OFF)
+#endif
 	}
 }
 
@@ -4322,64 +5267,75 @@ void CDlgMenu03::ChkDoneEngrave()
 
 BOOL CDlgMenu03::IsEngraveFdVac()
 {
-	//if (!pDoc->m_pMpeIo)
-	//	return FALSE;
+	if (!pDoc->m_pMpeIo)
+		return FALSE;
 
-	//// MpeIO
-	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	// MpeIO
+	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	//BOOL bOn = pDoc->m_pMpeIo[nInSeg + 21] & (0x01 << 5);		// 각인부 피딩 진공 스위치 램프
-	//return bOn;
+#ifdef USE_MPE
+	BOOL bOn = pDoc->m_pMpeIo[nInSeg + 21] & (0x01 << 5);		// 각인부 피딩 진공 스위치 램프
+	return bOn;
+#endif
 
 	return FALSE;
 }
 
 BOOL CDlgMenu03::IsEngraveTqVac()
 {
-	//if (!pDoc->m_pMpeIo)
-	//	return FALSE;
+	if (!pDoc->m_pMpeIo)
+		return FALSE;
 
-	//// MpeIO
-	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	// MpeIO
+	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	//BOOL bOn = pDoc->m_pMpeIo[nInSeg + 21] & (0x01 << 6);		// 각인부 토크 진공 스위치 램프
-	//return bOn;
+#ifdef USE_MPE
+	BOOL bOn = pDoc->m_pMpeIo[nInSeg + 21] & (0x01 << 6);		// 각인부 토크 진공 스위치 램프
+	return bOn;
+#endif
+
 	return FALSE;
 }
 
 BOOL CDlgMenu03::IsEngraveTblVac()
 {
-	//if (!pDoc->m_pMpeIo)
-	//	return FALSE;
+	if (!pDoc->m_pMpeIo)
+		return FALSE;
 
-	//// MpeIO
-	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	// MpeIO
+	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	//BOOL bOn = pDoc->m_pMpeIo[nInSeg + 21] & (0x01 << 7);		// 각인부 테이블 진공 스위치 램프
-	//return bOn;
+#ifdef USE_MPE
+	BOOL bOn = pDoc->m_pMpeIo[nInSeg + 21] & (0x01 << 7);		// 각인부 테이블 진공 스위치 램프
+	return bOn;
+#endif
+
 	return FALSE;
 }
 
 BOOL CDlgMenu03::IsEngraveTblBlw()
 {
-	//if (!pDoc->m_pMpeIo)
-	//	return FALSE;
+	if (!pDoc->m_pMpeIo)
+		return FALSE;
 
-	//// MpeIO
-	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	// MpeIO
+	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	//BOOL bOn = pDoc->m_pMpeIo[nInSeg + 21] & (0x01 << 2);		// 각인부 테이블 브로워 스위치 램프
-	//return bOn;
+#ifdef USE_MPE
+	BOOL bOn = pDoc->m_pMpeIo[nInSeg + 21] & (0x01 << 2);		// 각인부 테이블 브로워 스위치 램프
+	return bOn;
+#endif
+
 	return FALSE;
 }
 
 void CDlgMenu03::UpdateData()
 {
-
+	;
 }
 
 void CDlgMenu03::UpdateSignal()

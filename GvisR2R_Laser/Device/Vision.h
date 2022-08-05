@@ -98,7 +98,7 @@ class CVision : public CWnd
 	CLibMilDraw *m_pMilOvrCad[DEF_VIEW_IMG_NUMBER], *m_pMilOvrDef[DEF_VIEW_IMG_NUMBER];
 	CLibMilDraw *m_pMilDelOvrCad[DEF_VIEW_IMG_NUMBER], *m_pMilDelOvrDef[DEF_VIEW_IMG_NUMBER];
 
-	CLibMilDisp *m_pMilDispPin, *m_pMilDispAlign;//, *m_pMilDispPcs;
+	CLibMilDisp *m_pMilDispPin;// , *m_pMilDispAlign;//, *m_pMilDispPcs;
 	CLibMilBuf *m_pMilBufPin, *m_pMilBufAlign;//, *m_pMilBufPcs;
 	CLibMilDraw *m_pMilPinOverlay;
 	CLibMilDraw *m_pMilPinOverlayDelete;
@@ -131,6 +131,7 @@ class CVision : public CWnd
 // Construction
 public:
 	CVision(int nIdx, MIL_ID MilSysId, HWND *hCtrl, CWnd* pParent=NULL); // hCtrl : Max(4)
+	CCriticalSection m_cs;
 
 // Attributes
 public:
@@ -203,6 +204,9 @@ public:
 	void GetCameraSize(int &nX, int &nY);
 	void GetIdsSize(int &nX, int &nY);
 	void GetCrevisSize(int &nX, int &nY);
+	void GetIRaypleSize(int &nX, int &nY);
+
+	BOOL SaveMkImg(CString sPath);
 
 // Overrides
 	// ClassWizard generated virtual function overrides

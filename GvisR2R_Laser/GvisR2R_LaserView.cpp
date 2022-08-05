@@ -220,6 +220,7 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 	m_bNewModel = FALSE;
 	m_dTotVel = 0.0; m_dPartVel = 0.0;
 	m_bTIM_CHK_TEMP_STOP = FALSE;
+	m_bTIM_SAFTY_STOP = FALSE;
 	m_sMyMsg = _T("");
 	m_nTypeMyMsg = IDOK;
 
@@ -300,6 +301,7 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 	m_nClrAlmF = 0;
 
 	m_bMkSt = FALSE;
+	m_bMkStSw = FALSE;
 	m_nMkStAuto = 0;
 
 	m_bLotEnd = FALSE;
@@ -349,7 +351,6 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 
 	m_bChkLightErr = FALSE;
 
-
 	// client for SR-1000W
 	m_pSr1000w = NULL;
 
@@ -360,6 +361,8 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 	m_pEngrave = NULL;
 
 	m_bDestroyedView = FALSE;
+	m_bContEngraveF = FALSE;
+
 }
 
 CGvisR2R_LaserView::~CGvisR2R_LaserView()
@@ -382,7 +385,7 @@ void CGvisR2R_LaserView::DestroyView()
 		Buzzer(FALSE, 0);
 		Buzzer(FALSE, 1);
 
-
+#ifdef USE_VISION
 		if (m_pVision[1])
 		{
 			delete m_pVision[1];
@@ -394,14 +397,13 @@ void CGvisR2R_LaserView::DestroyView()
 			delete m_pVision[0];
 			m_pVision[0] = NULL;
 		}
+#endif
 
 		m_bTIM_MPE_IO = FALSE;
 		m_bTIM_DISP_STATUS = FALSE;
 		m_bTIM_INIT_VIEW = FALSE;
 		Sleep(100);
 
-		DelAllDlg();
-		Sleep(100);
 
 		InitIoWrite();
 		SetMainMc(FALSE);
@@ -472,6 +474,7 @@ void CGvisR2R_LaserView::OnInitialUpdate()
 		m_bTIM_INIT_VIEW = TRUE;
 		SetTimer(TIM_INIT_VIEW, 300, NULL);
 	}
+
 }
 
 
@@ -551,6 +554,7 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 					pDoc->WorkingInfo.LastJob.sModelUp,
 					pDoc->WorkingInfo.LastJob.sLayerUp);
 				pDoc->m_Master[0].LoadMstInfo();
+				pDoc->m_Master[0].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
 			}
 
 			if (IsLastJob(1)) // Dn
@@ -560,6 +564,7 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 					pDoc->WorkingInfo.LastJob.sLayerDn,
 					pDoc->WorkingInfo.LastJob.sLayerUp);
 				pDoc->m_Master[1].LoadMstInfo();
+				pDoc->m_Master[1].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotDn);
 			}
 
 			SetAlignPos();
@@ -771,6 +776,7 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 			//MoveMkInitPos();
 			InitPLC();
 			SetPlcParam();
+			GetPlcParam();
 			TcpIpInit();
 			m_bTIM_DISP_STATUS = TRUE;
 			SetTimer(TIM_DISP_STATUS, 100, NULL);
@@ -925,14 +931,22 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 	if (nIDEvent == TIM_CHK_TEMP_STOP)
 	{
 		KillTimer(TIM_CHK_TEMP_STOP);
-		//if (!(pDoc->m_pMpeSignal[7] & (0x01 << 3)))	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
-		//{
-		//	m_bTIM_CHK_TEMP_STOP = FALSE;
-		//	m_pDlgMenu01->SetTempStop(FALSE);
-		//}
+#ifdef USE_MPE
+		if (!(pDoc->m_pMpeSignal[7] & (0x01 << 3)))	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
+		{
+			m_bTIM_CHK_TEMP_STOP = FALSE;
+			m_pDlgMenu01->SetTempStop(FALSE);
+		}
+#endif
+		if (m_bTIM_CHK_TEMP_STOP)
+			SetTimer(TIM_CHK_TEMP_STOP, 500, NULL);
+	}
 
-		//if (m_bTIM_CHK_TEMP_STOP)
-		//	SetTimer(TIM_CHK_TEMP_STOP, 100, NULL);
+	if (nIDEvent == TIM_SAFTY_STOP)
+	{
+		KillTimer(TIM_SAFTY_STOP);
+		MsgBox(_T("일시정지 - 마킹부 안전센서가 감지되었습니다."));
+		m_bTIM_SAFTY_STOP = FALSE;
 	}
 
 	CFormView::OnTimer(nIDEvent);
@@ -1386,7 +1400,7 @@ BOOL CGvisR2R_LaserView::HwInit()
 		return FALSE;
 	}
 
-
+#ifdef USE_MPE
 	if (!m_pMpe)
 		m_pMpe = new CMpDevice(this);
 	if (!m_pMpe->Init(1, 1))
@@ -1396,6 +1410,7 @@ BOOL CGvisR2R_LaserView::HwInit()
 		PostMessage(WM_CLOSE);
 		return FALSE;
 	}
+#endif
 
 	//StartClient_MDX2500(pDoc->WorkingInfo.System.sIpClient[0], pDoc->WorkingInfo.System.sIpServer[0], pDoc->WorkingInfo.System.sPort[0]);
 	//StartClient_SR1000W(pDoc->WorkingInfo.System.sIpClient[1], pDoc->WorkingInfo.System.sIpServer[1], pDoc->WorkingInfo.System.sPort[1]);
@@ -1837,8 +1852,10 @@ void CGvisR2R_LaserView::TowerLamp(COLORREF color, BOOL bOn, BOOL bWink)
 	{
 		m_bTimTowerWinker = FALSE;
 
-		//if (!pDoc->m_pMpeIo)
-		//	return;
+#ifdef USE_MPE
+		if (!pDoc->m_pMpeIo)
+			return;
+#endif
 	}
 }
 
@@ -1860,6 +1877,7 @@ void CGvisR2R_LaserView::BuzzerFromThread(BOOL bOn, int nCh)
 void CGvisR2R_LaserView::Buzzer(BOOL bOn, int nCh)
 {
 	//	return; // PLC제어
+#ifdef USE_MPE
 	if (!m_pMpe)
 		return;
 
@@ -1895,6 +1913,7 @@ void CGvisR2R_LaserView::Buzzer(BOOL bOn, int nCh)
 			break;
 		}
 	}
+#endif
 }
 
 
@@ -2886,10 +2905,11 @@ BOOL CGvisR2R_LaserView::ChkSaftySen() // 감지 : TRUE , 비감지 : FALSE
 			m_bSwRunF = FALSE;
 			Stop();
 			pView->DispStsBar(_T("정지-4"), 0);
-			DispMain(_T("정 지"), RGB_RED);
-			MsgBox(_T("일시정지 - 마킹부 안전센서가 감지되었습니다."));
+			DispMain(_T("정 지"), RGB_RED);			
 			TowerLamp(RGB_RED, TRUE);
 			Buzzer(TRUE, 0);
+			m_bTIM_SAFTY_STOP = TRUE;//MsgBox(_T("일시정지 - 마킹부 안전센서가 감지되었습니다."));
+			SetTimer(TIM_SAFTY_STOP, 100, NULL);
 		}
 		else if (!pDoc->Status.bSensSaftyMk && pDoc->Status.bSensSaftyMkF)
 		{
@@ -3951,8 +3971,9 @@ void CGvisR2R_LaserView::DoBoxSw()
 
 void CGvisR2R_LaserView::DoEmgSw()
 {
-	//if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
-	//	return;
+#ifdef USE_MPE
+	if (!pDoc->m_pMpeIo)// || !pDoc->m_pMpeIoF)
+		return;
 
 	// 	unsigned short usIn = pDoc->m_pMpeIo[4];
 	// 	unsigned short *usInF = &pDoc->m_pMpeIoF[4];
@@ -3981,6 +4002,7 @@ void CGvisR2R_LaserView::DoEmgSw()
 	// 		*usInF &= ~(0x01<<0);	
 	// 		pDoc->Status.bEmgUc = FALSE;
 	// 	}
+#endif
 }
 
 void CGvisR2R_LaserView::GetEnc()
@@ -7142,17 +7164,21 @@ void CGvisR2R_LaserView::SetAoiFdPitch(double dPitch)
 {
 	pDoc->SetAoiFdPitch(dPitch);
 	// 	m_pMotion->SetLeadPitch(AXIS_AOIFD, dPitch);
-	//long lData = long(dPitch*1000.0);
-	//pView->m_pMpe->Write(_T("ML45012"), lData); // 검사부 Feeding 롤러 Lead Pitch
-	//pView->m_pMpe->Write(_T("ML45020"), lData); // 각인부 Feeding 롤러 Lead Pitch
+	long lData = long(dPitch*1000.0);
+#ifdef USE_MPE
+	pView->m_pMpe->Write(_T("ML45012"), lData); // 검사부 Feeding 롤러 Lead Pitch
+	pView->m_pMpe->Write(_T("ML45020"), lData); // 각인부 Feeding 롤러 Lead Pitch
+#endif
 }
 
 void CGvisR2R_LaserView::SetMkFdPitch(double dPitch)
 {
 	pDoc->SetMkFdPitch(dPitch);
-	//// 	m_pMotion->SetLeadPitch(AXIS_MKFD, dPitch);
-	//long lData = long(dPitch*1000.0);
-	//pView->m_pMpe->Write(_T("ML45014"), lData); // 마킹부 Feeding 롤러 Lead Pitch
+	// 	m_pMotion->SetLeadPitch(AXIS_MKFD, dPitch);
+	long lData = long(dPitch*1000.0);
+#ifdef USE_MPE
+	pView->m_pMpe->Write(_T("ML45014"), lData); // 마킹부 Feeding 롤러 Lead Pitch
+#endif
 }
 
 void CGvisR2R_LaserView::SetBufInitPos(double dPos)
@@ -7348,6 +7374,7 @@ void CGvisR2R_LaserView::Shift2Mk()
 			nSerial = m_nBufDnSerial[0];
 			if (nSerial > 0 && (nSerial % 2))
 			{
+				pDoc->UpdateYield(nSerial);
 				pDoc->Shift2Mk(nSerial);	// Cam0
 				if (m_pDlgFrameHigh)
 					m_pDlgFrameHigh->SetMkLastShot(nSerial);
@@ -7360,7 +7387,9 @@ void CGvisR2R_LaserView::Shift2Mk()
 			{
 				if (nSerial > 0 && (nSerial % 2)) // First Shot number must be odd.
 				{
+					pDoc->UpdateYield(nSerial);
 					pDoc->Shift2Mk(nSerial);	// Cam0
+					pDoc->UpdateYield(nSerial + 1);
 					pDoc->Shift2Mk(nSerial + 1);	// Cam1
 					if (m_pDlgFrameHigh)
 						m_pDlgFrameHigh->SetMkLastShot(nSerial + 1);
@@ -7374,7 +7403,9 @@ void CGvisR2R_LaserView::Shift2Mk()
 			{
 				if (nSerial > 0)
 				{
+					pDoc->UpdateYield(nSerial);
 					pDoc->Shift2Mk(nSerial);	// Cam0
+					pDoc->UpdateYield(nSerial + 1);
 					pDoc->Shift2Mk(nSerial + 1);	// Cam1
 					if (m_pDlgFrameHigh)
 						m_pDlgFrameHigh->SetMkLastShot(nSerial + 1);
@@ -7395,6 +7426,7 @@ void CGvisR2R_LaserView::Shift2Mk()
 			{
 				if (nSerial > 0 && (nSerial % 2)) // First Shot number must be odd.
 				{
+					pDoc->UpdateYield(nSerial);
 					pDoc->Shift2Mk(nSerial);	// Cam0
 					if (m_pDlgFrameHigh)
 						m_pDlgFrameHigh->SetMkLastShot(nSerial);
@@ -7408,6 +7440,7 @@ void CGvisR2R_LaserView::Shift2Mk()
 			{
 				if (nSerial > 0)
 				{
+					pDoc->UpdateYield(nSerial);
 					pDoc->Shift2Mk(nSerial);	// Cam0
 					if (m_pDlgFrameHigh)
 						m_pDlgFrameHigh->SetMkLastShot(nSerial);
@@ -7425,7 +7458,9 @@ void CGvisR2R_LaserView::Shift2Mk()
 			{
 				if (nSerial > 0 && (nSerial % 2)) // First Shot number must be odd.
 				{
+					pDoc->UpdateYield(nSerial);
 					pDoc->Shift2Mk(nSerial);	// Cam0
+					pDoc->UpdateYield(nSerial + 1);
 					pDoc->Shift2Mk(nSerial + 1);	// Cam1
 					if (m_pDlgFrameHigh)
 						m_pDlgFrameHigh->SetMkLastShot(nSerial + 1);
@@ -7439,7 +7474,9 @@ void CGvisR2R_LaserView::Shift2Mk()
 			{
 				if (nSerial > 0)
 				{
+					pDoc->UpdateYield(nSerial);
 					pDoc->Shift2Mk(nSerial);	// Cam0
+					pDoc->UpdateYield(nSerial + 1);
 					pDoc->Shift2Mk(nSerial + 1);	// Cam1
 					if (m_pDlgFrameHigh)
 						m_pDlgFrameHigh->SetMkLastShot(nSerial + 1);
@@ -7475,22 +7512,26 @@ void CGvisR2R_LaserView::SetTestSts(int nStep)
 
 void CGvisR2R_LaserView::SetTestSts0(BOOL bOn)
 {
+#ifdef USE_MPE
 	if (bOn)
 		pView->m_pMpe->Write(_T("MB003829"), 1);
 	//IoWrite(_T("MB003829"), 1); // 검사부 상 검사 테이블 진공 SOL <-> Y4369 I/F
 	else
 		pView->m_pMpe->Write(_T("MB003829"), 0);
 	//IoWrite(_T("MB003829"), 0); // 검사부 상 검사 테이블 진공 SOL <-> Y4369 I/F
+#endif
 }
 
 void CGvisR2R_LaserView::SetTestSts1(BOOL bOn)
 {
+#ifdef USE_MPE
 	if (bOn)
 		pView->m_pMpe->Write(_T("MB003929"), 1);
 	//IoWrite(_T("MB003929"), 1); // 검사부 하 검사 테이블 진공 SOL <-> Y4369 I/F
 	else
 		pView->m_pMpe->Write(_T("MB003929"), 0);
 	//IoWrite(_T("MB003929"), 0); // 검사부 하 검사 테이블 진공 SOL <-> Y4369 I/F
+#endif
 }
 
 void CGvisR2R_LaserView::SetAoiStopSts()
@@ -7697,9 +7738,10 @@ void CGvisR2R_LaserView::SetAoiFd()
 
 	if (!pDoc->WorkingInfo.LastJob.bAoiOnePnl)
 	{
+#ifdef USE_MPE
 		//IoWrite(_T("MB440151"), 1);	// 한판넬 이송상태 ON (PC가 ON, OFF)
 		pView->m_pMpe->Write(_T("MB440151"), 1);
-
+#endif
 		CString sData, sPath = PATH_WORKING_INFO;
 		pDoc->WorkingInfo.LastJob.bMkOnePnl = pDoc->WorkingInfo.LastJob.bAoiOnePnl = TRUE;
 		sData.Format(_T("%d"), pDoc->WorkingInfo.LastJob.bMkOnePnl ? 1 : 0);
@@ -7754,44 +7796,52 @@ void CGvisR2R_LaserView::SetMkFd()
 
 void CGvisR2R_LaserView::MoveMk(double dOffset)
 {
+#ifdef USE_MPE
 	long lData = (long)(dOffset * 1000.0);
 	//IoWrite(_T("MB440161"), 1);		// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF))
 	pView->m_pMpe->Write(_T("MB440161"), 1);
 	//IoWrite(_T("ML45066"), lData);	// 마킹부 Feeding 롤러 Offset(*1000, +:더 보냄, -덜 보냄)
 	pView->m_pMpe->Write(_T("ML45066"), lData);
+#endif
 }
 
 BOOL CGvisR2R_LaserView::IsMkFd()
 {
-	//if (m_nShareDnCnt > 0)
-	//{
-	//	if (!(m_nShareDnCnt % 2))
-	//	{
-	//		if (pDoc->m_pMpeSignal[5] & (0x01 << 1))	// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF)
-	//			return TRUE;
-	//		return FALSE;
-	//	}
-	//}
-	//else
-	//{
-	//	if (m_nShareUpCnt > 0)
-	//	{
-	//		if (!(m_nShareUpCnt % 2))
-	//		{
-	//			if (pDoc->m_pMpeSignal[5] & (0x01 << 1))	// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF)
-	//				return TRUE;
-	//			return FALSE;
-	//		}
-	//	}
-	//}
+	if (m_nShareDnCnt > 0)
+	{
+		if (!(m_nShareDnCnt % 2))
+		{
+#ifdef USE_MPE
+			if (pDoc->m_pMpeSignal[5] & (0x01 << 1))	// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF)
+				return TRUE;
+#endif
+			return FALSE;
+		}
+	}
+	else
+	{
+		if (m_nShareUpCnt > 0)
+		{
+			if (!(m_nShareUpCnt % 2))
+			{
+#ifdef USE_MPE
+				if (pDoc->m_pMpeSignal[5] & (0x01 << 1))	// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF)
+					return TRUE;
+#endif
+				return FALSE;
+			}
+		}
+	}
 
 	return TRUE;
 }
 
 BOOL CGvisR2R_LaserView::IsAoiFd()
 {
-	//if (pDoc->m_pMpeSignal[5] & (0x01 >> 0))	// 검사부 피딩 ON (PLC가 피딩완료 후 OFF)
-	//	return TRUE;
+#ifdef USE_MPE
+	if (pDoc->m_pMpeSignal[5] & (0x01 >> 0))	// 검사부 피딩 ON (PLC가 피딩완료 후 OFF)
+		return TRUE;
+#endif
 	return FALSE;
 }
 
@@ -7826,13 +7876,15 @@ int CGvisR2R_LaserView::GetCycTime()
 
 BOOL CGvisR2R_LaserView::IsMkFdDone()
 {
-	//if (m_nShareDnCnt > 0)
-	//{
-	//	if (m_nShareDnCnt % 2)
-	//		return TRUE;
-	//}
-	//if (!(pDoc->m_pMpeSignal[5] & (0x01 << 1)))	// 마킹부 피딩 ON (PLC가 피딩완료 후 OFF)
-	//	return TRUE;
+	if (m_nShareDnCnt > 0)
+	{
+		if (m_nShareDnCnt % 2)
+			return TRUE;
+	}
+#ifdef USE_MPE
+	if (!(pDoc->m_pMpeSignal[5] & (0x01 << 1)))	// 마킹부 피딩 ON (PLC가 피딩완료 후 OFF)
+		return TRUE;
+#endif
 	return FALSE;
 
 	// 	if(!pView->m_pMotion)
@@ -7849,8 +7901,10 @@ BOOL CGvisR2R_LaserView::IsMkFdDone()
 
 BOOL CGvisR2R_LaserView::IsAoiFdDone()
 {
-	//if (!(pDoc->m_pMpeSignal[5] & (0x01 << 0)))	// 검사부 피딩 ON (PLC가 피딩완료 후 OFF)
-	//	return TRUE;
+#ifdef USE_MPE
+	if (!(pDoc->m_pMpeSignal[5] & (0x01 << 0)))	// 검사부 피딩 ON (PLC가 피딩완료 후 OFF)
+		return TRUE;
+#endif
 	return FALSE;
 
 	// 	if(!pView->m_pMotion)
@@ -7881,12 +7935,15 @@ double CGvisR2R_LaserView::GetMkInitDist()
 
 double CGvisR2R_LaserView::GetMkRemain()
 {
+#ifdef USE_MPE
 	// 	double dRemain = _tstof(pDoc->WorkingInfo.LastJob.sDistAoiMk) - m_dEnc[AXIS_RENC];
-	//double dCurPosMkFd = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
-	//double dInitD0 = _tstof(pDoc->WorkingInfo.Motion.sFdAoiAoiDistShot) * _tstof(pDoc->WorkingInfo.LastJob.sOnePnlLen);
-	//double dRemain = _tstof(pDoc->WorkingInfo.Motion.sFdMkAoiInitDist) + dInitD0 - dCurPosMkFd;
-	//return dRemain;
+	double dCurPosMkFd = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
+	double dInitD0 = _tstof(pDoc->WorkingInfo.Motion.sFdAoiAoiDistShot) * _tstof(pDoc->WorkingInfo.LastJob.sOnePnlLen);
+	double dRemain = _tstof(pDoc->WorkingInfo.Motion.sFdMkAoiInitDist) + dInitD0 - dCurPosMkFd;
+	return dRemain;
+#else
 	return 0.0;
+#endif
 }
 
 void CGvisR2R_LaserView::UpdateWorking()
@@ -7924,6 +7981,7 @@ BOOL CGvisR2R_LaserView::IsStop()
 
 BOOL CGvisR2R_LaserView::IsRun()
 {
+	//return TRUE; // AlignTest
 	if (m_sDispMain == _T("운전중") || m_sDispMain == _T("초기운전") || m_sDispMain == _T("단면샘플")
 		|| m_sDispMain == _T("단면검사") || m_sDispMain == _T("양면검사") || m_sDispMain == _T("양면샘플"))
 		return TRUE;
@@ -8053,87 +8111,94 @@ void CGvisR2R_LaserView::DispLotTime()
 
 BOOL CGvisR2R_LaserView::IsTest()
 {
-	//if (!pDoc->m_pMpeIo)
-	//	return FALSE;
+#ifdef USE_MPE
+	if (!pDoc->m_pMpeIo)
+		return FALSE;
 
-	//// MpeIO
-	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	// MpeIO
+	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	//BOOL bOn0 = (pDoc->m_pMpeIo[nInSeg + 10] & 0x01 << 8) ? TRUE : FALSE; //[34] 검사부 상 검사 시작 <-> Y4368 I/F
-	//BOOL bOn1 = (pDoc->m_pMpeIo[nInSeg + 14] & 0x01 << 8) ? TRUE : FALSE; //[38] 검사부 하 검사 시작 <-> Y4468 I/F
+	BOOL bOn0 = (pDoc->m_pMpeIo[nInSeg + 10] & 0x01 << 8) ? TRUE : FALSE; //[34] 검사부 상 검사 시작 <-> Y4368 I/F
+	BOOL bOn1 = (pDoc->m_pMpeIo[nInSeg + 14] & 0x01 << 8) ? TRUE : FALSE; //[38] 검사부 하 검사 시작 <-> Y4468 I/F
 
-	//BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	//if (bDualTest)
-	//{
-	//	if (bOn0 || bOn1)
-	//		return TRUE;
-	//}
-	//else
-	//{
-	//	if (bOn0)
-	//		return TRUE;
-	//}
-
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	if (bDualTest)
+	{
+		if (bOn0 || bOn1)
+			return TRUE;
+	}
+	else
+	{
+		if (bOn0)
+			return TRUE;
+	}
+#endif
 	return FALSE;
 }
 
 BOOL CGvisR2R_LaserView::IsTestUp()
 {
-	//if (!pDoc->m_pMpeIo)
-	//	return FALSE;
+#ifdef USE_MPE
+	if (!pDoc->m_pMpeIo)
+		return FALSE;
 
-	//// MpeIO
-	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	// MpeIO
+	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	//BOOL bOn0 = (pDoc->m_pMpeIo[nInSeg + 10] & 0x01 << 8) ? TRUE : FALSE; //[34] 검사부 상 검사 시작 <-> Y4368 I/F
-	//if (bOn0)
-	//	return TRUE;
+	BOOL bOn0 = (pDoc->m_pMpeIo[nInSeg + 10] & 0x01 << 8) ? TRUE : FALSE; //[34] 검사부 상 검사 시작 <-> Y4368 I/F
+	if (bOn0)
+		return TRUE;
+#endif
 	return FALSE;
 }
 
 BOOL CGvisR2R_LaserView::IsTestDn()
 {
-	//BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	//if (!bDualTest)
-	//	return FALSE;
+#ifdef USE_MPE
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	if (!bDualTest)
+		return FALSE;
 
-	//if (!pDoc->m_pMpeIo)
-	//	return FALSE;
+	if (!pDoc->m_pMpeIo)
+		return FALSE;
 
-	//// MpeIO
-	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	// MpeIO
+	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	//BOOL bOn1 = (pDoc->m_pMpeIo[nInSeg + 14] & 0x01 << 8) ? TRUE : FALSE; //[38] 검사부 하 검사 시작 <-> Y4468 I/F
-	//if (bOn1)
-	//	return TRUE;
+	BOOL bOn1 = (pDoc->m_pMpeIo[nInSeg + 14] & 0x01 << 8) ? TRUE : FALSE; //[38] 검사부 하 검사 시작 <-> Y4468 I/F
+	if (bOn1)
+		return TRUE;
+#endif
 	return FALSE;
 }
 
 BOOL CGvisR2R_LaserView::IsAoiTblVac()
 {
-	//if (!pDoc->m_pMpeIo)
-	//	return FALSE;
+#ifdef USE_MPE
+	if (!pDoc->m_pMpeIo)
+		return FALSE;
 
-	//// MpeIO
-	//int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
-	//int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
+	// MpeIO
+	int nInSeg = pDoc->MkIo.MpeIo.nInSeg;
+	int nOutSeg = pDoc->MkIo.MpeIo.nOutSeg;
 
-	//BOOL bOn0 = (pDoc->m_pMpeIo[nInSeg + 10] & 0x01 << 9) ? TRUE : FALSE; //[34] 검사부 상 검사 테이블 진공 SOL <-> Y4469 I/F
-	//BOOL bOn1 = (pDoc->m_pMpeIo[nInSeg + 14] & 0x01 << 9) ? TRUE : FALSE; //[38] 검사부 하 검사 테이블 진공 SOL <-> Y4469 I/F
-	//BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	//if (bDualTest)
-	//{
-	//	if (bOn0 || bOn1)
-	//		return TRUE;
-	//}
-	//else
-	//{
-	//	if (bOn0)
-	//		return TRUE;
-	//}
+	BOOL bOn0 = (pDoc->m_pMpeIo[nInSeg + 10] & 0x01 << 9) ? TRUE : FALSE; //[34] 검사부 상 검사 테이블 진공 SOL <-> Y4469 I/F
+	BOOL bOn1 = (pDoc->m_pMpeIo[nInSeg + 14] & 0x01 << 9) ? TRUE : FALSE; //[38] 검사부 하 검사 테이블 진공 SOL <-> Y4469 I/F
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	if (bDualTest)
+	{
+		if (bOn0 || bOn1)
+			return TRUE;
+	}
+	else
+	{
+		if (bOn0)
+			return TRUE;
+	}
+#endif
 	return FALSE;
 }
 
@@ -8177,53 +8242,57 @@ BOOL CGvisR2R_LaserView::IsAoiTblVac()
 
 BOOL CGvisR2R_LaserView::IsTestDone()
 {
-	//BOOL bOn0 = (pDoc->m_pMpeI[10] & (0x01 << 8)) ? TRUE : FALSE;	// 검사부 상 검사 완료 <-> X4328 I/F
-	//BOOL bOn1 = (pDoc->m_pMpeI[14] & (0x01 << 8)) ? TRUE : FALSE;	// 검사부 하 검사 완료 <-> X4428 I/F
-	//BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	//if (bDualTest)
-	//{
-	//	if (bOn0 && bOn1)
-	//		return TRUE;
-	//}
-	//else
-	//{
-	//	if (bOn0)
-	//		return TRUE;
-	//}
+#ifdef USE_MPE
+	BOOL bOn0 = (pDoc->m_pMpeIb[10] & (0x01 << 8)) ? TRUE : FALSE;	// 검사부 상 검사 완료 <-> X4328 I/F
+	BOOL bOn1 = (pDoc->m_pMpeIb[14] & (0x01 << 8)) ? TRUE : FALSE;	// 검사부 하 검사 완료 <-> X4428 I/F
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	if (bDualTest)
+	{
+		if (bOn0 && bOn1)
+			return TRUE;
+	}
+	else
+	{
+		if (bOn0)
+			return TRUE;
+	}
 
-	//double dCurPosMkFd = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
-	//double dTgtFd = _tstof(pDoc->WorkingInfo.Motion.sFdAoiAoiDistShot) * _tstof(pDoc->WorkingInfo.Motion.sAoiFdDist);
-	//if (dCurPosMkFd + 10.0 < dTgtFd)//-_tstof(pDoc->WorkingInfo.Motion.sAoiFdDist))
-	//{
-	//	if (bOn0)
-	//		return TRUE;
-	//}
+	double dCurPosMkFd = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
+	double dTgtFd = _tstof(pDoc->WorkingInfo.Motion.sFdAoiAoiDistShot) * _tstof(pDoc->WorkingInfo.Motion.sAoiFdDist);
+	if (dCurPosMkFd + 10.0 < dTgtFd)//-_tstof(pDoc->WorkingInfo.Motion.sAoiFdDist))
+	{
+		if (bOn0)
+			return TRUE;
+	}
+#endif
 	return FALSE;
 }
 
 BOOL CGvisR2R_LaserView::IsAoiTblVacDone()
 {
-	//BOOL bOn0 = (pDoc->m_pMpeI[10] & (0x01 << 9)) ? TRUE : FALSE;	// 검사부 상 테이블 진공 완료 <-> X4329 I/F
-	//BOOL bOn1 = (pDoc->m_pMpeI[14] & (0x01 << 9)) ? TRUE : FALSE;	// 검사부 하 테이블 진공 완료 <-> X4329 I/F
-	//BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	//if (bDualTest)
-	//{
-	//	if (bOn0 && bOn1)
-	//		return TRUE;
-	//}
-	//else
-	//{
-	//	if (bOn0)
-	//		return TRUE;
-	//}
+#ifdef USE_MPE
+	BOOL bOn0 = (pDoc->m_pMpeIb[10] & (0x01 << 9)) ? TRUE : FALSE;	// 검사부 상 테이블 진공 완료 <-> X4329 I/F
+	BOOL bOn1 = (pDoc->m_pMpeIb[14] & (0x01 << 9)) ? TRUE : FALSE;	// 검사부 하 테이블 진공 완료 <-> X4329 I/F
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	if (bDualTest)
+	{
+		if (bOn0 && bOn1)
+			return TRUE;
+	}
+	else
+	{
+		if (bOn0)
+			return TRUE;
+	}
 
-	//double dCurPosMkFd = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
-	//double dTgtFd = _tstof(pDoc->WorkingInfo.Motion.sFdAoiAoiDistShot) * _tstof(pDoc->WorkingInfo.Motion.sAoiFdDist);
-	//if (dCurPosMkFd + 10.0 < dTgtFd)//-_tstof(pDoc->WorkingInfo.Motion.sAoiFdDist))
-	//{
-	//	if (bOn0)
-	//		return TRUE;
-	//}
+	double dCurPosMkFd = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
+	double dTgtFd = _tstof(pDoc->WorkingInfo.Motion.sFdAoiAoiDistShot) * _tstof(pDoc->WorkingInfo.Motion.sAoiFdDist);
+	if (dCurPosMkFd + 10.0 < dTgtFd)//-_tstof(pDoc->WorkingInfo.Motion.sAoiFdDist))
+	{
+		if (bOn0)
+			return TRUE;
+	}
+#endif
 	return FALSE;
 }
 
@@ -9275,15 +9344,15 @@ void CGvisR2R_LaserView::SetAlignPos()
 {
 	if (m_pMotion)
 	{
-		m_pMotion->m_dAlignPosX[0][0] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[0];
-		m_pMotion->m_dAlignPosY[0][0] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[0];
-		//m_pMotion->m_dAlignPosX[0][1] = pDoc->m_Master[0].m_stAlignMk.X2 + pView->m_pMotion->m_dPinPosX[0];
-		//m_pMotion->m_dAlignPosY[0][1] = pDoc->m_Master[0].m_stAlignMk.Y2 + pView->m_pMotion->m_dPinPosY[0];
+		m_pMotion->m_dAlignPosX[0][0] = pDoc->m_Master[0].m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[0];
+		m_pMotion->m_dAlignPosY[0][0] = pDoc->m_Master[0].m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[0];
+		//m_pMotion->m_dAlignPosX[0][1] = pDoc->m_Master[0].m_stAlignMk.X1+ pView->m_pMotion->m_dPinPosX[0];
+		//m_pMotion->m_dAlignPosY[0][1] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[0];
 
-		m_pMotion->m_dAlignPosX[1][0] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[1];
-		m_pMotion->m_dAlignPosY[1][0] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[1];
-		//m_pMotion->m_dAlignPosX[1][1] = pDoc->m_Master[0].m_stAlignMk.X2 + pView->m_pMotion->m_dPinPosX[1];
-		//m_pMotion->m_dAlignPosY[1][1] = pDoc->m_Master[0].m_stAlignMk.Y2 + pView->m_pMotion->m_dPinPosY[1];
+		m_pMotion->m_dAlignPosX[1][0] = pDoc->m_Master[0].m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[1];
+		m_pMotion->m_dAlignPosY[1][0] = pDoc->m_Master[0].m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[1];
+		//m_pMotion->m_dAlignPosX[1][1] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[1];
+		//m_pMotion->m_dAlignPosY[1][1] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[1];
 	}
 }
 
@@ -9291,10 +9360,10 @@ void CGvisR2R_LaserView::SetAlignPosUp()
 {
 	if (m_pMotion)
 	{
-		m_pMotion->m_dAlignPosX[0][0] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[0];
-		m_pMotion->m_dAlignPosY[0][0] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[0];
-		//m_pMotion->m_dAlignPosX[0][1] = pDoc->m_Master[0].m_stAlignMk.X2 + pView->m_pMotion->m_dPinPosX[0];
-		//m_pMotion->m_dAlignPosY[0][1] = pDoc->m_Master[0].m_stAlignMk.Y2 + pView->m_pMotion->m_dPinPosY[0];
+		m_pMotion->m_dAlignPosX[0][0] = pDoc->m_Master[0].m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[0];
+		m_pMotion->m_dAlignPosY[0][0] = pDoc->m_Master[0].m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[0];
+		//m_pMotion->m_dAlignPosX[0][1] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[0];
+		//m_pMotion->m_dAlignPosY[0][1] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[0];
 	}
 }
 
@@ -9302,10 +9371,10 @@ void CGvisR2R_LaserView::SetAlignPosDn()
 {
 	if (m_pMotion)
 	{
-		m_pMotion->m_dAlignPosX[1][0] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[1];
-		m_pMotion->m_dAlignPosY[1][0] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[1];
-		//m_pMotion->m_dAlignPosX[1][1] = pDoc->m_Master[0].m_stAlignMk.X2 + pView->m_pMotion->m_dPinPosX[1];
-		//m_pMotion->m_dAlignPosY[1][1] = pDoc->m_Master[0].m_stAlignMk.Y2 + pView->m_pMotion->m_dPinPosY[1];
+		m_pMotion->m_dAlignPosX[1][0] = pDoc->m_Master[0].m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[1];
+		m_pMotion->m_dAlignPosY[1][0] = pDoc->m_Master[0].m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[1];
+		//m_pMotion->m_dAlignPosX[1][1] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[1];
+		//m_pMotion->m_dAlignPosY[1][1] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[1];
 	}
 }
 
@@ -11030,6 +11099,7 @@ void CGvisR2R_LaserView::StopTimWinker(int nId) // 0:Ready, 1:Reset, 2:Run, 3:St
 
 void CGvisR2R_LaserView::Winker(int nId, int nDly) // 0:Ready, 1:Reset, 2:Run, 3:Stop
 {
+#ifdef USE_MPE
 	if (nId == MN_RUN)
 	{
 		if (pView->m_pMpe)
@@ -11040,13 +11110,16 @@ void CGvisR2R_LaserView::Winker(int nId, int nDly) // 0:Ready, 1:Reset, 2:Run, 3
 		}
 	}
 	// 	DispBtnWinker(nDly);
+#endif
 }
 
 void CGvisR2R_LaserView::ResetWinker() // 0:Ready, 1:Reset, 2:Run, 3:Stop
 {
+#ifdef USE_MPE
 	//IoWrite(_T("MB44015D"), 0); // 자동 초기 운전상태(PC가 On/Off 시킴, PLC가 운전램프를 윙크동작, on->off시 운전램프 on, 다시 운전스위치가 눌러지면 off) - 20141017
 	pView->m_pMpe->Write(_T("MB44015D"), 0);
-	for (int i = 0; i < 4; i++)
+#endif
+	for (int i = 0; i<4; i++)
 	{
 		m_bBtnWinker[i] = FALSE;
 		m_nCntBtnWinker[i] = FALSE;
@@ -11350,30 +11423,38 @@ BOOL CGvisR2R_LaserView::IsReview1()
 
 BOOL CGvisR2R_LaserView::IsJogRtDn()
 {
-	//BOOL bOn = pDoc->m_pMpeI[4] & (0x01 << 10) ? TRUE : FALSE;	// 마킹부 JOG 버튼(우)
-	//return bOn;
-	return FALSE;
+	BOOL bOn = FALSE;
+#ifdef USE_MPE
+	bOn = pDoc->m_pMpeIb[4] & (0x01 << 10) ? TRUE : FALSE;	// 마킹부 JOG 버튼(우)
+#endif
+	return bOn;
 }
 
 BOOL CGvisR2R_LaserView::IsJogRtUp()
 {
-	//BOOL bOn = pDoc->m_pMpeI[4] & (0x01 << 10) ? FALSE : TRUE;	// 마킹부 JOG 버튼(우)
-	//return bOn;
-	return FALSE;
+	BOOL bOn = FALSE;
+#ifdef USE_MPE
+	bOn = pDoc->m_pMpeIb[4] & (0x01 << 10) ? FALSE : TRUE;	// 마킹부 JOG 버튼(우)
+#endif
+	return bOn;
 }
 
 BOOL CGvisR2R_LaserView::IsJogRtDn0()
 {
-	//BOOL bOn = pDoc->m_pMpeI[4] & (0x01 << 10) ? TRUE : FALSE;	// 마킹부 JOG 버튼(우)
-	//return bOn;
-	return FALSE;
+	BOOL bOn = FALSE;
+#ifdef USE_MPE
+	bOn = pDoc->m_pMpeIb[4] & (0x01 << 10) ? TRUE : FALSE;	// 마킹부 JOG 버튼(우)
+#endif
+	return bOn;
 }
 
 BOOL CGvisR2R_LaserView::IsJogRtUp0()
 {
-	//BOOL bOn = pDoc->m_pMpeI[4] & (0x01 << 10) ? FALSE : TRUE;	// 마킹부 JOG 버튼(우)
-	//return bOn;
-	return FALSE;
+	BOOL bOn = FALSE;
+#ifdef USE_MPE
+	bOn = pDoc->m_pMpeIb[4] & (0x01 << 10) ? FALSE : TRUE;	// 마킹부 JOG 버튼(우)
+#endif
+	return bOn;
 }
 
 //BOOL CGvisR2R_LaserView::IsJogRtDn1()
@@ -12482,12 +12563,12 @@ void CGvisR2R_LaserView::EStop()
 	if (m_pMotion)
 	{
 		m_pMotion->EStop(MS_X0Y0);
-		m_pMotion->EStop(MS_X1Y1);
+		//m_pMotion->EStop(MS_X1Y1);
 		Sleep(30);
 		ResetMotion(MS_X0Y0);
 		Sleep(30);
-		ResetMotion(MS_X1Y1);
-		Sleep(30);
+		//ResetMotion(MS_X1Y1);
+		//Sleep(30);
 		// 		DispMsg(_T("X축 충돌 범위에 의한 정지입니다."), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
 		AfxMessageBox(_T("X축 충돌 범위에 의한 정지입니다."));
 	}
@@ -12541,7 +12622,7 @@ void CGvisR2R_LaserView::EStop()
 
 BOOL CGvisR2R_LaserView::IsRunAxisX()
 {
-	if (m_pMotion->IsMotionDone(MS_X0) && m_pMotion->IsMotionDone(MS_X1))
+	if (m_pMotion->IsMotionDone(MS_X0))// && m_pMotion->IsMotionDone(MS_X1))
 		return FALSE;
 	return TRUE;
 }
@@ -12755,6 +12836,7 @@ void CGvisR2R_LaserView::StopAllMk()
 
 void CGvisR2R_LaserView::InitPLC()
 {
+#ifdef USE_MPE
 	long lData;
 	lData = (long)(_tstof(pDoc->WorkingInfo.Lot.sTotalReelDist) * 1000.0);
 	m_pMpe->Write(_T("ML45000"), lData);	// 전체 Reel 길이 (단위 M * 1000)
@@ -12797,6 +12879,11 @@ void CGvisR2R_LaserView::InitPLC()
 	m_pMpe->Write(_T("ML45060"), lData);	// 2D 바코드 리더기위치까지 Feeding 속도 (단위 mm/sec * 1000)
 	lData = (long)(_tstof(pDoc->WorkingInfo.Motion.sFdBarcodeOffsetAcc) * 1000.0);
 	m_pMpe->Write(_T("ML45062"), lData);	// 2D 바코드 리더기위치까지 Feeding 가속도 (단위 mm/s^2 * 1000)
+
+	lData = (long)(_tstof(pDoc->WorkingInfo.LastJob.sUltraSonicCleannerStTim) * 100.0);
+	m_pMpe->Write(_T("MW05940"), lData);	// AOI_Dn (단위 [초] * 100) : 1 is 10 mSec.
+	m_pMpe->Write(_T("MW05942"), lData);	// AOI_Up (단위 [초] * 100) : 1 is 10 mSec.
+#endif
 }
 
 BOOL CGvisR2R_LaserView::SetCollision(double dCollisionMargin)
@@ -12861,35 +12948,38 @@ BOOL CGvisR2R_LaserView::IsRdyTest()
 
 BOOL CGvisR2R_LaserView::IsRdyTest0()
 {
-	//BOOL bOn0 = (pDoc->m_pMpeI[10] & (0x01 << 11)) ? TRUE : FALSE;		// 검사부 상 자동 운전 <-> X432B I/F
-	//BOOL bOn1 = (pDoc->m_pMpeI[10] & (0x01 << 9)) ? TRUE : FALSE;		// 검사부 상 테이블 진공 완료 <-> X4329 I/F
+#ifdef USE_MPE
+	BOOL bOn0 = (pDoc->m_pMpeIb[10] & (0x01 << 11)) ? TRUE : FALSE;		// 검사부 상 자동 운전 <-> X432B I/F
+	BOOL bOn1 = (pDoc->m_pMpeIb[10] & (0x01 << 9)) ? TRUE : FALSE;		// 검사부 상 테이블 진공 완료 <-> X4329 I/F
 
-	//if (bOn0 && bOn1)
-	//	return TRUE;
+	if (bOn0 && bOn1)
+		return TRUE;
+#endif
 	return FALSE;
 }
 
 BOOL CGvisR2R_LaserView::IsRdyTest1()
 {
-	//BOOL bOn0 = (pDoc->m_pMpeI[14] & (0x01 << 11)) ? TRUE : FALSE;		// 검사부 하 자동 운전 <-> X442B I/F
-	//BOOL bOn1 = (pDoc->m_pMpeI[14] & (0x01 << 9)) ? TRUE : FALSE;		// 검사부 하 테이블 진공 완료 <-> X4329 I/F
-	//double dCurPosMkFd = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
-	//double dTgtFd = _tstof(pDoc->WorkingInfo.Motion.sFdAoiAoiDistShot) * _tstof(pDoc->WorkingInfo.Motion.sAoiFdDist);
-	//if (dCurPosMkFd > dTgtFd - _tstof(pDoc->WorkingInfo.Motion.sAoiFdDist) / 2.0)
-	//{
-	//	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	//	if (bDualTest)
-	//	{
-	//		if (bOn0 && bOn1)
-	//			return TRUE;
-	//	}
-	//	else
-	//	{
-	//		if (bOn0)
-	//			return TRUE;
-	//	}
-	//}
-
+#ifdef USE_MPE
+	BOOL bOn0 = (pDoc->m_pMpeIb[14] & (0x01 << 11)) ? TRUE : FALSE;		// 검사부 하 자동 운전 <-> X442B I/F
+	BOOL bOn1 = (pDoc->m_pMpeIb[14] & (0x01 << 9)) ? TRUE : FALSE;		// 검사부 하 테이블 진공 완료 <-> X4329 I/F
+	double dCurPosMkFd = (double)pDoc->m_pMpeData[0][0];				// 마킹부 Feeding 엔코더 값(단위 mm )
+	double dTgtFd = _tstof(pDoc->WorkingInfo.Motion.sFdAoiAoiDistShot) * _tstof(pDoc->WorkingInfo.Motion.sAoiFdDist);
+	if (dCurPosMkFd > dTgtFd - _tstof(pDoc->WorkingInfo.Motion.sAoiFdDist) / 2.0)
+	{
+		BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+		if (bDualTest)
+		{
+			if (bOn0 && bOn1)
+				return TRUE;
+		}
+		else
+		{
+			if (bOn0)
+				return TRUE;
+		}
+	}
+#endif
 	return FALSE;
 }
 
@@ -12956,6 +13046,121 @@ void CGvisR2R_LaserView::SetPlcParam()
 //
 //	pView->m_pMpe->Write(_T("MB44010E"), (pDoc->WorkingInfo.LastJob.bUseAoiUpCleanRoler ? 1 : 0));
 //	pView->m_pMpe->Write(_T("MB44010F"), (pDoc->WorkingInfo.LastJob.bUseAoiDnCleanRoler ? 1 : 0));
+}
+
+void CGvisR2R_LaserView::GetPlcParam()
+{
+#ifdef USE_MPE
+	// Main
+	pDoc->BtnStatus.Main.Ready = m_pMpe->Read(_T("MB005503")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Main.Run = m_pMpe->Read(_T("MB005501")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Main.Reset = m_pMpe->Read(_T("MB005504")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Main.Stop = m_pMpe->Read(_T("MB005502")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Main.Auto = m_pMpe->Read(_T("MB005505")) ? TRUE : FALSE;	// 마킹부 자동/수동 (ON)
+	pDoc->BtnStatus.Main.Manual = m_pMpe->Read(_T("MB005505")) ? FALSE : TRUE;	// 마킹부 자동/수동 (OFF)
+
+																				// TorqueMotor
+	pDoc->BtnStatus.Tq.Mk = m_pMpe->Read(_T("MB440155")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Tq.Aoi = m_pMpe->Read(_T("MB440156")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Tq.Eng = m_pMpe->Read(_T("MB440154")) ? TRUE : FALSE;
+
+	// InductionMotor
+	pDoc->BtnStatus.Induct.Rc = m_pMpe->Read(_T("MB44017D")) ? TRUE : FALSE;	//pView->SetTwoMetal(FALSE, TRUE);	// One Metal IDC_CHK_68		
+	pDoc->BtnStatus.Induct.Uc = m_pMpe->Read(_T("MB44017C")) ? TRUE : FALSE;	//pView->SetTwoMetal(TRUE, TRUE);	// Two Metal IDC_CHK_69
+
+																				// Core150mm
+	pDoc->BtnStatus.Core150.Rc = m_pMpe->Read(_T("MB44017E")) ? TRUE : FALSE;	// SetCore150mmRecoiler(TRUE);	// Recoiler IDC_CHK_70	
+	pDoc->BtnStatus.Core150.Uc = m_pMpe->Read(_T("MB44017F")) ? TRUE : FALSE;	// SetCore150mmUncoiler(TRUE);	// Uncoiler IDC_CHK_71	
+
+																				// Etc
+																				//pDoc->BtnStatus.Etc.EmgAoi = m_pMpe->Read(_T("")) ? TRUE : FALSE;
+
+																				// Recoiler
+	pDoc->BtnStatus.Rc.Relation = m_pMpe->Read(_T("MB005801")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Rc.FdCw = m_pMpe->Read(_T("MB00580C")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Rc.FdCcw = m_pMpe->Read(_T("MB00580D")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Rc.ReelChuck = m_pMpe->Read(_T("MB00580B")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Rc.DcRlUpDn = m_pMpe->Read(_T("MB005802")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Rc.ReelJoinL = m_pMpe->Read(_T("MB005805")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Rc.ReelJoinR = m_pMpe->Read(_T("MB005806")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Rc.ReelJoinVac = m_pMpe->Read(_T("MB00580F")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Rc.PprChuck = m_pMpe->Read(_T("MB005808")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Rc.PprCw = m_pMpe->Read(_T("MB005809")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Rc.PprCcw = m_pMpe->Read(_T("MB00580A")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Rc.Rewine = m_pMpe->Read(_T("MB005803")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Rc.RewineReelPpr = m_pMpe->Read(_T("MB005804")) ? TRUE : FALSE;
+
+	// Punch
+	pDoc->BtnStatus.Mk.Relation = m_pMpe->Read(_T("MB005511")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Mk.FdCw = m_pMpe->Read(_T("MB005513")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Mk.FdCcw = m_pMpe->Read(_T("MB005514")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Mk.FdVac = m_pMpe->Read(_T("MB005515")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Mk.PushUp = m_pMpe->Read(_T("MB005516")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Mk.TblBlw = m_pMpe->Read(_T("MB005512")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Mk.TblVac = m_pMpe->Read(_T("MB005517")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Mk.FdClp = m_pMpe->Read(_T("MB005519")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Mk.TqClp = m_pMpe->Read(_T("MB00551A")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Mk.MvOne = m_pMpe->Read(_T("MB440151")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Mk.LsrPt = m_pMpe->Read(_T("MB005518")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Mk.DcRSol = m_pMpe->Read(_T("MB00551B")) ? TRUE : FALSE;
+
+	// AOIDn
+	pDoc->BtnStatus.AoiDn.Relation = m_pMpe->Read(_T("MB005701")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiDn.FdCw = m_pMpe->Read(_T("MB005703")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiDn.FdCcw = m_pMpe->Read(_T("MB005704")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiDn.FdVac = m_pMpe->Read(_T("MB005705")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiDn.PushUp = m_pMpe->Read(_T("MB005706")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiDn.TblBlw = m_pMpe->Read(_T("MB005702")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiDn.TblVac = m_pMpe->Read(_T("MB005707")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiDn.FdClp = m_pMpe->Read(_T("MB005709")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiDn.TqClp = m_pMpe->Read(_T("MB00570A")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiDn.MvOne = m_pMpe->Read(_T("MB440151")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiDn.LsrPt = m_pMpe->Read(_T("MB005708")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiDn.SonicBlw = m_pMpe->Read(_T("MB44014F")) ? TRUE : FALSE;
+
+	// AOIUp
+	pDoc->BtnStatus.AoiUp.Relation = m_pMpe->Read(_T("MB005601")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiUp.FdCw = m_pMpe->Read(_T("MB005603")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiUp.FdCcw = m_pMpe->Read(_T("MB005604")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiUp.FdVac = m_pMpe->Read(_T("MB005605")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiUp.PushUp = m_pMpe->Read(_T("MB005606")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiUp.TblBlw = m_pMpe->Read(_T("MB005602")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiUp.TblVac = m_pMpe->Read(_T("MB005607")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiUp.FdClp = m_pMpe->Read(_T("MB005609")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiUp.TqClp = m_pMpe->Read(_T("MB00560A")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiUp.MvOne = m_pMpe->Read(_T("MB440151")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiUp.LsrPt = m_pMpe->Read(_T("MB005608")) ? TRUE : FALSE;
+
+	// Engrave
+	//pDoc->BtnStatus.Eng.Relation = m_pMpe->Read(_T("")) ? TRUE : FALSE;
+	//pDoc->BtnStatus.Eng.FdCw = m_pMpe->Read(_T("")) ? TRUE : FALSE;
+	//pDoc->BtnStatus.Eng.FdCcw = m_pMpe->Read(_T("")) ? TRUE : FALSE;
+	//pDoc->BtnStatus.Eng.FdVac = m_pMpe->Read(_T("")) ? TRUE : FALSE;
+	//pDoc->BtnStatus.Eng.PushUp = m_pMpe->Read(_T("")) ? TRUE : FALSE;
+	//pDoc->BtnStatus.Eng.TblBlw = m_pMpe->Read(_T("")) ? TRUE : FALSE;
+	//pDoc->BtnStatus.Eng.TblVac = m_pMpe->Read(_T("")) ? TRUE : FALSE;
+	//pDoc->BtnStatus.Eng.FdClp = m_pMpe->Read(_T("")) ? TRUE : FALSE;
+	//pDoc->BtnStatus.Eng.TqClp = m_pMpe->Read(_T("")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Eng.MvOne = m_pMpe->Read(_T("MB440151")) ? TRUE : FALSE;
+	//pDoc->BtnStatus.Eng.LsrPt = m_pMpe->Read(_T("")) ? TRUE : FALSE;
+	//pDoc->BtnStatus.Eng.DcRSol = m_pMpe->Read(_T("")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Eng.SonicBlw = m_pMpe->Read(_T("MB44014E")) ? TRUE : FALSE;
+
+	// Uncoiler
+	pDoc->BtnStatus.Uc.Relation = m_pMpe->Read(_T("MB005401")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Uc.FdCw = m_pMpe->Read(_T("MB00540C")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Uc.FdCcw = m_pMpe->Read(_T("MB00540D")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Uc.ReelChuck = m_pMpe->Read(_T("MB00540B")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Uc.DcRlUpDn = m_pMpe->Read(_T("MB005402")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Uc.ReelJoinL = m_pMpe->Read(_T("MB005405")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Uc.ReelJoinR = m_pMpe->Read(_T("MB005406")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Uc.ReelJoinVac = m_pMpe->Read(_T("MB00540F")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Uc.PprChuck = m_pMpe->Read(_T("MB005408")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Uc.PprCw = m_pMpe->Read(_T("MB005409")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Uc.PprCcw = m_pMpe->Read(_T("MB00540A")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Uc.ClRlUpDn = m_pMpe->Read(_T("MB005403")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Uc.ClRlPshUpDn = m_pMpe->Read(_T("MB005404")) ? TRUE : FALSE;
+#endif
 }
 
 void CGvisR2R_LaserView::InitIoWrite()
@@ -13471,8 +13676,10 @@ BOOL CGvisR2R_LaserView::ChkLotCutPos()
 		if (dFdTotLen >= dLotCutPos)
 		{
 			pDoc->WorkingInfo.LastJob.bLotSep = FALSE;
+#ifdef USE_MPE
 			pView->m_pMpe->Write(_T("MB440184"), 0);	// 로트분리사용(PC가 On시키고, PC가 확인하고 Off시킴)-20141031
 														//pView->IoWrite(_T("MB440184"), 1);
+#endif
 			if (pDoc->m_pReelMap)
 				pDoc->m_pReelMap->m_bUseLotSep = FALSE;
 
@@ -13659,6 +13866,8 @@ void CGvisR2R_LaserView::MakeSapp3()
 	_stprintf(FileName, _T("%s"), sPath);
 
 	fp = fopen(pRtn = TCHARToChar(FileName), "w+");
+	if(pRtn) delete pRtn; 
+	pRtn = NULL;
 
 	if (fp != NULL)
 	{
@@ -13973,6 +14182,7 @@ BOOL CGvisR2R_LaserView::ChkLightErr()
 
 void CGvisR2R_LaserView::CntMk()
 {
+#ifdef USE_MPE
 	if (m_nPrevTotMk[0] != m_nTotMk[0])
 	{
 		m_nPrevTotMk[0] = m_nTotMk[0];
@@ -13994,6 +14204,7 @@ void CGvisR2R_LaserView::CntMk()
 		m_nPrevCurMk[1] = m_nMkPcs[1];//m_nCurMk[1];
 		pView->m_pMpe->Write(_T("ML45102"), (long)m_nMkPcs[1]);	// 마킹부 (우) 현재 마킹한 수
 	}
+#endif
 }
 
 BOOL CGvisR2R_LaserView::IsOnMarking0()
@@ -14014,9 +14225,10 @@ BOOL CGvisR2R_LaserView::IsOnMarking1()
 
 void CGvisR2R_LaserView::SetDualTest(BOOL bOn)
 {
+#ifdef USE_MPE
 	if (pView->m_pMpe)
 		pView->m_pMpe->Write(_T("MB44017A"), bOn ? 0 : 1);		// 단면 검사 On
-
+#endif
 	if (m_pDlgFrameHigh)
 		m_pDlgFrameHigh->SetDualTest(bOn);
 	if (m_pDlgMenu01)
@@ -14241,9 +14453,10 @@ void CGvisR2R_LaserView::SetEngraveFd()
 
 	if (!pDoc->WorkingInfo.LastJob.bAoiOnePnl)
 	{
+#ifdef USE_MPE
 		//IoWrite(_T("MB440151"), 1);	// 한판넬 이송상태 ON (PC가 ON, OFF)
 		pView->m_pMpe->Write(_T("MB440151"), 1);
-
+#endif
 		CString sData, sPath = PATH_WORKING_INFO;
 		pDoc->WorkingInfo.LastJob.bMkOnePnl = pDoc->WorkingInfo.LastJob.bAoiOnePnl = TRUE;
 		sData.Format(_T("%d"), pDoc->WorkingInfo.LastJob.bMkOnePnl ? 1 : 0);
@@ -14261,36 +14474,42 @@ void CGvisR2R_LaserView::SetEngraveFd(double dDist)
 
 void CGvisR2R_LaserView::MoveEngrave(double dOffset)
 {
+#ifdef USE_MPE
 	long lData = (long)(dOffset * 1000.0);
 	//IoWrite(_T("MB440161"), 1);		// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF))
 	pView->m_pMpe->Write(_T("MB440161"), 1);
 	//IoWrite(_T("ML45066"), lData);	// 마킹부 Feeding 롤러 Offset(*1000, +:더 보냄, -덜 보냄)
 	pView->m_pMpe->Write(_T("ML45066"), lData);
+#endif
 }
 
 BOOL CGvisR2R_LaserView::IsEngraveFd()
 {
-	//if (m_nShareDnCnt > 0)
-	//{
-	//	if (!(m_nShareDnCnt % 2))
-	//	{
-	//		if (pDoc->m_pMpeSignal[5] & (0x01 << 1))	// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF)
-	//			return TRUE;
-	//		return FALSE;
-	//	}
-	//}
-	//else
-	//{
-	//	if (m_nShareUpCnt > 0)
-	//	{
-	//		if (!(m_nShareUpCnt % 2))
-	//		{
-	//			if (pDoc->m_pMpeSignal[5] & (0x01 << 1))	// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF)
-	//				return TRUE;
-	//			return FALSE;
-	//		}
-	//	}
-	//}
+	if (m_nShareDnCnt > 0)
+	{
+		if (!(m_nShareDnCnt % 2))
+		{
+#ifdef USE_MPE
+			if (pDoc->m_pMpeSignal[5] & (0x01 << 1))	// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF)
+				return TRUE;
+#endif
+			return FALSE;
+		}
+	}
+	else
+	{
+		if (m_nShareUpCnt > 0)
+		{
+			if (!(m_nShareUpCnt % 2))
+			{
+#ifdef USE_MPE
+				if (pDoc->m_pMpeSignal[5] & (0x01 << 1))	// 마킹부 피딩 CW ON (PLC가 피딩완료 후 OFF)
+					return TRUE;
+#endif
+				return FALSE;
+			}
+		}
+	}
 
 	return TRUE;
 }
@@ -14311,10 +14530,13 @@ double CGvisR2R_LaserView::GetAoiInitDist()
 
 double CGvisR2R_LaserView::GetAoiRemain()
 {
-	//double dCurPosEngraveFd = (double)pDoc->m_pMpeData[1][0];	// ML44052	,	각인부 Feeding 엔코더 값(단위 mm)
-	//double dRemain = _tstof(pDoc->WorkingInfo.Motion.sFdEngraveAoiInitDist) - dCurPosEngraveFd;
-	//return dRemain;
+#ifdef USE_MPE
+	double dCurPosEngraveFd = (double)pDoc->m_pMpeData[1][0];	// ML44052	,	각인부 Feeding 엔코더 값(단위 mm)
+	double dRemain = _tstof(pDoc->WorkingInfo.Motion.sFdEngraveAoiInitDist) - dCurPosEngraveFd;
+	return dRemain;
+#else
 	return 0.0;
+#endif
 }
 
 LRESULT CGvisR2R_LaserView::wmClientReceivedMdx(WPARAM wParam, LPARAM lParam)

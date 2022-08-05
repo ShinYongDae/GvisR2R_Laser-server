@@ -35,6 +35,7 @@ class CReelMap : public CWnd
 	int m_nDefStrip[4], m_nDefPerStrip[4][MAX_DEF];
 	int m_nStripOut[4], m_nTotStOut;
 	CString m_sPathShare, m_sPathBuf;
+	CString m_sPathYield;
 	double m_dAdjRatio; // Master Image의 Pixel 해상도에 따른 Reelmap에서의 식별용 간격 비율.
 	int m_nIdxDefInfo;	// MAX_DEFINFO에 들어가는 정보의 Index.
 	int m_nWritedSerial; // In Share folder Serial.
@@ -55,9 +56,13 @@ class CReelMap : public CWnd
 	char* StrToChar(CString str);
 	void StrToChar(CString str, char* pCh);
 	
+	BOOL ReadYield(int nSerial, CString sPath);
+	BOOL WriteYield(int nSerial, CString sPath);
+	void ResetYield();
+	
 // Construction
 public:
-	CReelMap(int nPnl=0, int nPcs=0, int nDir=0);
+	CReelMap(int nLayer, int nPnl=0, int nPcs=0, int nDir=0);
 
 // Attributes
 public:
@@ -143,6 +148,7 @@ public:
 	BOOL Write(int nSerial, int nLayer, CString sPath);
 	void SetPathAtBuf(CString sPath);
 	CString GetRmapPath(int nRmap);
+	CString GetYieldPath(int nRmap);
 
 	void SetPnlDefNum(int *pPnlDefNum);
 	void ClrPnlDefNum();
@@ -173,6 +179,8 @@ public:
 	void StartThreadReloadRst();
 	static BOOL ThreadProcReloadRst(LPVOID lpContext);
 	void StopThreadReloadRst();
+
+	BOOL UpdateYield(int nSerial);
 
 // Overrides
 	// ClassWizard generated virtual function overrides

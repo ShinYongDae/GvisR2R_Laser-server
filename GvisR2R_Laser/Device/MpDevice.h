@@ -8,7 +8,7 @@
 //
 
 //#include "ymcPCAPI.h"
-//#pragma comment (lib, "ymcPCAPI.lib")
+//#pragma comment (lib, "ymcPCAPI_x64.lib")
 
 #define M_REGISTER_MAX_ADDR		65532
 
@@ -42,6 +42,8 @@ class CMpDevice : public CWnd
 	BOOL SetIo(CString strRegAddr, LPVOID pIoData, int nIoSize);
 // 	long Read(CString strRegAddr);
 	int atoh(CString &strVal);
+
+	//void SetConfigure(UINT16 nBoardId, UINT16 nDevIdIoIn, UINT16 nDevIdIoOut, INT nOffsetAxisID);
 
 
 // Construction

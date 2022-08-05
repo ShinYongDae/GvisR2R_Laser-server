@@ -590,7 +590,7 @@ typedef struct {
 #define PNLBUF_Y					50
 #define PNLBUF_X					50
 
-enum SEL_RMAP { RMAP_UP=0, RMAP_DN=1, RMAP_ALLUP=2, RMAP_ALLDN=3 };
+enum SEL_RMAP { RMAP_NONE = -1, RMAP_UP = 0, RMAP_DN = 1, RMAP_ALLUP = 2, RMAP_ALLDN = 3 };
 enum SEL_CAM { CAM_LF=0, CAM_RT=1, CAM_BOTH=2 };
 enum MAIN_BTN { MN_RST=0, MN_RDY=1, MN_STOP=2, MN_RUN=3 };
 

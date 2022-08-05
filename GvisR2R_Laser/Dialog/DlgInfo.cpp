@@ -850,11 +850,13 @@ void CDlgInfo::OnStc197()
 
 	double dTime = _tstof(sVal) * 100.0;
 	int nTime = int(dTime);
+#ifdef USE_MPE
 	if (pView->m_pMpe)
 	{
 		pView->m_pMpe->Write(_T("MW05940"), (long)nTime);	// AOI_Dn (단위 [초] * 100) : 1 is 10 mSec.
 		pView->m_pMpe->Write(_T("MW05942"), (long)nTime);	// AOI_Up (단위 [초] * 100) : 1 is 10 mSec.
 	}
+#endif
 }
 
 void CDlgInfo::OnChk000() 
@@ -879,15 +881,19 @@ void CDlgInfo::OnChk001()
 	if(myBtn[1].GetCheck())
 	{
 		bUse = TRUE;
+#ifdef USE_MPE
 		//pView->IoWrite(_T("MB440184", 1);	// 로트분리사용(PC가 On시키고, PC가 확인하고 Off시킴)-20141031
 		pView->m_pMpe->Write(_T("MB440184"), 1);
+#endif
 		pView->SetLotLastShot();
 	}
 	else
 	{
 		bUse = FALSE;
+#ifdef USE_MPE
 		//pView->IoWrite(_T("MB440184", 0);	// 로트분리사용(PC가 On시키고, PC가 확인하고 Off시킴)-20141031
 		pView->m_pMpe->Write(_T("MB440184"), 0);
+#endif
 	}
 
 	pDoc->WorkingInfo.LastJob.bLotSep = bUse;
@@ -905,7 +911,9 @@ void CDlgInfo::OnChk002()
 	Sleep(100);
 	if (bUse)
 	{
+#ifdef USE_MPE
 		pView->m_pMpe->Write(_T("MB440183"), 1);
+#endif
 		pView->ChkTempStop(TRUE);
 		if (!myBtn[2].GetCheck())
 		{
@@ -916,7 +924,9 @@ void CDlgInfo::OnChk002()
 	}
 	else
 	{
+#ifdef USE_MPE
 		pView->m_pMpe->Write(_T("MB440183"), 0);
+#endif
 		pView->ChkTempStop(FALSE);
 
 		if (myBtn[2].GetCheck())
@@ -1376,7 +1386,9 @@ void CDlgInfo::OnChkSampleTest()
 	CString sData = bOn ? _T("1") : _T("0");
 	::WritePrivateProfileString(_T("Last Job"), _T("Sample Test On"), sData, PATH_WORKING_INFO);
 
+#ifdef USE_MPE
 	pView->m_pMpe->Write(_T("MB44017B"), (pDoc->WorkingInfo.LastJob.bSampleTest)?1:0);		// Sample 검사 On
+#endif
 }
 
 void CDlgInfo::OnChkOneMetal() 
@@ -1411,7 +1423,9 @@ void CDlgInfo::OnStc181()
 	::WritePrivateProfileString(_T("Last Job"), _T("Sample Test Shot Num"), sVal, PATH_WORKING_INFO);
 	
 	long lData = (long)_tstoi(pDoc->WorkingInfo.LastJob.sSampleTestShotNum);//atoi
+#ifdef USE_MPE
 	pView->m_pMpe->Write(_T("ML45126"), lData);	// 샘플검사 Shot수
+#endif
 }
 
 
@@ -1458,12 +1472,16 @@ void CDlgInfo::OnBnClickedChk85()
 	if (myBtn[19].GetCheck()) //하면AOI 클린롤러
 	{
 		pDoc->WorkingInfo.LastJob.bUseAoiDnCleanRoler = TRUE;
+#ifdef USE_MPE
 		pView->m_pMpe->Write(_T("MB44010F"), 1);
+#endif
 	}
 	else
 	{
 		pDoc->WorkingInfo.LastJob.bUseAoiDnCleanRoler = FALSE;
+#ifdef USE_MPE
 		pView->m_pMpe->Write(_T("MB44010F"), 0);
+#endif
 	}
 
 	CString sData = pDoc->WorkingInfo.LastJob.bUseAoiDnCleanRoler ? _T("1") : _T("0");
@@ -1476,12 +1494,16 @@ void CDlgInfo::OnBnClickedChk86()
 	if (myBtn[20].GetCheck()) //상면AOI 클린롤러
 	{
 		pDoc->WorkingInfo.LastJob.bUseAoiUpCleanRoler = TRUE;
+#ifdef USE_MPE
 		pView->m_pMpe->Write(_T("MB44010E"), 1);
+#endif
 	}
 	else
 	{
 		pDoc->WorkingInfo.LastJob.bUseAoiUpCleanRoler = FALSE;
+#ifdef USE_MPE
 		pView->m_pMpe->Write(_T("MB44010E"), 0);
+#endif
 	}
 
 	CString sData = pDoc->WorkingInfo.LastJob.bUseAoiUpCleanRoler ? _T("1") : _T("0");
@@ -1495,12 +1517,16 @@ void CDlgInfo::OnBnClickedChk1187()
 	if (myBtn[21].GetCheck()) //AOI초음파세정기
 	{
 		pDoc->WorkingInfo.LastJob.bUseAoiDnCleanner = TRUE;
+#ifdef USE_MPE
 		pView->m_pMpe->Write(_T("MB44016F"), 1);
+#endif
 	}
 	else
 	{
 		pDoc->WorkingInfo.LastJob.bUseAoiDnCleanner = FALSE;
+#ifdef USE_MPE
 		pView->m_pMpe->Write(_T("MB44016F"), 0);
+#endif
 	}
 
 	CString sData = pDoc->WorkingInfo.LastJob.bUseAoiDnCleanner ? _T("1") : _T("0");
@@ -1514,12 +1540,16 @@ void CDlgInfo::OnBnClickedChk1188()
 	if (myBtn[22].GetCheck()) //각인부초음파세정기
 	{
 		pDoc->WorkingInfo.LastJob.bUseEngraveCleanner = TRUE;
+#ifdef USE_MPE
 		pView->m_pMpe->Write(_T("MB44016E"), 1);
+#endif
 	}
 	else
 	{
 		pDoc->WorkingInfo.LastJob.bUseEngraveCleanner = FALSE;
+#ifdef USE_MPE
 		pView->m_pMpe->Write(_T("MB44016E"), 0);
+#endif
 	}
 
 	CString sData = pDoc->WorkingInfo.LastJob.bUseEngraveCleanner ? _T("1") : _T("0");

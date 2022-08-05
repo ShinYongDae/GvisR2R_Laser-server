@@ -175,6 +175,7 @@ class CGvisR2R_LaserView : public CFormView
 	int m_nTotMk[2], m_nCurMk[2]; // [0]: 좌 MK, [1]: 우 MK
 	int m_nPrevTotMk[2], m_nPrevCurMk[2]; // [0]: 좌 MK, [1]: 우 MK
 
+	BOOL m_bContEngraveF;
 
 
 	void InitMyMsg();
@@ -207,10 +208,47 @@ class CGvisR2R_LaserView : public CFormView
 	int GetVsUpBufLastSerial();
 	int GetVsDnBufLastSerial();
 
+	void MarkingWith2PointAlign();
+	void Mk2PtReady();
+	void Mk2PtChkSerial();
+	void Mk2PtInit();
+	void Mk2PtAlignPt0();
+	void Mk2PtAlignPt1();
+	void Mk2PtMoveInitPos();
+	void Mk2PtElecChk();
+	void Mk2PtDoMarking();
+	void Mk2PtLotDiff();
+	void Mk2PtReject();
+	void Mk2PtErrStop();
+
+	void MarkingWith4PointAlign();
+	void Mk4PtReady();
+	void Mk4PtChkSerial();
+	void Mk4PtInit();
+	void Mk4PtAlignPt0();
+	void Mk4PtAlignPt1();
+	void Mk4PtAlignPt2();
+	void Mk4PtAlignPt3();
+	void Mk4PtMoveInitPos();
+	void Mk4PtElecChk();
+	void Mk4PtDoMarking();
+	void Mk4PtLotDiff();
+	void Mk4PtReject();
+	void Mk4PtErrStop();
+
 	void DoBoxSw();
 	void DoEmgSw();
 	void DoSens();
 	void DoAuto();
+	void DoAutoMarking();
+	void DoAutoChkShareFolder(); // 20170727-잔량처리 시 계속적으로 반복해서 이함수가 호출됨으로 좌우 마킹 인덱스 동일 현상 발생.(case AT_LP + 8:)	
+	void DoAutoDispMsg();
+	void DoAutoChkCycleStop();
+	void DoAutoSetFdOffset();
+	void DoAutoSetFdOffsetLastProc();
+	void DoAutoSetLastProcAtPlc();
+	void DoAtuoGetMkStSignal();
+	BOOL DoAutoGetLotEndSignal();
 	void DoInterlock();
 
 	void DoSaftySens();
@@ -235,6 +273,7 @@ class CGvisR2R_LaserView : public CFormView
 	BOOL SetCollision(double dCollisionMargin);
 	void DispStsMainMsg(int nIdx = 0);
 	void SetPlcParam();
+	void GetPlcParam();
 
 
 	BOOL SortingInUp(CString sPath, int nIndex);
@@ -262,9 +301,9 @@ public:
 	BOOL m_bStopFromThread, m_bBuzzerFromThread;
 
 	CMpDevice* m_pMpe;
-	CPtAlign m_Align[2];
+	CPtAlign m_Align[2];	// [0] : LeftCam , [1] : RightCam
 #ifdef USE_VISION
-	CVision* m_pVision[2];
+	CVision* m_pVision[2];	// [0] : LeftCam , [1] : RightCam
 #endif
 	//CPtAlign m_Align;
 	//CVision* m_pVision;
@@ -345,14 +384,19 @@ public:
 	int m_nBufUpCnt;
 	int m_nBufDnCnt;
 
-	BOOL m_bFailAlign[2][2]; // [nCam][nPos] 
-	BOOL m_bReAlign[2][2]; // [nCam][nPos] 
-	BOOL m_bSkipAlign[2][2]; // [nCam][nPos] 
+	//BOOL m_bFailAlign[2][2]; // [nCam][nPos] 
+	//BOOL m_bReAlign[2][2]; // [nCam][nPos] 
+	//BOOL m_bSkipAlign[2][2]; // [nCam][nPos] 
+	BOOL m_bFailAlign[2][4]; // [nCam][nPos] 
+	BOOL m_bReAlign[2][4]; // [nCam][nPos] 
+	BOOL m_bSkipAlign[2][4]; // [nCam][nPos] 
+
 	BOOL m_bDoMk[2], m_bDoneMk[2]; // [nCam]
 	BOOL m_bReMark[2]; // [nCam]
 
 	int m_nMonAlmF, m_nClrAlmF;
 	BOOL m_bMkSt, m_bLotEnd, m_bLastProc, m_bLastProcFromUp;
+	BOOL m_bMkStSw;
 	int m_nMkStAuto, m_nLotEndAuto, m_nLastProcAuto;
 	BOOL m_bLoadShare[2]; // [Up/Dn]
 	CString m_sNewLotUp, m_sNewLotDn;
@@ -482,13 +526,14 @@ public:
 	BOOL IsReady();				// not used
 	void Shift2Buf();
 	void Shift2Mk();
-	void SetTestSts(int nStep);	// not used
-	void SetMkSts(int nStep);	// not used
+	void CompletedMk(int nCam); // 0: Only Cam0, 1: Only Cam1, 2: Cam0 and Cam1, 3: None
+	void SetTestSts(int nStep);
+	void SetMkSts(int nStep);
 	void SetAoiFdSts();
 	void SetAoiStopSts();
 	void SetMkFdSts();
 	void SetMkStopSts();
-	BOOL IsMkFdSts();
+	BOOL IsMkFdSts();		// not used
 	void SetAoiFd();			// not used
 	void SetMkFd();				// not used
 	BOOL IsMkFd();				// not used

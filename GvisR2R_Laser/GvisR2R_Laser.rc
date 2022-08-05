@@ -1811,6 +1811,7 @@ STRINGTABLE
 BEGIN
     AFX_IDS_SCRESTORE       "창을 보통 크기로 복원합니다."
     AFX_IDS_SCTASKLIST      "작업 목록을 활성화합니다."
+    ID_INDICATOR_PROGRESS_PANE "ID_INDICATOR_PROGRESS_PANE"
 END
 
 #endif    // 한국어(대한민국) resources

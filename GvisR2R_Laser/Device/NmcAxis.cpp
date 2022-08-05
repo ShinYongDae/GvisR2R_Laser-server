@@ -79,8 +79,7 @@ BOOL CNmcAxis::IsAmpFault()
 	ms = MC_ReadAxisStatus(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, &Status);
 	if (ms != MC_OK)
 	{
-		//AfxMessageBox(_T("Error-IsAmpFault"));
-		pView->MsgBox(_T("Error-IsAmpFault"));
+		AfxMessageBox(_T("Error-IsAmpFault"));
 		return TRUE;
 	}
 
@@ -98,8 +97,7 @@ double CNmcAxis::GetState()
 	ms = MC_ReadAxisStatus(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, &Status);
 	if (ms != MC_OK)
 	{
-		//AfxMessageBox(_T("Error-GetState"));
-		pView->MsgBox(_T("Error-GetState"));
+		AfxMessageBox(_T("Error-GetState"));
 		return MPIStateERROR;
 	}
 
@@ -156,8 +154,7 @@ BOOL CNmcAxis::ClearStatus()
 	ms = MC_ReadAxisStatus(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, &state);
 	if (ms != MC_OK)
 	{
-		//AfxMessageBox(_T("Error-MC_ReadAxisStatus()"));
-		pView->MsgBox(_T("Error-MC_ReadAxisStatus"));
+		AfxMessageBox(_T("Error-MC_ReadAxisStatus()"));
 		return FALSE;
 	}
 	if (state & mcErrorStop)
@@ -166,15 +163,35 @@ BOOL CNmcAxis::ClearStatus()
 		Sleep(30);
 	}
 
-	//ms = MC_Reset(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID);
-	//Sleep(30);
+	ms = MC_Reset(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID);
+	Sleep(30);
+
 	if (IsAmpFault())
-		ms = (MC_STATUS)AmpFaultReset();
+	{
+		//ms = (MC_STATUS)AmpFaultReset();
+		ms = MC_Reset(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID);
 
-	if (ms == MC_OK)
-		return TRUE;
+		if (ms != MC_OK)
+			return FALSE;
 
+		Sleep(30);
+	}
+
+	BOOL bRtn = TRUE;
+
+	if (!GetAmpEnable())
+	{
+		//bRtn = SetAmpEnable(TRUE);
+		ms = MC_Power(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, TRUE);
+		if (ms != MC_OK)
+		{
+			AfxMessageBox(_T("Error-SetAmpEnable()"));
 	return FALSE;
+		}
+		Sleep(100); // Fastek EasyServo Z축 서보 On시 Delay필요....
+	}
+
+	return bRtn;
 }
 
 
@@ -187,8 +204,7 @@ BOOL CNmcAxis::CheckMotionDone()
 	ms = MC_ReadAxisStatus(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, &state);
 	if (ms != MC_OK)
 	{
-		//AfxMessageBox(_T("Error-MC_ReadAxisStatus()"));
-		pView->MsgBox(_T("Error-MC_ReadAxisStatus"));
+		AfxMessageBox(_T("Error-MC_ReadAxisStatus()"));
 		return FALSE;
 	}
 	if (state ^ mcContinuousMotion && state ^ mcConstantVelocity && state ^ mcAccelerating && state ^ mcDecelerating)
@@ -219,8 +235,7 @@ double CNmcAxis::GetActualPosition()
 	ms =  MC_ReadActualPosition(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, &dPos);
 	if (ms != MC_OK)
 	{
-		//AfxMessageBox(_T("Error-GetActualPosition()"));
-		pView->MsgBox(_T("Error-GetActualPosition"));
+		AfxMessageBox(_T("Error-GetActualPosition()"));
 		return 0.0;
 	}
 	dCurPos = PulseToLen(dPos);
@@ -239,8 +254,7 @@ double CNmcAxis::GetCommandPosition()
 
 	if (ms != MC_OK)
 	{
-		//AfxMessageBox(_T("Error-GetCommandPosition()"));
-		pView->MsgBox(_T("Error-GetCommandPosition"));
+		AfxMessageBox(_T("Error-GetCommandPosition()"));
 		return 0.0;
 	}
 	dCurPos = PulseToLen(dPos);
@@ -375,8 +389,7 @@ BOOL CNmcAxis::GetAmpEnable()
 	ms = MC_ReadAxisStatus(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, &Status);
 	if (ms != MC_OK)
 	{
-		//AfxMessageBox(_T("Error-GetAmpEnable()"));
-		pView->MsgBox(_T("Error-GetAmpEnable"));
+		AfxMessageBox(_T("Error-GetAmpEnable()"));
 		return FALSE;
 	}
 
@@ -391,8 +404,7 @@ BOOL CNmcAxis::IsAmpReady()
 	ms = MC_ReadAxisStatus(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, &Status);
 	if (ms != MC_OK)
 	{
-		//AfxMessageBox(_T("Error-IsAmpReady()"));
-		pView->MsgBox(_T("Error-IsAmpReady"));
+		AfxMessageBox(_T("Error-IsAmpReady()"));
 		return FALSE;
 	}
 
@@ -403,6 +415,23 @@ BOOL CNmcAxis::IsAmpReady()
 }
 
 
+BOOL CNmcAxis::IsGroupMotion()
+{
+	MC_STATUS ms = MC_OK;
+	UINT32 Status = 0;
+
+	ms = MC_ReadAxisStatus(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, &Status);
+	if (ms != MC_OK)
+	{
+		AfxMessageBox(_T("Error-IsAmpReady()"));
+		return FALSE;
+	}
+
+	if ((Status & mcGroupMotion))
+		return TRUE;
+
+	return FALSE;
+}
 
 BOOL CNmcAxis::IsMotionDone()
 {
@@ -412,8 +441,7 @@ BOOL CNmcAxis::IsMotionDone()
 	ms = MC_ReadAxisStatus(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, &state);
 	if (ms != MC_OK)
 	{
-		//AfxMessageBox(_T("Error-IsMotionDone()"));
-		pView->MsgBox(_T("Error-IsMotionDone"));
+		AfxMessageBox(_T("Error-IsMotionDone()"));
 		return FALSE; 
 	}
 //	if ( !(state & mcContinuousMotion) && !(state & mcConstantVelocity) && !(state & mcAccelerating) && !(state & mcDecelerating) )
@@ -433,8 +461,7 @@ BOOL CNmcAxis::IsStandStill()
 	ms = MC_ReadStatus(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, &state);
 	if (ms != MC_OK)
 	{
-		//AfxMessageBox(_T("Error-IsStandStill()"));
-		pView->MsgBox(_T("Error-IsStandStill"));
+		AfxMessageBox(_T("Error-IsStandStill()"));
 		return FALSE;
 	}
 	if ((state & mcStandStill) > 0)
@@ -451,8 +478,7 @@ BOOL CNmcAxis::IsAxisDone()
 	ms = MC_ReadAxisStatus(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, &state);
 	if (ms != MC_OK)
 	{
-		//AfxMessageBox(_T("Error-IsMotionDone()"));
-		pView->MsgBox(_T("Error-IsMotionDone"));
+		AfxMessageBox(_T("Error-IsMotionDone()"));
 		return FALSE;
 	}
 	if ((state & mcStandStill) && !(state & mcContinuousMotion) && !(state & mcConstantVelocity) && !(state & mcAccelerating) && !(state & mcDecelerating))
@@ -470,8 +496,7 @@ BOOL CNmcAxis::IsStopping()
 	ms = MC_ReadAxisStatus(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, &state);
 	if (ms != MC_OK)
 	{
-		//AfxMessageBox(_T("Error-IsStopping()"));
-		pView->MsgBox(_T("Error-IsStopping"));
+		AfxMessageBox(_T("Error-IsStopping()"));
 		return FALSE;
 	}
 	if (state & mcStopping)
@@ -855,12 +880,11 @@ BOOL CNmcAxis::StartVelocityMove(double fVel, double fAcc)
 
 	if (fabs(fVel) > m_stParam.Speed.fMaxVel)
 	{
-		//AfxMessageBox(_T("Exceed Maximum Speed"));
-		pView->MsgBox(_T("Exceed Maximum Speed"));
+		AfxMessageBox(_T("Exceed Maximum Speed"));
 		return FALSE;
 	}
 
-	if (!WaitUntilAxisDone(TEN_SECOND))
+	if (!WaitUntilMotionDone(TEN_SECOND))
 	{
 		return FALSE;
 	}
@@ -937,8 +961,7 @@ INT CNmcAxis::GetNegLimitAction()
 	ms = MC_ReadBoolParameter(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, mcpEnableHWLimitNeg, &Value);
 	if (ms != MC_OK)
 	{
-		//AfxMessageBox(_T("Error-GetNegLimitAction()"));
-		pView->MsgBox(_T("Error-GetNegLimitAction"));
+		AfxMessageBox(_T("Error-GetNegLimitAction()"));
 		return nAction;
 	}
 	if (Value)
@@ -965,8 +988,7 @@ INT CNmcAxis::GetPosLimitAction()
 	ms = MC_ReadBoolParameter(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, mcpEnableHWLimitPos, &Value);
 	if (ms != MC_OK)
 	{
-		//AfxMessageBox(_T("Error-GetNegLimitAction()"));
-		pView->MsgBox(_T("Error-GetNegLimitAction"));
+		AfxMessageBox(_T("Error-GetNegLimitAction()"));
 		return nAction;
 	}
 	if (Value)
@@ -1117,17 +1139,17 @@ BOOL CNmcAxis::SetAmpEnable(BOOL bOn)
 			return TRUE;
 		}
 	}
-	ClearStatus();
-	Sleep(100);
+	//ClearStatus();
+	ms = MC_Reset(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID);
+	Sleep(30);
 
 	ms = MC_Power(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, bOn);
 	if (ms != MC_OK)
 	{
-		//AfxMessageBox(_T("Error-SetAmpEnable()"));
-		pView->MsgBox(_T("Error-SetAmpEnable"));
+		AfxMessageBox(_T("Error-SetAmpEnable()"));
 		return FALSE;
 	}
-	Sleep(100);
+	Sleep(100); // Fastek EasyServo Z축 서보 On시 Delay필요....
 
 	if (bOn)
 	{
@@ -1144,8 +1166,11 @@ BOOL CNmcAxis::SetAmpEnable(BOOL bOn)
 				//	pGlobalView->OnDispMessage(strTitleMsg, strMsg, RGB_GREEN, 30000);
 				//}
 				//CGvisAORView::m_pAORMasterView->OnDispMessage(strTitleMsg, strMsg, RGB_YELLOW, 3000);
-				ClearStatus();
-				Sleep(300);
+
+				//ClearStatus();
+				ms = MC_Reset(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID);
+				Sleep(30);
+				//Sleep(300);
 			}
 		}
 		else
@@ -1155,9 +1180,9 @@ BOOL CNmcAxis::SetAmpEnable(BOOL bOn)
 			{
 				nAction = GetNegLimitAction();
 				SetNegHWLimitAction(E_STOP_EVENT);//ABORT_EVENT);
-				Sleep(100);
+				Sleep(30);
 				SetNegHWLimitAction(NO_EVENT);//ABORT_EVENT);
-				Sleep(100);
+				Sleep(30);
 			}
 			else if (CheckLimitSwitch(PLUS))
 			{
@@ -1168,35 +1193,36 @@ BOOL CNmcAxis::SetAmpEnable(BOOL bOn)
 				Sleep(100);
 			}
 
-			ClearStatus();
-			Sleep(100);
+			//ClearStatus();
+			//Sleep(100);
+			ms = MC_Reset(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID);
+			Sleep(30);
 
 			ms = MC_Power(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, bOn);
 			if (ms != MC_OK)
 			{
-				//AfxMessageBox(_T("Error-SetAmpEnable()"));
-				pView->MsgBox(_T("Error-SetAmpEnable"));
+				AfxMessageBox(_T("Error-SetAmpEnable()"));
 				return FALSE;
 			}
 
-			Sleep(500);
+			Sleep(100);
 
 			if (CheckLimitSwitch(MINUS))
 			{
 				SetNegHWLimitAction(nAction);//ABORT_EVENT);
-				Sleep(100);
+				Sleep(30);
 			}
 			else if (CheckLimitSwitch(PLUS))
 			{
 				SetPosHWLimitAction(nAction);//ABORT_EVENT);
-				Sleep(100);
+				Sleep(30);
 			}
 
 			if (!GetAmpEnable())
 				return FALSE;
 		}
 
-		Sleep(500); // Fastek EasyServo Z축 서보 On시 Delay필요....
+		//Sleep(100); // Fastek EasyServo Z축 서보 On시 Delay필요....
 	}
 	else if (GetAmpEnable() && !bOn)
 	{
@@ -1272,15 +1298,13 @@ BOOL CNmcAxis::SetAmpEnable(BOOL bOn)
 		ms = MC_ReadAxisStatus(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, &state);
 		if (ms != MC_OK)
 		{
-			//AfxMessageBox(_T("Error-MC_ReadAxisStatus()"));
-			pView->MsgBox(_T("Error-MC_ReadAxisStatus"));
+			AfxMessageBox(_T("Error-MC_ReadAxisStatus()"));
 			return FALSE;
 		}
 
 		if (state & mcDriveFault)
 		{
-			//AfxMessageBox(_T("Failed Amp Enable - mcDriveFault !!!"));
-			pView->MsgBox(_T("Failed Amp Enable - mcDriveFault !!!"));
+			AfxMessageBox(_T("Failed Amp Enable - mcDriveFault !!!"));
 			return FALSE;
 		}
 
@@ -1289,8 +1313,7 @@ BOOL CNmcAxis::SetAmpEnable(BOOL bOn)
 			Sleep(1000);
 			if (!IsAmpReady())
 			{
-				//AfxMessageBox(_T("Error-IsAmpReady()"));
-				pView->MsgBox(_T("Error-IsAmpReady"));
+				AfxMessageBox(_T("Error-IsAmpReady()"));
 			}
 		}
 	}
@@ -2392,7 +2415,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 						pThread->ClearStatus();
 						Sleep(100);
 
-						if (GetTickCount64() - nOriginTick >= 15000)
+						if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 						{
 							bError = TRUE;
 							pThread->SetEStop();
@@ -2454,7 +2477,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 
 					if (pThread->GetState() == MPIStateERROR)
 					{
-						if (GetTickCount64() - nOriginTick >= 15000)
+						if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 						{
 							bError = TRUE;
 							pThread->SetEStop();
@@ -2480,7 +2503,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 						Sleep(50);
 						if (!pThread->GetAmpEnable())
 						{
-							if (GetTickCount64() - nOriginTick >= 15000)
+							if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 							{
 								bError = TRUE;
 								pThread->SetEStop();
@@ -2506,7 +2529,11 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 
 					//pThread->SetVMove(pThread->m_stParam.Home.f2ndSpd, pThread->m_stParam.Home.fAcc);
 					//pThread->VMove((-pThread->m_stParam.Home.nDir));// , pThread->m_stParam.Home.fAcc);
+					if(pThread->IsMotionDone())
+					{ 
 					pThread->VMove(pThread->m_stParam.Home.f2ndSpd*(double)(-pThread->m_stParam.Home.nDir), pThread->m_stParam.Home.fAcc);
+						Sleep(60);
+					}
 
 					pThread->m_nExeStatus++;
 					nOriginTick = GetTickCount64();
@@ -2524,7 +2551,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 
 					if (pThread->GetState() == MPIStateERROR)
 					{
-						if (GetTickCount64() - nOriginTick >= 15000)
+						if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 						{
 							bError = TRUE;
 							pThread->SetEStop();
@@ -2550,7 +2577,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 						Sleep(50);
 						if (!pThread->GetAmpEnable())
 						{
-							if (GetTickCount64() - nOriginTick >= 15000)
+							if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 							{
 								bError = TRUE;
 								pThread->SetEStop();
@@ -2576,7 +2603,11 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 
 					//pThread->SetVMove(pThread->m_stParam.Home.f2ndSpd, pThread->m_stParam.Home.fAcc);
 					//pThread->VMove(pThread->m_stParam.Home.nDir);// , pThread->m_stParam.Home.fAcc);
+					if (pThread->IsMotionDone())
+					{ 
 					pThread->VMove(pThread->m_stParam.Home.f2ndSpd*pThread->m_stParam.Home.nDir, pThread->m_stParam.Home.fAcc);
+						Sleep(60);
+					}
 					pThread->m_nExeStatus++;
 					nOriginTick = GetTickCount64();
 					bChkState = FALSE;
@@ -2647,7 +2678,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 
 					if (pThread->GetState() == MPIStateERROR)
 					{
-						if (GetTickCount64() - nOriginTick >= 15000)
+						if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 						{
 							bError = TRUE;
 							pThread->SetEStop();
@@ -2674,7 +2705,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 				}
 				else
 				{
-					if (GetTickCount64() - nOriginTick >= 30000)
+					if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 					{
 						bError = TRUE;
 						pThread->SetEStop();
@@ -2707,7 +2738,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 
 				if (pThread->GetState() == MPIStateERROR)
 				{
-					if (GetTickCount64() - nOriginTick >= 30000)
+					if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 					{
 						bError = TRUE;
 						pThread->SetEStop();
@@ -2733,7 +2764,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 					Sleep(50);
 					if (!pThread->GetAmpEnable())
 					{
-						if (GetTickCount64() - nOriginTick >= 30000)
+						if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 						{
 							bError = TRUE;
 							pThread->SetEStop();
@@ -2761,21 +2792,20 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 					pThread->m_nExeStatus++;
 					nOriginTick = GetTickCount64();
 					bChkState = FALSE;
-					Sleep(10);
+					Sleep(60);
 				}
 				else
 				{
 					nOriginTick = GetTickCount64();
-					pThread->m_nExeStatus = 0;
+					//pThread->m_nExeStatus = 0;
+					pThread->m_nExeStatus++;
 				}
 				break;
 			case 6:
 				bMotDone = pThread->IsMotionDone();
 
-				if (bMotDone)
+				if (bMotDone || (bLimitEvent = pThread->CheckLimitSwitch(pThread->m_stParam.Home.nDir)) )
 				{
-					bLimitEvent = pThread->CheckLimitSwitch(pThread->m_stParam.Home.nDir);
-
 					if (bLimitEvent)
 					{
 						Sleep(100);
@@ -2788,7 +2818,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 						Sleep(100);
 						if (pThread->GetState() == MPIStateERROR)
 						{
-							if (GetTickCount64() - nOriginTick >= 30000)
+							if (GetTickCount64() - nOriginTick >= 10000)
 							{
 								bError = TRUE;
 								pThread->SetEStop();
@@ -2825,7 +2855,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 							Sleep(100);
 							if (pThread->GetState() == MPIStateERROR)
 							{
-								if (GetTickCount64() - nOriginTick >= 30000)
+								if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 								{
 									bError = TRUE;
 									pThread->SetEStop();
@@ -2848,13 +2878,13 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 							nOriginTick = GetTickCount64();
 						}
 						else
-							pThread->m_nExeStatus--;
+							pThread->m_nExeStatus--; // VMove to Home direction.
 					}
 				}
 				else
 				{
 					//2분 이내에 원점복귀가 되지 않으면 알람 처리
-					if (GetTickCount64() - nOriginTick >= 1000 * 120)
+					if (GetTickCount64() - nOriginTick >= TEN_SECOND * 12)
 					{
 						nOriginTick = GetTickCount64();
 						bError = TRUE;
@@ -2880,7 +2910,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 
 				if (pThread->GetState() == MPIStateERROR)
 				{
-					if (GetTickCount64() - nOriginTick >= 30000)
+					if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 					{
 						bError = TRUE;
 						pThread->SetEStop();
@@ -2906,7 +2936,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 					Sleep(100);
 					if (!pThread->GetAmpEnable())
 					{
-						if (GetTickCount64() - nOriginTick >= 30000)
+						if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 						{
 							bError = TRUE;
 							pThread->SetEStop();
@@ -2961,7 +2991,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 				{
 					bError = TRUE;
 
-					if (GetTickCount64() - nOriginTick >= 30000)
+					if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 					{
 						bError = TRUE;
 						pThread->SetEStop();
@@ -2985,7 +3015,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 				bMotDone = pThread->IsMotionDone();
 				bInPos = pThread->IsInPosition();
 
-				if (GetTickCount() - dwST > 3000)
+				if (GetTickCount() - dwST > TEN_SECOND)
 				{
 					bMotDone = TRUE;
 				}
@@ -3009,7 +3039,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 							{
 								pThread->ClearStatus();
 								Sleep(100);
-								if (GetTickCount64() - nOriginTick >= 30000)
+								if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 								{
 									bError = TRUE;
 									pThread->SetEStop();
@@ -3029,7 +3059,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 								break;
 							}
 						}
-						pThread->m_nExeStatus = 7;
+						pThread->m_nExeStatus = 7; // StartPtPMove : Escapte Home senser...
 						nOriginTick = GetTickCount64();
 					}
 					else
@@ -3049,7 +3079,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 							{
 								pThread->ClearStatus();
 								Sleep(100);
-								if (GetTickCount64() - nOriginTick >= 30000)
+								if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 								{
 									bError = TRUE;
 									pThread->SetEStop();
@@ -3078,7 +3108,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 				}
 				else
 				{
-					if (GetTickCount64() - nOriginTick >= 120 * 1000)
+					if (GetTickCount64() - nOriginTick >= 12 * TEN_SECOND)
 					{
 						bError = TRUE;
 						pThread->SetEStop();
@@ -3108,7 +3138,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 				Sleep(100);
 				if (pThread->GetState() == MPIStateERROR)
 				{
-					if (GetTickCount64() - nOriginTick >= 30000)
+					if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 					{
 						bError = TRUE;
 						pThread->SetEStop();
@@ -3134,7 +3164,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 					Sleep(50);
 					if (!pThread->GetAmpEnable())
 					{
-						if (GetTickCount64() - nOriginTick >= 30000)
+						if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 						{
 							bError = TRUE;
 							pThread->SetEStop();
@@ -3164,6 +3194,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 				//if (pThread->VMove(pThread->m_stParam.Home.nDir))//, 10.0*fMachineSpeed))
 				if (pThread->VMove(fMachineSpeed*pThread->m_stParam.Home.nDir, 10.0*fMachineSpeed))
 				{
+					Sleep(60);
 					pThread->m_nExeStatus++;
 					bChkState = FALSE;
 					nOriginTick = GetTickCount64();
@@ -3194,7 +3225,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 						{
 							pThread->ClearStatus();
 							Sleep(100);
-							if (GetTickCount64() - nOriginTick >= 30000)
+							if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 							{
 								bError = TRUE;
 								pThread->SetEStop();
@@ -3234,7 +3265,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 							Sleep(100);
 							if (pThread->GetState() == MPIStateERROR)
 							{
-								if (GetTickCount64() - nOriginTick >= 30000)
+								if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 								{
 									bError = TRUE;
 									pThread->SetEStop();
@@ -3265,7 +3296,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 				}
 				else
 				{
-					if (GetTickCount64() - nOriginTick >= 120 * 1000)
+					if (GetTickCount64() - nOriginTick >= 12 * TEN_SECOND)
 					{
 						bError = TRUE;
 						pThread->SetEStop();
@@ -3298,7 +3329,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 
 					if (pThread->GetState() == MPIStateERROR)
 					{
-						if (GetTickCount64() - nOriginTick >= 30000)
+						if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 						{
 							bError = TRUE;
 							pThread->SetEStop();
@@ -3324,7 +3355,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 						Sleep(50);
 						if (!pThread->GetAmpEnable())
 						{
-							if (GetTickCount64() - nOriginTick >= 30000)
+							if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 							{
 								bError = TRUE;
 								pThread->SetEStop();
@@ -3369,7 +3400,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 					else
 					{
 						bError = TRUE;
-						if (GetTickCount64() - nOriginTick >= 10000)
+						if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 						{
 							bError = TRUE;
 							pThread->SetEStop();
@@ -3426,7 +3457,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 							{
 								pThread->ClearStatus();
 								Sleep(100);
-								if (GetTickCount64() - nOriginTick >= 30000)
+								if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 								{
 									bError = TRUE;
 									pThread->SetEStop();
@@ -3470,7 +3501,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 							if(bMotDone)
 								pThread->m_nExeStatus--;
 
-							if (GetTickCount64() - nOriginTick >= 30000)
+							if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 							{
 								bError = TRUE;
 								pThread->SetEStop();
@@ -3492,7 +3523,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 				}
 				else
 				{
-					if (GetTickCount64() - nOriginTick >= 30000)
+					if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 					{
 						bError = TRUE;
 						pThread->SetEStop();
@@ -3522,7 +3553,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 					Sleep(30);
 					pThread->SetPosition(pThread->m_stParam.Home.fOffset);
 
-					if (GetTickCount64() - nOriginTick >= 30000)
+					if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 					{
 						bError = TRUE;
 						pThread->SetEStop();
@@ -3548,7 +3579,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 				{
 					Sleep(30);
 					pThread->SetPosition(pThread->m_stParam.Home.fOffset);
-					if (GetTickCount64() - nOriginTick >= 30000)
+					if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 					{
 						bError = TRUE;
 						pThread->SetEStop();
@@ -3600,7 +3631,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 
 				if (pThread->GetState() != MPIStateIDLE && pThread->GetState() != MPIStateSTOPPED)
 				{
-					if (GetTickCount64() - nOriginTick >= 30000)
+					if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 					{
 						bError = TRUE;
 						pThread->SetEStop();
@@ -3626,7 +3657,7 @@ UINT CNmcAxis::HomeThreadProc(LPVOID lpContext)
 					Sleep(50);
 					if (!pThread->GetAmpEnable())
 					{
-						if (GetTickCount64() - nOriginTick >= 30000)
+						if (GetTickCount64() - nOriginTick >= TEN_SECOND)
 						{
 							bError = TRUE;
 							pThread->SetEStop();
@@ -4560,15 +4591,13 @@ BOOL CNmcAxis::EscapeHomeDirLimitSens()
 				if (!StartVelocityMove(m_stParam.Home.f1stSpd*(-m_stParam.Home.nDir), m_stParam.Home.fAcc))
 				{
 					Sleep(30);
-					pView->MsgBox(_T("SearchHomePos Fail : StartVelocityMove Fail axisdone"));
-					//AfxMessageBox(_T("SearchHomePos Fail : StartVelocityMove Fail axisdone"));
+					AfxMessageBox(_T("SearchHomePos Fail : StartVelocityMove Fail axisdone"));
 					return FALSE;
 				}
 			}
 			else
 			{
-				pView->MsgBox(_T("SearchHomePos Fail : StartVelocityMove Fail"));
-				//AfxMessageBox(_T("SearchHomePos Fail : StartVelocityMove Fail"));
+				AfxMessageBox(_T("SearchHomePos Fail : StartVelocityMove Fail"));
 				return FALSE;
 			}
 		}
@@ -4837,15 +4866,13 @@ BOOL CNmcAxis::SecondMoveToHomeDirSens()
 
 			if (!StartVelocityMove(m_stParam.Home.f2ndSpd*m_stParam.Home.nDir, m_stParam.Home.fAcc))
 			{
-				pView->MsgBox(_T("SearchHomePos Fail : StartVelocityMove Fail axisdone f2ndSpd"));
-				//AfxMessageBox(_T("SearchHomePos Fail : StartVelocityMove Fail axisdone f2ndSpd"));
+				AfxMessageBox(_T("SearchHomePos Fail : StartVelocityMove Fail axisdone f2ndSpd"));
 				return FALSE;
 			}
 		}
 		else
 		{
-			pView->MsgBox(_T("SearchHomePos Fail : StartVelocityMove Fail f2ndSpd"));
-			//AfxMessageBox(_T("SearchHomePos Fail : StartVelocityMove Fail f2ndSpd"));
+			AfxMessageBox(_T("SearchHomePos Fail : StartVelocityMove Fail f2ndSpd"));
 			return FALSE;
 		}
 	}
@@ -5032,8 +5059,7 @@ BOOL CNmcAxis::Stop(int nRate)	//For iRate * 10 msec, Stopping.
 	}
 	if (CurTimer - StartTimer >= 1000.)
 	{
-		pView->MsgBox(_T("Error Motion Done On Axis Stop\nFor 1000msec!!!"));
-		//AfxMessageBox(_T("Error Motion Done On Axis Stop\nFor 1000msec!!!"));
+		AfxMessageBox(_T("Error Motion Done On Axis Stop\nFor 1000msec!!!"));
 	}
 
 	ClearStatus();
@@ -5074,8 +5100,7 @@ double CNmcAxis::GetInposition()
 	ms = MC_ReadParameter(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, mcpInPositionWindowSize, &Length);
 	if (ms != MC_OK)
 	{
-		pView->MsgBox(_T("Error-GetInposition()"));
-		//AfxMessageBox(_T("Error-GetInposition()"));
+		AfxMessageBox(_T("Error-GetInposition()"));
 		return 0.0;
 	}
 	double dInpos = PulseToLen(Length);
@@ -5337,16 +5362,14 @@ void CNmcAxis::SetNegSoftwareLimit(double fLimitVal, INT nAction)
 	ms = MC_WriteParameter(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, mcpSWLimitNeg, dPos);
 	if (ms != MC_OK)
 	{
-		pView->MsgBox(_T("Error-SetNegSoftwareLimit()"));
-		//AfxMessageBox(_T("Error-SetNegSoftwareLimit()"));
+		AfxMessageBox(_T("Error-SetNegSoftwareLimit()"));
 		return;
 	}
 
 	ms = MC_WriteBoolParameter(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, mcpEnableLimitNeg, enable);
 	if (ms != MC_OK)
 	{
-		pView->MsgBox(_T("Error-SetNegSoftwareLimit()"));
-		//AfxMessageBox(_T("Error-SetNegSoftwareLimit()"));
+		AfxMessageBox(_T("Error-SetNegSoftwareLimit()"));
 		return;
 	}
 
@@ -5399,16 +5422,14 @@ void CNmcAxis::SetPosSoftwareLimit(double fLimitVal, INT nAction)
 	ms = MC_WriteParameter(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, mcpSWLimitPos, dPos);
 	if (ms != MC_OK)
 	{
-		pView->MsgBox(_T("Error-SetPosSoftwareLimit()"));
-		//AfxMessageBox(_T("Error-SetPosSoftwareLimit()"));
+		AfxMessageBox(_T("Error-SetPosSoftwareLimit()"));
 		return;
 	}
 
 	ms = MC_WriteBoolParameter(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, mcpEnableLimitPos, enable);
 	if (ms != MC_OK)
 	{
-		pView->MsgBox(_T("Error-SetPosSoftwareLimit()"));
-		//AfxMessageBox(_T("Error-SetPosSoftwareLimit()"));
+		AfxMessageBox(_T("Error-SetPosSoftwareLimit()"));
 		return;
 	}
 }
@@ -5453,8 +5474,7 @@ BOOL CNmcAxis::SetVelocity(double fVelocity)
 	ms = MC_WriteParameter(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, mcpCommandedVelocity, dPulse);
 	if (ms != MC_OK)
 	{
-		pView->MsgBox(_T("Error-SetVelocity()"));
-		//AfxMessageBox(_T("Error-SetVelocity()"));
+		AfxMessageBox(_T("Error-SetVelocity()"));
 		return FALSE;
 	}
 
@@ -5462,7 +5482,6 @@ BOOL CNmcAxis::SetVelocity(double fVelocity)
 	ms = MC_WriteParameter(m_nBoardId, m_stParam.Motor.nAxisID + m_nOffsetAxisID, mcpActualVelocity, dPulse);
 	if (ms != MC_OK)
 	{
-		pView->MsgBox(_T("Error-SetVelocity()"));
 		AfxMessageBox(_T("Error-SetVelocity()"));
 		return FALSE;
 	}
@@ -5962,8 +5981,7 @@ BOOL CNmcAxis::SetOriginPos()
 	bRtn = SetPosition(m_stParam.Home.fOffset);
 	if (!bRtn)
 	{
-		pView->MsgBox(_T("Error-SetOriginPos()"));
-		//AfxMessageBox(_T("Error-SetOriginPos()"));
+		AfxMessageBox(_T("Error-SetOriginPos()"));
 	}
 
 	// Temparary -> 나중에 상위로 올려야 함....
@@ -5987,8 +6005,7 @@ void CNmcAxis::EnableSensorStop(int nSensorIndex, BOOL bEnable) // nSensorIndex 
 
 	if (nSensorIndex > 4 || nSensorIndex < 0)
 	{
-		pView->MsgBox(_T("Error - Sensor index is out of range. (0 ~ 4)"));
-		//AfxMessageBox(_T("Error - Sensor index is out of range. (0 ~ 4)"));
+		AfxMessageBox(_T("Error - Sensor index is out of range. (0 ~ 4)"));
 		return;
 	}
 
@@ -6205,8 +6222,7 @@ UINT CNmcAxis::RsaHomeThreadProc(LPVOID lpContext)
 			{
 				pThread->m_bHomeThreadAlive = FALSE;
 				pThread->m_bRsaHomeThreadAlive = FALSE;
-				pView->MsgBox(_T("Error-StartRsaHoming(201)"));
-				//AfxMessageBox(_T("Error-StartRsaHoming(201)"));
+				AfxMessageBox(_T("Error-StartRsaHoming(201)"));
 				return 0;
 			}
 			Sleep(pThread->m_nSamplingTimeMsec);
@@ -6216,8 +6232,7 @@ UINT CNmcAxis::RsaHomeThreadProc(LPVOID lpContext)
 			{
 				pThread->m_bHomeThreadAlive = FALSE;
 				pThread->m_bRsaHomeThreadAlive = FALSE;
-				pView->MsgBox(_T("Error-StartRsaHoming(202)"));
-				//AfxMessageBox(_T("Error-StartRsaHoming(202)"));
+				AfxMessageBox(_T("Error-StartRsaHoming(202)"));
 				return 0;
 			}
 		}
@@ -6227,8 +6242,7 @@ UINT CNmcAxis::RsaHomeThreadProc(LPVOID lpContext)
 		{
 			pThread->m_bHomeThreadAlive = FALSE;
 			pThread->m_bRsaHomeThreadAlive = FALSE;
-			pView->MsgBox(_T("Error-StartRsaHoming(203)"));
-			//AfxMessageBox(_T("Error-StartRsaHoming(203)"));
+			AfxMessageBox(_T("Error-StartRsaHoming(203)"));
 			return 0;
 		}
 
@@ -6238,8 +6252,7 @@ UINT CNmcAxis::RsaHomeThreadProc(LPVOID lpContext)
 			{
 				pThread->m_bHomeThreadAlive = FALSE;
 				pThread->m_bRsaHomeThreadAlive = FALSE;
-				pView->MsgBox(_T("Error-StartRsaHoming(204)"));
-				//AfxMessageBox(_T("Error-StartRsaHoming(204)"));
+				AfxMessageBox(_T("Error-StartRsaHoming(204)"));
 				return 0;
 			}
 			Sleep(pThread->m_nSamplingTimeMsec);
@@ -6249,8 +6262,7 @@ UINT CNmcAxis::RsaHomeThreadProc(LPVOID lpContext)
 			{
 				pThread->m_bHomeThreadAlive = FALSE;
 				pThread->m_bRsaHomeThreadAlive = FALSE;
-				pView->MsgBox(_T("Error-StartRsaHoming(205)"));
-				//AfxMessageBox(_T("Error-StartRsaHoming(205)"));
+				AfxMessageBox(_T("Error-StartRsaHoming(205)"));
 				return 0;
 			}
 		}
@@ -6263,8 +6275,7 @@ UINT CNmcAxis::RsaHomeThreadProc(LPVOID lpContext)
 		{
 			pThread->m_bHomeThreadAlive = FALSE;
 			pThread->m_bRsaHomeThreadAlive = FALSE;
-			pView->MsgBox(_T("Error-StartRsaHoming(100)"));
-			//AfxMessageBox(_T("Error-StartRsaHoming(100)"));
+			AfxMessageBox(_T("Error-StartRsaHoming(100)"));
 			return 0;
 		}
 
@@ -6275,8 +6286,7 @@ UINT CNmcAxis::RsaHomeThreadProc(LPVOID lpContext)
 			{
 				pThread->m_bHomeThreadAlive = FALSE;
 				pThread->m_bRsaHomeThreadAlive = FALSE;
-				pView->MsgBox(_T("Error-StartRsaHoming(101)"));
-				//AfxMessageBox(_T("Error-StartRsaHoming(101)"));
+				AfxMessageBox(_T("Error-StartRsaHoming(101)"));
 				return 0;
 			}
 			Sleep(pThread->m_nSamplingTimeMsec);
@@ -6286,8 +6296,7 @@ UINT CNmcAxis::RsaHomeThreadProc(LPVOID lpContext)
 			{
 				pThread->m_bHomeThreadAlive = FALSE;
 				pThread->m_bRsaHomeThreadAlive = FALSE;
-				pView->MsgBox(_T("Error-StartRsaHoming(102)"));
-				//AfxMessageBox(_T("Error-StartRsaHoming(102)"));
+				AfxMessageBox(_T("Error-StartRsaHoming(102)"));
 				return 0;
 			}
 		}
@@ -6297,8 +6306,7 @@ UINT CNmcAxis::RsaHomeThreadProc(LPVOID lpContext)
 		{
 			pThread->m_bHomeThreadAlive = FALSE;
 			pThread->m_bRsaHomeThreadAlive = FALSE;
-			pView->MsgBox(_T("Error-StartRsaHoming(103)"));
-			//AfxMessageBox(_T("Error-StartRsaHoming(103)"));
+			AfxMessageBox(_T("Error-StartRsaHoming(103)"));
 			return 0;
 		}
 
@@ -6308,8 +6316,7 @@ UINT CNmcAxis::RsaHomeThreadProc(LPVOID lpContext)
 			{
 				pThread->m_bHomeThreadAlive = FALSE;
 				pThread->m_bRsaHomeThreadAlive = FALSE;
-				pView->MsgBox(_T("Error-StartRsaHoming(104)"));
-				//AfxMessageBox(_T("Error-StartRsaHoming(104)"));
+				AfxMessageBox(_T("Error-StartRsaHoming(104)"));
 				return 0;
 			}
 			Sleep(pThread->m_nSamplingTimeMsec);
@@ -6319,8 +6326,7 @@ UINT CNmcAxis::RsaHomeThreadProc(LPVOID lpContext)
 			{
 				pThread->m_bHomeThreadAlive = FALSE;
 				pThread->m_bRsaHomeThreadAlive = FALSE;
-				pView->MsgBox(_T("Error-StartRsaHoming(105)"));
-				//AfxMessageBox(_T("Error-StartRsaHoming(105)"));
+				AfxMessageBox(_T("Error-StartRsaHoming(105)"));
 				return 0;
 			}
 		}

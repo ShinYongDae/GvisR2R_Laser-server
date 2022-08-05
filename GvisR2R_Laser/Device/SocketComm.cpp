@@ -859,7 +859,7 @@ int CSocketComm::GetServerID()
 
 DWORD CSocketComm::WriteCommData(SOCKET_DATA SocketData, DWORD dwTimeout, DWORD dwStrLen)
 {
-	_ASSERTE(IsOpen());
+	//_ASSERTE(IsOpen());
 
 	// Accept 0 bytes message
 	if (!IsOpen())

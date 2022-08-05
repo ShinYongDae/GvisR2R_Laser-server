@@ -110,6 +110,7 @@ typedef struct {
 
 
 typedef struct {
+	int nId;
 	int Col;
 	int Row;
 } REGIONS_FRAME_ID;
@@ -127,6 +128,8 @@ class CCamMaster : public CWnd
 	short FrameRgnNum;
 	int PieceRgnNum;
 	int m_nCornerNum;
+	int m_nDummy[MAX_PATH];
+	int m_nPieceNum[MAX_PATH];
 	REGIONS_FRAME FrameRgnPix[MAX_FRAME_RGN_NUM];
 	REGIONS_FRAME_ID FrameRgnID[MAX_FRAME_RGN_NUM];
 	REGIONS_PIECE_2 PieceRgnPix[MAX_PIECE_RGN_NUM];
@@ -194,6 +197,7 @@ public:
 public:
 	void Init(CString sPathSpec, CString sModel, CString sLayer, CString sLayerUp=_T(""));
 	BOOL LoadMstInfo();
+	BOOL WriteStripPieceRegion_Text(CString sBasePath, CString sLot);
 
 // Overrides
 	// ClassWizard generated virtual function overrides

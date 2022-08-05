@@ -23,8 +23,8 @@ typedef enum _stSigInx {
 	_Ready, _Run, _Reset, _Stop, _Auto, _OneCycle, _Manual, _MkTq, _AoiTq, _EngTq, _CcwModRe, _CcwModUn, _Core150Re, _Core150Un, 
 	_Relation, _JoinSelRe, _MvCwRe, _MvCcwRe, _PrdChuckRe, _DancerUpRe, _PasteUpLfRe, _PasteUpRtRe, _PasteVacRe, _PprChuckRe,
 	_PprCwRe, _PprCcwRe, _DoRe, _PrdPprRe,
-	_JoinSelMk, _MvCwMk, _MvCcwMk, _FdVacMk, _PushUpMk, _TblBlwMk, _TblVacMk, _TqVacMk, _FdClampMk, _TensClampMk, _OnePnlMk, _LsrMk,
-	_DancerUpMk,
+	_JoinSelMk, _MvCwMk, _MvCcwMk, _FdVacMk, _PushUpMk, _TblBlwMk, _TblVacMk, _FdClampMk, _TensClampMk, _OnePnlMk, _LsrMk,
+	_DancerUpMk, _TqVacMk,
 	_JoinSelAoiDn, _MvCwAoiDn, _MvCcwAoiDn, _FdVacAoiDn, _PushUpAoiDn, _TblBlwAoiDn, _TblVacAoiDn, _FdClampAoiDn, _TensClampAoiDn, 
 	_OnePnlAoiDn, _LsrAoiDn, _ClrRollAoiDn, _ClrSonicAoiDn,
 	_TestAoiDn, _ResetAoiDn, _LotEndAoiDn,
@@ -46,13 +46,13 @@ typedef enum _stPageInx {
 
 typedef enum _stItemInx {
 	// Frame High
-	_MkFdDiffX = 0, _MkFdDiffY, _AoiDnFdDiffX, _AoiDnFdDiffY, _AoiUpFdDiffX, _AoiUpFdDiffY, _EgrFdDiffX, _EgrFdDiffY,	
+	_MkFdDiffX = 0, _MkFdDiffY, _AoiDnFdDiffX, _AoiDnFdDiffY, _AoiUpFdDiffX, _AoiUpFdDiffY, _EgrFdDiffX, _EgrFdDiffY,
 	// Dlg Info
 	_DualTest, _SampleTest, _SampleShotNum, _TestMode, _RecoilerCcw, _UncoilerCcw, _AlignMethode,
 	_DoorRecoiler, _DoorAoiUp, _DoorAoiDn, _DoorMk, _DoorEngrave, _DoorUncoiler, _SaftyMk, _CleannerAoiUp, _CleannerAoiDn, _UltraSonicAoiDn, _UltraSonicEngrave,
 	_LmtTotYld, _LmtPatlYld, _StripOutRatio, _CustomNeedRatio, _NumRangeFixDef, _NumContFixDef, _UltraSonicStTim,
 	// Menu01
-	_OpName, _ModelUpName, _ModelDnName, _LotUpName, _LotDnName, _LayerUpName, _LayerDnName, _OrderNum, _ShotNum, _TotReelLen, _TotOpRto, _LotOpRto, 
+	_OpName, _ModelUpName, _ModelDnName, _LotUpName, _LotDnName, _LayerUpName, _LayerDnName, _OrderNum, _ShotNum, _TotReelLen, _TotOpRto, _LotOpRto,
 	_TotVel, _PartVel, _TempPause, _TempStopLen, _LotCut, _LotCutLen, _LotCutPosLen, _MkDoneLen, _AoiDnDoneLen, _AoiUpDoneLen, _LotSerial, //_MkNumLf, _MkNumRt,	
 	_DefNumUp, _DefNumDn, _DefNumTot, _DefRtoUp, _DefRtoDn, _DefRtoTot, _GoodNumTot, _GoodNumUp, _GoodNumDn, _GoodRtoUp, 
 	_GoodRtoDn, _GoodRtoTot, _TestNumUp, _TestNumDn, _TestNumTot, _MkVerfyLen, _LotStTime, _LotEdTime, _LotRunTime, 	

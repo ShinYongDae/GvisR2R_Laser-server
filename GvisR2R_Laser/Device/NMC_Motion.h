@@ -102,15 +102,19 @@ typedef enum MC_STATUS_tag
 	//PLCOpen Motion Command Response Error Defines (F/W)
 	MC_INVALID_SYSTEM_STATE								=	0x00010000, 
 	MC_UNSUPPORT_CMD									=	0x00020000,	
+	MC_INVALID_AXIS_STATE_NOT_HOMING_MODE				=   0x00020047, //v12.1.0.42 
 	MC_UNSUPPORTED_CMD_AXIS_HOMING						=	0x00024148, //v12.2.0.1
+	MC_UNSUPPORTED_CMD_INVALID_ETHERCAT_CYCLE_TIME      =   0x00024354, //v12.2.0.10
+	MC_UNSUPPORTED_CMD_INVALID_ETHERCAT_OPERATION_MODE	=	0x0002454D, //v12.2.0.1
+	MC_UNSUPPORTED_CMD_BOARD_CATALOG					=	0x00024743, //v12.2.0.1
+	MC_UNSUPPORTED_CMD_GANTRY_ENABLING					=	0x00024745, //v12.2.0.1
+	MC_UNSUPPORTED_CMD_GANTRY_HOMING					=	0x00024748, //v12.2.0.1
+	MC_UNSUPPORTED_CMD_GANTRY_YAW_UNSTABLE				=	0x00024759, //v12.2.0.1
+	MC_UNSUPPORTED_CMD_BOARD_CATALOG_IO					=   0x00024943, //v12.2.0.3
+	MC_UNSUPPORTED_CMD_INVALID_REF_AXIS_STATUS		    =   0x00025241, //v12.2.0.10
 	MC_UNSUPPORTED_CMD_SLAVE_HOMING						=	0x00025348, //v12.2.0.1
 	MC_UNSUPPORTED_CMD_SLAVE_HOME_MODE					=	0x0002534D, //v12.2.0.1
-	MC_UNSUPPORTED_CMD_GANTRY_ENABLING					=	0x00024745, //v12.2.0.1
-	MC_UNSUPPORTED_CMD_GANTRY_YAW_UNSTABLE				=	0x00024759, //v12.2.0.1
-	MC_UNSUPPORTED_CMD_GANTRY_HOMING					=	0x00024748, //v12.2.0.1
-	MC_UNSUPPORTED_CMD_BOARD_CATALOG					=	0x00024743, //v12.2.0.1
-	MC_UNSUPPORTED_CMD_INVALID_ETHERCAT_OPERATION_MODE	=	0x0002454D, //v12.2.0.1
-	MC_INVALID_AXIS_STATE_NOT_HOMING_MODE				=   0x00020047, //v12.1.0.42 
+	MC_UNSUPPORTED_CMD_TORQUE_LIMIT						=   0x0002544C, //v12.2.0.10
 	MC_INVALID_PARAM									=	0x00030000,
 	MC_INVALID_PARAM_1									=	0x00030001,
 	MC_INVALID_PARAM_2									=	0x00030002,
@@ -242,6 +246,10 @@ typedef enum MC_STATUS_tag
 	MC_GANTRY_IN_HOMING_SEQUENCE						=   0x00270000, //v12.2.0.0
 	MC_INVALID_GANTRY_STATE_DO_NOT_CHANGE_RATIO			=	0x00280001, //v12.2.0.1
 	MC_INVALID_GANTRY_STATE_EC_ENABLED					=   0x00280020, //v12.2.0.0
+	MC_INVALID_GANTRY_STATE_ENABLED_TORQUE_LIMIT		=   0x00280026, //v12.2.0.10
+	MC_INVALID_GANTRY_STATE_ALIGN_SW_LIMIT				=   0x00280027, //v12.2.0.10
+	MC_INVALID_AXIS_ID_ENTER_GANTRY_SALVE_AXIS_ID		=   0x00290000, //v12.2.0.10
+	MC_INVALID_PARAMETER_ATTRIBUTE						=   0x002A0000, //v12.2.0.10
 	MC_GROUP_EC_MODE_ENABLED							=	0x11010020, //v12.2.0.0
 	MC_GANTRY_EC_MODE_ENABLED							=	0x12000020, //v12.2.0.0
 
@@ -297,6 +305,7 @@ typedef enum MC_STATUS_tag
 	MC_EC_MODE_OUT_OF_RANGE								=   0xE00C0042, //v12.2.0.0
 	MC_EC_MAPID_OUT_OF_RANGE							=   0xE00C0043, //v12.2.0.0
 	MC_EC_LAST_INDEX_OUT_OF_RANGE						=   0xE00C0044, //v12.2.0.0
+	MC_BOARD_CATALOG_MISMATCH_ERROR						=	0xE00C0045, //v12.2.0.10
 
 	//Comm Library Error Defines
 	MC_PCICIP_GEN_10    								=	0xCC100000,
@@ -899,7 +908,7 @@ typedef enum Home_Direction_tag
 	HOMING_DIR_CW
 }MC_HOME_AXIS_DIRECTION;
 
-typedef enum Home_Type_tag { HOMING_REF_PULSE = 0, HOMING_ABS_SWITCH = 1, HOMING_LIMIT_SWITCH = 2, HOMING_DIRECT = 3 } MC_HOME_AXIS_MODE;
+typedef enum Home_Type_tag { HOMING_REF_PULSE = 0, HOMING_ABS_SWITCH = 1, HOMING_LIMIT_SWITCH = 2, HOMING_DIRECT = 3 ,HOMMING_NMC_CONFIG=4 } MC_HOME_AXIS_MODE;
 typedef enum Home_Flag_tag { HOMING_CLEAR = 0, HOMING_NOT_CLEAR = 1, HOMING_DRIVE_CLEAR = 2 } MC_HOME_DONE_FLAG;
 
 //MC_AXIS_OBJ_INST_ATTR_CONTROL_TYPE			23
@@ -987,6 +996,26 @@ typedef enum SaveMode_tag
 	mcSMAuto = 0,
 	mcSMIndex,
 }MC_SAVE_MODE;
+
+//v12.2.0.12
+typedef enum StatusCombination_Tag
+{
+	STATUS_COMBINATION_1 = 1,	//Init.
+	STATUS_COMBINATION_2 = 2,	//PreOP
+	STATUS_COMBINATION_3 = 3,	//ProOP + Init or Bootstrap
+	STATUS_COMBINATION_4 = 4,	//SafeOP
+	STATUS_COMBINATION_5 = 5,	//SafeOP + Init
+	STATUS_COMBINATION_6 = 6,	//SafeOP + PreOP
+	STATUS_COMBINATION_7 = 7,	//SafeOP + PreOP + Init or SafeOP + Bootstrap
+	STATUS_COMBINATION_8 = 8,	//OP
+	STATUS_COMBINATION_9 = 9,	//OP + Init
+	STATUS_COMBINATION_10 = 10,	//OP + PreOP
+	STATUS_COMBINATION_11 = 11,	//OP + PreOP + Init or OP + Bootstrap
+	STATUS_COMBINATION_12 = 12,	//OP + SafeOP
+	STATUS_COMBINATION_13 = 13,	//OP + SafeOP + Init
+	STATUS_COMBINATION_14 = 14,	//OP + SafeOP + PreOP
+	STATUS_COMBINATION_15 = 15,	//OP + SafeOP + PreOP + Init or OP + SafeOP + Bootstrap
+}STATUS_COMBINATION;
 
 typedef enum GroupStatus_tag
 {
@@ -1718,55 +1747,128 @@ extern "C"
 									char DeviceNameArray[MAX_DEVICE_NAME_SIZE] //_out AO Device Name Array [256]
 									);
 
-//I/O Device (DI/DO/AI/AO) - Pdo Info. 
+//=============================================================================
+//-----------------------------------------------------------------------------
+//
+//
+// Master APIs - Device I/O Info.
+// v12.2.0.10
+//
+//-----------------------------------------------------------------------------
+//Digital Input - I/O Info.
 #ifdef __cplusplus
-extern "C" 
+	extern "C" 
 #endif
-	NMCMOTIONAPI MC_STATUS	MasterGet_IO_DevicePdoCount(
+	NMCMOTIONAPI MC_STATUS	MasterGet_DI_IO_Count(
 									UINT16 BoardID,			//_in BoardID
-									UINT16 DeviceID,		//_in I/O DeviceID (EcatAddr)
-									UINT16 * InPdoCount,	//_out Input Pdo Count				
-									UINT16 * OutPdoCount	//_out Output Pdo Count
-									);
-//Input
-#ifdef __cplusplus
-extern "C" 
-#endif
-	NMCMOTIONAPI MC_STATUS	MasterGet_IO_DeviceInPdoData(
-									UINT16 BoardID,					//_in BoardID
-									UINT16 DeviceID,				//_in I/O DeviceID (EcatAddr)
-									UINT16 * InPdoSizeArray,		//_out Input Pdo Size Array
-									UINT16 * InPdoIOOffsetArray,	//_out Input Pdo IOOffset Array
-									UINT16 * InPdoRawIOOffsetArray	//_out Input Pdo Raw IOOffset Array
+									UINT16 DeviceID,	//_in DeviceID (EcatAddr)
+									UINT16 * Count		//_out Count
 									);
 
 #ifdef __cplusplus
-extern "C" 
+	extern "C"
 #endif
-	NMCMOTIONAPI MC_STATUS	MasterGet_IO_DeviceInPdoName(
+	NMCMOTIONAPI MC_STATUS	MasterGet_DI_IO_Name(
 									UINT16 BoardID,					//_in BoardID
-									UINT16 DeviceID,				//_in I/O DeviceID (EcatAddr)
-									char InPdoNameArray[][MAX_DEVICE_NAME_SIZE] //_out Input Pdo Name Array [][256]
+									UINT16 DeviceID,	 //_in DeviceID (EcatAddr)
+									char NameArray[][MAX_DEVICE_NAME_SIZE] //_out Name Array [][256]
 									);
-//Output
+
 #ifdef __cplusplus
-extern "C" 
+	extern "C" 
 #endif
-	NMCMOTIONAPI MC_STATUS	MasterGet_IO_DeviceOutPdoData(
+	NMCMOTIONAPI MC_STATUS	MasterGet_DI_IO_Data(
+									UINT16 BoardID,					//_in BoardID
+									UINT16 DeviceID,		  //_in DeviceID (EcatAddr)
+									UINT16 * BitSizeArray,	  //_out Bit Size Array 
+									UINT16 * RawIOOffsetArray //_out Raw IOOffset Array
+									);
+
+//Digital Output - I/O Info.
+#ifdef __cplusplus
+	extern "C" 
+#endif
+	NMCMOTIONAPI MC_STATUS	MasterGet_DO_IO_Count(
 									UINT16 BoardID,					 //_in BoardID
-									UINT16 DeviceID,				 //_in I/O DeviceID (EcatAddr)
-									UINT16 * OutPdoSizeArray,		 //_out Output Pdo Size Array
-									UINT16 * OutPdoIOOffsetArray,	 //_out Output Pdo IOOffset Array
-									UINT16 * OutPdoRawIOOffsetArray  //_out Output Pdo Raw IOOffset Array
+									UINT16 DeviceID,	//_in DeviceID (EcatAddr)
+									UINT16 * Count		//_out Count
 									);
 
 #ifdef __cplusplus
-extern "C" 
+	extern "C" 
 #endif
-	NMCMOTIONAPI MC_STATUS	MasterGet_IO_DeviceOutPdoName(
+	NMCMOTIONAPI MC_STATUS	MasterGet_DO_IO_Name(
+									UINT16 BoardID,		 //_in BoardID
+									UINT16 DeviceID,	 //_in DeviceID (EcatAddr)
+									char NameArray[][MAX_DEVICE_NAME_SIZE] //_out Name Array [][256]
+									);
+
+#ifdef __cplusplus
+	extern "C" 
+#endif
+	NMCMOTIONAPI MC_STATUS	MasterGet_DO_IO_Data(
+									UINT16 BoardID,			  //_in BoardID
+									UINT16 DeviceID,		  //_in DeviceID (EcatAddr)
+									UINT16 * BitSizeArray,	  //_out Bit Size Array 
+									UINT16 * RawIOOffsetArray //_out Raw IOOffset Array
+									);
+
+//Analog Input - I/O Info.
+#ifdef __cplusplus
+	extern "C" 
+#endif
+	NMCMOTIONAPI MC_STATUS	MasterGet_AI_IO_Count(
 									UINT16 BoardID,					//_in BoardID
-									UINT16 DeviceID,				//_in I/O DeviceID (EcatAddr)
-									char OutPdoNameArray[][MAX_DEVICE_NAME_SIZE] //_out Output Pdo Array [][256]
+									UINT16 DeviceID,	//_in DeviceID (EcatAddr)
+									UINT16 * Count		//_out Count
+									);
+
+#ifdef __cplusplus
+	extern "C" 
+#endif
+	NMCMOTIONAPI MC_STATUS	MasterGet_AI_IO_Name(
+									UINT16 BoardID,		 //_in BoardID
+									UINT16 DeviceID,	 //_in DeviceID (EcatAddr)
+									char NameArray[][MAX_DEVICE_NAME_SIZE] //_out Name Array [][256]
+									);
+
+#ifdef __cplusplus
+	extern "C" 
+#endif
+	NMCMOTIONAPI MC_STATUS	MasterGet_AI_IO_Data(
+									UINT16 BoardID,			  //_in BoardID
+									UINT16 DeviceID,		  //_in DeviceID (EcatAddr)
+									UINT16 * BitSizeArray,	  //_out Bit Size Array
+									UINT16 * RawIOOffsetArray //_out Raw IOOffset Array
+									);
+
+//Analog Output - I/O Info.
+#ifdef __cplusplus
+	extern "C" 
+#endif
+	NMCMOTIONAPI MC_STATUS	MasterGet_AO_IO_Count(
+									UINT16 BoardID,		//_in BoardID
+									UINT16 DeviceID,	//_in DeviceID (EcatAddr)
+									UINT16 * Count		//_out Count
+									);
+
+#ifdef __cplusplus
+	extern "C" 
+#endif
+	NMCMOTIONAPI MC_STATUS	MasterGet_AO_IO_Name(
+									UINT16 BoardID,		 //_in BoardID
+									UINT16 DeviceID,	 //_in DeviceID (EcatAddr)
+									char NameArray[][MAX_DEVICE_NAME_SIZE] //_out Name Array [][256]
+									);
+
+#ifdef __cplusplus
+	extern "C" 
+#endif
+	NMCMOTIONAPI MC_STATUS	MasterGet_AO_IO_Data(
+									UINT16 BoardID,					//_in BoardID
+									UINT16 DeviceID,		  //_in DeviceID (EcatAddr)
+									UINT16 * BitSizeArray,	  //_out Bit Size Array
+									UINT16 * RawIOOffsetArray //_out Raw IOOffset Array
 									);
 
 //=============================================================================
@@ -1804,6 +1906,19 @@ extern "C"
 									UINT16 EcatAddr, 
 									UINT8 * data
 									);
+
+
+//v12.2.0.12
+#ifdef __cplusplus
+	extern "C"
+#endif
+	NMCMOTIONAPI MC_STATUS  SlaveGetCurStateAll(
+									UINT16 BoardID,		  //_in BoardID
+									UINT16 *DeviceCount,  //_out Device Count
+									UINT16 *WorkingCount, //_out Working Count
+									UINT8  *StatusCombination //_out Status Combination (All Slave)(STATUS_COMBINATION Enum)
+									);
+
 //42h - Ethercat Direct Access
 #ifdef __cplusplus
 	extern "C" 
@@ -2434,9 +2549,45 @@ extern "C"
 #endif
 	NMCMOTIONAPI MC_STATUS MC_WriteDigitalOutput(
 									UINT16 BoardID, 
-									UINT16 AxisID, 
+									UINT16 AxisID,
 									UINT32 OutputNumber,
 									bool Value
+									);
+
+//v12.2.0.11 add
+#ifdef __cplusplus
+extern "C" 
+#endif
+	NMCMOTIONAPI MC_STATUS MC_ReadDigitalInputByte(
+									UINT16 BoardID,		 //_in BoardID
+									UINT16 AxisID,		 //_in AxisID
+									UINT8  Offset,		 //_in Offset (Range : 0 ~ 3)
+									UINT8  Size,		 //_in Size (Range : 1 ~ 4)
+									UINT8  InputValue[4] //_out InputValue[4] Array
+									);
+
+//v12.2.0.11 add
+#ifdef __cplusplus
+extern "C" 
+#endif
+	NMCMOTIONAPI MC_STATUS MC_ReadDigitalOutputByte(	 
+									UINT16 BoardID,		  //_in BoardID
+									UINT16 AxisID,		  //_in AxisID
+									UINT8  Offset,		  //_in Offset (Range : 0 ~ 3)
+									UINT8  Size,		  //_in Size (Range : 1 ~ 4)
+									UINT8  OutputValue[4] //_out OutputValue[4] Array
+									);
+
+//v12.2.0.11 add
+#ifdef __cplusplus
+extern "C" 
+#endif
+	NMCMOTIONAPI MC_STATUS MC_WriteDigitalOutputByte(	  
+									UINT16 BoardID,		  //_in BoardID
+									UINT16 AxisID,		  //_in AxisID
+									UINT8  Offset,		  //_in Offset (Range : 0 ~ 3)
+									UINT8  Size,		  //_in Size (Range : 1 ~ 4)
+									UINT8  OutputValue[4] //_in OutputValue[4] Array
 									);
 
 //5.1.1.29
@@ -3021,8 +3172,10 @@ extern "C"
 									DOUBLE Acceleration, 		//_in Acceleration
 									DOUBLE Deceleration, 		//_in Deceleration
 									DOUBLE Jerk,				//_in Jerk
-									UINT8  DisplayMode			//_in DisplayMode //(0 : Yaw Error Display (Master Axis - Slave Axis))
-									);											  //(1 : Yaw Diff. Display (Virtual Axis - Slave Axis))										
+									UINT8  DisplayMode			//_in DisplayMode //0 : Yaw Error Display (Master Axis - Slave Axis)
+									);											  //1 : Yaw Diff. Display (Virtual Axis - Slave Axis)
+																				  //2 : Yaw Error Display (Slave Axis - Master Axis)
+																				  //3 : Yaw Diff. Display (Slave Axis - Virtual Axis)
 
 //=============================================================================
 //-----------------------------------------------------------------------------
@@ -3053,26 +3206,28 @@ extern "C"
 //-----------------------------------------------------------------------------
 //Error Compensation
 //v12.2.0.0
+//v12.2.0.13
 #ifdef __cplusplus
 	extern "C" 
 #endif
 		NMCMOTIONAPI MC_STATUS MC_ChangeErrorCompensationMode(
 									UINT16 BoardID,		//_in BoardID
-									UINT16 AxisID,		//_in AxisID (AxisID:1~65535 / Gantry:0~1 / Group:0~15)
-									UINT8  Type,		//_in Type (Axis:0, Gantry:1, Group:2)
+									UINT16 AxisID[3],	//_in AxisID (AxisID:1~65535 / Gantry:0~1 / Group:0~15 / Combination AxisID:1~65535)
+									UINT8  Type,		//_in Type (Axis:0, Gantry:1, Group:2, Combination:3)
 									UINT16 Mode,		//_in Mode (EC Data Mode Enable:1, EC Data Mode Disable:0)
 									UINT8  ECMapID		//_in ECMapID (Range:0~3) (Table1 ~ Table4)									
 									);
 
 //v12.2.0.0
+//v12.2.0.13
 #ifdef __cplusplus
 	extern "C"
 #endif
 		NMCMOTIONAPI MC_STATUS MC_ReadErrorCompensationStatus(
 									UINT16 BoardID,		//_in BoardID
 									UINT8  ECMapID,		//_in ECMapID (Range:0~3) (Table1 ~ Table4)
-									UINT16 * AxisID,	//_out AxisID (AxisID:1~65535 / Gantry:0~1 / Group:0~15)
-									UINT8  * Type,		//_out Type (Axis:0, Gantry:1, Group-2D:2, Group-3D:3)
+									UINT16 AxisID[3],	//_out AxisID (AxisID:1~65535 / Gantry:0~1 / Group:0~15 / Combination AxisID:1~65535)
+									UINT8  * Type,		//_out Type (Axis:0, Gantry:1, Group-2D:2, Group-3D:3, 2D_Combination:4, 3D_Combination:5)
 									UINT8  * Status		//_out Mode Status (Disabled:0, Enabled:1, Disabling:2, Enabling:3)
 									);
 
@@ -3095,54 +3250,6 @@ extern "C"
 //
 //
 //-----------------------------------------------------------------------------
-////v12.2.0.2
-//#ifdef __cplusplus
-//	extern "C"
-//#endif
-//		NMCMOTIONAPI MC_STATUS MC_ChangeTorqueLimitPositionEvent(
-//									UINT16 BoardID,				//_in BoardID
-//									UINT16 AxisID,				//_in AxisID
-//									DOUBLE EventPosition,		//_in Event Position
-//									DOUBLE Width,				//_in Width
-//									UINT16 NormalTorque, 		//_in Normal Torque
-//									UINT16 EventTorque, 		//_in Event Torque
-//									UINT16 MaintainCycleCount,	//_in Maintain Cycle Count(0 : Immediately, X : Minimum Event Maintain Cycle)
-//									MC_BUFFER_MODE  BufferMode	//_in Buffer Mode (0 : Aborted, 1 : Buffered)
-//									);
-//
-////=============================================================================
-////-----------------------------------------------------------------------------
-////
-////
-//// Function Module APIs - Special
-////
-////
-////-----------------------------------------------------------------------------
-////v12.1.0.48
-//#ifdef __cplusplus
-//	extern "C" 
-//#endif
-//		NMCMOTIONAPI MC_STATUS	MC_WriteIntervalTrigParameterFM(
-//									UINT16 BoardID,			//_in BoardID
-//									UINT16 EcatAddr,		//_in Ethercat Address
-//									UINT16 AxisID,		    //_in AxisID
-//									DOUBLE StartPosition,	//_in Start Position
-//									DOUBLE EndPosition,		//_in End Position
-//									UINT16 IntervalPeriod,	//_in Interval Period
-//									UINT16 PulseWidth		//_in Pulse Width
-//									);
-//
-////v12.1.0.48
-//#ifdef __cplusplus
-//	extern "C" 
-//#endif
-//		NMCMOTIONAPI MC_STATUS	MC_WriteIntervalTrigEnableFM(
-//									UINT16 BoardID,		//_in BoardID
-//									UINT16 EcatAddr,	//_in Ethercat Address
-//									UINT16 AxisID,		//_in AxisID
-//									bool Enable			//_in Configuration Enable True/False
-//									);
-
 //v12.2.0.3
 #ifdef __cplusplus
 	extern "C"
@@ -3156,7 +3263,7 @@ extern "C"
 			UINT16 EventTorque	 		//_in Event Torque
 		);
 
-	//v12.2.0.4
+//v12.2.0.4
 #ifdef __cplusplus
 	extern "C"
 #endif
@@ -3175,9 +3282,9 @@ extern "C"
 			MC_BUFFER_MODE BufferMode	//_in Buffer Mode (Reserved 0 : Aborting)
 		);
 
-	//v12.2.0.13
+//v12.2.0.13
 #ifdef __cplusplus
-	extern "C"
+	extern "C" 
 #endif
 		NMCMOTIONAPI MC_STATUS MC_SyncAxisToRefAxis(
 			UINT16 BoardID,				//_in BoardID
@@ -3189,7 +3296,7 @@ extern "C"
 			MC_BUFFER_MODE BufferMode	//_in Buffer Mode (Aborting:0, Buffered:1 옵션만 지원)
 		);
 
-	//v12.2.0.13
+//v12.2.0.13
 #ifdef __cplusplus
 	extern "C"
 #endif
@@ -3204,7 +3311,7 @@ extern "C"
 			MC_BUFFER_MODE BufferMode	//_in Buffer Mode (Aborting:0, Buffered:1 옵션만 지원)
 		);
 
-	//v12.2.0.13
+//v12.2.0.13
 #ifdef __cplusplus
 	extern "C"
 #endif

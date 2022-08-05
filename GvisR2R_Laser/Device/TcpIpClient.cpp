@@ -15,12 +15,13 @@ CTcpIpClient::CTcpIpClient(CWnd* pParent/*=NULL*/)
 	//m_bReadAck = 0;
 	//m_bReadErr = 0;
 	m_strReceived = _T("");
+	m_bStop = 0;
 }
 
 CTcpIpClient::~CTcpIpClient()
 {
 	//m_bReadCommData = 0;
-	//m_bStop = 1;
+	m_bStop = 1;
 	//StopComm();
 	//Sleep(100);
 
@@ -48,7 +49,7 @@ void CTcpIpClient::OnEvent(UINT uEvent)
 		TRACE("Connection Established\r\n");
 		break;
 	case EVT_CONFAILURE:
-		//////AfxMessageBox(_T("Connection Failed\r\n"));
+		//AfxMessageBox(_T("Connection Failed\r\n"));
 		TRACE("Connection Failed\r\n");
 		break;
 	case EVT_CONDROP:
@@ -77,16 +78,94 @@ void CTcpIpClient::Init(CString strClientIP, CString strServerIP, int nPort)
 	m_nNetworkPort = nPort;
 }
 
-void CTcpIpClient::Start()
+BOOL CTcpIpClient::Start()
 {
-	PrepareThread();
-	ResumeThread();
+	//PrepareThread();
+	//ResumeThread();
+
+	HANDLE hThread;
+	UINT uiThreadId = 0;
+
+	//m_bReadCommData = TRUE; // 2006,05,04 추가 khc
+
+	hThread = (HANDLE)_beginthreadex(NULL,	// Security attributes
+		0,	// stack
+		SocketThreadProc,	// Thread proc
+		this,	// Thread param
+		CREATE_SUSPENDED,	// creation mode
+		&uiThreadId);	// Thread ID
+
+	if (NULL != hThread)
+	{
+		//SetThreadPriority(hThread, THREAD_PRIORITY_HIGHEST);
+		ResumeThread(hThread);
+		m_hThread = hThread;
+		return TRUE;
+	}
+	return FALSE;
 }
 
-SOCKET_DATA CTcpIpClient::GetSocketData()
+void CTcpIpClient::StopThread() // Worker Thread 구동관련 Step9
 {
-	return m_SocketData;
+	if (m_pThread != NULL)
+	{
+		m_evtThread.SetEvent();
+		WaitUntilThreadEnd(m_hThread);
+	}
+	m_pThread = NULL;
+	m_bModify = FALSE;
 }
+
+void CTcpIpClient::WaitUntilThreadEnd(HANDLE hThread) // Worker Thread 구동관련 Step6
+{
+	TRACE("WaitUntilThreadEnd(0x%08x:RunThread) Entering\n", hThread);
+	MSG message;
+	const DWORD dwTimeOut = 500000;
+	DWORD dwStartTick = GetTickCount();
+	DWORD dwExitCode;
+	while (GetExitCodeThread(hThread, &dwExitCode) && dwExitCode == STILL_ACTIVE && m_bAlive) {
+		// Time Out Check
+		if (GetTickCount() >= (dwStartTick + dwTimeOut))
+		{
+			//pView->MsgBox("WaitUntilThreadEnd() Time Out!!!");
+			AfxMessageBox(_T("WaitUntilThreadEnd() Time Out!!!", NULL, MB_OK | MB_ICONSTOP));
+			return;
+		}
+		if (::PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
+		{
+			::TranslateMessage(&message);
+			::DispatchMessage(&message);
+		}
+	}
+	TRACE("WaitUntilThreadEnd(0x%08x:DispMsgThread) Exit\n", hThread);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SocketThreadProc
+///////////////////////////////////////////////////////////////////////////////
+// DESCRIPTION:
+//     Socket Thread function.  This function is the main thread for socket
+//     communication - Asynchronous mode.
+// PARAMETERS:
+//     LPVOID pParam : Thread parameter - a CSocketComm pointer
+// NOTES:
+///////////////////////////////////////////////////////////////////////////////
+UINT WINAPI CTcpIpClient::SocketThreadProc(LPVOID pParam)
+{
+	CTcpIpClient* pThis = reinterpret_cast<CTcpIpClient*>(pParam);
+	_ASSERTE(pThis != NULL);
+	pThis->m_bAlive = TRUE;
+	while (!pThis->m_bStop)
+	{
+		int nExit = pThis->Running();
+		if (nExit == 0)
+			break;
+	}
+	pThis->m_bAlive = FALSE;
+	Sleep(10);
+	return 1L;
+} // end SocketThreadProc
+
 
 int CTcpIpClient::Running()
 {
@@ -135,7 +214,8 @@ int CTcpIpClient::ReadCommData(SOCKET_DATA &SocketData, DWORD dwSize, DWORD dwTi
 	}
 
 	OnEvent(EVT_CONSUCCESS);
-	DWORD	dwBytes = 0L;
+
+	int	dwBytes = 0L;
 
 	while (IsOpen() && !m_bStop)
 	{
@@ -146,11 +226,7 @@ int CTcpIpClient::ReadCommData(SOCKET_DATA &SocketData, DWORD dwSize, DWORD dwTi
 		{
 			OnDataReceived();
 		}
-		else
-			dwBytes = (DWORD)(-1L);
-
-		// Error? - need to signal error
-		if (dwBytes == (DWORD)-1L)
+		else // 연결 상태 끊어짐 확인.
 		{
 			// Do not send event if we are closing
 			if (IsOpen())
@@ -169,7 +245,8 @@ int CTcpIpClient::ReadCommData(SOCKET_DATA &SocketData, DWORD dwSize, DWORD dwTi
 }
 
 int CTcpIpClient::ReadPacketData(SOCKET_DATA &SocketData, DWORD dwSize, DWORD dwTimeout)
-{	_ASSERTE(IsOpen());
+{	
+	//_ASSERTE(IsOpen());
 
 	if (dwSize < 1L)
 	{
@@ -192,7 +269,7 @@ int CTcpIpClient::ReadPacketData(SOCKET_DATA &SocketData, DWORD dwSize, DWORD dw
 		FD_SET(s, &fdRead);
 
 	// Select function set read timeout
-	DWORD dwBytesRead = 0L;
+	int dwBytesRead = 0L;
 	int res = select(s + 1, &fdRead, NULL, NULL, pstTime);
 	if (res > 0)
 	{
@@ -281,10 +358,11 @@ int CTcpIpClient::ReadComm()
 		return -1; // Server is failed.
 	}
 
-	OnEvent(EVT_CONSUCCESS);
+	OnEvent(EVT_CONSUCCESS); // lost connection
 
 	DWORD	dwBytes = 0L;
-	DWORD	dwTimeout = 5000;
+	DWORD	dwTimeout = INFINITE;
+	//DWORD	dwTimeout = 5000;
 
 	while (IsOpen() && !m_bStop)
 	{
@@ -367,6 +445,11 @@ int CTcpIpClient::ReadComm()
 
 	::LeaveCriticalSection(&m_sc);
 	return 0; // Terminate Thread
+}
+
+SOCKET_DATA CTcpIpClient::GetSocketData()
+{
+	return m_SocketData;
 }
 
 void CTcpIpClient::OnDataReceived()

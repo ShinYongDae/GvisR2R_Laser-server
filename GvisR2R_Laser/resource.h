@@ -1069,6 +1069,7 @@
 #define ID_APP_MINIMIZE                 32772
 #define ID_DATABASECONNECT              32773
 #define ID_DATABASE_CONNECTION          32774
+#define ID_INDICATOR_PROGRESS_PANE      61204
 
 // Next default values for new objects
 // 

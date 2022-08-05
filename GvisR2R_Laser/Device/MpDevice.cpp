@@ -102,8 +102,10 @@ BOOL CMpDevice::SetIoDataValue(CString strRegAddr, long OutputData)
 #ifdef USE_MPE
 	//char chrRegAddr[10];
 	//strcpy(chrRegAddr, strRegAddr);
-	TCHAR chrRegAddr[10];
-	wsprintf(chrRegAddr, TEXT("%s"), strRegAddr);
+	//TCHAR chrRegAddr[10];
+	//wsprintf(chrRegAddr, TEXT("%s"), strRegAddr);
+	char* chrRegAddr;
+	chrRegAddr = StringToChar(strRegAddr);
 
 	m_dwReturnVal = ymcSetController(m_hController);
 	if (m_dwReturnVal !=MP_SUCCESS)
@@ -113,6 +115,8 @@ BOOL CMpDevice::SetIoDataValue(CString strRegAddr, long OutputData)
 	}
 	
 	m_dwReturnVal = ymcGetRegisterDataHandle((LPBYTE)chrRegAddr, &m_hOutRegData);
+	delete chrRegAddr;
+
 	if (m_dwReturnVal !=MP_SUCCESS)
 	{
 		pView->DispMsg(_T("출력 레지스터 핸들을 취득할 수 없습니다."), _T("경고"), RGB_RED, DELAY_TIME_MSG);
@@ -325,8 +329,10 @@ BOOL CMpDevice::SetIo(CString strRegAddr, LPVOID pIoData, int nIoSize)
 	m_cs.Lock();
 	//char chrRegAddr[10];
 	//strcpy(chrRegAddr, strRegAddr);
-	TCHAR chrRegAddr[10];
-	wsprintf(chrRegAddr, TEXT("%s"), strRegAddr);
+	//TCHAR chrRegAddr[10];
+	//wsprintf(chrRegAddr, TEXT("%s"), strRegAddr);
+	char* chrRegAddr;
+	chrRegAddr = StringToChar(strRegAddr);
 
 	m_dwReturnVal = ymcSetController(m_hController);
 	if (m_dwReturnVal !=MP_SUCCESS)
@@ -337,6 +343,8 @@ BOOL CMpDevice::SetIo(CString strRegAddr, LPVOID pIoData, int nIoSize)
 	}
 	
 	m_dwReturnVal = ymcGetRegisterDataHandle((LPBYTE)chrRegAddr, &m_hOutRegData);
+	delete chrRegAddr;
+
 	if (m_dwReturnVal !=MP_SUCCESS)
 	{
 		pView->DispMsg(_T("출력 레지스터 핸들을 취득할 수 없습니다."), _T("경고"), RGB_RED, DELAY_TIME_MSG);
@@ -390,8 +398,11 @@ int CMpDevice::GetIo(CString strRegAddr, LPVOID pIoData, int nIoSize)	// nRtn : 
 	DWORD dwCount = 0, wRtn = MP_SUCCESS;
 	//char chrRegAddr[10];
 	//strcpy(chrRegAddr, strRegAddr);
-	TCHAR chrRegAddr[10];
-	wsprintf(chrRegAddr, TEXT("%s"), strRegAddr);
+	//TCHAR chrRegAddr[10];
+	//wsprintf(chrRegAddr, TEXT("%s"), strRegAddr);
+	char* chrRegAddr;
+	chrRegAddr = StringToChar(strRegAddr);
+
 
 	HREGISTERDATA hRData;
 	wRtn = ymcSetController(m_hController);
@@ -402,6 +413,8 @@ int CMpDevice::GetIo(CString strRegAddr, LPVOID pIoData, int nIoSize)	// nRtn : 
 		return 0;
 	}
 	wRtn = ymcGetRegisterDataHandle((LPBYTE)chrRegAddr, &hRData);
+	delete chrRegAddr;
+
 	if (wRtn !=MP_SUCCESS)
 	{
 		//pView->MyMsgBox(_T("ymcGetRegisterDataHandle Error!!!");
@@ -463,8 +476,10 @@ BOOL CMpDevice::GetIoDataValue(CString strRegAddr, long &InputData)
 	DWORD dwCount = 0;
 	//char chrRegAddr[10];
 	//strcpy(chrRegAddr, strRegAddr);
-	TCHAR chrRegAddr[10];
-	wsprintf(chrRegAddr, TEXT("%s"), strRegAddr);
+	//TCHAR chrRegAddr[10];
+	//wsprintf(chrRegAddr, TEXT("%s"), strRegAddr);
+	char* chrRegAddr;
+	chrRegAddr = StringToChar(strRegAddr);
 
 	m_dwReturnVal = ymcSetController(m_hController);
 	if (m_dwReturnVal !=MP_SUCCESS)
@@ -474,6 +489,8 @@ BOOL CMpDevice::GetIoDataValue(CString strRegAddr, long &InputData)
 	}
 	
 	m_dwReturnVal = ymcGetRegisterDataHandle((LPBYTE)chrRegAddr, &m_hInRegData);
+	delete chrRegAddr;
+
 	if (m_dwReturnVal !=MP_SUCCESS)
 	{
 		pView->DispMsg(_T("입력 레지스터 핸들을 취득할 수 없습니다."), _T("경고"), RGB_RED, DELAY_TIME_MSG);
@@ -718,9 +735,9 @@ BOOL CMpDevice::Write(CString strRegAddr, long lData, BOOL bCheck)
 		}
 	}
 
+	m_cs.Unlock();
 #endif
 
-	m_cs.Unlock();
 	return TRUE;
 }
 
@@ -1350,7 +1367,8 @@ void CMpDevice::GetMpeIO()
 
 	CString sAddr;
 	//char cAddr[MAX_PATH];
-	TCHAR cAddr[MAX_PATH];
+	//TCHAR cAddr[MAX_PATH];
+	char* cAddr;
 	DWORD dwRC;
 	HREGISTERDATA	hRegisterData[15] = {0};
 	REGISTER_INFO	RegInfo[15];
@@ -1365,8 +1383,10 @@ void CMpDevice::GetMpeIO()
 		sAddr = pDoc->MkIo.MpeIo.pAddrIn[nSt][0];
 		sAddr.SetAt(1,'W');
 		//strcpy(cAddr, sAddr.Left(7));
-		wsprintf(cAddr, TEXT("%s"), sAddr.Left(7));
+		//wsprintf(cAddr, TEXT("%s"), sAddr.Left(7));
+		cAddr = StringToChar(sAddr.Left(7));
 		dwRC = ymcGetRegisterDataHandle((LPBYTE)cAddr, &hRegisterData[nLoop]);
+		delete cAddr;
 		RegInfo[nLoop].hRegisterData = hRegisterData[nLoop];	// Register handle
 		RegInfo[nLoop].RegisterDataNumber = nGrpStep;		// The number of register data
 		RegInfo[nLoop].pRegisterData = RegisterWData[nLoop];		// The number of register data
@@ -1383,8 +1403,10 @@ void CMpDevice::GetMpeIO()
 		sAddr = pDoc->MkIo.MpeIo.pAddrOut[nSt][0];
 		sAddr.SetAt(1,'W');
 		//strcpy(cAddr, sAddr.Left(7));
-		wsprintf(cAddr, TEXT("%s"), sAddr.Left(7));
+		//wsprintf(cAddr, TEXT("%s"), sAddr.Left(7));
+		cAddr = StringToChar(sAddr.Left(7));
 		dwRC = ymcGetRegisterDataHandle((LPBYTE)cAddr, &hRegisterData[nLoop+nGrpIn]);
+		delete cAddr;
 		RegInfo[nLoop+nGrpIn].hRegisterData = hRegisterData[nLoop+nGrpIn];	// Register handle
 		RegInfo[nLoop+nGrpIn].RegisterDataNumber = nGrpStep;		// The number of register data
 		RegInfo[nLoop+nGrpIn].pRegisterData = RegisterWData[nLoop+nGrpIn];		// The number of register data
@@ -1438,7 +1460,8 @@ void CMpDevice::GetMpeSignal()
 
 	CString sAddr;
 	//char cAddr[MAX_PATH];
-	TCHAR cAddr[MAX_PATH];
+	//TCHAR cAddr[MAX_PATH];
+	char* cAddr;	
 	DWORD dwRC;
 	HREGISTERDATA	hRegisterData[15] = {0};
 	REGISTER_INFO	RegInfo[15];
@@ -1456,8 +1479,11 @@ void CMpDevice::GetMpeSignal()
 		sAddr = pDoc->MkIo.MpeIo.pSymIn[nSt][0];
 		sAddr.SetAt(1,'W');
 		//strcpy(cAddr, sAddr.Left(6));
-		wsprintf(cAddr, TEXT("%s"), sAddr.Left(6));
+		//wsprintf(cAddr, TEXT("%s"), sAddr.Left(6));
+		cAddr = StringToChar(sAddr.Left(6));
 		dwRC = ymcGetRegisterDataHandle((LPBYTE)cAddr, &hRegisterData[nLoop]);
+		delete cAddr;
+
 		RegInfo[nLoop].hRegisterData = hRegisterData[nLoop];	// Register handle
 		RegInfo[nLoop].RegisterDataNumber = nGrpStep;		// The number of register data
 		RegInfo[nLoop].pRegisterData = RegisterWData[nLoop];		// The number of register data
@@ -1478,8 +1504,10 @@ void CMpDevice::GetMpeSignal()
 	sAddr = pDoc->MkIo.MpeSignal.pAddrOut[0][0];
 	sAddr.SetAt(1,'W');
 	//strcpy(cAddr, sAddr.Left(7));
-	wsprintf(cAddr, TEXT("%s"), sAddr.Left(7));
+	//wsprintf(cAddr, TEXT("%s"), sAddr.Left(7));
+	cAddr = StringToChar(sAddr.Left(7));
 	dwRC = ymcGetRegisterDataHandle((LPBYTE)cAddr, &hRegisterData[nLoop]);
+	delete cAddr;
 	RegInfo[nLoop].hRegisterData = hRegisterData[nLoop];	// Register handle
 	RegInfo[nLoop].RegisterDataNumber = nGrpStep;		// The number of register data
 	RegInfo[nLoop].pRegisterData = RegisterWData[nLoop];		// The number of register data
@@ -1488,8 +1516,10 @@ void CMpDevice::GetMpeSignal()
 
 	sAddr = pDoc->MkIo.MpeData.pAddrIn[0][0];
 	//strcpy(cAddr, sAddr);
-	wsprintf(cAddr, TEXT("%s"), sAddr);
+	//wsprintf(cAddr, TEXT("%s"), sAddr);
+	cAddr = StringToChar(sAddr);
 	dwRC = ymcGetRegisterDataHandle((LPBYTE)cAddr, &hRegisterData[nLoop]);
+	delete cAddr;
 	RegInfo[nLoop].hRegisterData = hRegisterData[nLoop];	// Register handle
 	RegInfo[nLoop].RegisterDataNumber = nGrpStep*16;		// The number of register data
 	RegInfo[nLoop].pRegisterData = RegisterLData[nLoop];		// The number of register data
@@ -1499,8 +1529,10 @@ void CMpDevice::GetMpeSignal()
 
 	sAddr = pDoc->MkIo.MpeData.pAddrOut[0][0];
 	//strcpy(cAddr, sAddr);
-	wsprintf(cAddr, TEXT("%s"), sAddr);
+	//wsprintf(cAddr, TEXT("%s"), sAddr);
+	cAddr = StringToChar(sAddr);
 	dwRC = ymcGetRegisterDataHandle((LPBYTE)cAddr, &hRegisterData[nLoop]);
+	delete cAddr;
 	RegInfo[nLoop].hRegisterData = hRegisterData[nLoop];	// Register handle
 	RegInfo[nLoop].RegisterDataNumber = nGrpStep*16;		// The number of register data
 	RegInfo[nLoop].pRegisterData = RegisterLData[nLoop];		// The number of register data

@@ -11,8 +11,8 @@
 #include "MyLabel.h"
 #include "MyGroup.h"
 
-#define MAX_MENU03_STC				(61+13+4+13)
-#define MAX_MENU03_BTN				(55+13+4+13)
+#define MAX_MENU03_STC				93
+#define MAX_MENU03_BTN				87
 #define MAX_MENU03_GRP				10
 
 #define TIM_MENU03_DISP				300
@@ -82,7 +82,6 @@ class CDlgMenu03 : public CDialog
 	void DispEngrave();
 	void DispUncoiler();
 
-
 // 	void MyBtnDown(int nCtrlID);
 // 	void MyBtnUp(int nCtrlID);
 	void ChkDoneMkAoi();
@@ -140,8 +139,10 @@ public:
 	afx_msg LRESULT OnMyBtnDown(WPARAM wPara, LPARAM lPara);
 	afx_msg LRESULT OnMyBtnUp(WPARAM wPara, LPARAM lPara);
 
-// 	void SwMyBtnDown(int nCtrlID);
-// 	void SwMyBtnUp(int nCtrlID);
+ 	void SwMyBtnDown(int nCtrlID);
+ 	void SwMyBtnUp(int nCtrlID);
+	void SwEngraveBtn(int nCtrlID, BOOL bOn);
+	void SwMpeBtn(int nCtrlID, long lData);
 
 	BOOL IsMkFdVac();		// not used
 	BOOL IsMkTqVac();		// not used
@@ -180,6 +181,8 @@ public:
 	void SwMkFdClp(BOOL bOn);			// not used
 // 	void SwMkDnSol(BOOL bOn);			// not used
 
+	void SwBufRolSol(BOOL bOn);
+
 	// AOI
 	void SwAoiRelation(BOOL bOn);
 	void SwAoiDustBlw(BOOL bOn);
@@ -214,8 +217,8 @@ public:
 	void SwRcPprChuck(BOOL bOn);
 	void SwRcReelChuck(BOOL bOn);
 
-	void SwBufRolSol(BOOL bOn);
 	void SwAoiEmg(BOOL bOn);
+
 	void SwReset();
 	void SwReady();
 	void SwRun();

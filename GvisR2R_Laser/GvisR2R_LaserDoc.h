@@ -277,6 +277,7 @@ public:
 	BOOL MakeMkDirDn();
 	BOOL Shift2Mk(int nSerial);
 	void SetLastSerial(int nSerial);
+	void UpdateYield(int nSerial);
 	void SetCompletedSerial(int nSerial);
 	BOOL ChkLotEnd(CString sPath);
 	BOOL IsPinMkData();

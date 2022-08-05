@@ -5,7 +5,7 @@
 
 #ifdef USE_NMC
 
-
+#include "safelock.h"
 #include "Motion.h"
 #include "NmcDevice.h"
 
@@ -168,7 +168,8 @@ END_MESSAGE_MAP()
 
 double CNmcDevice::GetAxisState(int nAxisId)
 {
-	if (nAxisId >= m_nTotalMotion)
+	//if (nAxisId >= m_nTotalMotion)
+	if (nAxisId >= m_nTotalAxis)
 		return 0.0;
 
 	return (m_pAxis[nAxisId]->GetState());
@@ -237,8 +238,7 @@ BOOL CNmcDevice::DestroyDevice()
 	MC_GetErrorMessage(ms, MAX_ERR_LEN, cstrErrorMsg);
 	if (ms != MC_OK)
 	{
-		pView->MsgBox(_T("Failed MMC Board Exit !!!"));
-		//AfxMessageBox(_T("Failed MMC Board Exit !!!"));
+		AfxMessageBox(_T("Failed MMC Board Exit !!!"));
 		return FALSE;
 	}
 
@@ -246,7 +246,8 @@ BOOL CNmcDevice::DestroyDevice()
 
 	//Delete Memory Allocation For Axis Object.
 	//	for (int i=0; i<8; i++)
-	for (int i = 0; i < m_nTotalMotion; i++)	//20110922 hyk mod
+	//for (int i = 0; i < m_nTotalMotion; i++)	//20110922 hyk mod
+	for (int i = 0; i < m_nTotalAxis; i++)	//20110922 hyk mod
 	{
 		if (m_pAxis[i])
 		{
@@ -309,7 +310,8 @@ BOOL CNmcDevice::ResetAxesGroup()
 
 BOOL CNmcDevice::InitAxisParam(int nAxis)
 {
-	if (nAxis >= m_nTotalMotion)
+	//if (nAxis >= m_nTotalMotion)
+	if (nAxis >= m_nTotalAxis)
 		return FALSE;
 
 	//m_pParamCtrl = &(((CMotion*)m_pParent)->m_ParamCtrl);
@@ -420,7 +422,8 @@ BOOL CNmcDevice::InitAxisParam(int nAxis)
 
 BOOL CNmcDevice::CreateAxis(int nAxis)
 {
-	if (nAxis >= m_nTotalMotion)
+	//if (nAxis >= m_nTotalMotion)
+	if (nAxis >= m_nTotalAxis)
 		return FALSE;
 
 	if (!m_pAxis[nAxis])
@@ -438,7 +441,8 @@ BOOL CNmcDevice::CreateAxis(int nAxis)
 
 CNmcAxis* CNmcDevice::GetAxis(int nAxis)
 {
-	if (nAxis >= m_nTotalMotion)
+	//if (nAxis >= m_nTotalMotion)
+	if (nAxis >= m_nTotalAxis)
 		return FALSE;
 
 	CString strMsg;
@@ -643,7 +647,8 @@ int CNmcDevice::In32(long *value)
 	nData |= (val[2] << 16) & 0x00FF0000;
 	nData |= (val[3] << 24) & 0xFF000000;
 
-	*value = (long)(~nData);
+	//*value = (long)(~nData);
+	*value = (nData);
 
 	return nRtn;
 }
@@ -702,9 +707,13 @@ BOOL CNmcDevice::Move(int nMotionId, double *pTgtPos, BOOL bAbs, BOOL bWait)
 //	return (m_pMotion[nMotionId].Move(pTgtPos, bAbs, bWait));
 //#endif
 
-	double fVel = m_pParamAxis[nMotionId].fSpd;
-	double fAcc = m_pParamAxis[nMotionId].fAcc;
-	double fDec = m_pParamAxis[nMotionId].fDec;
+	int nAxisId = m_pParamMotion[nMotionId].stMsMap.nMappingAxis[0];
+	//double fVel = m_pParamAxis[nMotionId].fSpd;
+	//double fAcc = m_pParamAxis[nMotionId].fAcc;
+	//double fDec = m_pParamAxis[nMotionId].fDec;
+	double fVel = m_pParamAxis[nAxisId].fSpd;
+	double fAcc = m_pParamAxis[nAxisId].fAcc;
+	double fDec = m_pParamAxis[nAxisId].fDec;
 
 	double fTime = 0.0, fJerk = 0.0;
 	double fPos = *pTgtPos;
@@ -736,9 +745,13 @@ BOOL CNmcDevice::Move(int nMotionId, double *pTgtPos, double dRatio, BOOL bAbs, 
 	//	return (m_pMotion[nMotionId].Move(pTgtPos, dRatio, bAbs, bWait));
 	//#endif
 
-	double fVel = (m_pParamAxis[nMotionId].fSpd * dRatio) / 100.0;
-	double fAcc = (m_pParamAxis[nMotionId].fAcc * dRatio) / 100.0;
-	double fDec = (m_pParamAxis[nMotionId].fDec * dRatio) / 100.0;
+	int nAxisId = m_pParamMotion[nMotionId].stMsMap.nMappingAxis[0];
+	//double fVel = (m_pParamAxis[nMotionId].fSpd * dRatio) / 100.0;
+	//double fAcc = (m_pParamAxis[nMotionId].fAcc * dRatio) / 100.0;
+	//double fDec = (m_pParamAxis[nMotionId].fDec * dRatio) / 100.0;
+	double fVel = (m_pParamAxis[nAxisId].fSpd * dRatio) / 100.0;
+	double fAcc = (m_pParamAxis[nAxisId].fAcc * dRatio) / 100.0;
+	double fDec = (m_pParamAxis[nAxisId].fDec * dRatio) / 100.0;
 
 	double fTime = 0.0, fJerk = 0.0;
 	double fPos = *pTgtPos;
@@ -1006,6 +1019,18 @@ BOOL CNmcDevice::VMove(int nMotionId, int nDir)
 	if (nMotionId >= m_nTotalMotion)
 		return FALSE;
 
+	if (GetAxis(nMotionId)->CheckAmpFaultSwitch() || GetAxis(nMotionId)->CheckLimitSwitch(MINUS) || GetAxis(nMotionId)->CheckLimitSwitch(PLUS))
+	{
+		GetAxis(nMotionId)->SetAmpEnable(FALSE);
+		Sleep(50);
+		GetAxis(nMotionId)->AmpFaultReset();
+		Sleep(50);
+		GetAxis(nMotionId)->ClearStatus();
+		Sleep(50);
+		GetAxis(nMotionId)->SetAmpEnable(TRUE);
+		Sleep(50);
+	}
+
 	return (GetAxis(nMotionId)->VMove(nDir));
 }
 
@@ -1097,8 +1122,7 @@ BOOL CNmcDevice::GantryEnable(long lMaster, long lSlave, long lOnOff)
 
 	if (ms != MC_OK)
 	{
-		pView->MsgBox(_T("Error-MC_GantryReadStatus(220)"));
-		//AfxMessageBox(_T("Error-MC_GantryReadStatus(220)"));
+		AfxMessageBox(_T("Error-MC_GantryReadStatus(220)"));
 		return FALSE;
 	}
 
@@ -1107,8 +1131,7 @@ BOOL CNmcDevice::GantryEnable(long lMaster, long lSlave, long lOnOff)
 	{
 		if (GetTickCount() - nTick >= 60000)
 		{
-			pView->MsgBox(_T("Error-StartRsaHoming(221)"));
-			//AfxMessageBox(_T("Error-StartRsaHoming(221)"));
+			AfxMessageBox(_T("Error-StartRsaHoming(221)"));
 			return FALSE;
 		}
 		Sleep(100);
@@ -1116,8 +1139,7 @@ BOOL CNmcDevice::GantryEnable(long lMaster, long lSlave, long lOnOff)
 		ms = MC_GantryReadStatus(m_nBoardId, 0, &state);
 		if (ms != MC_OK)
 		{
-			pView->MsgBox(_T("Error-StartRsaHoming(202)"));
-			//AfxMessageBox(_T("Error-StartRsaHoming(202)"));
+			AfxMessageBox(_T("Error-StartRsaHoming(202)"));
 			return FALSE;
 		}
 	}
@@ -1128,8 +1150,7 @@ BOOL CNmcDevice::GantryEnable(long lMaster, long lSlave, long lOnOff)
 		ms = MC_GantryEnable(m_nBoardId, 0, lMaster + m_nOffsetAxisID, lSlave + m_nOffsetAxisID, 50, 10000000);
 		if (ms != MC_OK)
 		{
-			pView->MsgBox(_T("Error-MC_GantryEnable"));
-			//AfxMessageBox(_T("Error-MC_GantryEnable"));
+			AfxMessageBox(_T("Error-MC_GantryEnable"));
 			return FALSE;
 		}
 		m_bGantryEnabled = TRUE;
@@ -1141,8 +1162,7 @@ BOOL CNmcDevice::GantryEnable(long lMaster, long lSlave, long lOnOff)
 		ms = MC_GantryDisable(m_nBoardId, 0);
 		if (ms != MC_OK)
 		{
-			pView->MsgBox(_T("Error-MC_GantryDisable"));
-			//AfxMessageBox(_T("Error-MC_GantryDisable"));
+			AfxMessageBox(_T("Error-MC_GantryDisable"));
 			return TRUE;		
 		}
 		m_bGantryEnabled = FALSE;
@@ -1168,8 +1188,7 @@ BOOL CNmcDevice::GetGantry(long lMaster, long lSlave, long *lOnOff)
 	if (ms != MC_OK)
 	{
 		*lOnOff = FALSE;
-		//AfxMessageBox(_T("Error-MC_GantryStatus"));
-		pView->MsgBox(_T("Error-MC_GantryStatus"));
+		AfxMessageBox(_T("Error-MC_GantryStatus"));
 		return FALSE;
 	}
 	else if(Status & mcGantry_Fault)
@@ -1214,8 +1233,7 @@ BOOL CNmcDevice::TriggerSetRange(int encAxisId, int nEcatAddr, int vAxisId, doub
 	ms = MC_WriteIntervalTrigParameterFM(m_nBoardId, nEcatAddr, vAxisId, dStartPos, dEndPos, usPeriod, usPulseWidth); // dStartPos[pulse], dEndPos[pulse], usPeriod[pulse], usPulseWidth[1/50nSec]
 	if (ms != MC_OK)
 	{
-		pView->MsgBox(_T("Error-TriggerSetRange()"));
-		//AfxMessageBox(_T("Error-TriggerSetRange()"));
+		AfxMessageBox(_T("Error-TriggerSetRange()"));
 		return FALSE;
 	}
 	Sleep(100);
@@ -1223,8 +1241,7 @@ BOOL CNmcDevice::TriggerSetRange(int encAxisId, int nEcatAddr, int vAxisId, doub
 	ms = MC_WriteIntervalTrigEnableFM(m_nBoardId, nEcatAddr, vAxisId, true);
 	if (ms != MC_OK)
 	{
-		pView->MsgBox(_T("Error-EnableTriggerSetRange()"));
-		//AfxMessageBox(_T("Error-EnableTriggerSetRange()"));
+		AfxMessageBox(_T("Error-EnableTriggerSetRange()"));
 		return FALSE;
 	}
 	Sleep(100);
@@ -1240,8 +1257,7 @@ BOOL CNmcDevice::TriggerStop(int nEcatAddr, int vAxisId)
 	ms = MC_WriteIntervalTrigEnableFM(m_nBoardId, nEcatAddr, vAxisId, false);
 	if (ms != MC_OK)
 	{
-		pView->MsgBox(_T("Error-TriggerStop()"));
-		//AfxMessageBox(_T("Error-TriggerStop()"));
+		AfxMessageBox(_T("Error-TriggerStop()"));
 		return FALSE;
 	}
 	Sleep(100);
@@ -1261,8 +1277,7 @@ BOOL CNmcDevice::TriggerSetOriginPos(int nEcatAddr, int vAxisId, int nSdoIdx)
 	ms = MasterGetSDODataEcatAddr(m_nBoardId, nEcatAddr, nSdoIdx, 7, 4, &uRspsDataSize, Data);
 	if (ms != MC_OK)
 	{
-		pView->MsgBox(_T("Error-MasterGetSDODataEcatAddr()"));
-		//AfxMessageBox(_T("Error-MasterGetSDODataEcatAddr()"));
+		AfxMessageBox(_T("Error-MasterGetSDODataEcatAddr()"));
 		return FALSE;
 	}
 	Sleep(100);
@@ -1274,8 +1289,7 @@ BOOL CNmcDevice::TriggerSetOriginPos(int nEcatAddr, int vAxisId, int nSdoIdx)
 	ms = MC_WriteParameter(m_nBoardId, vAxisId, 2147, -dCurPos); // ??? -dCurPos
 	if (ms != MC_OK)
 	{
-		pView->MsgBox(_T("Error-TriggerSetOriginPos()"));
-		//AfxMessageBox(_T("Error-TriggerSetOriginPos()"));
+		AfxMessageBox(_T("Error-TriggerSetOriginPos()"));
 		return FALSE;
 	}
 
@@ -1295,8 +1309,7 @@ int CNmcDevice::GetTriggerEnc(int nEcatAddr, int nSdoIdx)
 	ms = MasterGetSDODataEcatAddr(m_nBoardId, nEcatAddr, nSdoIdx, 7, 4, &uRspsDataSize, Data);
 	if (ms != MC_OK)
 	{
-		pView->MsgBox(_T("Error-GetTriggerEncCnt()"));
-		//AfxMessageBox(_T("Error-GetTriggerEncCnt()"));
+		AfxMessageBox(_T("Error-GetTriggerEncCnt()"));
 		return 0;
 	}
 	Sleep(30);
@@ -1316,8 +1329,7 @@ CString CNmcDevice::GetTriggerEncCnt(int nEcatAddr, int nSdoIdx)
 	ms = MasterGetSDODataEcatAddr(m_nBoardId, nEcatAddr, nSdoIdx, 7, 4, &uRspsDataSize, Data);
 	if (ms != MC_OK)
 	{
-		pView->MsgBox(_T("Error-GetTriggerEncCnt()"));
-		//AfxMessageBox(_T("Error-GetTriggerEncCnt()"));
+		AfxMessageBox(_T("Error-GetTriggerEncCnt()"));
 		return _T("");
 	}
 	Sleep(30);
@@ -1343,7 +1355,17 @@ int CNmcDevice::UnGroup2Ax(int nGroupNum)
 	MC_STATUS ms;
 
 	ms = MC_GroupDisable(m_nBoardId, nGroupNum);
+	if (ms != MC_OK)
+	{
+		AfxMessageBox(_T("Error-MC_GroupDisable()"));
+		return ms;
+	}
 	ms = MC_UngroupAllAxes(m_nBoardId, nGroupNum);
+	if (ms != MC_OK)
+	{
+		AfxMessageBox(_T("Error-MC_UngroupAllAxes()"));
+		return ms;
+	}
 	Sleep(5);
 
 	return ms;
@@ -1351,41 +1373,9 @@ int CNmcDevice::UnGroup2Ax(int nGroupNum)
 
 void CNmcDevice::UnGroup2Ax(int nBdNum, int nGroupNum)
 {
-	//if(m_nGroupID_RTAF == nGroupNum)
-	//	m_bListMotion = FALSE;
-	//else if(m_nGroupID_ErrMapXY == nGroupNum)
-	//	m_bErrMap = FALSE;
-	//else if (m_nGroupID_Interpolation == nGroupNum)
-	//	m_bInterpolationMotion = FALSE;
-
-	if (m_nGroupID_Interpolation == nGroupNum)
-		m_bInterpolationMotion = FALSE;
-
-	//if (m_pBufferControl)
-	//	m_pBufferControl->UnGroup2Ax(nBdNum, nGroupNum);
-	//else
-		UnGroup2Ax(nGroupNum);
+	UnGroup2Ax(nGroupNum);
 
 	return;
-
-	//MC_STATUS ms = MC_OK;
-
-	//ms = MC_GroupDisable(m_nBoardId, m_nGroupID);
-	//if (ms != MC_OK)
-	//{
-	//	AfxMessageBox(_T("Error-MC_GroupDisable()"));
-	//	return;
-	//}
-
-	//ms = MC_UngroupAllAxes(m_nBoardId, m_nGroupID);
-	//if (ms != MC_OK)
-	//{
-	//	AfxMessageBox(_T("Error-MC_UngroupAllAxes()"));
-	//	return;
-	//}
-
-	//Sleep(5);
-
 }
 
 int CNmcDevice::Grouping2Ax(int nBdNum, int nGroupNum, int nAxisNumX, int nAxisNumY)
@@ -1615,9 +1605,9 @@ BOOL CNmcDevice::IsListMotion()
 	return m_bListMotion;
 }
 
-BOOL CNmcDevice::IsInterpolationMotion()
+BOOL CNmcDevice::IsInterpolationMotion(int nId)
 {
-	return m_bInterpolationMotion;
+	return m_bInterpolationMotion[nId];
 }
 
 int CNmcDevice::GetAddListNum()
@@ -1886,24 +1876,80 @@ int CNmcDevice::DisableGroup2Ax(int nGroupNum)
 BOOL CNmcDevice::TwoStartPosMove(int nMsId0, int nMsId1, double fPos0, double fPos1, double fVel, double fAcc, double fDec, BOOL bAbs, BOOL bWait, int bMotionType, BOOL bOptimize)
 {
 	MC_STATUS ms = MC_OK;
+	UINT32 GroupStatus = 0;
+	UINT32 AxisStatus = 0;
+	UINT32 AxisStatus2 = 0;
+	UINT16 GroupNo = NMC_GROUPID_INTERPOLRATION;
+	UINT16 PositionCount = 2;	// 2축 직선보간운동
+	UINT16 nAxesNum = 2;
+	UINT16 arnAxes[2] = { nMsId0 + m_nOffsetAxisID, nMsId1 + m_nOffsetAxisID };
 
-	ms = MC_Reset(m_nBoardId, nMsId0 + m_nOffsetAxisID);
-	if (ms != MC_OK)
+	DWORD CurTimer, StartTimer;
+	MSG message;
+	CString sMsg;
+
+	DWORD nTick = GetTickCount();
+
+	if (m_pAxis[nMsId0]->IsGroupMotion() && m_pAxis[nMsId1]->IsGroupMotion())
 	{
-		CString sMsg;
-		sMsg.Format(_T("Error-MC_Reset Axis%d"), nMsId0 + m_nOffsetAxisID);
-		AfxMessageBox(sMsg);
-		return FALSE; // Error...
+		MC_GroupReadStatus(m_nBoardId, GroupNo, &GroupStatus);
+		if ( !( (GroupStatus & GroupStandby) && (GroupStatus & InPosition) ) )
+		{
+			while (TRUE)
+			{
+				MC_GroupReadStatus(m_nBoardId, GroupNo, &GroupStatus);
+				Sleep(10);
+				if (GroupStatus & InPosition)
+				{
+					MC_ReadStatus(m_nBoardId, arnAxes[0], &AxisStatus);
+					MC_ReadStatus(m_nBoardId, arnAxes[1], &AxisStatus2);
+					if ((AxisStatus & mcStandStill) > 0 && (AxisStatus2 & mcStandStill) > 0)
+					{
+						break;
+					}
+				}
+				if (GetTickCount() - nTick > 30000)
+				{
+					AfxMessageBox(_T("Time out 30 seconds."));
+					break;
+				}
+			}
+		}
+	}
+	else
+	{ 
+		StartTimer = GetTickCount();
+		CurTimer = GetTickCount();
+
+		while ((!IsMotionDone(nMsId0) || !IsMotionDone(nMsId1)) && TEN_SECOND > int(CurTimer - StartTimer))
+		{
+			CurTimer = GetTickCount();
+			Sleep(10);
+		}
+
+		if (TEN_SECOND < int(CurTimer - StartTimer))
+		{
+			sMsg.Format(_T("Error-Wait MotionDone Time Over(TEN_SECOND)."));
+			AfxMessageBox(sMsg);
+			return FALSE;
+		}
 	}
 
-	ms = MC_Reset(m_nBoardId, nMsId1 + m_nOffsetAxisID);
-	if (ms != MC_OK)
-	{
-		CString sMsg;
-		sMsg.Format(_T("Error-MC_Reset Axis%d"), nMsId1 + m_nOffsetAxisID);
-		AfxMessageBox(sMsg);
-		return FALSE; // Error...
-	}
+	//ms = MC_Reset(m_nBoardId, nMsId0 + m_nOffsetAxisID);
+	//if (ms != MC_OK)
+	//{
+	//	sMsg.Format(_T("Error-MC_Reset Axis%d"), nMsId0 + m_nOffsetAxisID);
+	//	AfxMessageBox(sMsg);
+	//	return FALSE; // Error...
+	//}
+
+	//ms = MC_Reset(m_nBoardId, nMsId1 + m_nOffsetAxisID);
+	//if (ms != MC_OK)
+	//{
+	//	sMsg.Format(_T("Error-MC_Reset Axis%d"), nMsId1 + m_nOffsetAxisID);
+	//	AfxMessageBox(sMsg);
+	//	return FALSE; // Error...
+	//}
 
 	double dPulse0 = GetAxis(nMsId0)->LenToPulse(fPos0);
 	double dPulse1 = GetAxis(nMsId1)->LenToPulse(fPos1);
@@ -1913,35 +1959,22 @@ BOOL CNmcDevice::TwoStartPosMove(int nMsId0, int nMsId1, double fPos0, double fP
 	double dAcc = GetAxis(nMsId0)->LenToPulse(fAcc);
 	double dJerk = GetAxis(nMsId0)->LenToPulse(fSpeed / m_pParamAxis[nMsId0].fMinJerkTime);	// 0;
 
-	UINT16 nAxesNum = 2;
-	UINT16 arnAxes[2] = { nMsId0 + m_nOffsetAxisID, nMsId1 + m_nOffsetAxisID };
 	double ardPosVal[2] = { dPulse0, dPulse1 };
 	MC_DIRECTION pDirArray[2] = { mcPositiveDirection, mcPositiveDirection };
 	UINT8 ErrorStopMode = 1;	// ErrorStop이 발생할 경우 처리 방법 선택(0: Error발생축만 정지, 1: 모든축 동작 정지)
 	CString msg;
 	char cstrErrorMsg[MAX_ERR_LEN];
 
-	UINT32 GroupStatus = 0;
-	UINT32 AxisStatus = 0;
-	UINT32 AxisStatus2 = 0;
-	UINT16 GroupNo = NMC_GROUPID_INTERPOLRATION;
-	UINT16 PositionCount = 2;	// 2축 직선보간운동
-
-	MC_GroupReadStatus(m_nBoardId, GroupNo, &GroupStatus);
-	if (GroupStatus & GroupStandby)
-	{
-		;
-	}
-	else
+	if (!m_pAxis[nMsId0]->IsGroupMotion() || !m_pAxis[nMsId1]->IsGroupMotion())
 	{
 		// MMCE0-Axis1를 Group의 Identity0로 추가
 		ms = MC_AddAxisToGroup(m_nBoardId, arnAxes[0], GroupNo, 0);
-		Sleep(30);
+		Sleep(10);
 		// MMCE0-Axis2를 Group의 Identity1로 추가
 		ms = MC_AddAxisToGroup(m_nBoardId, arnAxes[1], GroupNo, 1);
-		Sleep(30);
+		Sleep(10);
 		ms = MC_GroupEnable(m_nBoardId, GroupNo);
-		Sleep(100);
+		Sleep(30);
 
 		if (ms != MC_OK)
 		{
@@ -1950,27 +1983,36 @@ BOOL CNmcDevice::TwoStartPosMove(int nMsId0, int nMsId1, double fPos0, double fP
 			AfxMessageBox(msg);
 			return FALSE;
 		}
-		else
-		{
-			//MC_GroupReadStatus를 통해 GroupEnable 되었는지 확인
-			MC_GroupReadStatus(m_nBoardId, GroupNo, &GroupStatus);
-			if (GroupStatus & GroupStandby)
-			{
-				;
-			}
-			else
-			{
-				//GroupEnable 실패하면 Status 출력
-				msg.Format(_T("GroupEnable Fail, GroupStatus: 0x%04x"), GroupStatus);
-				AfxMessageBox(msg);
-				return FALSE;
-			}
-		}
+		//else
+		//{
+		//	//MC_GroupReadStatus를 통해 GroupEnable 되었는지 확인
+		//	MC_GroupReadStatus(m_nBoardId, GroupNo, &GroupStatus);
+		//	if (GroupStatus & GroupStandby)
+		//	{
+		//		;
+		//	}
+		//	else
+		//	{
+		//		//GroupEnable 실패하면 Status 출력
+		//		msg.Format(_T("GroupEnable Fail, GroupStatus: 0x%04x"), GroupStatus);
+		//		AfxMessageBox(msg);
+		//		return FALSE;
+		//	}
+		//}
 
 		m_bInterpolationMotion = TRUE;
 	}
 
-	Sleep(30);
+	//MC_GroupReadStatus(m_nBoardId, GroupNo, &GroupStatus);
+	//if (GroupStatus & GroupStandby)
+	//{
+	//	;
+	//}
+	//else
+	//{
+	//}
+
+	//Sleep(30);
 	// mcACS 모드만 지원, BufferMode 선택, mcTMNone 모드만 지원, TransitionParameterCount: Reserved, TransitionParameter: Reserved
 	ms = MC_MoveLinearAbsolute(m_nBoardId, GroupNo, PositionCount, ardPosVal, dVel, dAcc, dAcc, dJerk, mcACS, mcAborting, mcTMNone, 0, 0);
 	if (ms != MC_OK)
@@ -1981,7 +2023,7 @@ BOOL CNmcDevice::TwoStartPosMove(int nMsId0, int nMsId1, double fPos0, double fP
 		return FALSE;
 	}
 
-	DWORD nTick = GetTickCount();
+	nTick = GetTickCount();
 
 	while (bWait)
 	{
@@ -1998,8 +2040,7 @@ BOOL CNmcDevice::TwoStartPosMove(int nMsId0, int nMsId1, double fPos0, double fP
 		}
 		if (GetTickCount() - nTick > 30000)
 		{
-			pView->MsgBox(_T("Time out 10 seconds."));
-			//AfxMessageBox(_T("Time out 10 seconds."));
+			AfxMessageBox(_T("Time out 10 seconds."));
 			break;
 		}
 	}
@@ -2010,24 +2051,81 @@ BOOL CNmcDevice::TwoStartPosMove(int nMsId0, int nMsId1, double fPos0, double fP
 BOOL CNmcDevice::TwoStartPosMove(int nMsId0, int nMsId1, double fPos0, double fPos1, double fVelRatio, BOOL bAbs, BOOL bWait, int bMotionType, BOOL bOptimize)
 {
 	MC_STATUS ms = MC_OK;
+	UINT32 GroupStatus = 0;
+	UINT32 AxisStatus = 0;
+	UINT32 AxisStatus2 = 0;
+	UINT16 GroupNo = NMC_GROUPID_INTERPOLRATION;
+	UINT16 PositionCount = 2;	// 2축 직선보간운동
+	UINT16 nAxesNum = 2;
+	UINT16 arnAxes[2] = { nMsId0 + m_nOffsetAxisID, nMsId1 + m_nOffsetAxisID };
 
-	ms = MC_Reset(m_nBoardId, nMsId0 + m_nOffsetAxisID);
-	if (ms != MC_OK)
+	DWORD CurTimer, StartTimer;
+	MSG message;
+	CString sMsg;
+
+	DWORD nTick = GetTickCount();
+
+	if (m_pAxis[nMsId0]->IsGroupMotion() && m_pAxis[nMsId1]->IsGroupMotion())
 	{
-		CString sMsg;
-		sMsg.Format(_T("Error-MC_Reset Axis%d"), nMsId0 + m_nOffsetAxisID);
-		AfxMessageBox(sMsg);
-		return FALSE; // Error...
+		MC_GroupReadStatus(m_nBoardId, GroupNo, &GroupStatus);
+		if ( !( (GroupStatus & GroupStandby) && (GroupStatus & InPosition) ) )
+		{
+			while (TRUE)
+			{
+				MC_GroupReadStatus(m_nBoardId, GroupNo, &GroupStatus);
+				Sleep(10);
+				if (GroupStatus & InPosition)
+				{
+					MC_ReadStatus(m_nBoardId, arnAxes[0], &AxisStatus);
+					MC_ReadStatus(m_nBoardId, arnAxes[1], &AxisStatus2);
+					if ((AxisStatus & mcStandStill) > 0 && (AxisStatus2 & mcStandStill) > 0)
+					{
+						break;
+					}
+				}
+				if (GetTickCount() - nTick > 30000)
+				{
+					AfxMessageBox(_T("Time out 30 seconds."));
+					break;
+				}
+			}
+		}
+	}
+	else
+	{ 
+		StartTimer = GetTickCount();
+		CurTimer = GetTickCount();
+
+		while ((!IsMotionDone(nMsId0) || !IsMotionDone(nMsId1)) && TEN_SECOND > int(CurTimer - StartTimer))
+		{
+			CurTimer = GetTickCount();
+			Sleep(10);
+		}
+
+		if (TEN_SECOND < int(CurTimer - StartTimer))
+		{
+			sMsg.Format(_T("Error-Wait MotionDone Time Over(TEN_SECOND)."));
+			AfxMessageBox(sMsg);
+			return FALSE;
+		}
 	}
 
-	ms = MC_Reset(m_nBoardId, nMsId1 + m_nOffsetAxisID);
-	if (ms != MC_OK)
-	{
-		CString sMsg;
-		sMsg.Format(_T("Error-MC_Reset Axis%d"), nMsId1 + m_nOffsetAxisID);
-		AfxMessageBox(sMsg);
-		return FALSE; // Error...
-	}
+
+	//ms = MC_Reset(m_nBoardId, nMsId0 + m_nOffsetAxisID);
+	//if (ms != MC_OK)
+	//{
+	//	sMsg.Format(_T("Error-MC_Reset Axis%d"), nMsId0 + m_nOffsetAxisID);
+	//	AfxMessageBox(sMsg);
+	//	return FALSE; // Error...
+	//}
+
+	//ms = MC_Reset(m_nBoardId, nMsId1 + m_nOffsetAxisID);
+	//if (ms != MC_OK)
+	//{
+	//	sMsg.Format(_T("Error-MC_Reset Axis%d"), nMsId1 + m_nOffsetAxisID);
+	//	AfxMessageBox(sMsg);
+	//	return FALSE; // Error...
+	//}
 
 	double dPulse0 = GetAxis(nMsId0)->LenToPulse(fPos0);
 	double dPulse1 = GetAxis(nMsId1)->LenToPulse(fPos1);
@@ -2037,20 +2135,36 @@ BOOL CNmcDevice::TwoStartPosMove(int nMsId0, int nMsId1, double fPos0, double fP
 	double dAcc = GetAxis(nMsId0)->LenToPulse(m_pParamAxis[nMsId0].fAcc);
 	double dJerk = GetAxis(nMsId0)->LenToPulse(fSpeed / m_pParamAxis[nMsId0].fMinJerkTime);	// 0;
 
-	UINT16 nAxesNum = 2;
-	UINT16 arnAxes[2] = { nMsId0 + m_nOffsetAxisID, nMsId1 + m_nOffsetAxisID };
 	double ardPosVal[2] = { dPulse0, dPulse1 };
 	MC_DIRECTION pDirArray[2] = { mcPositiveDirection, mcPositiveDirection };
 	UINT8 ErrorStopMode = 1;	// ErrorStop이 발생할 경우 처리 방법 선택(0: Error발생축만 정지, 1: 모든축 동작 정지)
 	CString msg;
 	char cstrErrorMsg[MAX_ERR_LEN];
 
-	UINT32 GroupStatus = 0;
-	UINT32 AxisStatus = 0;
-	UINT32 AxisStatus2 = 0;
-	UINT16 GroupNo = NMC_GROUPID_INTERPOLRATION;
-	UINT16 PositionCount = 2;	// 2축 직선보간운동
+	if (!m_pAxis[nMsId0]->IsGroupMotion() || !m_pAxis[nMsId1]->IsGroupMotion())
+	{
+		// MMCE0-Axis1를 Group의 Identity0로 추가
+		ms = MC_AddAxisToGroup(m_nBoardId, arnAxes[0], GroupNo, 0);
+		Sleep(100);
+		// MMCE0-Axis2를 Group의 Identity1로 추가
+		ms = MC_AddAxisToGroup(m_nBoardId, arnAxes[1], GroupNo, 1);
+		Sleep(100);
+		ms = MC_GroupEnable(m_nBoardId, GroupNo);
+		Sleep(300);
 
+		if (ms != MC_OK)
+		{
+			MC_GetErrorMessage(ms, MAX_ERR_LEN, cstrErrorMsg);
+			msg.Format(_T("Error :: 0x%08X, %s"), ms, cstrErrorMsg);
+			AfxMessageBox(msg);
+			return FALSE;
+		}
+
+		m_bInterpolationMotion = TRUE;
+	}
+
+
+/*
 	MC_GroupReadStatus(m_nBoardId, GroupNo, &GroupStatus);
 	if (GroupStatus & GroupStandby)
 	{
@@ -2095,6 +2209,7 @@ BOOL CNmcDevice::TwoStartPosMove(int nMsId0, int nMsId1, double fPos0, double fP
 	}
 
 	Sleep(30);
+*/
 	// mcACS 모드만 지원, BufferMode 선택, mcTMNone 모드만 지원, TransitionParameterCount: Reserved, TransitionParameter: Reserved
 	ms = MC_MoveLinearAbsolute(m_nBoardId, GroupNo, PositionCount, ardPosVal, dVel, dAcc, dAcc, dJerk, mcACS, mcAborting, mcTMNone, 0, 0);
 	if (ms != MC_OK)
@@ -2105,7 +2220,8 @@ BOOL CNmcDevice::TwoStartPosMove(int nMsId0, int nMsId1, double fPos0, double fP
 		return FALSE;
 	}
 
-	DWORD nTick = GetTickCount();
+	//DWORD nTick = GetTickCount();
+	nTick = GetTickCount();
 
 	while (bWait)
 	{
@@ -2122,8 +2238,7 @@ BOOL CNmcDevice::TwoStartPosMove(int nMsId0, int nMsId1, double fPos0, double fP
 		}
 		if (GetTickCount() - nTick > 30000)
 		{
-			pView->MsgBox(_T("Time out 10 seconds."));
-			//AfxMessageBox(_T("Time out 10 seconds."));
+			AfxMessageBox(_T("Time out 10 seconds."));
 			break;
 		}
 	}
@@ -2185,8 +2300,10 @@ BOOL CNmcDevice::IsHomeDone()
 {
 	BOOL bAllHome = TRUE;
 
-	int nTotMs = m_nTotalMotion;
-	for (int i = 0; i<nTotMs; i++)
+	//int nTotMs = m_nTotalMotion;
+	//for (int i = 0; i<nTotMs; i++)
+	int nTotAxis = m_nTotalAxis;
+	for (int i = 0; i<nTotAxis; i++)
 	{
 		if (m_pAxis[i]->m_bHomeThreadAlive && m_pParamMotion[i].Home.bAct)
 			bAllHome = FALSE;
@@ -2355,8 +2472,7 @@ double CNmcDevice::GetSCurveVelocity(double dLen, double &dVel, double &dAcc, do
 			}
 			else
 			{
-				pView->MsgBox(_T("Calculation Error at Speed profile of S-Curve motion"));
-				//AfxMessageBox(_T("Calculation Error at Speed profile of S-Curve motion"));
+				AfxMessageBox(_T("Calculation Error at Speed profile of S-Curve motion"));
 			}
 		}
 	} while (1);
@@ -2507,6 +2623,101 @@ BOOL CNmcDevice::IsEnable(int nMsId)
 BOOL CNmcDevice::IsServoOn(int nMotorID)
 {
 	return IsEnable(nMotorID);
+}
+
+BOOL CNmcDevice::CheckNmcConnection() // TRUE: OK , FALSE: Error
+{
+	MC_STATUS mc;
+	UINT16 devicecount = 0;
+	UINT16 workingcount = 0;
+	UINT8  statusall = 0;
+
+	mc = SlaveGetCurStateAll(m_nBoardId, &devicecount, &workingcount, &statusall);
+	if (mc == MC_OK)
+	{
+		if (devicecount != workingcount || statusall != STATUS_COMBINATION_8)	// 반드시 전체 OP 상태도 체크해야 한다.	
+		{
+			UINT16* DeviceIDArray = new UINT16[devicecount];
+			MasterGetDeviceID(m_nBoardId, DeviceIDArray);
+			UINT8 data = 0;
+			//문제 발생 시 개별 디바이스의 상태를 확인 하고 로깅 한다.
+			for (int i = 0; i < (int)devicecount; i++)
+			{
+				SlaveGetCurState(m_nBoardId, DeviceIDArray[i], &data);
+				if (data != (byte)eST_OP)
+				{
+					CString strData;
+					strData.Format(_T("Ethercat Device:%d is not op, detect fault %d"), DeviceIDArray[i], data);
+					SaveLog(strData);
+				}
+			}
+
+			return FALSE; // Slave 이상 감지
+		}
+	}
+
+	return TRUE;
+}
+
+void CNmcDevice::SaveLog(CString strMsg)
+{
+	CSafeLock lock(&m_csLogLock);
+
+	TCHAR szFile[MAX_PATH] = { 0, };
+	TCHAR szPath[MAX_PATH] = { 0, };
+	TCHAR* pszPos = NULL;
+	CFileOperation fileOp(GetWindowVersion());
+	GetModuleFileName(NULL, szPath, MAX_PATH);
+	pszPos = _tcsrchr(szPath, '\\');
+	*pszPos = NULL;
+
+	_stprintf(szPath, _T("C:\\R2RSet\\Log"));
+	fileOp.DoCreateFolder(szPath, NULL);
+	COleDateTime time = COleDateTime::GetCurrentTime();
+
+	_stprintf(szFile, _T("%s\\%s.txt"), szPath, COleDateTime::GetCurrentTime().Format(_T("%Y%m%d")));
+
+	CString strDate;
+	CString strContents;
+
+	CTime now;
+	strDate.Format(_T("%s: "), COleDateTime::GetCurrentTime().Format(_T("%Y/%m/%d %H:%M:%S")));
+
+
+	strContents = strDate;
+	strContents += strMsg;
+	strContents += _T("\r\n");
+	CFile file;
+
+	CFileFind finder;
+	BOOL bFound = FALSE;
+	if (finder.FindFile(szFile))
+		bFound = TRUE;
+
+	if (file.Open(szFile, CFile::modeCreate | CFile::modeNoTruncate | CFile::modeWrite | CFile::shareDenyNone) == 0)
+		return;
+
+	file.SeekToEnd();
+
+	if (!bFound)
+	{
+#ifdef UNICODE
+		USHORT uBOM = 0xfeff;
+
+		WORD MASK = 0xfeff;
+		file.Write(&MASK, sizeof(WORD));
+#endif
+	}
+
+	file.Write(strContents, strContents.GetLength() * sizeof(TCHAR));
+
+	file.Flush();
+	file.Close();
+}
+
+tpOs CNmcDevice::GetWindowVersion()
+{
+	return m_cWindowVersionCollect.GetOsInfo();
 }
 
 #endif	// #ifdef USE_NMC
