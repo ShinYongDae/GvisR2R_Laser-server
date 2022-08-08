@@ -2530,19 +2530,21 @@ void CDlgMenu01::DispRunTime()
 	if(!sPrev.IsEmpty())
 	{
 		GetDlgItem(IDC_STC_LOT_RUN)->GetWindowText(sPrev);
-		if(sPrev != str)
+		if (sPrev != str)
+		{
 			myStcData[22].SetText(str);
-	}
 
 #ifdef USE_ENGRAVE
-	if (pView)
-	{
-		if (pView->m_pEngrave)
-		{
-			pView->m_pEngrave->SetRunTime();
+			if (pView)
+			{
+				if (pView->m_pEngrave)
+				{
+					pView->m_pEngrave->SetRunTime();
+				}
+			}
+#endif
 		}
 	}
-#endif
 }
 
 CString CDlgMenu01::GetRunTime()

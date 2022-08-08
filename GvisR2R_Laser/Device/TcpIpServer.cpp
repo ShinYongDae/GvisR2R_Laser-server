@@ -345,8 +345,9 @@ DWORD CTcpIpServer::WriteSocketData(int nClientID, SOCKET_DATA SocketData, DWORD
 	return 0;
 }
 
-BOOL CTcpIpServer::IsConnected(CString addrClient)
+BOOL CTcpIpServer::IsConnected(CString addrClient, int& nClientId)
 {
+	nClientId = -1;
 	for (int nClientID = 0; nClientID < MAX_CLIENT; nClientID++)
 	{
 		if(m_pAcceptAddr[nClientID])
@@ -354,7 +355,13 @@ BOOL CTcpIpServer::IsConnected(CString addrClient)
 			CString sIP = m_pAcceptAddr[nClientID]->GetAcceptIpAddr();
 			if (!addrClient.Compare(sIP)) // Equal
 			{
-				return IsConnected(nClientID);
+				if (IsConnected(nClientID))
+				{
+					nClientId = nClientID; 
+					return TRUE;
+				}
+
+				return FALSE;
 			}
 		}
 	}
@@ -428,4 +435,9 @@ BOOL CTcpIpServer::AddrToString(LPTSTR strAddress, struct sockaddr_in addr)
 #endif
 
 	return FALSE;
+}
+
+int CTcpIpServer::GetConnectedId()
+{
+	return m_nConnectedID;
 }

@@ -22,6 +22,7 @@ class CEngrave : public CWnd
 
 	SOCKET_DATA m_SocketData;
 	BOOL m_bAutoConnect;
+	int m_nConnectedId;
 
 	void StartServer(CString sAddr, CString sPort);
 	void StopServer();

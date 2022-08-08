@@ -40,6 +40,7 @@ CEngrave::CEngrave(CString sAddrCli, CString sAddrSvr, CString sPortSvr, CWnd* p
 	Sleep(10);
 
 	m_pThread = NULL;
+	m_nConnectedId = -1;
 }
 
 
@@ -354,7 +355,7 @@ BOOL CEngrave::SendCommand(SOCKET_DATA SocketData, BOOL bWait)
 	BOOL bRtn = TRUE;
 	SocketData.nTxPC = _Engrave;	// Server
 	SocketData.nRxPC = _Punch;		// Client
-	m_pServer->WriteCommData(SocketData, INFINITE);
+	m_pServer->WriteSocketData(m_nConnectedId, SocketData, INFINITE);
 
 	if (bWait)
 	{
@@ -394,7 +395,7 @@ BOOL CEngrave::IsConnected()
 	if (!m_pServer)
 		return FALSE;
 
-	return m_pServer->IsConnected(m_strAddrCli);
+	return m_pServer->IsConnected(m_strAddrCli, m_nConnectedId);
 	//return FALSE;
 }
 
@@ -2189,6 +2190,7 @@ void CEngrave::SetStTime()
 
 void CEngrave::SetRunTime()
 {
+	return;
 	SOCKET_DATA SocketData;
 	SocketData.nCmdCode = _SetData;
 

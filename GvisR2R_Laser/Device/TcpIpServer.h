@@ -37,7 +37,7 @@ public:
 	// General Function
 	BOOL IsConnected(int nClientID);
 	int WriteComm(int nClientID, CString sMsg);
-	BOOL IsConnected(CString addrClient);
+	BOOL IsConnected(CString addrClient, int& nClientId);
 	BOOL WriteComm(CString addrClient, CString sMsg);
 	SOCKET_DATA GetSocketData();
 	virtual int Running();
@@ -53,6 +53,8 @@ public:
 
 	void StopThread();
 	void WaitUntilThreadEnd(HANDLE hThread);
+
+	int GetConnectedId();
 
 // Generated message map functions
 protected:
