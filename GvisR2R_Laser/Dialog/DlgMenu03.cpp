@@ -2539,505 +2539,6 @@ void CDlgMenu03::SwEngraveBtn(int nCtrlID, BOOL bOn)
 #endif
 }
 
-/*
-LRESULT CDlgMenu03::OnMyBtnDown(WPARAM wPara, LPARAM lPara)
-{
-
-	int nCtrlID = (int)lPara;
-	long lData = 1;
-	
-	if(nCtrlID != IDC_CHK_33 && nCtrlID != IDC_CHK_0)		// 마킹부 정지 스위치 , 마킹부 운전 스위치
-	{
-		if(!pDoc->Status.bManual)
-		{
-			pView->DispMsg(_T("수동 모드가 아닙니다."), _T("주의"), RGB_YELLOW);
-			return 0L;
-		}
-	}
-
-	if(pView->m_pMpe)
-	{
-		switch(nCtrlID)
-		{
-		// Main
-		case IDC_CHK_34:		// 마킹부 운전준비 스위치
-			pView->m_pMpe->Write(_T("MB005503"), lData);
-			break;
-		case IDC_CHK_0:			// 마킹부 운전 스위치
-			pView->m_pMpe->Write(_T("MB005501"), lData);
-			break;
-		case IDC_CHK_1:			// 마킹부 리셋 스위치	
-			pView->m_pMpe->Write(_T("MB005504"), lData);
-			break;
-		case IDC_CHK_33:		// 마킹부 정지 스위치
-			pView->m_pMpe->Write(_T("MB005502"), lData);
-			break;
-
-		// Recoiler
-		case IDC_CHK_4:			// 리코일러 연동 온/오프 스위치
-			pView->m_pMpe->Write(_T("MB005801"), lData);
-			break;
-		case IDC_CHK_5:			// 리코일러 제품휠 정회전 스위치
-			pView->m_pMpe->Write(_T("MB00580C"), lData);
-			break;	
-		case IDC_CHK_6:			// 리코일러 제품휠 역회전 스위치
-			pView->m_pMpe->Write(_T("MB00580D"), lData);
-			break;
-		case IDC_CHK_41:		// 리코일러 제품척 클램프 스위치
-			pView->m_pMpe->Write(_T("MB00580B"), lData);
-			break;
-		case IDC_CHK_42:		// 리코일러 댄서롤 상승/하강 스위치
-			pView->m_pMpe->Write(_T("MB005802"), lData);
-			break;
-		case IDC_CHK_43:		// 리코일러 제품 이음매(상/좌) 스위치
-			pView->m_pMpe->Write(_T("MB005805"), lData);
-			break;
-		case IDC_CHK_7:			// 리코일러 제품 이음매(하/우) 스위치
-			pView->m_pMpe->Write(_T("MB005806"), lData);
-			break;
-		case IDC_CHK_8:			// 리코일러 제품 이음매 진공 스위치
-			pView->m_pMpe->Write(_T("MB00580F"), lData);
-			break;
-		case IDC_CHK_44:		// 리코일러 간지척 클램프 스위치
-			pView->m_pMpe->Write(_T("MB005808"), lData);
-			break;
-		case IDC_CHK_45:		// 리코일러 간지휠 정회전 스위치
-			pView->m_pMpe->Write(_T("MB005809"), lData);
-			break;
-		case IDC_CHK_46:		// 리코일러 간지휠 역회전 스위치
-			pView->m_pMpe->Write(_T("MB00580A"), lData);
-			break;
-		case IDC_CHK_66:		// 리코일러 Rewinder 동작 스위치
-			pView->m_pMpe->Write(_T("MB005803"), lData);
-			break;
-		case IDC_CHK_67:		// 리코일러 Rewinder 제품 & 간지 스위치
-			pView->m_pMpe->Write(_T("MB005804"), lData);
-			break;
-
-		// Marking
-		case IDC_CHK_9:			// 마킹부 연동 온/오프 스위치
-			pView->m_pMpe->Write(_T("MB005511"), lData);
-			break;
-		case IDC_CHK_10:		// 마킹부 피딩 정회전 스위치
-			pView->m_pMpe->Write(_T("MB005513"), lData);
-			break;
-		case IDC_CHK_11:		// 마킹부 피딩 역회전 스위치
-			pView->m_pMpe->Write(_T("MB005514"), lData);
-			break;
-		case IDC_CHK_12:		// 마킹부 피딩 진공 스위치
-			pView->m_pMpe->Write(_T("MB005515"), lData);
-			break;
-		case IDC_CHK_13:		// 마킹부 토크 진공 스위치
-			pView->m_pMpe->Write(_T("MB005516"), lData);
-			break;
-		case IDC_CHK_14:		// 마킹부 테이블 브로워 스위치
-			pView->m_pMpe->Write(_T("MB005512"), lData);
-			break;
-		case IDC_CHK_15:		// 마킹부 테이블 진공 스위치
-			pView->m_pMpe->Write(_T("MB005517"), lData);
-			break;
-		case IDC_CHK_51:		// 마킹부 피딩 클램프 스위치
-			pView->m_pMpe->Write(_T("MB005519"), lData);
-			break;
-		case IDC_CHK_52:		// 마킹부 텐션 클램프 스위치
-			pView->m_pMpe->Write(_T("MB00551A"), lData);
-			break;
-
-		// AOI 하면 검사	
-		case IDC_CHK_55:		// 검사부 하 연동 온/오프 스위치
-			pView->m_pMpe->Write(_T("MB005701"), lData);
-			break;
-		case IDC_CHK_56:		// 검사부 하 피딩 정회전 스위치
-			pView->m_pMpe->Write(_T("MB005703"), lData);
-			break;
-		case IDC_CHK_57:		// 검사부 하 피딩 역회전 스위치
-			pView->m_pMpe->Write(_T("MB005704"), lData);
-			break;
-		case IDC_CHK_58:		// 검사부 하 피딩 진공 스위치
-			pView->m_pMpe->Write(_T("MB005705"), lData);
-			break;
-		case IDC_CHK_59:		// 검사부 하 토크 진공 스위치
-			pView->m_pMpe->Write(_T("MB005706"), lData);
-			break;
-		case IDC_CHK_60:		// 검사부 하 테이블 브로워 스위치
-			pView->m_pMpe->Write(_T("MB005702"), lData);
-			break;
-		case IDC_CHK_61:		// 검사부 하 테이블 진공 스위치
-			pView->m_pMpe->Write(_T("MB005707"), lData);
-			break;
-		case IDC_CHK_64:		// 검사부 하 피딩 클램프 스위치
-			pView->m_pMpe->Write(_T("MB005709"), lData);
-			break;
-		case IDC_CHK_65:		// 검사부 하 텐션 클램프 스위치
-			pView->m_pMpe->Write(_T("MB00570A"), lData);
-			break;
-
-		// AOI 상면 검사
-		case IDC_CHK_17:		// 검사부 상 연동 온/오프 스위치
-			pView->m_pMpe->Write(_T("MB005601"), lData);
-			break;
-		case IDC_CHK_18:		// 검사부 상 피딩 정회전 스위치
-			pView->m_pMpe->Write(_T("MB005603"), lData);
-			break;
-		case IDC_CHK_19:		// 검사부 상 피딩 역회전 스위치
-			pView->m_pMpe->Write(_T("MB005604"), lData);
-			break;
-		case IDC_CHK_20:		// 검사부 상 피딩 진공 스위치
-			pView->m_pMpe->Write(_T("MB005605"), lData);
-			break;
-		case IDC_CHK_21:		// 검사부 상 토크 진공 스위치
-			pView->m_pMpe->Write(_T("MB005606"), lData);
-			break;
-		case IDC_CHK_22:		// 검사부 상 테이블 브로워 스위치
-			pView->m_pMpe->Write(_T("MB005602"), lData);
-			break;
-		case IDC_CHK_23:		// 검사부 상 테이블 진공 스위치
-			pView->m_pMpe->Write(_T("MB005607"), lData);
-			break;
-		case IDC_CHK_53:		// 검사부 상 피딩 클램프 스위치
-			pView->m_pMpe->Write(_T("MB005609"), lData);
-			break;
-		case IDC_CHK_54:		// 검사부 상 텐션 클램프 스위치
-			pView->m_pMpe->Write(_T("MB00560A"), lData);
-			break;
-
-		// Uncoiler
-		case IDC_CHK_25:		// 언코일러 연동 온/오프 스위치
-			pView->m_pMpe->Write(_T("MB005401"), lData);
-			break;
-		case IDC_CHK_26:		// 언코일러 제품휠 정회전 스위치
-			pView->m_pMpe->Write(_T("MB00540C"), lData);
-			break;
-		case IDC_CHK_27:		// 언코일러 제품휠 역회전 스위치
-			pView->m_pMpe->Write(_T("MB00540D"), lData);
-			break;
-		case IDC_CHK_35:		// 언코일러 제품척 클램프 스위치
-			pView->m_pMpe->Write(_T("MB00540B"), lData);
-			break;
-		case IDC_CHK_28:		// 언코일러 댄서롤 상승/하강 스위치
-			pView->m_pMpe->Write(_T("MB005402"), lData);
-			break;
-		case IDC_CHK_30:		// 언코일러 제품 이음매(상/좌) 스위치
-			pView->m_pMpe->Write(_T("MB005405"), lData);
-			break;
-		case IDC_CHK_37:		// 언코일러 제품 이음매(하/우) 스위치
-			pView->m_pMpe->Write(_T("MB005406"), lData);
-			break;
-		case IDC_CHK_38:		// 언코일러 제품 이음매 진공 스위치
-			pView->m_pMpe->Write(_T("MB00540F"), lData);
-			break;
-		case IDC_CHK_31:		// 언코일러 간지척 클램프 스위치
-			pView->m_pMpe->Write(_T("MB005408"), lData);
-			break;
-		case IDC_CHK_32:		// 언코일러 간지휠 정회전 스위치
-			pView->m_pMpe->Write(_T("MB005409"), lData);
-			break;
-		case IDC_CHK_39:		// 언코일러 간지휠 역회전 스위치
-			pView->m_pMpe->Write(_T("MB00540A"), lData);
-			break;
-		case IDC_CHK_29:		// 언코일러 클린롤러 상승/하강 스위치
-			pView->m_pMpe->Write(_T("MB005403"), lData);
-			break;
-		case IDC_CHK_36:		// 언코일러 클린롤러누름 상승/하강 스위치
-			pView->m_pMpe->Write(_T("MB005404"), lData);
-			break;
-	
-		// Torque Motor
-		case IDC_CHK_2:		// 마킹부 텐션 ON (PC가 ON/OFF시킴)
-			//if(!(pDoc->m_pMpeSignal[4] & (0x01<<5)))
-			//{
-			//	pDoc->WorkingInfo.Motion.bMkTq = TRUE;
-			//	pView->m_pMpe->Write(_T("MB440155"), 1);
-			//}
-			//else
-			//{
-			//	pDoc->WorkingInfo.Motion.bMkTq = FALSE;
-			//	pView->m_pMpe->Write(_T("MB440155"), 0);
-			//}
-			break;
-		case IDC_CHK_3:		// 검사부 텐션 ON (PC가 ON/OFF시킴)
-			//if(!(pDoc->m_pMpeSignal[4] & (0x01<<6)))
-			//{
-			//	pDoc->WorkingInfo.Motion.bAoiTq = TRUE;
-			//	pView->m_pMpe->Write(_T("MB440156"), 1);
-			//}
-			//else
-			//{
-			//	pDoc->WorkingInfo.Motion.bAoiTq = FALSE;
-			//	pView->m_pMpe->Write(_T("MB440156"), 0);
-			//}
-			break;
-		case IDC_CHK_84:	// 각인부 텐션 ON (PC가 ON/OFF시킴)
-			//if(!(pDoc->m_pMpeSignal[4] & (0x01<<4)))
-			//{
-			//	pDoc->WorkingInfo.Motion.bEngraveTq = TRUE;
-			//	pView->m_pMpe->Write(_T("MB440154"), 1);
-			//}
-			//else
-			//{
-			//	pDoc->WorkingInfo.Motion.bEngraveTq = FALSE;
-			//	pView->m_pMpe->Write(_T("MB440154"), 0);
-			//}
-			break;
-
-		// [One Metal]
-		case IDC_CHK_68:
-			pView->SetTwoMetal(FALSE, TRUE);
-			break;
-
-		// [Two Metal]
-		case IDC_CHK_69:
-			pView->SetTwoMetal(TRUE, TRUE);
-			break;
-
-		// [Core 150mm] - Recoiler
-		case IDC_CHK_70:
-			SetCore150mmRecoiler(TRUE);
-			break;
-
-		// [Core 150mm] - Uncoiler
-		case IDC_CHK_71:
-			SetCore150mmUncoiler(TRUE);
-			break;
-		}
-	}
-
-// 	SwMyBtnDown(nCtrlID);
-	return 0L;
-}
-
-LRESULT CDlgMenu03::OnMyBtnUp(WPARAM wPara, LPARAM lPara)
-{
-	int nCtrlID = (int)lPara;
-	long lData = 0;
-
-	if(nCtrlID != IDC_CHK_33 && nCtrlID != IDC_CHK_0)		// 마킹부 정지 스위치 , 마킹부 운전 스위치
-	{
-		if(!pDoc->Status.bManual)
-			return 0L;
-	}
-
-	if(pView->m_pMpe)
-	{
-		switch(nCtrlID)
-		{
-		// Main
-		case IDC_CHK_34:		// 마킹부 운전준비 스위치
-			pView->m_pMpe->Write(_T("MB005503"), lData);
-			break;
-		case IDC_CHK_0:			// 마킹부 운전 스위치
-			pView->m_pMpe->Write(_T("MB005501"), lData);
-			break;
-		case IDC_CHK_1:			// 마킹부 리셋 스위치	
-			pView->m_pMpe->Write(_T("MB005504"), lData);
-			break;
-		case IDC_CHK_33:		// 마킹부 정지 스위치
-			pView->m_pMpe->Write(_T("MB005502"), lData);
-			break;
-
-		// Recoiler
-		case IDC_CHK_4:			// 리코일러 연동 온/오프 스위치
-			pView->m_pMpe->Write(_T("MB005801"), lData);
-			break;
-		case IDC_CHK_5:			// 리코일러 제품휠 정회전 스위치
-			pView->m_pMpe->Write(_T("MB00580C"), lData);
-			break;	
-		case IDC_CHK_6:			// 리코일러 제품휠 역회전 스위치
-			pView->m_pMpe->Write(_T("MB00580D"), lData);
-			break;
-		case IDC_CHK_41:		// 리코일러 제품척 클램프 스위치
-			pView->m_pMpe->Write(_T("MB00580B"), lData);
-			break;
-		case IDC_CHK_42:		// 리코일러 댄서롤 상승/하강 스위치
-			pView->m_pMpe->Write(_T("MB005802"), lData);
-			break;
-		case IDC_CHK_43:		// 리코일러 제품 이음매(상/좌) 스위치
-			pView->m_pMpe->Write(_T("MB005805"), lData);
-			break;
-		case IDC_CHK_7:			// 리코일러 제품 이음매(하/우) 스위치
-			pView->m_pMpe->Write(_T("MB005806"), lData);
-			break;
-		case IDC_CHK_8:			// 리코일러 제품 이음매 진공 스위치
-			pView->m_pMpe->Write(_T("MB00580F"), lData);
-			break;
-		case IDC_CHK_44:		// 리코일러 간지척 클램프 스위치
-			pView->m_pMpe->Write(_T("MB005808"), lData);
-			break;
-		case IDC_CHK_45:		// 리코일러 간지휠 정회전 스위치
-			pView->m_pMpe->Write(_T("MB005809"), lData);
-			break;
-		case IDC_CHK_46:		// 리코일러 간지휠 역회전 스위치
-			pView->m_pMpe->Write(_T("MB00580A"), lData);
-			break;
-		case IDC_CHK_66:		// 리코일러 Rewinder 동작 스위치
-			pView->m_pMpe->Write(_T("MB005803"), lData);
-			break;
-		case IDC_CHK_67:		// 리코일러 Rewinder 제품 & 간지 스위치
-			pView->m_pMpe->Write(_T("MB005804"), lData);
-			break;
-
-		// Marking
-		case IDC_CHK_9:			// 마킹부 연동 온/오프 스위치
-			pView->m_pMpe->Write(_T("MB005511"), lData);
-			break;
-		case IDC_CHK_10:		// 마킹부 피딩 정회전 스위치
-			pView->m_pMpe->Write(_T("MB005513"), lData);
-			break;
-		case IDC_CHK_11:		// 마킹부 피딩 역회전 스위치
-			pView->m_pMpe->Write(_T("MB005514"), lData);
-			break;
-		case IDC_CHK_12:		// 마킹부 피딩 진공 스위치
-			pView->m_pMpe->Write(_T("MB005515"), lData);
-			break;
-		case IDC_CHK_13:		// 마킹부 토크 진공 스위치
-			pView->m_pMpe->Write(_T("MB005516"), lData);
-			break;
-		case IDC_CHK_14:		// 마킹부 테이블 브로워 스위치
-			pView->m_pMpe->Write(_T("MB005512"), lData);
-			break;
-		case IDC_CHK_15:		// 마킹부 테이블 진공 스위치
-			pView->m_pMpe->Write(_T("MB005517"), lData);
-			break;
-		case IDC_CHK_51:		// 마킹부 피딩 클램프 스위치
-			pView->m_pMpe->Write(_T("MB005519"), lData);
-			break;
-		case IDC_CHK_52:		// 마킹부 텐션 클램프 스위치
-			pView->m_pMpe->Write(_T("MB00551A"), lData);
-			break;
-
-		// AOI 하면 검사	
-		case IDC_CHK_55:		// 검사부 하 연동 온/오프 스위치
-			pView->m_pMpe->Write(_T("MB005701"), lData);
-			break;
-		case IDC_CHK_56:		// 검사부 하 피딩 정회전 스위치
-			pView->m_pMpe->Write(_T("MB005703"), lData);
-			break;
-		case IDC_CHK_57:		// 검사부 하 피딩 역회전 스위치
-			pView->m_pMpe->Write(_T("MB005704"), lData);
-			break;
-		case IDC_CHK_58:		// 검사부 하 피딩 진공 스위치
-			pView->m_pMpe->Write(_T("MB005705"), lData);
-			break;
-		case IDC_CHK_59:		// 검사부 하 토크 진공 스위치
-			pView->m_pMpe->Write(_T("MB005706"), lData);
-			break;
-		case IDC_CHK_60:		// 검사부 하 테이블 브로워 스위치
-			pView->m_pMpe->Write(_T("MB005702"), lData);
-			break;
-		case IDC_CHK_61:		// 검사부 하 테이블 진공 스위치
-			pView->m_pMpe->Write(_T("MB005707"), lData);
-			break;
-		case IDC_CHK_64:		// 검사부 하 피딩 클램프 스위치
-			pView->m_pMpe->Write(_T("MB005709"), lData);
-			break;
-		case IDC_CHK_65:		// 검사부 하 텐션 클램프 스위치
-			pView->m_pMpe->Write(_T("MB00570A"), lData);
-			break;
-
-		// AOI 상면 검사
-		case IDC_CHK_17:		// 검사부 상 연동 온/오프 스위치
-			pView->m_pMpe->Write(_T("MB005601"), lData);
-			break;
-		case IDC_CHK_18:		// 검사부 상 피딩 정회전 스위치
-			pView->m_pMpe->Write(_T("MB005603"), lData);
-			break;
-		case IDC_CHK_19:		// 검사부 상 피딩 역회전 스위치
-			pView->m_pMpe->Write(_T("MB005604"), lData);
-			break;
-		case IDC_CHK_20:		// 검사부 상 피딩 진공 스위치
-			pView->m_pMpe->Write(_T("MB005605"), lData);
-			break;
-		case IDC_CHK_21:		// 검사부 상 토크 진공 스위치
-			pView->m_pMpe->Write(_T("MB005606"), lData);
-			break;
-		case IDC_CHK_22:		// 검사부 상 테이블 브로워 스위치
-			pView->m_pMpe->Write(_T("MB005602"), lData);
-			break;
-		case IDC_CHK_23:		// 검사부 상 테이블 진공 스위치
-			pView->m_pMpe->Write(_T("MB005607"), lData);
-			break;
-		case IDC_CHK_53:		// 검사부 상 피딩 클램프 스위치
-			pView->m_pMpe->Write(_T("MB005609"), lData);
-			break;
-		case IDC_CHK_54:		// 검사부 상 텐션 클램프 스위치
-			pView->m_pMpe->Write(_T("MB00560A"), lData);
-			break;
-
-		// Uncoiler
-		case IDC_CHK_25:		// 언코일러 연동 온/오프 스위치
-			pView->m_pMpe->Write(_T("MB005401"), lData);
-			break;
-		case IDC_CHK_26:		// 언코일러 제품휠 정회전 스위치
-			pView->m_pMpe->Write(_T("MB00540C"), lData);
-			break;
-		case IDC_CHK_27:		// 언코일러 제품휠 역회전 스위치
-			pView->m_pMpe->Write(_T("MB00540D"), lData);
-			break;
-		case IDC_CHK_35:		// 언코일러 제품척 클램프 스위치
-			pView->m_pMpe->Write(_T("MB00540B"), lData);
-			break;
-		case IDC_CHK_28:		// 언코일러 댄서롤 상승/하강 스위치
-			pView->m_pMpe->Write(_T("MB005402"), lData);
-			break;
-		case IDC_CHK_30:		// 언코일러 제품 이음매(상/좌) 스위치
-			pView->m_pMpe->Write(_T("MB005405"), lData);
-			break;
-		case IDC_CHK_37:		// 언코일러 제품 이음매(하/우) 스위치
-			pView->m_pMpe->Write(_T("MB005406"), lData);
-			break;
-		case IDC_CHK_38:		// 언코일러 제품 이음매 진공 스위치
-			pView->m_pMpe->Write(_T("MB00540F"), lData);
-			break;
-		case IDC_CHK_31:		// 언코일러 간지척 클램프 스위치
-			pView->m_pMpe->Write(_T("MB005408"), lData);
-			break;
-		case IDC_CHK_32:		// 언코일러 간지휠 정회전 스위치
-			pView->m_pMpe->Write(_T("MB005409"), lData);
-			break;
-		case IDC_CHK_39:		// 언코일러 간지휠 역회전 스위치
-			pView->m_pMpe->Write(_T("MB00540A"), lData);
-			break;
-		case IDC_CHK_29:		// 언코일러 클린롤러 상승/하강 스위치
-			pView->m_pMpe->Write(_T("MB005403"), lData);
-			break;
-		case IDC_CHK_36:		// 언코일러 클린롤러누름 상승/하강 스위치
-			pView->m_pMpe->Write(_T("MB005404"), lData);
-			break;
-	
-// 		// Torque Motor
-// 		case IDC_CHK_2:		// 마킹부 텐션 ON (PC가 ON/OFF시킴)
-// 			pView->m_pMpe->Write(_T("MB440155"), lData);
-// 			break;
-// 		case IDC_CHK_3:		// 검사부 텐션 ON (PC가 ON/OFF시킴)
-// 			pView->m_pMpe->Write(_T("MB440156"), lData);
-// 			break;
-
-		// [One Metal]
-		case IDC_CHK_68:
-			pView->SetTwoMetal(FALSE, FALSE);
-			break;
-
-		// [Two Metal]
-		case IDC_CHK_69:
-			pView->SetTwoMetal(TRUE, FALSE);
-			break;
-
-		// [Core 150mm] - Recoiler
-		case IDC_CHK_70:
-			SetCore150mmRecoiler(FALSE);
-			break;
-
-		// [Core 150mm] - Uncoiler
-		case IDC_CHK_71:
-			SetCore150mmUncoiler(FALSE);
-			break;
-		}
-	}
-//	SwMyBtnUp(nCtrlID);
-	return 0L;
-}
-*/
-
 BOOL CDlgMenu03::GetCw() 
 {
 	if(!pDoc->m_pMpeIo)
@@ -3347,9 +2848,6 @@ BOOL CDlgMenu03::GetEngraveTq()
 {
 	return (pDoc->WorkingInfo.Motion.bEngraveTq);
 }
-
-
-
 
 void CDlgMenu03::SetMkTq(BOOL bOn)
 {
@@ -3752,7 +3250,6 @@ void CDlgMenu03::SwReset()
 	pView->m_bSwReset = TRUE;
 }
 
-
 // [Torque Motor]
 void CDlgMenu03::SwMkTq(BOOL bOn)
 {
@@ -3792,7 +3289,6 @@ void CDlgMenu03::SwEngraveTq(BOOL bOn)
 {
 	SetEngraveTq(bOn);
 }
-
 
 // [Marking]
 void CDlgMenu03::SwMkRelation(BOOL bOn) 
@@ -4101,7 +3597,6 @@ void CDlgMenu03::SwBufRolSol()
 // 	else
 // 		pDoc->m_pSliceIo[6] |= (0x01<<6);						
 }
-
 
 // [AOI]
 void CDlgMenu03::SwAoiRelation(BOOL bOn) 
@@ -4497,7 +3992,6 @@ void CDlgMenu03::SwAoiTqClp()
 // 		pDoc->m_pSliceIo[9] |= (0x01<<9);						
 }
 
-
 // [Uncoiler]
 void CDlgMenu03::SwUcRelation(BOOL bOn) 
 {
@@ -4725,7 +4219,6 @@ void CDlgMenu03::SwUcReelChuck()
 // 		pDoc->m_pMpeIo[8] |= (0x01<<11);						
 }
 
-
 // [Recoiler]
 void CDlgMenu03::SwRcRelation(BOOL bOn) 
 {
@@ -4929,7 +4422,6 @@ void CDlgMenu03::OnChk24()
 		SetMkOnePnl(!bOn);
 		SetEngraveOnePnl(!bOn);
 }
-
 
 BOOL CDlgMenu03::PreTranslateMessage(MSG* pMsg) 
 {
@@ -5188,7 +4680,6 @@ void CDlgMenu03::SetDualTest(BOOL bOn)
 			myBtn[65].ShowWindow(SW_HIDE);
 	}
 }
-
 
 BOOL CDlgMenu03::OnEraseBkgnd(CDC* pDC)
 {
