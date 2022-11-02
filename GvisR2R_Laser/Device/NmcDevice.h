@@ -29,6 +29,8 @@
 #include "NmcAxis.h"
 #include "BufferControl.h"
 
+#include "FileOperation.h"
+
 
 class CNmcDevice : public CWnd
 {
@@ -157,7 +159,7 @@ public:
 	int GetErrorCompensationType();
 	BOOL InitErrMap();
 	*/
-	BOOL IsInterpolationMotion(int nId);
+	BOOL IsInterpolationMotion();
 	int UnGroup2Ax(int nGroupNum);
 	void UnGroup2Ax(int nBdNum, int nGroupNum);
 

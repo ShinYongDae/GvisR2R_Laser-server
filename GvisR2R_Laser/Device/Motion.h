@@ -22,6 +22,12 @@
 class CMotion : public CWnd
 {
 	CWnd* m_pParent;
+	UINT16	m_nBoardId;
+	UINT16	m_nDevIdIoIn;
+	UINT16	m_nDevIdIoOut;
+	INT		m_nOffsetAxisID;
+	int		m_nGroupID_Interpolation[2];
+
 #ifdef USE_NMC
 	//CXmpControl *m_pMotionCard;
 	CNmcDevice *m_pMotionCard;
@@ -157,6 +163,10 @@ public:
 	//BOOL ChkCollision();
 	void GetData(long *addressActPos1, long *addressActPos2, long *addressDifferenceStored);
 
+	void WriteData(long lData);
+	void WriteBit(BYTE cBit, BOOL bOn);
+	BOOL ReadBit(BYTE cBit, BOOL bInput = TRUE);
+	unsigned long ReadAllBit(BOOL bInput);
 	void MotionAbortAll();
 	BOOL MotionAbort(int nMsId);
 

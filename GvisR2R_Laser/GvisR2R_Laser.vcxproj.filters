@@ -297,6 +297,24 @@
     <ClInclude Include="Device\EngraveDef.h">
       <Filter>Device</Filter>
     </ClInclude>
+    <ClInclude Include="type_def.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\safelock.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\Field.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\FileOperation.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\HardwareInfoDefine.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\HardwareInfoEx.h">
+      <Filter>Device</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GvisR2R_Laser.cpp">
@@ -513,6 +531,15 @@
       <Filter>Device</Filter>
     </ClCompile>
     <ClCompile Include="Device\Engrave.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\Field.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\FileOperation.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\HardwareInfoEx.cpp">
       <Filter>Device</Filter>
     </ClCompile>
   </ItemGroup>

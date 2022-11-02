@@ -1605,9 +1605,9 @@ BOOL CNmcDevice::IsListMotion()
 	return m_bListMotion;
 }
 
-BOOL CNmcDevice::IsInterpolationMotion(int nId)
+BOOL CNmcDevice::IsInterpolationMotion()
 {
-	return m_bInterpolationMotion[nId];
+	return m_bInterpolationMotion;
 }
 
 int CNmcDevice::GetAddListNum()

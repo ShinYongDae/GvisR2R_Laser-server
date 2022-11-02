@@ -232,6 +232,9 @@ protected:
 	afx_msg void OnChk2layer();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnStnClickedStcLotSrl();
+
 };
 
 //{{AFX_INSERT_LOCATION}}

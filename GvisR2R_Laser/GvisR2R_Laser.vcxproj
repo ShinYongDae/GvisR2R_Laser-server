@@ -195,6 +195,10 @@
     <ClInclude Include="Device\CEasyThread.h" />
     <ClInclude Include="Device\Engrave.h" />
     <ClInclude Include="Device\EngraveDef.h" />
+    <ClInclude Include="Device\Field.h" />
+    <ClInclude Include="Device\FileOperation.h" />
+    <ClInclude Include="Device\HardwareInfoDefine.h" />
+    <ClInclude Include="Device\HardwareInfoEx.h" />
     <ClInclude Include="Device\LibMil.h" />
     <ClInclude Include="Device\LibMilBuf.h" />
     <ClInclude Include="Device\LibMilDisp.h" />
@@ -213,6 +217,7 @@
     <ClInclude Include="Device\Render.h" />
     <ClInclude Include="Device\RGBConvert.h" />
     <ClInclude Include="Device\Rs232.h" />
+    <ClInclude Include="Device\safelock.h" />
     <ClInclude Include="Device\SocketComm.h" />
     <ClInclude Include="Device\Sr1000w.h" />
     <ClInclude Include="Device\Sr1000wDef.h" />
@@ -279,12 +284,16 @@
     <ClInclude Include="SingleInstance.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="type_def.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device\BufferControl.cpp" />
     <ClCompile Include="Device\CamIRayple.cpp" />
     <ClCompile Include="Device\CEasyThread.cpp" />
     <ClCompile Include="Device\Engrave.cpp" />
+    <ClCompile Include="Device\Field.cpp" />
+    <ClCompile Include="Device\FileOperation.cpp" />
+    <ClCompile Include="Device\HardwareInfoEx.cpp" />
     <ClCompile Include="Device\LibMil.cpp" />
     <ClCompile Include="Device\LibMilBuf.cpp" />
     <ClCompile Include="Device\LibMilDisp.cpp" />

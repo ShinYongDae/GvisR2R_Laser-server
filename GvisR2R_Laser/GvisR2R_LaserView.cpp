@@ -363,6 +363,7 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 	m_bDestroyedView = FALSE;
 	m_bContEngraveF = FALSE;
 
+	m_bStopF_Verify = FALSE;
 }
 
 CGvisR2R_LaserView::~CGvisR2R_LaserView()
@@ -505,7 +506,7 @@ CGvisR2R_LaserDoc* CGvisR2R_LaserView::GetDocument() const // 디버그되지 않은 버
 void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	int nInc = 0;//nSrl, 
+	int nInc = 0; int nSrl;
 	CString str, sMsg, sPath;
 	//BOOL bExist;
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
@@ -693,7 +694,10 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 			DispMsg(_T("H/W를 초기화합니다."), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
 			InitAct();
 			m_bStopFeeding = TRUE;
-			m_pMpe->Write(_T("MB440115"), 1); // 마킹부Feeding금지
+#ifdef USE_MPE
+			if (m_pMpe)
+				m_pMpe->Write(_T("MB440115"), 1); // 마킹부Feeding금지
+#endif
 			Sleep(300);
 			break;
 		case 16:
@@ -719,10 +723,8 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 					Sleep(300);
 				}
 
-				sMsg.Format(_T("X0(%s) , Y0(%s)\r\nX1(%s) , Y1(%s)"), m_pMotion->IsHomeDone(MS_X0) ? _T("Done") : _T("Doing"),
-					m_pMotion->IsHomeDone(MS_Y0) ? _T("Done") : _T("Doing"),
-					m_pMotion->IsHomeDone(MS_X1) ? _T("Done") : _T("Doing"),
-					m_pMotion->IsHomeDone(MS_Y1) ? _T("Done") : _T("Doing"));
+				sMsg.Format(_T("X0(%s) , Y0(%s)"), m_pMotion->IsHomeDone(MS_X0) ? _T("Done") : _T("Doing"),
+					m_pMotion->IsHomeDone(MS_Y0) ? _T("Done") : _T("Doing"));
 				DispMsg(sMsg, _T("Homming"), RGB_GREEN, 2000, TRUE);
 			}
 			else
@@ -748,7 +750,10 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 			break;
 		case 20:
 			m_bStopFeeding = FALSE;
-			m_pMpe->Write(_T("MB440115"), 0); // 마킹부Feeding금지
+#ifdef USE_MPE
+			if (m_pMpe)
+				m_pMpe->Write(_T("MB440115"), 0); // 마킹부Feeding금지
+#endif
 			m_nStepInitView++;
 			if(m_pDlgMenu02)
 				m_pDlgMenu02->SetJogSpd(_tstoi(pDoc->WorkingInfo.LastJob.sJogSpd));
@@ -1887,11 +1892,13 @@ void CGvisR2R_LaserView::Buzzer(BOOL bOn, int nCh)
 		{
 		case 0:
 			//IoWrite(_T("MB44015E"), 0); // 부저1 On  (PC가 ON, OFF) - 20141020
-			m_pMpe->Write(_T("MB44015E"), 0);
+			if (m_pMpe)
+				m_pMpe->Write(_T("MB44015E"), 0);
 			break;
 		case 1:
 			//IoWrite(_T("MB44015F"), 0); // 부저2 On  (PC가 ON, OFF) - 20141020
-			m_pMpe->Write(_T("MB44015F"), 0);
+			if (m_pMpe)
+				m_pMpe->Write(_T("MB44015F"), 0);
 			break;
 		}
 	}
@@ -7248,6 +7255,10 @@ void CGvisR2R_LaserView::DispMain(CString sMsg, COLORREF rgb)
 	stDispMain stData(sMsg, rgb);
 	m_ArrayDispMain.Add(stData);
 	m_bDispMain = TRUE;
+
+	if (sMsg == _T("정 지"))
+		m_bStopF_Verify = TRUE;
+
 	sMsg.Empty();
 	m_csDispMain.Unlock();
 }
@@ -11285,6 +11296,17 @@ BOOL CGvisR2R_LaserView::IsChkTmpStop()
 BOOL CGvisR2R_LaserView::IsVerify()
 {
 	BOOL bVerify = FALSE;
+	int nSerial0 = m_nBufUpSerial[0];
+	int nSerial1 = m_nBufUpSerial[1];
+	int nPeriod = pDoc->WorkingInfo.LastJob.nVerifyPeriod;
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+
+	if (bDualTest)
+	{
+		nSerial0 = m_nBufDnSerial[0];
+		nSerial1 = m_nBufDnSerial[1];
+	}
+
 
 	if (pDoc->WorkingInfo.LastJob.bVerify)
 	{
@@ -11292,7 +11314,18 @@ BOOL CGvisR2R_LaserView::IsVerify()
 		double dVerifyLen = _tstof(pDoc->WorkingInfo.LastJob.sVerifyLen)*1000.0;
 		// 		if(dFdLen >= dVerifyLen && dFdLen < dVerifyLen+pDoc->m_pReelMap->m_dPnlLen)
 		if (dFdLen < dVerifyLen)
-			bVerify = TRUE;
+		{
+			if (nSerial0 == 1 || nPeriod == 0 || nPeriod == 1 || nPeriod == 2 || m_bStopF_Verify)
+			{
+				m_bStopF_Verify = FALSE;
+				bVerify = TRUE;
+			}
+			else
+			{
+				if (!(nSerial0 % nPeriod) || !(nSerial1 % nPeriod))
+					bVerify = TRUE;
+			}
+		}
 		else
 		{
 			pDoc->WorkingInfo.LastJob.bVerify = FALSE;
@@ -14253,6 +14286,11 @@ void CGvisR2R_LaserView::SetTwoMetal(BOOL bSel, BOOL bOn)
 			m_pMpe->Write(_T("MB44017C"), 0);
 			::WritePrivateProfileString(_T("Last Job"), _T("Two Metal On"), _T("0"), PATH_WORKING_INFO);// IDC_CHK_TWO_METAL - Uncoiler\r정방향 ON : TRUE	
 		}
+
+#ifdef USE_ENGRAVE
+		if (pView && pView->m_pEngrave)
+			pView->m_pEngrave->SetUncoilerCcw();	//_stSigInx::_UncoilerCcw
+#endif
 	}
 	else
 	{
@@ -14268,6 +14306,11 @@ void CGvisR2R_LaserView::SetTwoMetal(BOOL bSel, BOOL bOn)
 			m_pMpe->Write(_T("MB44017D"), 0);
 			::WritePrivateProfileString(_T("Last Job"), _T("One Metal On"), _T("0"), PATH_WORKING_INFO);// IDC_CHK_ONE_METAL - Recoiler\r정방향 CW : FALSE
 		}
+
+#ifdef USE_ENGRAVE
+		if (pView && pView->m_pEngrave)
+			pView->m_pEngrave->SetRecoilerCcw();	//_stSigInx::_RecoilerCcw
+#endif
 	}
 }
 

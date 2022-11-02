@@ -752,6 +752,7 @@
 #define IDC_STC_75                      1244
 #define IDC_STC_12_22                   1245
 #define IDC_STC_76                      1245
+#define IDC_STC_199                     1245
 #define IDC_CHK_18                      1246
 #define IDC_STC_77                      1246
 #define IDC_STC_12_24                   1247
@@ -951,6 +952,7 @@
 #define IDC_STC_0_3                     1340
 #define IDC_STC_219                     1340
 #define IDC_CHK_73                      1340
+#define IDC_STC_VISION2                 1340
 #define IDC_STC_0_4                     1341
 #define IDC_STC_220                     1341
 #define IDC_CHK_74                      1341

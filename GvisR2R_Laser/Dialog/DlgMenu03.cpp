@@ -57,6 +57,9 @@ CDlgMenu03::CDlgMenu03(CWnd* pParent /*=NULL*/)
 	m_bVMoveAoiFdVac = FALSE;
 
 	m_bTIM_CHK_DONE_ENGRAVE = FALSE;
+
+	m_bTIM_CHK_DONE_ENG_BUF_HOME = FALSE;
+	m_bTIM_CHK_DONE_ENG_BUF_INIT = FALSE;
 }
 
 CDlgMenu03::~CDlgMenu03()
@@ -75,6 +78,9 @@ CDlgMenu03::~CDlgMenu03()
 	m_bTIM_SW_UC_RELATION = FALSE;
 
 	m_bTIM_CHK_DONE_ENGRAVE = FALSE;
+
+	m_bTIM_CHK_DONE_ENG_BUF_HOME = FALSE;
+	m_bTIM_CHK_DONE_ENG_BUF_INIT = FALSE;
 
 	DelImg();
 	if(m_pRect)
@@ -4832,4 +4838,22 @@ void CDlgMenu03::UpdateData()
 void CDlgMenu03::UpdateSignal()
 {
 	Disp();
+}
+
+void CDlgMenu03::ChkEngBufHomeDone()
+{
+	if (!m_bTIM_CHK_DONE_ENG_BUF_HOME)
+	{
+		m_bTIM_CHK_DONE_ENG_BUF_HOME = TRUE;
+		SetTimer(TIM_CHK_DONE_ENG_BUF_HOME, 100, NULL);
+	}
+}
+
+void CDlgMenu03::ChkEngBufInitDone()
+{
+	if (!m_bTIM_CHK_DONE_ENG_BUF_INIT)
+	{
+		m_bTIM_CHK_DONE_ENG_BUF_INIT = TRUE;
+		SetTimer(TIM_CHK_DONE_ENG_BUF_INIT, 100, NULL);
+	}
 }

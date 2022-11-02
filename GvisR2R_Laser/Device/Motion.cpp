@@ -29,6 +29,16 @@ CMotion::CMotion(CWnd* pParent)
 {
 	int i=0;
 
+	UINT16 nBoardID = NMC_DEVICE_BOARD;
+	UINT16 nDevIdIoIn = NMC_DEVICE_IOIN;
+	UINT16 nDevIdIoOut = NMC_DEVICE_IOOUT;
+
+	m_nBoardId = nBoardID;
+	m_nDevIdIoIn = nDevIdIoIn;
+	m_nDevIdIoOut = nDevIdIoOut;
+	m_nOffsetAxisID = 1;
+	m_nGroupID_Interpolation[0] = NMC_GROUPID_INTERPOLRATION;
+
 	m_pParent = pParent;
 	m_pParam = NULL; 
 
@@ -87,9 +97,11 @@ CMotion::CMotion(CWnd* pParent)
 		m_dFeedRate[i] = 1.0;
 
 	RECT rt={0,0,0,0};
-	if(!Create(NULL, NULL, WS_CHILD, rt, pParent, 0))
-		pView->MsgBox(_T("CMotion::Create() Failed!!!"));
-		//AfxMessageBox(_T("CMotion::Create() Failed!!!"));
+	if (!Create(NULL, NULL, WS_CHILD, rt, pParent, 0))
+	{
+		pView->ClrDispMsg();
+		AfxMessageBox(_T("CMotion::Create() Failed!!!"));
+	}
 
 	m_sPathMotionParam = PATH_MOTION_PARAM;
 	LoadParam();
@@ -1153,6 +1165,7 @@ BOOL CMotion::InitNmcBoard()
 
 	if (!m_pMotionCard->CheckNmcConnection())
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("이더캣 통신이 불안정합니다. 노드 끊김 감지, 이더캣 장치의 상태 및 케이블 결속 상태를 재확인하고 프로그램을 다시 실행하십시오. 프로그램이 종료됩니다"), MB_ICONSTOP | MB_SYSTEMMODAL | MB_SETFOREGROUND | MB_TOPMOST);
 		return FALSE;
 	}
@@ -1182,61 +1195,60 @@ BOOL CMotion::CreateObject()
 	return TRUE;
 }
 
-//BOOL CMotion::ReadBit(BYTE cBit, BOOL bInput)
-//{
-//	//return (m_pMotionCard->ReadBit(cBit, bInput));
-//#ifdef USE_NMC
-//	if (bInput)
-//	{
-//		return m_pMotionCard->ReadIn((long)cBit);
-//	}
-//	else
-//	{
-//		return m_pMotionCard->ReadOut((long)cBit);
-//	}
-//
-//	return FALSE;
-//#else
-//	return TRUE;
-//#endif
-//}
+BOOL CMotion::ReadBit(BYTE cBit, BOOL bInput)
+{
+	//return (m_pMotionCard->ReadBit(cBit, bInput));
+#ifdef USE_NMC
+	if (bInput)
+	{
+		return m_pMotionCard->ReadIn((long)cBit);
+	}
+	else
+	{
+		return m_pMotionCard->ReadOut((long)cBit);
+	}
 
-//unsigned long CMotion::ReadAllBit(BOOL bInput)
-//{
-//	//return (m_pMotionCard->ReadAllBit(bInput));
-//
-//	long nData;
-//
-//#ifdef USE_NMC
-//
-//	if (bInput)
-//	{
-//		m_pMotionCard->In32(&nData);
-//		return ((unsigned long)nData);
-//	}
-//	else
-//	{
-//		nData = m_pMotionCard->ReadOut();
-//		return ((unsigned long)nData);
-//	}
-//
-//#endif
-//	return 0L;
-//}
+	return FALSE;
+#else
+	return TRUE;
+#endif
+}
 
-//void CMotion::WriteData(long lData)
-//{
-//#ifdef USE_NMC
-//	m_pMotionCard->Out32(lData);
-//#endif
-//}
+unsigned long CMotion::ReadAllBit(BOOL bInput)
+{
+	//return (m_pMotionCard->ReadAllBit(bInput));
 
-//void CMotion::WriteBit(BYTE cBit, BOOL bOn)
-//{
-//#ifdef USE_NMC
-//	m_pMotionCard->OutBit((long)cBit, bOn);
-//#endif
-//}
+	long nData;
+
+#ifdef USE_NMC
+
+	if (bInput)
+	{
+		m_pMotionCard->In32(&nData);
+		return ((unsigned long)nData);
+	}
+	else
+	{
+		nData = m_pMotionCard->ReadOut();
+		return ((unsigned long)nData);
+	}
+
+#endif
+	return 0L;
+}
+void CMotion::WriteData(long lData)
+{
+#ifdef USE_NMC
+	m_pMotionCard->Out32(lData);
+#endif
+}
+
+void CMotion::WriteBit(BYTE cBit, BOOL bOn)
+{
+#ifdef USE_NMC
+	m_pMotionCard->OutBit((long)cBit, bOn);
+#endif
+}
 
 void CMotion::SetConfigure()
 {
@@ -1261,7 +1273,11 @@ void CMotion::SetMotionParam()
 BOOL CMotion::AmpReset(int nMsId)
 {
 #ifdef USE_NMC
-	//return m_pMotionCard->m_pMotion[nMsId].Clear();
+	if (nMsId == MS_X0Y0)
+	{
+		return (m_pMotionCard->GetAxis(MS_X0)->AmpFaultReset() && m_pMotionCard->GetAxis(MS_Y0)->AmpFaultReset());
+	}
+	else
 	return m_pMotionCard->GetAxis(nMsId)->AmpFaultReset();
 #else
 	return TRUE;
@@ -1271,6 +1287,9 @@ BOOL CMotion::AmpReset(int nMsId)
 BOOL CMotion::ServoOnOff(int nAxisId,BOOL bOnOff)
 {
 #ifdef USE_NMC
+	if (nAxisId == MS_X0Y0)
+		return (m_pMotionCard->GetAxis(MS_X0)->SetAmpEnable(bOnOff) && m_pMotionCard->GetAxis(MS_Y0)->SetAmpEnable(bOnOff));
+	else
 	return m_pMotionCard->GetAxis(nAxisId)->SetAmpEnable(bOnOff);
 #else
 	return TRUE;
@@ -1344,6 +1363,9 @@ BOOL CMotion::IsHomeDone(int nMotionId)
 BOOL CMotion::SetVMove(int nMotionId, double fVel, double fAcc)
 {
 #ifdef USE_NMC
+	if (nMotionId == MS_X0Y0)
+		return (m_pMotionCard->SetVMove(MS_X0, fVel, fAcc) && m_pMotionCard->SetVMove(MS_Y0, fVel, fAcc));
+	else
 	return (m_pMotionCard->SetVMove(nMotionId, fVel, fAcc));
 #else
 	return TRUE;
@@ -1353,7 +1375,18 @@ BOOL CMotion::SetVMove(int nMotionId, double fVel, double fAcc)
 BOOL CMotion::VMove(int nMotionId, int nDir)
 {	
 #ifdef USE_NMC
+	if (nMotionId == MS_X0Y0)
+		return (m_pMotionCard->VMove(MS_X0, nDir) && m_pMotionCard->VMove(MS_Y0, nDir));
+	else
+	{
+		if (nMotionId == MS_X0 || nMotionId == MS_Y0)
+		{
+			if (m_pMotionCard->IsInterpolationMotion())
+				m_pMotionCard->UnGroup2Ax(m_nBoardId, m_nGroupID_Interpolation[0]);
+		}
+
 	return (m_pMotionCard->VMove(nMotionId, nDir));
+	}
 #else
 	return TRUE;
 #endif
@@ -1362,7 +1395,18 @@ BOOL CMotion::VMove(int nMotionId, int nDir)
 BOOL CMotion::Move(int nMotionId, double *pTgtPos, BOOL bAbs, BOOL bWait)
 {	
 #ifdef USE_NMC
-	return (m_pMotionCard->Move(nMotionId, pTgtPos, bAbs, bWait));
+	if (nMotionId == MS_X0Y0)
+		return (m_pMotionCard->Move(MS_X0, pTgtPos, bAbs, bWait) && m_pMotionCard->Move(MS_Y0, pTgtPos, bAbs, bWait));
+	else
+	{
+		if (nMotionId == MS_X0 || nMotionId == MS_Y0)
+		{
+			if (m_pMotionCard->IsInterpolationMotion())
+				m_pMotionCard->UnGroup2Ax(m_nBoardId, m_nGroupID_Interpolation[0]);
+		}
+
+		return (m_pMotionCard->Move(nMotionId, pTgtPos, bAbs, bWait)); 
+	}
 #else
 	return TRUE;
 #endif
@@ -1371,6 +1415,23 @@ BOOL CMotion::Move(int nMotionId, double *pTgtPos, BOOL bAbs, BOOL bWait)
 BOOL CMotion::Move(int nMotionId, double *pTgtPos, double dRatio, BOOL bAbs, BOOL bWait)
 {	
 #ifdef USE_NMC
+	BOOL bOk = FALSE;
+	if (nMotionId == MS_X0Y0)
+	{
+		//if (m_pMotionCard->IsInterpolationMotion())
+		//	m_pMotionCard->UnGroup2Ax(m_nBoardId, m_nGroupID_Interpolation[0]);
+		bOk = m_pMotionCard->TwoStartPosMove(MS_X0, MS_Y0, pTgtPos[0], pTgtPos[1], dRatio, bAbs, bWait);
+		//if (m_pMotionCard->IsInterpolationMotion())
+		//	m_pMotionCard->UnGroup2Ax(m_nBoardId, m_nGroupID_Interpolation[0]);
+		return bOk;
+	}
+
+	if (nMotionId == MS_X0 || nMotionId == MS_Y0)
+	{
+		if (m_pMotionCard->IsInterpolationMotion())
+			m_pMotionCard->UnGroup2Ax(m_nBoardId, m_nGroupID_Interpolation[0]);
+	}
+
 	return (m_pMotionCard->Move(nMotionId, pTgtPos, dRatio, bAbs, bWait));
 #else
 	return TRUE;
@@ -1380,6 +1441,23 @@ BOOL CMotion::Move(int nMotionId, double *pTgtPos, double dRatio, BOOL bAbs, BOO
 BOOL CMotion::Move(int nMotionId, double *pTgtPos, double dSpd, double dAcc, double dDec, BOOL bAbs, BOOL bWait)
 {
 #ifdef USE_NMC
+	BOOL bOk = FALSE;
+	if (nMotionId == MS_X0Y0)
+	{
+		//if (m_pMotionCard->IsInterpolationMotion())
+		//	m_pMotionCard->UnGroup2Ax(m_nBoardId, m_nGroupID_Interpolation[0]);
+		bOk = m_pMotionCard->TwoStartPosMove(MS_X0, MS_Y0, pTgtPos[0], pTgtPos[1], dSpd, dAcc, dDec, bAbs, bWait);
+		//if (m_pMotionCard->IsInterpolationMotion())
+		//	m_pMotionCard->UnGroup2Ax(m_nBoardId, m_nGroupID_Interpolation[0]);
+		return bOk;
+	}
+
+	if (nMotionId == MS_X0 || nMotionId == MS_Y0)
+	{
+		if (m_pMotionCard->IsInterpolationMotion())
+			m_pMotionCard->UnGroup2Ax(m_nBoardId, m_nGroupID_Interpolation[0]);
+	}
+
 	return (m_pMotionCard->Move(nMotionId, pTgtPos, dSpd, dAcc, dDec, bAbs, bWait));
 #else
 	return TRUE;
@@ -1389,6 +1467,17 @@ BOOL CMotion::Move(int nMotionId, double *pTgtPos, double dSpd, double dAcc, dou
 BOOL CMotion::Move0(int nMotionId, double *pTgtPos, double dSpd, double dAcc, double dDec, BOOL bAbs, BOOL bWait)
 {
 #ifdef USE_NMC
+	BOOL bOk = FALSE;
+	if (nMotionId == MS_X0Y0)
+	{
+		//if (m_pMotionCard->IsInterpolationMotion())
+		//	m_pMotionCard->UnGroup2Ax(m_nBoardId, m_nGroupID_Interpolation[0]);
+		bOk = m_pMotionCard->TwoStartPosMove(MS_X0, MS_Y0, pTgtPos[0], pTgtPos[1], dSpd, dAcc, dDec, bAbs, bWait);
+		//if (m_pMotionCard->IsInterpolationMotion())
+		//	m_pMotionCard->UnGroup2Ax(m_nBoardId, m_nGroupID_Interpolation[0]);
+		return bOk;
+	}
+
 	return (m_pMotionCard->Move(nMotionId, pTgtPos, dSpd, dAcc, dDec, bAbs, bWait));
 #else
 	return TRUE;
@@ -1407,6 +1496,12 @@ BOOL CMotion::Move0(int nMotionId, double *pTgtPos, double dSpd, double dAcc, do
 BOOL CMotion::Move(int nMotionId, double dTgtPos, double dSpd, double dAcc, double dDec, BOOL bAbs, BOOL bWait)
 {
 #ifdef USE_NMC
+	if (nMotionId == MS_X0 || nMotionId == MS_Y0)
+	{
+		if (m_pMotionCard->IsInterpolationMotion())
+			m_pMotionCard->UnGroup2Ax(m_nBoardId, m_nGroupID_Interpolation[0]);
+	}
+
 	return (m_pMotionCard->Move(nMotionId, dTgtPos, dSpd, dAcc, dDec, bAbs, bWait));
 #else
 	return TRUE;
@@ -1416,6 +1511,9 @@ BOOL CMotion::Move(int nMotionId, double dTgtPos, double dSpd, double dAcc, doub
 BOOL CMotion::IsMotionDone(int nMotionId)
 {
 #ifdef USE_NMC
+	if (nMotionId == MS_X0Y0)
+		return (m_pMotionCard->IsMotionDone(MS_X0) && m_pMotionCard->IsMotionDone(MS_Y0));
+	else
 	return (m_pMotionCard->IsMotionDone(nMotionId));
 #else
 return TRUE;
@@ -1425,6 +1523,9 @@ return TRUE;
 BOOL CMotion::IsInPosition(int nMotionId)
 {
 #ifdef USE_NMC
+	if (nMotionId == MS_X0Y0)
+		return (m_pMotionCard->IsInPosition(MS_X0) && m_pMotionCard->IsInPosition(MS_Y0));
+	else
 	return (m_pMotionCard->IsInPosition(nMotionId));
 #else
 return TRUE;
@@ -1472,6 +1573,9 @@ BOOL CMotion::ObjectMapping()
 BOOL CMotion::Stop(int nMotionId)
 {
 #ifdef USE_NMC
+	if (nMotionId == MS_X0Y0)
+		return (m_pMotionCard->Stop(MS_X0) && m_pMotionCard->Stop(MS_Y0));
+	else
 	return (m_pMotionCard->Stop(nMotionId));
 #else
 	return TRUE;
@@ -1481,6 +1585,9 @@ BOOL CMotion::Stop(int nMotionId)
 BOOL CMotion::EStop(int nMotionId)
 {
 #ifdef USE_NMC
+	if (nMotionId == MS_X0Y0)
+		return (m_pMotionCard->EStop(MS_X0) && m_pMotionCard->EStop(MS_Y0));
+	else
 	return (m_pMotionCard->EStop(nMotionId));
 #else
 	return TRUE;
@@ -1490,6 +1597,9 @@ BOOL CMotion::EStop(int nMotionId)
 BOOL CMotion::VMoveStop(int nMotionId, int nDir)
 {
 #ifdef USE_NMC
+	if (nMotionId == MS_X0Y0)
+		return (m_pMotionCard->VMoveStop(MS_X0, nDir) && m_pMotionCard->VMoveStop(MS_Y0, nDir));
+	else
 	return (m_pMotionCard->VMoveStop(nMotionId, nDir));
 #else
 	return TRUE;
@@ -1508,6 +1618,9 @@ BOOL CMotion::IsLimit(int nMotionId, int nDir)
 BOOL CMotion::Clear(int nMotionId)
 {
 #ifdef USE_NMC
+	if (nMotionId == MS_X0Y0)
+		return (m_pMotionCard->Clear(MS_X0) && m_pMotionCard->Clear(MS_Y0));
+	else
 	return (m_pMotionCard->Clear(nMotionId));
 #else
 	return TRUE;
@@ -1656,6 +1769,11 @@ void CMotion::SetMarkOffset(double dX, double dY)
 long CMotion::GetState(int nMotionId)
 {
 #ifdef USE_NMC
+	if (nMotionId == MS_X0Y0)
+		return (m_pMotionCard->GetState(MS_X0) | m_pMotionCard->GetState(MS_Y0));
+	if (nMotionId == MS_X1Y1)
+		return (m_pMotionCard->GetState(MS_X1) | m_pMotionCard->GetState(MS_Y1));
+	else
 	return (m_pMotionCard->GetState(nMotionId));
 #else
 	return 0L;
@@ -1665,7 +1783,10 @@ long CMotion::GetState(int nMotionId)
 BOOL CMotion::Abort(int nMotionId)
 {
 #ifdef USE_NMC
-	return (m_pMotionCard->Abort(nMotionId));
+	if (nMotionId == MS_X0Y0)
+		return (m_pMotionCard->Abort(MS_X0) && m_pMotionCard->Abort(MS_Y0));
+	else
+		return (m_pMotionCard->Abort(nMotionId));
 #else
 	return TRUE;
 #endif
@@ -1683,6 +1804,9 @@ BOOL CMotion::Abort(int nMotionId)
 
 double CMotion::GetSpeedProfile(int nMode,int nAxisID,double fLength,double &fVel,double &fAcc,double &fJerk,int nSpeedType)
 {
+	if (nAxisID == MS_X0Y0)
+		nAxisID = MS_X0;
+
 	double fMotionTime,fAccTime,fVelocityTime,fSettleTime,fTotalTime;
 	
 	double fMaxVelocity = m_pParamMotor[nAxisID].fLeadPitch*(m_pParamMotor[nAxisID].fRatingSpeed/60.); // [mm/s]
@@ -1787,7 +1911,10 @@ double CMotion::GetSpeedProfile(int nMode,int nAxisID,double fLength,double &fVe
 
 double CMotion::GetSpeedProfile0(int nMode,int nAxisID,double fLength,double &fVel,double &fAcc,double &fJerk,int nSpeedType)
 {
-	double fMotionTime,fAccTime,fVelocityTime,fSettleTime,fTotalTime;
+	if (nAxisID == MS_X0Y0)
+		nAxisID = MS_X0;
+
+	double fMotionTime, fAccTime, fVelocityTime, fSettleTime, fTotalTime;
 	
 	double fMaxVelocity = m_pParamMotor[nAxisID].fLeadPitch*(m_pParamMotor[nAxisID].fRatingSpeed/60.); // [mm/s]
 	double fMaxAccel = m_pParamAxis[nAxisID].fMaxAccel; //[mm/s2]
@@ -1891,6 +2018,9 @@ double CMotion::GetSpeedProfile0(int nMode,int nAxisID,double fLength,double &fV
 
 double CMotion::GetSpeedProfile1(int nMode,int nAxisID,double fLength,double &fVel,double &fAcc,double &fJerk,int nSpeedType)
 {
+	if (nAxisID == MS_X0Y0)
+		nAxisID = MS_X0;
+
 	double fMotionTime,fAccTime,fVelocityTime,fSettleTime,fTotalTime;
 	
 	double fMaxVelocity = m_pParamMotor[nAxisID].fLeadPitch*(m_pParamMotor[nAxisID].fRatingSpeed/60.); // [mm/s]
@@ -2025,8 +2155,8 @@ double CMotion::GetSCurveVelocity(double dLen, double &dVel, double &dAcc, doubl
 			}
 			else
 			{
-				pView->MsgBox(_T("S-Curve 속도 프로파일 계산 에러"));
-				//AfxMessageBox(_T("S-Curve 속도 프로파일 계산 에러 "));
+				pView->ClrDispMsg();
+				AfxMessageBox(_T("S-Curve 속도 프로파일 계산 에러 "));
 //				AfxMessageBox(_T("Calculation Error at Speed profile of S-Curve motion"));
 			}		
 		}
@@ -2118,12 +2248,18 @@ void CMotion::SetR2RConf()
 // 
 double CMotion::GetLeadPitch(int nAxisId)
 {
+	if (nAxisId == MS_X0Y0)
+		nAxisId = MS_X0;
+
 	return (m_pParamMotor[nAxisId].fLeadPitch);
 }
 
 BOOL CMotion::IsEnable(int nMsId)
 {
 #ifdef USE_NMC
+	if (nMsId == MS_X0Y0)
+		return (m_pMotionCard->IsEnable(MS_X0) && m_pMotionCard->IsEnable(MS_Y0));
+	else
 	return (m_pMotionCard->IsEnable(nMsId));
 #else
 	return TRUE;
@@ -2133,6 +2269,9 @@ BOOL CMotion::IsEnable(int nMsId)
 BOOL CMotion::IsServoOn(int nMotorID)
 {
 #ifdef USE_NMC
+	if (nMotorID == MS_X0Y0)
+		return (m_pMotionCard->IsServoOn(MS_X0) && m_pMotionCard->IsServoOn(MS_Y0));
+	else
 	return (m_pMotionCard->IsServoOn(nMotorID));
 #else
 	return TRUE;
@@ -2157,10 +2296,12 @@ void CMotion::GetData(long *addressActPos1, long *addressActPos2, long *addressD
 	long lDiff = 0;
 #ifdef USE_NMC
 	*addressActPos1 = (long)m_pMotionCard->GetActualPosition(AXIS_X0);
-	*addressActPos2 = (long)m_pMotionCard->GetActualPosition(AXIS_X1);
+	//*addressActPos2 = (long)m_pMotionCard->GetActualPosition(AXIS_X1);
 #endif
-	*addressDifferenceStored = (lDiff = *addressActPos1 - *addressActPos2) > 0 ? lDiff : -lDiff;
+	//*addressDifferenceStored = (lDiff = *addressActPos1 - *addressActPos2) > 0 ? lDiff : -lDiff;
+	*addressDifferenceStored = (lDiff = *addressActPos1) > 0 ? lDiff : -lDiff;
 }
+
 void CMotion::MotionAbortAll()
 {
 	for (int nAxisId = 0; nAxisId < MAX_AXIS; nAxisId++)

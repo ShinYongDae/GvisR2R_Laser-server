@@ -71,6 +71,9 @@ public:
 	void StopLive();
 	int GetImgWidth();
 	int GetImgHeight();
+	BOOL GetImgSize(int &nWidth, int &nHeight);
 	void SetTriggermode(CString sTriggerMode);
+
+	BOOL OneshotGrab();
 };
 

@@ -80,6 +80,7 @@ class CLibMil : public CWnd
 	double m_dFontScaleX;
 	double m_dFontScaleY;
 
+	int m_nCamWidth, m_nCamHeight;
 	////////////////////////////////////////////////////////////////
 	
 	// Resize, Fit
@@ -117,7 +118,7 @@ class CLibMil : public CWnd
 
 // Construction
 public:
-	CLibMil(int nIdx, MIL_ID &MilSysId, HWND *hCtrl, CWnd* pParent=NULL);
+	CLibMil(int nIdx, MIL_ID &MilSysId, HWND *hCtrl, int nCamWidth, int nCamHeight, CWnd* pParent=NULL);
 	CLibMil(int nIdx, int *nPixelMode, HWND *hCtrl, CWnd* pParent=NULL);
 
 // Attributes

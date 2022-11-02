@@ -361,8 +361,9 @@ BOOL CDlgMenu02::OnInitDialog()
 
 #ifndef TEST_MODE
 	HWND hCtrlV1[4] = { 0 };
-	hCtrlV1[0] = GetDlgItem(IDC_STC_VISION)->GetSafeHwnd();
+	hCtrlV1[0] = GetDlgItem(IDC_STC_VISION2)->GetSafeHwnd();
 	pView->m_pVision[1] = new CVision(1, MilSys, hCtrlV1, this);
+	GetDlgItem(IDC_STC_VISION2)->ShowWindow(SW_HIDE);
 #endif
 
 

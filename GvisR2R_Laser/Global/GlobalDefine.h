@@ -10,7 +10,7 @@
 #endif // _MSC_VER > 1000
 
 
-#define TEST_MODE		1
+//#define TEST_MODE		1
 
 
 #ifdef TEST_MODE
@@ -51,21 +51,22 @@
 	#define	USE_NMC
 	#define	USE_MIL
 	#define	USE_LIGHT
-//	#define	USE_XMP
-	#define	USE_MPE
-	#define	USE_SMAC
-//	#define	USE_FLUCK
+	//#define	USE_XMP
+	//#define	USE_MPE
+	//#define	USE_SMAC
+	//#define	USE_FLUCK
 
 	#define USE_VISION
-//	#define	USE_IDS
-//	#define	USE_SONY
-//	#define USE_CREVIS
 	#define	USE_IRAYPLE
-	#define	USE_MDX2500
-	#define	USE_SR1000W
 
  	#define	USE_TCPIP
 	#define USE_ENGRAVE
+	#define	USE_MDX2500
+	#define	USE_SR1000W
+
+	//#define	USE_IDS
+	//#define	USE_SONY
+	//#define USE_CREVIS
 
 	#define PATH_PIN_IMG			_T("C:\\R2RSet\\Pin\\Pin.TIF")
 	#define PATH_ALIGN0_IMG			_T("C:\\R2RSet\\Align\\Align0.TIF")
@@ -74,8 +75,8 @@
 #endif
 
 
-#define MAX_MS				6	
-#define MAX_AXIS			4	
+#define MAX_MS				3	
+#define MAX_AXIS			2	
 typedef enum {MS_X0=0, MS_Y0=1, MS_X1=2, MS_Y1=3, MS_X0Y0=4, MS_X1Y1=5} MS_ID; 
 typedef enum {AXIS_X0=0, AXIS_Y0=1} AXIS_ID;	// , AXIS_X1=2, AXIS_Y1=3
 typedef enum {BTN_UP=1, BTN_DN=2} BTN_ACT; 
@@ -684,8 +685,9 @@ struct stLastJob
 	CString sJogSpd, sLotSerial; //sLightVal, 
 	BOOL bLightOn, bMkOnePnl, bAoiOnePnl, bEngraveOnePnl;
 	BOOL bVerify, bReview;
+	int nVerifyPeriod;
 	CString sVerifyLen;
-	// 	CString sDistAoiMk;
+	//CString sDistAoiMk;
 	CString sFurgeNum, sFurgeRun;
 	CString sMkLastShot;
 	CString sAoiLastShot[2]; // [Up/Dn]
@@ -726,7 +728,8 @@ struct stLastJob
 		bLightOn = FALSE; bMkOnePnl = FALSE; bAoiOnePnl = FALSE; bEngraveOnePnl = FALSE;
 		bVerify = FALSE; bReview = FALSE;
 		sVerifyLen = _T("");
-		// 		sDistAoiMk = _T("");
+		nVerifyPeriod = 0;
+		//sDistAoiMk = _T("");
 		sFurgeNum = _T(""); sFurgeRun = _T("");
 		sMkLastShot = _T("0");
 		sAoiLastShot[0] = _T("0");

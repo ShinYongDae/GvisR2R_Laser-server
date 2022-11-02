@@ -122,6 +122,7 @@ BEGIN_MESSAGE_MAP(CDlgMenu01, CDialog)
 	ON_MESSAGE(WM_MYBTN_DBLCLK, OnMyBtnDblClk)
 	ON_MESSAGE(WM_MYBTN_DOWN, OnMyBtnDown)
 	ON_MESSAGE(WM_MYBTN_UP, OnMyBtnUp)
+	ON_STN_CLICKED(IDC_STC_LOT_SRL, &CDlgMenu01::OnStnClickedStcLotSrl)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2780,8 +2781,10 @@ void CDlgMenu01::UpdateData()
 		//sVal.Format(_T("%.1f"), dLotLen / 1000.0);
 		//myStcData[11].SetText(sVal);	// 로트분리길이
 
-		if(!pDoc->m_bDoneChgLot)
-			myStcData[14].SetText(_T(""));	// 진행Lot시리얼
+		//if(!pDoc->m_bDoneChgLot)
+		//	myStcData[14].SetText(_T(""));	// 진행Lot시리얼
+		sVal.Format(_T("%d"), pDoc->WorkingInfo.LastJob.nVerifyPeriod);
+		myStcData[14].SetText(sVal);
 	}
 
 	myStcData[11].SetText(pDoc->WorkingInfo.LastJob.sCustomNeedRatio);	// 고객출하수율
@@ -2832,8 +2835,11 @@ void CDlgMenu01::UpdateWorking()
 	else
 	{
 		myStcData[6].SetText(_T(""));		// 로트진행율
-		myStcData[14].SetText(_T(""));		// 진행Lot시리얼
+		//myStcData[14].SetText(_T(""));		// 진행Lot시리얼
 	}
+
+	sVal.Format(_T("%d"), pDoc->WorkingInfo.LastJob.nVerifyPeriod);
+	myStcData[14].SetText(sVal);
 
 	sVal.Format(_T("%.1f"), pView->GetTotVel());
 	myStcData[7].SetText(sVal);			// 전체속도
@@ -4601,6 +4607,49 @@ LRESULT CDlgMenu01::OnMyBtnDblClk(WPARAM wPara, LPARAM lPara)
 
 	return 0L;
 }
+/*
+void CDlgMenu01::ChkTpStop()
+{
+	BOOL bUse = !pDoc->WorkingInfo.LastJob.bTempPause;
+	Sleep(100);
+
+	if (bUse)
+	{
+#ifdef USE_MPE
+		pView->m_pMpe->Write(_T("MB440183"), 1);
+#endif
+		pView->ChkTempStop(TRUE);
+		if (!myBtn[0].GetCheck())
+		{
+			myBtn[0].SetCheck(TRUE);
+			//bUse = TRUE;
+			//pView->IoWrite(_T("MB440183", 1);	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
+		}
+	}
+	else
+	{
+#ifdef USE_MPE
+		pView->m_pMpe->Write(_T("MB440183"), 0);
+#endif
+		pView->ChkTempStop(FALSE);
+
+		if (myBtn[0].GetCheck())
+		{
+			myBtn[0].SetCheck(FALSE);
+			//bUse = FALSE;
+			//pView->IoWrite(_T("MB440183", 0);	// 일시정지사용(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
+		}
+	}
+
+	pDoc->WorkingInfo.LastJob.bTempPause = bUse;
+	if (pDoc->m_pReelMap)
+		pDoc->m_pReelMap->m_bUseTempPause = bUse;
+
+	CString sData = bUse ? _T("1") : _T("0");
+	::WritePrivateProfileString(_T("Last Job"), _T("Use Temporary Pause"), sData, PATH_WORKING_INFO);
+	this->MoveWindow(m_pRect, TRUE);
+}
+*/
 
 void CDlgMenu01::ChkTpStop()
 {
@@ -4642,4 +4691,26 @@ void CDlgMenu01::ChkTpStop()
 	CString sData = bUse ? _T("1") : _T("0");
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Temporary Pause"), sData, PATH_WORKING_INFO);
 	this->MoveWindow(m_pRect, TRUE);
+}
+
+
+void CDlgMenu01::OnStnClickedStcLotSrl()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	myStcData[14].SetBkColor(RGB_RED);
+	myStcData[14].RedrawWindow();
+
+	CPoint pt;	CRect rt;
+	GetDlgItem(IDC_STC_LOT_SRL)->GetWindowRect(&rt);
+	pt.x = rt.right; pt.y = rt.bottom;
+	ShowKeypad(IDC_STC_LOT_SRL, pt, TO_BOTTOM | TO_RIGHT);
+
+	myStcData[14].SetBkColor(RGB_WHITE);
+	myStcData[14].RedrawWindow();
+
+	CString sVal;
+	GetDlgItem(IDC_STC_LOT_SRL)->GetWindowText(sVal);
+	pDoc->WorkingInfo.LastJob.nVerifyPeriod = _ttoi(sVal);
+
+	::WritePrivateProfileString(_T("Last Job"), _T("Verify Period"), sVal, PATH_WORKING_INFO);
 }

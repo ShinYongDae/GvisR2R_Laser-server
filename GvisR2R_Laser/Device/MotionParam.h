@@ -158,6 +158,8 @@ typedef struct stMotionMotion
 	CString s2DEngLen, s2DAoiLen, s2DMkLen, s2DMoveVel, s2DMoveAcc, s2DOneShotRemainLen;
 	CString sEngAoiLen, sEngFdDiffMax, sEngFdDiffRng, sEngFdDiffNum;
 	CString sEngBuffInitPos, sEngBuffCurrPos;
+	BOOL bEngBuffJogCw, bEngBuffJogCcw, bEngBuffHomming, bEngBuffHommingDone;
+	BOOL bEngBuffInitMv, bEngBuffInitMvDone, bEngBuffInitPosSave;
 
 	stMotionMotion()
 	{
@@ -191,7 +193,11 @@ typedef struct stMotionMotion
 		sEngraveLmtFdErr = _T("");															// Feeding량 Offset보정(설비정지) 한계값 설정. [mm]
 		bStNewPrdt = FALSE; bMkTq = FALSE; bAoiTq = FALSE; bEngraveTq = FALSE;
 		sMkFdVacOff = _T(""); sAoiFdVacOff = _T("");
-		sSafeZone = _T(""); sCollisionLength = _T(""); sCollisionMargin = _T("");
+		sSafeZone = _T(""); 
+		sCollisionLength = _T(""); 
+		sCollisionMargin = _T("");
+		bEngBuffJogCw = FALSE; bEngBuffJogCcw = FALSE; bEngBuffHomming = FALSE; bEngBuffHommingDone = FALSE;
+		bEngBuffInitMv = FALSE; bEngBuffInitMvDone = FALSE; bEngBuffInitPosSave = FALSE;
 
 		for (int k = 0; k < 2; k++)
 		{

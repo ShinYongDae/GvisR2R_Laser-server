@@ -1480,6 +1480,11 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	else
 		WorkingInfo.LastJob.sVerifyLen = _T("");
 
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Verify Period"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.nVerifyPeriod = _ttoi(szData);
+	else
+		WorkingInfo.LastJob.nVerifyPeriod = 0;
+
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use Review"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.LastJob.bReview = _ttoi(szData) ? TRUE : FALSE;
 	else
@@ -3226,6 +3231,9 @@ void CGvisR2R_LaserDoc::SaveWorkingInfo()
 
 	sData = WorkingInfo.LastJob.sVerifyLen;
 	::WritePrivateProfileString(_T("Last Job"), _T("Verify Length"), sData, sPath);
+
+	sData.Format(_T("%d"), WorkingInfo.LastJob.nVerifyPeriod);
+	::WritePrivateProfileString(_T("Last Job"), _T("Verify Period"), sData, sPath);
 
 	sData.Format(_T("%d"), WorkingInfo.LastJob.bReview ? 1 : 0);
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Review"), sData, sPath);
@@ -5944,6 +5952,11 @@ void CGvisR2R_LaserDoc::SetOnePnlLen(double dLen)
 	long lData = (long)(dLen * 1000.0);
 	pView->m_pMpe->Write(_T("ML45032"), lData);	// 한 판넬 길이 (단위 mm * 1000)
 #endif
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetOnePnlLen();	//_ItemInx::_OnePnlLen
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetOnePnlLen()
@@ -6616,7 +6629,13 @@ void CGvisR2R_LaserDoc::SetTotalReelDist(double dDist)
 
 #ifdef USE_MPE
 	long lData = (long)(dDist * 1000.0);
-	pView->m_pMpe->Write(_T("ML45000"), lData);	// 전체 Reel 길이 (단위 M * 1000)
+	if (pView && pView->m_pMpe)
+		pView->m_pMpe->Write(_T("ML45000"), lData);	// 전체 Reel 길이 (단위 M * 1000)
+#endif
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetTotReelLen();	//_ItemInx::_TotReelLen
 #endif
 }
 
@@ -6640,6 +6659,11 @@ void CGvisR2R_LaserDoc::SetSeparateDist(double dDist)
 #ifdef USE_MPE
 	long lData = (long)(dDist * 1000.0);
 	pView->m_pMpe->Write(_T("ML45002"), lData);	// Lot 분리 길이 (단위 M * 1000)
+#endif
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetLotCutLen();	//_ItemInx::_SetData
 #endif
 }
 
@@ -6666,6 +6690,11 @@ void CGvisR2R_LaserDoc::SetCuttingDist(double dDist)
 
 	long lData = (long)(dDist * 1000.0);
 	pView->m_pMpe->Write(_T("ML45004"), lData);	// Lot 분리 후 절단위치 (단위 M * 1000)
+#endif
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetLotCutPosLen();	//_ItemInx::_LotCutPosLen
 #endif
 }
 

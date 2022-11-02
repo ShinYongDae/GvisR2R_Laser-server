@@ -13,12 +13,15 @@ typedef enum _stCmdCode {
 typedef enum _stSigInx {
 	// Normal
 	_Idle = 0, _Busy, _Connect,
+	// Dlg Info 
+	_DualTest, _SampleTest, _TestMode, _RecoilerCcw, _UncoilerCcw, _AlignMethode,
+	_DoorRecoiler, _DoorAoiUp, _DoorAoiDn, _DoorMk, _DoorEngrave, _DoorUncoiler, _SaftyMk, _CleannerAoiUp, _CleannerAoiDn, 
+	_UltraSonicAoiDn, _UltraSonicEngrave, _FixDef,
 	// Menu01
-	__TempStop, __LotCut, _MkPosMv, _MkVerify, _ReelmapUp, _ReelmapDn, _ReelmapTot, 
+	__TempStop, _TempPause, _LotCut, _MkPosMv, _MkVerify, _ReelmapUp, _ReelmapDn, _ReelmapTot,
 	_RemainMode, _EndWork, _ReMk, _2Layer, _1LnMk, _2LnMk, _3LnMk, _4LnMk, _TotLnMk,
 	// Menu02
-	_2DEngLenMvCw, _2DEngLenMvCcw, _2DAoiLenMvCw, _2DAoiLenMvCcw, _2DMkLenMvCw, _2DMkLenMvCcw, _2DOneShotLenCw, _2DOneShotLenCcw,
-	_EngBuffJogCw, _EngBuffJogCcw, _EngBuffOrgMv, _EngBuffInitPosMv, _EngBuffPosSave,
+	_2DEngLenMvCw, _2DEngLenMvCcw, _2DAoiLenMvCw, _2DAoiLenMvCcw, _2DMkLenMvCw, _2DMkLenMvCcw, _2DOneShotLenCw, _2DOneShotLenCcw,	
 	// Menu03
 	_Ready, _Run, _Reset, _Stop, _Auto, _OneCycle, _Manual, _MkTq, _AoiTq, _EngTq, _CcwModRe, _CcwModUn, _Core150Re, _Core150Un, 
 	_Relation, _JoinSelRe, _MvCwRe, _MvCcwRe, _PrdChuckRe, _DancerUpRe, _PasteUpLfRe, _PasteUpRtRe, _PasteVacRe, _PprChuckRe,
@@ -38,6 +41,8 @@ typedef enum _stSigInx {
 	_EmgAoi,
 	// Menu04
 	_MkResetLf, _MkResetRt, _MkBuffJogCw, _MkBuffJogCcw, _MkBuffOrgMv, _MkBuffInitPosMv, _MkBuffPosSave,
+	// Menu04 (Engrave)
+	_EngBuffJogCw, _EngBuffJogCcw, _EngBuffOrgMv, _EngBuffOrgMvDone, _EngBuffInitPosMv, _EngBuffInitPosMvDone, _EngBuffInitPosSave,
 }_SigInx;
 
 typedef enum _stPageInx {
@@ -47,13 +52,11 @@ typedef enum _stPageInx {
 typedef enum _stItemInx {
 	// Frame High
 	_MkFdDiffX = 0, _MkFdDiffY, _AoiDnFdDiffX, _AoiDnFdDiffY, _AoiUpFdDiffX, _AoiUpFdDiffY, _EgrFdDiffX, _EgrFdDiffY,
-	// Dlg Info
-	_DualTest, _SampleTest, _SampleShotNum, _TestMode, _RecoilerCcw, _UncoilerCcw, _AlignMethode,
-	_DoorRecoiler, _DoorAoiUp, _DoorAoiDn, _DoorMk, _DoorEngrave, _DoorUncoiler, _SaftyMk, _CleannerAoiUp, _CleannerAoiDn, _UltraSonicAoiDn, _UltraSonicEngrave,
-	_LmtTotYld, _LmtPatlYld, _StripOutRatio, _CustomNeedRatio, _NumRangeFixDef, _NumContFixDef, _UltraSonicStTim,
+	// Dlg Info	
+	_SampleShotNum, _LmtTotYld, _LmtPatlYld, _StripOutRatio, _CustomNeedRatio, _NumRangeFixDef, _NumContFixDef, _UltraSonicStTim,
 	// Menu01
 	_OpName, _ModelUpName, _ModelDnName, _LotUpName, _LotDnName, _LayerUpName, _LayerDnName, _OrderNum, _ShotNum, _TotReelLen, _TotOpRto, _LotOpRto,
-	_TotVel, _PartVel, _TempPause, _TempStopLen, _LotCut, _LotCutLen, _LotCutPosLen, _MkDoneLen, _AoiDnDoneLen, _AoiUpDoneLen, _LotSerial, //_MkNumLf, _MkNumRt,	
+	_TotVel, _PartVel, _TempStopLen, _LotCutLen, _LotCutPosLen, _MkDoneLen, _AoiDnDoneLen, _AoiUpDoneLen, _LotSerial, //_MkNumLf, _MkNumRt,	
 	_DefNumUp, _DefNumDn, _DefNumTot, _DefRtoUp, _DefRtoDn, _DefRtoTot, _GoodNumTot, _GoodNumUp, _GoodNumDn, _GoodRtoUp, 
 	_GoodRtoDn, _GoodRtoTot, _TestNumUp, _TestNumDn, _TestNumTot, _MkVerfyLen, _LotStTime, _LotEdTime, _LotRunTime, 	
 	_1LnGoodRtoUp, _1LnGoodRtoDn, _1LnGoodRtoTot, _2LnGoodRtoUp, _2LnGoodRtoDn, _2LnGoodRtoTot, _3LnGoodRtoUp, _3LnGoodRtoDn, 
@@ -69,9 +72,9 @@ typedef enum _stItemInx {
 	_AoiPushOffLen, _MkPushOffLen, _AoiTqVal, _MkTqVal, _AoiBuffShotNum, _AoiMkLen, _MkBuffInitPos, _MkBuffCurrPos,
 	_MkNumLf, _MkNumRt, _MkMaxNumLf, _MkMaxNumRt,
 	_MkInitPosLf, _MkInitVelLf, _MkInitAccLf, _MkFnlPosLf, _MkFnlVelLf, _MkFnlAccLf, _MkFnlTqLf,
-	_MkHgtPosX1Lf, _MkHgtPosY1Lf, _MkHgtPosX2Lf, _MkHgtPosY2Lf, _MkHgtPosX3Lf, _MkHgtPosY3Lf, _MkHgtPosX4Lf, _MkHgtPosY4Lf,
+	_MkHgtPosX1Lf, _MkHgtPosY1Lf, _MkHgtPosX2Lf, _MkHgtPosY2Lf, _MkHgtPosX3Lf, _MkHgtPosY3Lf, _MkHgtPosX4Lf, _MkHgtPosY4Lf, _MkHgtAvgPosLf,
 	_MkInitPosRt, _MkInitVelRt, _MkInitAccRt, _MkFnlPosRt, _MkFnlVelRt, _MkFnlAccRt, _MkFnlTqRt,
-	_MkHgtPosX1Rt, _MkHgtPosY1Rt, _MkHgtPosX2Rt, _MkHgtPosY2Rt, _MkHgtPosX3Rt, _MkHgtPosY3Rt, _MkHgtPosX4Rt, _MkHgtPosY4Rt,
+	_MkHgtPosX1Rt, _MkHgtPosY1Rt, _MkHgtPosX2Rt, _MkHgtPosY2Rt, _MkHgtPosX3Rt, _MkHgtPosY3Rt, _MkHgtPosX4Rt, _MkHgtPosY4Rt, _MkHgtAvgPosRt,
 }_ItemInx;
 
 typedef enum _stStatusInx {

@@ -160,6 +160,7 @@ public:
 	void SetStripOutRatio();
 	void SetCustomNeedRatio();
 	void SetNumRangeFixDef();
+	void SetFixDef();
 	void SetNumContFixDef();
 	void SetUltraSonicStTim();
 
@@ -216,6 +217,13 @@ public:
 	void SetEngFdDiffNum();
 	void SetEngBuffInitPos();
 	void SetEngBuffCurrPos();
+	void SetEngBuffUp();
+	void SetEngBuffDn();
+	void SetEngBuffHome();
+	void SetEngBuffHomeDone();
+	void SetEngBuffInitMove();
+	void SetEngBuffInitMoveDone();
+	void SetEngBuffInitPosSave();
 
 	// SetFdInfo()
 	void SetFdVel();
@@ -236,6 +244,7 @@ public:
 	// SetMkInfo()
 	void SetMkLeadPitch();
 	void SetMkPushOffLen();
+	void SetMkTqVal();
 	void SetMkBuffInitPos();
 	void SetMkBuffCurrPos();
 	void SetMkNumLf();
@@ -259,6 +268,7 @@ public:
 	void SetMkHgtPosY3Lf();
 	void SetMkHgtPosX4Lf();
 	void SetMkHgtPosY4Lf();
+	void SetMkHgtAvgPosLf();
 
 	// SetMkInfoRt()
 	void SetMkInitPosRt();
@@ -276,6 +286,7 @@ public:
 	void SetMkHgtPosY3Rt();
 	void SetMkHgtPosX4Rt();
 	void SetMkHgtPosY4Rt();
+	void SetMkHgtAvgPosRt();
 
 	// End for SetSysData()
 

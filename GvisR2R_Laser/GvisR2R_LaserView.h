@@ -367,6 +367,7 @@ public:
 
 	BOOL m_bChkBufIdx[2];
 	BOOL m_bBufHomeDone, m_bReadyDone;
+	BOOL m_bEngBufHomeDone;
 
 	unsigned long m_Flag;
 	unsigned long m_AoiLdRun;
@@ -406,6 +407,7 @@ public:
 
 	BOOL m_bCycleStop, m_bContDiffLot;
 	CString m_sDispMain;
+	BOOL m_bStopF_Verify;
 
 	BOOL m_bShowMyMsg;
 	CWnd *m_pMyMsgForeground;
