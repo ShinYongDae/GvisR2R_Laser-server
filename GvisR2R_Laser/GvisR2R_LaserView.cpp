@@ -7182,10 +7182,10 @@ void CGvisR2R_LaserView::SetMkFdPitch(double dPitch)
 {
 	pDoc->SetMkFdPitch(dPitch);
 	// 	m_pMotion->SetLeadPitch(AXIS_MKFD, dPitch);
-	long lData = long(dPitch*1000.0);
-#ifdef USE_MPE
-	pView->m_pMpe->Write(_T("ML45014"), lData); // 마킹부 Feeding 롤러 Lead Pitch
-#endif
+//	long lData = long(dPitch*1000.0);
+//#ifdef USE_MPE
+//	pView->m_pMpe->Write(_T("ML45014"), lData); // 마킹부 Feeding 롤러 Lead Pitch
+//#endif
 }
 
 void CGvisR2R_LaserView::SetBufInitPos(double dPos)

@@ -870,6 +870,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 {
 	TCHAR szData[200];
 	CString sVal, sPath = PATH_WORKING_INFO;
+	pView->ClrDispMsg();
 
 	// [System]
 
@@ -1226,6 +1227,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		AfxMessageBox(_T("SerialUp이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
 		WorkingInfo.LastJob.sSerialUp = CString(_T(""));
 	}
+
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Last SerialDn"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.LastJob.sSerialDn = CString(szData);
 	else
@@ -1552,7 +1554,6 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.LastJob.bUse2Layer = _ttoi(szData) ? TRUE : FALSE;
 	else
 		WorkingInfo.LastJob.bUse2Layer = FALSE;
-
 
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Engrave Order Num"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.LastJob.sEngraveOrderNum = CString(szData);
@@ -3023,6 +3024,11 @@ void CGvisR2R_LaserDoc::SetMkCntL(int nNum) // 1[year] = 31536000[sec]
 	sData.Format(_T("%d"), nNum);
 	WorkingInfo.Marking[0].nMkCnt = nNum;
 	::WritePrivateProfileString(_T("Marking0"), _T("Marking Count"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkNumLf();	//_ItemInx::_MkNumLf
+#endif
 }
 
 int CGvisR2R_LaserDoc::GetMkLimitL() // 1[year] = 31536000[sec]
@@ -3036,6 +3042,11 @@ void CGvisR2R_LaserDoc::SetMkLimitL(int nNum) // 1[year] = 31536000[sec]
 	sData.Format(_T("%d"), nNum);
 	WorkingInfo.Marking[0].nMkLimit = nNum;
 	::WritePrivateProfileString(_T("Marking0"), _T("Marking Limit"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkMaxNumLf();	//_ItemInx::_MkMaxNumLf
+#endif
 }
 
 int CGvisR2R_LaserDoc::GetMkCntR() // 1[year] = 31536000[sec]
@@ -3062,6 +3073,11 @@ void CGvisR2R_LaserDoc::SetMkCntR(int nNum) // 1[year] = 31536000[sec]
 	sData.Format(_T("%d"), nNum);
 	WorkingInfo.Marking[1].nMkCnt = nNum;
 	::WritePrivateProfileString(_T("Marking1"), _T("Marking Count"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkNumRt();	//_ItemInx::_MkNumRt
+#endif
 }
 
 int CGvisR2R_LaserDoc::GetMkLimitR() // 1[year] = 31536000[sec]
@@ -3075,6 +3091,11 @@ void CGvisR2R_LaserDoc::SetMkLimitR(int nNum) // 1[year] = 31536000[sec]
 	sData.Format(_T("%d"), nNum);
 	WorkingInfo.Marking[1].nMkLimit = nNum;
 	::WritePrivateProfileString(_T("Marking1"), _T("Marking Limit"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkMaxNumRt();	//_ItemInx::_MkMaxNumRt
+#endif
 }
 
 void CGvisR2R_LaserDoc::SaveWorkingInfo()
@@ -3988,6 +4009,7 @@ int CGvisR2R_LaserDoc::GetPcrIdx(int nSerial, BOOL bNewLot)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.8"));
 		return 0;
 	}
@@ -4005,6 +4027,7 @@ int CGvisR2R_LaserDoc::GetPcrIdx0(int nSerial, BOOL bNewLot)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.9"));
 		return 0;
 	}
@@ -4039,6 +4062,7 @@ int CGvisR2R_LaserDoc::GetPcrIdx1(int nSerial, BOOL bNewLot)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.10"));
 		return 0;
 	}
@@ -4073,6 +4097,7 @@ BOOL CGvisR2R_LaserDoc::GetAoiUpInfo(int nSerial, int *pNewLot, BOOL bFromBuf) /
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.11"));
 		return 0;
 	}
@@ -4104,6 +4129,7 @@ BOOL CGvisR2R_LaserDoc::GetAoiDnInfo(int nSerial, int *pNewLot, BOOL bFromBuf) /
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.12"));
 		return 0;
 	}
@@ -4172,7 +4198,8 @@ BOOL CGvisR2R_LaserDoc::GetAoiInfoUp(int nSerial, int *pNewLot, BOOL bFromBuf) /
 		FileData = (char*)calloc(nFileSize + 1, sizeof(char));
 
 		nRSize = fread(FileData, sizeof(char), nFileSize, fp);
-		strFileData.Format(_T("%s"), CharToString(FileData));
+		//strFileData.Format(_T("%s"), CharToString(FileData));
+		strFileData = CharToString(FileData);
 		fclose(fp);
 		free(FileData);
 	}
@@ -4253,6 +4280,9 @@ BOOL CGvisR2R_LaserDoc::GetAoiInfoUp(int nSerial, int *pNewLot, BOOL bFromBuf) /
 			//else
 			//{
 			WorkingInfo.LastJob.sLotUp = Status.PcrShare[0].sLot;
+			WorkingInfo.LastJob.sModelUp = Status.PcrShare[0].sModel;
+			WorkingInfo.LastJob.sLayerUp = Status.PcrShare[0].sLayer;
+
 			SetModelInfoUp();
 			pView->OpenReelmapUp(); // At Start...
 			pView->SetPathAtBufUp();
@@ -4400,6 +4430,8 @@ BOOL CGvisR2R_LaserDoc::GetAoiInfoDn(int nSerial, int *pNewLot, BOOL bFromBuf) /
 			//else
 			//{
 			WorkingInfo.LastJob.sLotDn = Status.PcrShare[1].sLot;
+			WorkingInfo.LastJob.sModelDn = Status.PcrShare[1].sModel;
+			WorkingInfo.LastJob.sLayerDn = Status.PcrShare[1].sLayer;
 			SetModelInfoDn();
 
 			pView->OpenReelmapDn(); // At Start...
@@ -4457,11 +4489,12 @@ int CGvisR2R_LaserDoc::LoadPCR0(int nSerial, BOOL bFromShare)	// return : 2(Fail
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.14"));
 		return 0;
 	}
 
-	int nRtn[2];
+	int nRtn[2] = { 1 };
 	nRtn[0] = LoadPCRUp(nSerial, bFromShare);
 	//	nRtn[1] = LoadPCRAllUp(nSerial, bFromShare);
 
@@ -4477,6 +4510,7 @@ int CGvisR2R_LaserDoc::LoadPCR1(int nSerial, BOOL bFromShare)	// return : 2(Fail
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.15"));
 		return 0;
 	}
@@ -4506,12 +4540,13 @@ int CGvisR2R_LaserDoc::LoadPCRAllUp(int nSerial, BOOL bFromShare)	// return : 2(
 	return 0;
 #endif
 
-	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	BOOL bDualTest = WorkingInfo.LastJob.bDualTest;
 	if (!bDualTest)
 		return 0;
 
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.16"));
 		return 0;
 	}
@@ -4523,7 +4558,7 @@ int CGvisR2R_LaserDoc::LoadPCRAllUp(int nSerial, BOOL bFromShare)	// return : 2(
 	{
 		str.Format(_T("PCR파일이 설정되지 않았습니다."));
 		pView->MsgBox(str);
-		// 		AfxMessageBox(strFileData);
+		//AfxMessageBox(strFileData);
 		return(2);
 	}
 
@@ -4531,13 +4566,13 @@ int CGvisR2R_LaserDoc::LoadPCRAllUp(int nSerial, BOOL bFromShare)	// return : 2(
 	{
 		str.Format(_T("PCR[2]관련 메모리가 할당되지 않았습니다."));
 		pView->MsgBox(str);
-		// 		AfxMessageBox(strFileData);
+		//AfxMessageBox(strFileData);
 		return(2);
 	}
 
 	int nIdx;
-	if (m_bNewLotShare[0] && (pDoc->WorkingInfo.LastJob.bLotSep || m_bDoneChgLot))
-		nIdx = GetPcrIdx0(nSerial, TRUE);
+	if (m_bNewLotShare[0] && (WorkingInfo.LastJob.bLotSep || m_bDoneChgLot))
+		nIdx = GetPcrIdx0(nSerial, TRUE); // 릴맵화면 표시 인덱스
 	else
 		nIdx = GetPcrIdx0(nSerial);
 
@@ -4566,19 +4601,18 @@ int CGvisR2R_LaserDoc::LoadPCRAllUp(int nSerial, BOOL bFromShare)	// return : 2(
 	// Lot
 	m_pPcr[2][nIdx]->m_sLot = m_pPcr[0][nIdx]->m_sLot;
 
-	int nTotDef[3];
-	nTotDef[0] = pDoc->m_pPcr[0][nIdx]->m_nTotDef;
-	nTotDef[1] = pDoc->m_pPcr[1][nIdx]->m_nTotDef;
-	//	nTotDef[2] = nTotDef[0] + nTotDef[1];
+	int nTotDef[3] = { 0 };									// [0]: 상면, [1]: 하면, [2]: 상/하면 Merge
+	nTotDef[0] = pDoc->m_pPcr[0][nIdx]->m_nTotDef;			// 상면 불량 피스 수
+	nTotDef[1] = pDoc->m_pPcr[1][nIdx]->m_nTotDef;			// 하면 불량 피스 수
 
 	int nTotPcs = m_Master[0].m_pPcsRgn->nTotPcs;
 	stPcrMerge *pPcrMgr = new stPcrMerge[nTotPcs];
 
-	int nComp, nPcsId;
-	if (nTotDef[0] > nTotDef[1])
-		nComp = nTotDef[0];
-	else
-		nComp = nTotDef[1];
+	//int nComp, nPcsId;
+	//if (nTotDef[0] > nTotDef[1])
+	//	nComp = nTotDef[0];
+	//else
+	//	nComp = nTotDef[1];
 
 	// 	for(i=0; i<nComp; i++)
 	// 	{
@@ -4596,83 +4630,87 @@ int CGvisR2R_LaserDoc::LoadPCRAllUp(int nSerial, BOOL bFromShare)	// return : 2(
 	// 		}
 	// 	}
 
-	for (i = 0; i < nTotDef[1]; i++)
+	int nPcsId;												// nPcsId : CamMaster Pcs Index
+															//pPcrMgr테이블의 nIdx에 하면의 불량을 먼저 기록하고 상면의 불량을 엎어서 최종 merge불량 테이블을 만듬.
+	for (i = 0; i < nTotDef[1]; i++)						// 하면 불량 피스 수
 	{
-		nPcsId = m_pPcr[1][nIdx]->m_pDefPcs[i];
-		pPcrMgr[nPcsId].nIdx = i;
-		pPcrMgr[nPcsId].nIdxDn = i; // Dn
+		nPcsId = m_pPcr[1][nIdx]->m_pDefPcs[i];				// nPcsId : CamMaster Pcs Index
+		pPcrMgr[nPcsId].nIdx = i;	// Up+Dn				// 상하면 Merge [nPcsId:CamMaster Pcs Index]의 nIdx (0~)는 불량표시순서임.
+		pPcrMgr[nPcsId].nIdxDn = i; // Dn					// 상하면 Merge [nPcsId:CamMaster Pcs Index]의 nIdxDn (0~)는 불량표시순서임.
 	}
-	for (i = 0; i < nTotDef[0]; i++)
+	for (i = 0; i < nTotDef[0]; i++)						// 상면 불량 피스 수
 	{
-		nPcsId = m_pPcr[0][nIdx]->m_pDefPcs[i];
-		pPcrMgr[nPcsId].nIdx = i;
-		pPcrMgr[nPcsId].nIdxUp = i;	// Up
+		nPcsId = m_pPcr[0][nIdx]->m_pDefPcs[i];				// nPcsId : CamMaster Pcs Index
+		pPcrMgr[nPcsId].nIdx = i;	// Up+Dn				// 상하면 Merge [nPcsId:CamMaster Pcs Index]의 nIdx (0~)는 불량표시순서임.
+		pPcrMgr[nPcsId].nIdxUp = i;	// Up					// 상하면 Merge [nPcsId:CamMaster Pcs Index]의 nIdxUp (0~)는 불량표시순서임.
 	}
 
 
 	nTotDef[2] = 0;
-	for (i = 0; i < nTotPcs; i++)
+	for (i = 0; i < nTotPcs; i++)							// Shot내 총 Piece수
 	{
-		if (pPcrMgr[i].nIdx > -1)
-			nTotDef[2]++;
+		if (pPcrMgr[i].nIdx > -1)	// Up+Dn				// 상하면 Merge [i:CamMaster Pcs Index]의 nIdx (0~)는 불량표시순서임.
+			nTotDef[2]++;									// 상 / 하면 Merge한 총 불량피스수.
 	}
 
-	m_pPcr[2][nIdx]->Init(nSerial, nTotDef[2]);
+	m_pPcr[2][nIdx]->Init(nSerial, nTotDef[2]);				// 제품시리얼, Shot내 총불량 피스수
 
-	int nId[2];
-	idx = 0;
-	if (nTotDef[2] > 0)
+	int nId[2], Ord; // [0]: 상면 0~불량피스순서, [1]: 하면 0~불량피스순서
+	idx = 0; // 마킹순서 0~불량피스수만큼 정하기위해 현시점의 idx를 초기화함.
+	if (nTotDef[2] > 0) // 상 / 하면 Merge한 총 불량피스수.
 	{
 		for (nPcsId = 0; nPcsId < nTotPcs; nPcsId++)
 		{
-			nId[0] = pPcrMgr[nPcsId].nIdxUp;
-			nId[1] = pPcrMgr[nPcsId].nIdxDn;
+			nId[0] = pPcrMgr[nPcsId].nIdxUp; // 상하면 Merge [nPcsId:CamMaster Pcs Index]의 nIdxUp (0~)는 불량표시순서 임. nId[0]: 상면에서의 PCR파일순서 인덱스
+			nId[1] = pPcrMgr[nPcsId].nIdxDn; // 상하면 Merge [nPcsId:CamMaster Pcs Index]의 nIdxDn (0~)는 불량표시순서 임. nId[1]: 하면에서의 PCR파일순서 인덱스
 
 			if (nId[0] > -1)
 			{
+				Ord = nId[0];
 				// Cam ID
 				m_pPcr[2][nIdx]->m_nCamId = m_pPcr[0][nIdx]->m_nCamId;
 				// Piece Number
-				m_pPcr[2][nIdx]->m_pDefPcs[idx] = m_pPcr[0][nIdx]->m_pDefPcs[nId[0]];
-				m_pPcr[2][nIdx]->m_pLayer[idx] = m_pPcr[0][nIdx]->m_pLayer[nId[0]];
+				m_pPcr[2][nIdx]->m_pDefPcs[idx] = m_pPcr[0][nIdx]->m_pDefPcs[Ord];
+				m_pPcr[2][nIdx]->m_pLayer[idx] = m_pPcr[0][nIdx]->m_pLayer[Ord];
 				// BadPointPosX
-				m_pPcr[2][nIdx]->m_pDefPos[idx].x = m_pPcr[0][nIdx]->m_pDefPos[nId[0]].x;
+				m_pPcr[2][nIdx]->m_pDefPos[idx].x = m_pPcr[0][nIdx]->m_pDefPos[Ord].x;
 				// BadPointPosY
-				m_pPcr[2][nIdx]->m_pDefPos[idx].y = m_pPcr[0][nIdx]->m_pDefPos[nId[0]].y;
+				m_pPcr[2][nIdx]->m_pDefPos[idx].y = m_pPcr[0][nIdx]->m_pDefPos[Ord].y;
 				// BadName
-				m_pPcr[2][nIdx]->m_pDefType[idx] = m_pPcr[0][nIdx]->m_pDefType[nId[0]];
+				m_pPcr[2][nIdx]->m_pDefType[idx] = m_pPcr[0][nIdx]->m_pDefType[Ord];
 				// CellNum
-				m_pPcr[2][nIdx]->m_pCell[idx] = m_pPcr[0][nIdx]->m_pCell[nId[0]];
+				m_pPcr[2][nIdx]->m_pCell[idx] = m_pPcr[0][nIdx]->m_pCell[Ord];
 				// ImageSize
-				m_pPcr[2][nIdx]->m_pImgSz[idx] = m_pPcr[0][nIdx]->m_pImgSz[nId[0]];
+				m_pPcr[2][nIdx]->m_pImgSz[idx] = m_pPcr[0][nIdx]->m_pImgSz[Ord];
 				// ImageNum
-				m_pPcr[2][nIdx]->m_pImg[idx] = m_pPcr[0][nIdx]->m_pImg[nId[0]];
+				m_pPcr[2][nIdx]->m_pImg[idx] = m_pPcr[0][nIdx]->m_pImg[Ord];
 				// strMarkingCode : -2 (NoMarking)
-				m_pPcr[2][nIdx]->m_pMk[idx] = m_pPcr[0][nIdx]->m_pMk[nId[0]];
+				m_pPcr[2][nIdx]->m_pMk[idx] = m_pPcr[0][nIdx]->m_pMk[Ord];
 
 				idx++;
 			}
 			else if (nId[1] > -1)
 			{
+				Ord = nId[1];
 				// Cam ID
 				m_pPcr[2][nIdx]->m_nCamId = m_pPcr[1][nIdx]->m_nCamId;
 				// Piece Number
-				m_pPcr[2][nIdx]->m_pDefPcs[idx] = m_pPcr[1][nIdx]->m_pDefPcs[nId[1]];
-				m_pPcr[2][nIdx]->m_pLayer[idx] = m_pPcr[1][nIdx]->m_pLayer[nId[1]];
+				m_pPcr[2][nIdx]->m_pDefPcs[idx] = m_pPcr[1][nIdx]->m_pDefPcs[Ord];
+				m_pPcr[2][nIdx]->m_pLayer[idx] = m_pPcr[1][nIdx]->m_pLayer[Ord];
 				// BadPointPosX
-				m_pPcr[2][nIdx]->m_pDefPos[idx].x = m_pPcr[1][nIdx]->m_pDefPos[nId[1]].x;
+				m_pPcr[2][nIdx]->m_pDefPos[idx].x = m_pPcr[1][nIdx]->m_pDefPos[Ord].x;
 				// BadPointPosY
-				m_pPcr[2][nIdx]->m_pDefPos[idx].y = m_pPcr[1][nIdx]->m_pDefPos[nId[1]].y;
+				m_pPcr[2][nIdx]->m_pDefPos[idx].y = m_pPcr[1][nIdx]->m_pDefPos[Ord].y;
 				// BadName
-				m_pPcr[2][nIdx]->m_pDefType[idx] = m_pPcr[1][nIdx]->m_pDefType[nId[1]];
+				m_pPcr[2][nIdx]->m_pDefType[idx] = m_pPcr[1][nIdx]->m_pDefType[Ord];
 				// CellNum
-				m_pPcr[2][nIdx]->m_pCell[idx] = m_pPcr[1][nIdx]->m_pCell[nId[1]];
+				m_pPcr[2][nIdx]->m_pCell[idx] = m_pPcr[1][nIdx]->m_pCell[Ord];
 				// ImageSize
-				m_pPcr[2][nIdx]->m_pImgSz[idx] = m_pPcr[1][nIdx]->m_pImgSz[nId[1]];
+				m_pPcr[2][nIdx]->m_pImgSz[idx] = m_pPcr[1][nIdx]->m_pImgSz[Ord];
 				// ImageNum
-				m_pPcr[2][nIdx]->m_pImg[idx] = m_pPcr[1][nIdx]->m_pImg[nId[1]];
+				m_pPcr[2][nIdx]->m_pImg[idx] = m_pPcr[1][nIdx]->m_pImg[Ord];
 				// strMarkingCode : -2 (NoMarking)
-				m_pPcr[2][nIdx]->m_pMk[idx] = m_pPcr[1][nIdx]->m_pMk[nId[1]];
+				m_pPcr[2][nIdx]->m_pMk[idx] = m_pPcr[1][nIdx]->m_pMk[Ord];
 
 				idx++;
 			}
@@ -4791,7 +4829,7 @@ int CGvisR2R_LaserDoc::LoadPCRAllDn(int nSerial, BOOL bFromShare)	// return : 2(
 
 	m_pPcr[3][nIdx]->Init(nSerial, nTotDef[2]);
 
-	int nId[2];
+	int nId[2], Ord;
 	idx = 0;
 	if (nTotDef[2] > 0)
 	{
@@ -4802,49 +4840,51 @@ int CGvisR2R_LaserDoc::LoadPCRAllDn(int nSerial, BOOL bFromShare)	// return : 2(
 
 			if (nId[1] > -1)
 			{
+				Ord = nId[1];
 				// Cam ID
 				m_pPcr[3][nIdx]->m_nCamId = m_pPcr[1][nIdx]->m_nCamId;
 				// Piece Number
-				m_pPcr[3][nIdx]->m_pDefPcs[idx] = m_pPcr[1][nIdx]->m_pDefPcs[nId[1]];
-				m_pPcr[3][nIdx]->m_pLayer[idx] = m_pPcr[1][nIdx]->m_pLayer[nId[1]];
+				m_pPcr[3][nIdx]->m_pDefPcs[idx] = m_pPcr[1][nIdx]->m_pDefPcs[Ord];
+				m_pPcr[3][nIdx]->m_pLayer[idx] = m_pPcr[1][nIdx]->m_pLayer[Ord];
 				// BadPointPosX
-				m_pPcr[3][nIdx]->m_pDefPos[idx].x = m_pPcr[1][nIdx]->m_pDefPos[nId[1]].x;
+				m_pPcr[3][nIdx]->m_pDefPos[idx].x = m_pPcr[1][nIdx]->m_pDefPos[Ord].x;
 				// BadPointPosY
-				m_pPcr[3][nIdx]->m_pDefPos[idx].y = m_pPcr[1][nIdx]->m_pDefPos[nId[1]].y;
+				m_pPcr[3][nIdx]->m_pDefPos[idx].y = m_pPcr[1][nIdx]->m_pDefPos[Ord].y;
 				// BadName
-				m_pPcr[3][nIdx]->m_pDefType[idx] = m_pPcr[1][nIdx]->m_pDefType[nId[1]];
+				m_pPcr[3][nIdx]->m_pDefType[idx] = m_pPcr[1][nIdx]->m_pDefType[Ord];
 				// CellNum
-				m_pPcr[3][nIdx]->m_pCell[idx] = m_pPcr[1][nIdx]->m_pCell[nId[1]];
+				m_pPcr[3][nIdx]->m_pCell[idx] = m_pPcr[1][nIdx]->m_pCell[Ord];
 				// ImageSize
-				m_pPcr[3][nIdx]->m_pImgSz[idx] = m_pPcr[1][nIdx]->m_pImgSz[nId[1]];
+				m_pPcr[3][nIdx]->m_pImgSz[idx] = m_pPcr[1][nIdx]->m_pImgSz[Ord];
 				// ImageNum
-				m_pPcr[3][nIdx]->m_pImg[idx] = m_pPcr[1][nIdx]->m_pImg[nId[1]];
+				m_pPcr[3][nIdx]->m_pImg[idx] = m_pPcr[1][nIdx]->m_pImg[Ord];
 				// strMarkingCode : -2 (NoMarking)
-				m_pPcr[3][nIdx]->m_pMk[idx] = m_pPcr[1][nIdx]->m_pMk[nId[1]];
+				m_pPcr[3][nIdx]->m_pMk[idx] = m_pPcr[1][nIdx]->m_pMk[Ord];
 
 				idx++;
 			}
 			else if (nId[0] > -1)
 			{
+				Ord = nId[0];
 				// Cam ID
 				m_pPcr[3][nIdx]->m_nCamId = m_pPcr[0][nIdx]->m_nCamId;
 				// Piece Number
-				m_pPcr[3][nIdx]->m_pDefPcs[idx] = m_pPcr[0][nIdx]->m_pDefPcs[nId[0]];
-				m_pPcr[3][nIdx]->m_pLayer[idx] = m_pPcr[0][nIdx]->m_pLayer[nId[0]];
+				m_pPcr[3][nIdx]->m_pDefPcs[idx] = m_pPcr[0][nIdx]->m_pDefPcs[Ord];
+				m_pPcr[3][nIdx]->m_pLayer[idx] = m_pPcr[0][nIdx]->m_pLayer[Ord];
 				// BadPointPosX
-				m_pPcr[3][nIdx]->m_pDefPos[idx].x = m_pPcr[0][nIdx]->m_pDefPos[nId[0]].x;
+				m_pPcr[3][nIdx]->m_pDefPos[idx].x = m_pPcr[0][nIdx]->m_pDefPos[Ord].x;
 				// BadPointPosY
-				m_pPcr[3][nIdx]->m_pDefPos[idx].y = m_pPcr[0][nIdx]->m_pDefPos[nId[0]].y;
+				m_pPcr[3][nIdx]->m_pDefPos[idx].y = m_pPcr[0][nIdx]->m_pDefPos[Ord].y;
 				// BadName
-				m_pPcr[3][nIdx]->m_pDefType[idx] = m_pPcr[0][nIdx]->m_pDefType[nId[0]];
+				m_pPcr[3][nIdx]->m_pDefType[idx] = m_pPcr[0][nIdx]->m_pDefType[Ord];
 				// CellNum
-				m_pPcr[3][nIdx]->m_pCell[idx] = m_pPcr[0][nIdx]->m_pCell[nId[0]];
+				m_pPcr[3][nIdx]->m_pCell[idx] = m_pPcr[0][nIdx]->m_pCell[Ord];
 				// ImageSize
-				m_pPcr[3][nIdx]->m_pImgSz[idx] = m_pPcr[0][nIdx]->m_pImgSz[nId[0]];
+				m_pPcr[3][nIdx]->m_pImgSz[idx] = m_pPcr[0][nIdx]->m_pImgSz[Ord];
 				// ImageNum
-				m_pPcr[3][nIdx]->m_pImg[idx] = m_pPcr[0][nIdx]->m_pImg[nId[0]];
+				m_pPcr[3][nIdx]->m_pImg[idx] = m_pPcr[0][nIdx]->m_pImg[Ord];
 				// strMarkingCode : -2 (NoMarking)
-				m_pPcr[3][nIdx]->m_pMk[idx] = m_pPcr[0][nIdx]->m_pMk[nId[0]];
+				m_pPcr[3][nIdx]->m_pMk[idx] = m_pPcr[0][nIdx]->m_pMk[Ord];
 
 				idx++;
 			}
@@ -4916,7 +4956,8 @@ int CGvisR2R_LaserDoc::LoadPCRUp(int nSerial, BOOL bFromShare)	// return : 2(Fai
 		FileData = (char*)calloc(nFileSize + 1, sizeof(char));
 
 		nRSize = fread(FileData, sizeof(char), nFileSize, fp);
-		strFileData.Format(_T("%s"), CharToString(FileData));
+		//strFileData.Format(_T("%s"), CharToString(FileData));
+		strFileData = CharToString(FileData);
 		fclose(fp);
 		free(FileData);
 	}
@@ -5127,7 +5168,8 @@ int CGvisR2R_LaserDoc::LoadPCRDn(int nSerial, BOOL bFromShare)	// return : 2(Fai
 		FileData = (char*)calloc(nFileSize + 1, sizeof(char));
 
 		nRSize = fread(FileData, sizeof(char), nFileSize, fp);
-		strFileData.Format(_T("%s"), CharToString(FileData));
+		//strFileData.Format(_T("%s"), CharToString(FileData));
+		strFileData = CharToString(FileData);
 		fclose(fp);
 		free(FileData);
 	}
@@ -5285,6 +5327,7 @@ BOOL CGvisR2R_LaserDoc::CopyDefImg(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.17"));
 		return 0;
 	}
@@ -5336,6 +5379,7 @@ BOOL CGvisR2R_LaserDoc::CopyDefImgUp(int nSerial, CString sNewLot)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.18"));
 		return 0;
 	}
@@ -5515,6 +5559,7 @@ BOOL CGvisR2R_LaserDoc::CopyDefImgDn(int nSerial, CString sNewLot)
 
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.19"));
 		return 0;
 	}
@@ -5688,6 +5733,7 @@ int CGvisR2R_LaserDoc::GetIdxPcrBuf(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.20"));
 		return 0;
 	}
@@ -5713,6 +5759,7 @@ int CGvisR2R_LaserDoc::GetIdxPcrBufUp(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.21"));
 		return 0;
 	}
@@ -5742,6 +5789,7 @@ int CGvisR2R_LaserDoc::GetIdxPcrBufDn(int nSerial)
 
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.22"));
 		return 0;
 	}
@@ -5820,7 +5868,7 @@ int CGvisR2R_LaserDoc::GetLastSerial()
 	return (nLastShot);
 }
 
-int CGvisR2R_LaserDoc::GetLastShotMk()
+int CGvisR2R_LaserDoc::GetLastShotMk()	// m_pDlgFrameHigh에서 얻거나 없으면, sPathOldFile폴더의 ReelMapDataDn.txt에서 _T("Info"), _T("Marked Shot") 찾음.
 {
 	int nLastShot = 0;
 	if (pView->m_pDlgFrameHigh)
@@ -5990,6 +6038,11 @@ void CGvisR2R_LaserDoc::SetFdJogVel(double dVel)
 	long lData = (long)(dVel * 1000.0);
 	pView->m_pMpe->Write(_T("ML45038"), lData);	// 연속공급 속도 (단위 mm/sec * 1000)
 #endif
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetFdVel();	//_ItemInx::_FdVel
+#endif
 }
 
 void CGvisR2R_LaserDoc::SetFdJogAcc(double dVel)
@@ -6003,6 +6056,11 @@ void CGvisR2R_LaserDoc::SetFdJogAcc(double dVel)
 #ifdef USE_MPE
 	long lData = (long)(dVel * 1000.0);
 	pView->m_pMpe->Write(_T("ML45040"), lData);	// 연속공급 가속도 (단위 mm/s^2 * 1000)
+#endif
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetFdAcc();	//_ItemInx::_FdAcc
 #endif
 }
 
@@ -6032,6 +6090,11 @@ void CGvisR2R_LaserDoc::SetOnePnlAcc(double dAcc)
 #ifdef USE_MPE
 	long lData = (long)(dAcc * 1000.0);
 	pView->m_pMpe->Write(_T("ML45036"), lData);	// 한 판넬 Feeding 가속도 (단위 mm/s^2 * 1000)
+#endif
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetOnePnlAcc();	//_ItemInx::_OnePnlAcc
 #endif
 }
 
@@ -6084,6 +6147,11 @@ void CGvisR2R_LaserDoc::SetFdErrLmt(double dLmt)
 	sVal.Format(_T("%.3f"), dLmt);
 	WorkingInfo.Motion.sLmtFdErr = sVal;
 	::WritePrivateProfileString(_T("Motion"), _T("ADJUST_LIMIT_FEEDING_ERROR_VAL"), sVal, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetFdDiffMax();	//_ItemInx::_FdDiffMax
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetFdErrLmt()
@@ -6098,6 +6166,11 @@ void CGvisR2R_LaserDoc::SetFdErrRng(double dRng)
 	sVal.Format(_T("%.3f"), dRng);
 	WorkingInfo.Motion.sLmtFdAdjOffSet = sVal;
 	::WritePrivateProfileString(_T("Motion"), _T("ADJUST_LIMIT_FEEDING_OFFSET"), sVal, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetFdDiffRng();	//_ItemInx::_FdDiffRng
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetFdErrRng()
@@ -6112,6 +6185,11 @@ void CGvisR2R_LaserDoc::SetFdErrNum(int nNum)
 	sVal.Format(_T("%d"), nNum);
 	WorkingInfo.Motion.sLmtFdOvrNum = sVal;
 	::WritePrivateProfileString(_T("Motion"), _T("ADJUST_LIMIT_FEEDING_OVER_NUM"), sVal, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetFdDiffNum();	//_ItemInx::_FdDiffNum
+#endif
 }
 
 int CGvisR2R_LaserDoc::GetFdErrNum()
@@ -6128,6 +6206,11 @@ void CGvisR2R_LaserDoc::SetBufInitPos(double dPos)
 #ifdef USE_MPE
 	long lData = (long)(dPos * 1000.0);
 	pView->m_pMpe->Write(_T("ML45016"), lData);	// 버퍼 관련 설정 롤러 초기위치(단위 mm * 1000)
+#endif
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkBuffInitPos();	//_ItemInx::_MkBuffInitPos
 #endif
 }
 
@@ -6157,6 +6240,11 @@ void CGvisR2R_LaserDoc::SetAoiMkDist(double dLen)
 	long lData = (long)(dLen * 1000.0);
 	pView->m_pMpe->Write(_T("ML45008"), lData);	// AOI(하)에서 마킹까지 거리 (단위 mm * 1000)
 #endif
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetAoiMkLen();	//_ItemInx::_AoiMkLen
+#endif
 }
 
 void CGvisR2R_LaserDoc::SetAoiAoiDist(int nShot)
@@ -6168,6 +6256,11 @@ void CGvisR2R_LaserDoc::SetAoiAoiDist(int nShot)
 #ifdef USE_MPE
 	long lData = (long)(nShot * 1000);
 	pView->m_pMpe->Write(_T("ML45010"), lData);	// AOI(상)에서 AOI(하) Shot수 (단위 Shot수 * 1000)
+#endif
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetAoiBuffShotNum();	//_ItemInx::_AoiBuffShotNum
 #endif
 }
 
@@ -6287,6 +6380,11 @@ void CGvisR2R_LaserDoc::SetPosX1_1(double dPosX)
 	sData.Format(_T("%.3f"), dPosX);
 	WorkingInfo.Marking[0].sMeasurePosX[0] = sData;
 	::WritePrivateProfileString(_T("Marking0"), _T("MARKING_MEASURE_POSX1"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosX1Lf();	//_ItemInx::_MkHgtPosX1Lf
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetPosX1_1()
@@ -6300,6 +6398,11 @@ void CGvisR2R_LaserDoc::SetPosY1_1(double dPosY)
 	sData.Format(_T("%.3f"), dPosY);
 	WorkingInfo.Marking[0].sMeasurePosY[0] = sData;
 	::WritePrivateProfileString(_T("Marking0"), _T("MARKING_MEASURE_POSY1"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosY1Lf();	//_ItemInx::_MkHgtPosY1Lf
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetPosY1_1()
@@ -6313,6 +6416,11 @@ void CGvisR2R_LaserDoc::SetPosX1_2(double dPosX)
 	sData.Format(_T("%.3f"), dPosX);
 	WorkingInfo.Marking[0].sMeasurePosX[1] = sData;
 	::WritePrivateProfileString(_T("Marking0"), _T("MARKING_MEASURE_POSX2"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosX2Lf();	//_ItemInx::_MkHgtPosX2Lf
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetPosX1_2()
@@ -6326,6 +6434,11 @@ void CGvisR2R_LaserDoc::SetPosY1_2(double dPosY)
 	sData.Format(_T("%.3f"), dPosY);
 	WorkingInfo.Marking[0].sMeasurePosY[1] = sData;
 	::WritePrivateProfileString(_T("Marking0"), _T("MARKING_MEASURE_POSY2"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosY2Lf();	//_ItemInx::_MkHgtPosY2Lf
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetPosY1_2()
@@ -6339,6 +6452,11 @@ void CGvisR2R_LaserDoc::SetPosX1_3(double dPosX)
 	sData.Format(_T("%.3f"), dPosX);
 	WorkingInfo.Marking[0].sMeasurePosX[2] = sData;
 	::WritePrivateProfileString(_T("Marking0"), _T("MARKING_MEASURE_POSX3"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosX3Lf();	//_ItemInx::_MkHgtPosX3Lf
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetPosX1_3()
@@ -6352,6 +6470,11 @@ void CGvisR2R_LaserDoc::SetPosY1_3(double dPosY)
 	sData.Format(_T("%.3f"), dPosY);
 	WorkingInfo.Marking[0].sMeasurePosY[2] = sData;
 	::WritePrivateProfileString(_T("Marking0"), _T("MARKING_MEASURE_POSY3"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosY3Lf();	//_ItemInx::_MkHgtPosY3Lf
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetPosY1_3()
@@ -6365,6 +6488,11 @@ void CGvisR2R_LaserDoc::SetPosX1_4(double dPosX)
 	sData.Format(_T("%.3f"), dPosX);
 	WorkingInfo.Marking[0].sMeasurePosX[3] = sData;
 	::WritePrivateProfileString(_T("Marking0"), _T("MARKING_MEASURE_POSX4"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosX4Lf();	//_ItemInx::_MkHgtPosX4Lf
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetPosX1_4()
@@ -6378,6 +6506,11 @@ void CGvisR2R_LaserDoc::SetPosY1_4(double dPosY)
 	sData.Format(_T("%.3f"), dPosY);
 	WorkingInfo.Marking[0].sMeasurePosY[3] = sData;
 	::WritePrivateProfileString(_T("Marking0"), _T("MARKING_MEASURE_POSY4"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosY4Lf();	//_ItemInx::_MkHgtPosY4Lf
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetPosY1_4()
@@ -6391,6 +6524,11 @@ void CGvisR2R_LaserDoc::SetAverDist1(double dDist)
 	sData.Format(_T("%.3f"), dDist);
 	WorkingInfo.Marking[0].sAverDist = sData;
 	::WritePrivateProfileString(_T("Marking0"), _T("MARKING_AVER_DIST"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtAvgPosLf();	//_ItemInx::_MkHgtAvgPosLf
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetAverDist1()
@@ -6503,6 +6641,11 @@ void CGvisR2R_LaserDoc::SetPosX2_1(double dPosX)
 	sData.Format(_T("%.3f"), dPosX);
 	WorkingInfo.Marking[1].sMeasurePosX[0] = sData;
 	::WritePrivateProfileString(_T("Marking1"), _T("MARKING_MEASURE_POSX1"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosX1Rt();	//_ItemInx::_MkHgtPosX1Rt
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetPosX2_1()
@@ -6516,6 +6659,11 @@ void CGvisR2R_LaserDoc::SetPosY2_1(double dPosY)
 	sData.Format(_T("%.3f"), dPosY);
 	WorkingInfo.Marking[1].sMeasurePosY[0] = sData;
 	::WritePrivateProfileString(_T("Marking1"), _T("MARKING_MEASURE_POSY1"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosY1Rt();	//_ItemInx::_MkHgtPosY1Rt
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetPosY2_1()
@@ -6529,6 +6677,11 @@ void CGvisR2R_LaserDoc::SetPosX2_2(double dPosX)
 	sData.Format(_T("%.3f"), dPosX);
 	WorkingInfo.Marking[1].sMeasurePosX[1] = sData;
 	::WritePrivateProfileString(_T("Marking1"), _T("MARKING_MEASURE_POSX2"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosX2Rt();	//_ItemInx::_MkHgtPosX2Rt
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetPosX2_2()
@@ -6542,6 +6695,11 @@ void CGvisR2R_LaserDoc::SetPosY2_2(double dPosY)
 	sData.Format(_T("%.3f"), dPosY);
 	WorkingInfo.Marking[1].sMeasurePosY[1] = sData;
 	::WritePrivateProfileString(_T("Marking1"), _T("MARKING_MEASURE_POSY2"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosY2Rt();	//_ItemInx::_MkHgtPosY2Rt
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetPosY2_2()
@@ -6555,6 +6713,11 @@ void CGvisR2R_LaserDoc::SetPosX2_3(double dPosX)
 	sData.Format(_T("%.3f"), dPosX);
 	WorkingInfo.Marking[1].sMeasurePosX[2] = sData;
 	::WritePrivateProfileString(_T("Marking1"), _T("MARKING_MEASURE_POSX3"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosX3Rt();	//_ItemInx::_MkHgtPosX3Rt
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetPosX2_3()
@@ -6568,6 +6731,11 @@ void CGvisR2R_LaserDoc::SetPosY2_3(double dPosY)
 	sData.Format(_T("%.3f"), dPosY);
 	WorkingInfo.Marking[1].sMeasurePosY[2] = sData;
 	::WritePrivateProfileString(_T("Marking1"), _T("MARKING_MEASURE_POSY3"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosY3Rt();	//_ItemInx::_MkHgtPosY3Rt
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetPosY2_3()
@@ -6581,6 +6749,11 @@ void CGvisR2R_LaserDoc::SetPosX2_4(double dPosX)
 	sData.Format(_T("%.3f"), dPosX);
 	WorkingInfo.Marking[1].sMeasurePosX[3] = sData;
 	::WritePrivateProfileString(_T("Marking1"), _T("MARKING_MEASURE_POSX4"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosX4Rt();	//_ItemInx::_MkHgtPosX4Rt
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetPosX2_4()
@@ -6594,6 +6767,11 @@ void CGvisR2R_LaserDoc::SetPosY2_4(double dPosY)
 	sData.Format(_T("%.3f"), dPosY);
 	WorkingInfo.Marking[1].sMeasurePosY[3] = sData;
 	::WritePrivateProfileString(_T("Marking1"), _T("MARKING_MEASURE_POSY4"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosY4Rt();	//_ItemInx::_MkHgtPosY4Rt
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetPosY2_4()
@@ -6607,6 +6785,11 @@ void CGvisR2R_LaserDoc::SetAverDist2(double dDist)
 	sData.Format(_T("%.3f"), dDist);
 	WorkingInfo.Marking[1].sAverDist = sData;
 	::WritePrivateProfileString(_T("Marking1"), _T("MARKING_AVER_DIST"), sData, sPath);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtAvgPosRt();	//_ItemInx::_MkHgtAvgPosRt
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetAverDist2()
@@ -6723,6 +6906,11 @@ void CGvisR2R_LaserDoc::SetStopDist(double dDist)
 	long lData = (long)(dDist * 1000.0);
 	pView->m_pMpe->Write(_T("ML45006"), lData);	// 일시정지 길이 (단위 M * 1000)
 #endif
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetTempStopLen();	//_ItemInx::_TempStopLen
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetStopDist()
@@ -6740,6 +6928,11 @@ void CGvisR2R_LaserDoc::SetAOIToq(double dToq)
 	long lData = (long)(dToq * 1000.0);
 	pView->m_pMpe->Write(_T("ML45042"), lData);	// 검사부 Tension 모터 토크값 (단위 Kgf * 1000)
 #endif
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetAoiTqVal();	//_ItemInx::_AoiTqVal
+#endif
 }
 
 double CGvisR2R_LaserDoc::GetAOIToq()
@@ -6756,6 +6949,11 @@ void CGvisR2R_LaserDoc::SetMarkingToq(double dToq)
 #ifdef USE_MPE
 	long lData = (long)(dToq * 1000.0);
 	pView->m_pMpe->Write(_T("ML45044"), lData);	// 마킹부 Tension 모터 토크값 (단위 Kgf * 1000)
+#endif
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkTqVal();	//_ItemInx::_MkTqVal
 #endif
 }
 
@@ -6959,6 +7157,7 @@ BOOL CGvisR2R_LaserDoc::Shift2Mk(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.23"));
 		return 0;
 	}
@@ -6975,12 +7174,14 @@ BOOL CGvisR2R_LaserDoc::Shift2Mk(int nSerial)
 		if (!GetPcrInfo(sSrc, stInfo))
 		{
 			pView->DispStsBar(_T("E(2)"), 5);
+			pView->ClrDispMsg();
 			AfxMessageBox(_T("Error-GetPcrInfo(2)"));
 			return FALSE;
 		}
 
 		if (!MakeMkDir(stInfo))
 		{
+			pView->ClrDispMsg();
 			AfxMessageBox(_T("Error-MakeMkDir()"));
 			return FALSE;
 		}
@@ -6997,12 +7198,14 @@ BOOL CGvisR2R_LaserDoc::Shift2Mk(int nSerial)
 			if (!GetPcrInfo(sSrc, stInfo))
 			{
 				pView->DispStsBar(_T("E(3)"), 5);
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Error-GetPcrInfo(3)"));
 				return FALSE;
 			}
 
 			if (!MakeMkDir(stInfo))
 			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Error-MakeMkDir()"));
 				return FALSE;
 			}
@@ -7033,6 +7236,7 @@ void CGvisR2R_LaserDoc::SetLastSerial(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.24"));
 		return;
 	}
@@ -7051,15 +7255,15 @@ void CGvisR2R_LaserDoc::SetLastSerial(int nSerial)
 		// 		if(m_pReelMap)
 		// 			m_pReelMap->SetLastSerial(nSerial);
 		if (m_pReelMapUp)
-			m_pReelMapUp->SetLastSerial(nSerial);
+			m_pReelMapUp->SetLastSerial(nSerial);					// 릴맵 텍스트 파일의 수율정보를 업데이트함.
 		if (bDualTest)
 		{
 			if (m_pReelMapDn)
-				m_pReelMapDn->SetLastSerial(nSerial);
+				m_pReelMapDn->SetLastSerial(nSerial);					// 릴맵 텍스트 파일의 수율정보를 업데이트함.
 			if (m_pReelMapAllUp)
-				m_pReelMapAllUp->SetLastSerial(nSerial);
+				m_pReelMapAllUp->SetLastSerial(nSerial);					// 릴맵 텍스트 파일의 수율정보를 업데이트함.
 			if (m_pReelMapAllDn)
-				m_pReelMapAllDn->SetLastSerial(nSerial);
+				m_pReelMapAllDn->SetLastSerial(nSerial);					// 릴맵 텍스트 파일의 수율정보를 업데이트함.
 		}
 	}
 }
@@ -7068,6 +7272,7 @@ void CGvisR2R_LaserDoc::UpdateYield(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.66"));
 		return;
 	}
@@ -7091,6 +7296,7 @@ void CGvisR2R_LaserDoc::SetCompletedSerial(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.49"));
 		return;
 	}
@@ -7170,6 +7376,7 @@ BOOL CGvisR2R_LaserDoc::MakeMkDir(CString sModel, CString sLot, CString sLayer)
 	if (sModel.IsEmpty() || sLot.IsEmpty() || sLayer.IsEmpty())
 	{
 		sMsg.Format(_T("모델이나 로뜨 또는 레이어명이 없습니다."));
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg);
 		return FALSE;
 	}
@@ -7238,6 +7445,7 @@ BOOL CGvisR2R_LaserDoc::MakeMkDirUp()
 	if (WorkingInfo.LastJob.sModelUp.IsEmpty() || WorkingInfo.LastJob.sLotUp.IsEmpty() || WorkingInfo.LastJob.sLayerUp.IsEmpty())
 	{
 		sMsg.Format(_T("모델이나 로뜨 또는 레이어명이 없습니다."));
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg);
 		return FALSE;
 	}
@@ -7288,6 +7496,7 @@ BOOL CGvisR2R_LaserDoc::MakeMkDirDn()
 	if (WorkingInfo.LastJob.sModelDn.IsEmpty() || WorkingInfo.LastJob.sLotDn.IsEmpty() || WorkingInfo.LastJob.sLayerDn.IsEmpty())
 	{
 		sMsg.Format(_T("모델이나 로뜨 또는 레이어명이 없습니다."));
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg);
 		return FALSE;
 	}
@@ -7655,6 +7864,7 @@ BOOL CGvisR2R_LaserDoc::MakeMkDir(stModelInfo stInfo)
 	if (stInfo.sModel.IsEmpty() || stInfo.sLot.IsEmpty() || stInfo.sLayer.IsEmpty())
 	{
 		sMsg.Format(_T("모델이나 로뜨 또는 레이어명이 없습니다."));
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg);
 		return FALSE;
 	}
@@ -7717,7 +7927,8 @@ BOOL CGvisR2R_LaserDoc::GetPcrInfo(CString sPath, stModelInfo &stInfo)
 		FileData = (char*)calloc(nFileSize + 1, sizeof(char));
 
 		nRSize = fread(FileData, sizeof(char), nFileSize, fp);
-		strFileData.Format(_T("%s"), CharToString(FileData));
+		//strFileData.Format(_T("%s"), CharToString(FileData));
+		strFileData = CharToString(FileData);
 		fclose(fp);
 		free(FileData);
 	}

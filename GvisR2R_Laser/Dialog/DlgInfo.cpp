@@ -676,7 +676,7 @@ void CDlgInfo::OnStc0008()
 	CString sVal;
 	GetDlgItem(IDC_STC_0008)->GetWindowText(sVal);
 
- 	pDoc->SetTotalReelDist(_tstoi(sVal));		
+ 	pDoc->SetTotalReelDist(_tstof(sVal));		
 // 
 // 	pDoc->WorkingInfo.LastJob.sReelTotLen = sVal;
 // 	if(pDoc->m_pReelMap)
@@ -751,10 +751,10 @@ void CDlgInfo::OnStc0020()
 	GetDlgItem(IDC_STC_0020)->GetWindowText(sVal);
 	pDoc->SetCuttingDist(_tstof(sVal));
 
-#ifdef USE_ENGRAVE
-	if (pView && pView->m_pEngrave)
-		pView->m_pEngrave->SetLotCutLen();	//_ItemInx::_LotCutLen
-#endif
+//#ifdef USE_ENGRAVE
+//	if (pView && pView->m_pEngrave)
+//		pView->m_pEngrave->SetLotCutLen();	//_ItemInx::_LotCutLen
+//#endif
 }
 
 void CDlgInfo::OnStc0024() 
@@ -783,10 +783,10 @@ void CDlgInfo::OnStc0024()
 // 	//pView->IoWrite(_T("ML45006", long(_tstof(sVal)*1000.0));	// 일시정지 길이 (단위 M * 1000)
 // 	pView->m_pMpe->Write(_T("ML45006", long(_tstof(sVal)*1000.0));
 
-#ifdef USE_ENGRAVE
-	if (pView && pView->m_pEngrave)
-		pView->m_pEngrave->SetLotCutPosLen();	//_ItemInx::_LotCutPosLen
-#endif
+//#ifdef USE_ENGRAVE
+//	if (pView && pView->m_pEngrave)
+//		pView->m_pEngrave->SetLotCutPosLen();	//_ItemInx::_LotCutPosLen
+//#endif
 }
 
 void CDlgInfo::OnStc0030() 
@@ -1368,7 +1368,7 @@ void CDlgInfo::OnStc61()
 
 #ifdef USE_ENGRAVE
 	if (pView && pView->m_pEngrave)
-		pView->m_pEngrave->SetNumContFixDef();	//_ItemInx::_NumContFixDef
+		pView->m_pEngrave->SetNumRangeFixDef();	//_ItemInx::_NumRangeFixDef
 #endif
 
 }
