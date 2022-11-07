@@ -394,14 +394,14 @@ void CLibMil::BufPutColor2d0(long nSzX, long nSzY, TCHAR* pSrc)
 #else
 	MbufPutColor2d(MilImageCam, M_PACKED + M_BGR24, M_ALL_BANDS, 0, 0, nSzX, nSzY, pSrc);
 #endif
-	MimRotate(MilImageCam, MilImageCamRotate, 270.0, M_DEFAULT, M_DEFAULT, M_DEFAULT, M_DEFAULT, M_DEFAULT);
-	MbufCopyColor(MilImageCamRotate, MilImage[0]->m_MilImage, M_RED);
+	//MimRotate(MilImageCam, MilImageCamRotate, 270.0, M_DEFAULT, M_DEFAULT, M_DEFAULT, M_DEFAULT, M_DEFAULT);
+	//MbufCopyColor(MilImageCamRotate, MilImage[0]->m_MilImage, M_RED);
 
 	//MimFlip(MilImageCamRotate, MilImageCamFlip, M_FLIP_HORIZONTAL, M_DEFAULT);
 	//MimFlip(MilImageCamRotate, MilImageCamFlip, M_FLIP_VERTICAL, M_DEFAULT);
 	//MbufCopyColor(MilImageCamFlip, MilImage[0]->m_MilImage, M_RED);
 
-	//MbufCopyColor(MilImageCam, MilImage[0]->m_MilImage, M_RED);
+	MbufCopyColor(MilImageCam, MilImage[0]->m_MilImage, M_RED);
 
 //	MbufSave(_T("C:\\test.TIF", MilImage));
 }

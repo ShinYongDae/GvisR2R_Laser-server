@@ -242,7 +242,7 @@ int CTcpIpAccept::ReadCommData(SOCKET_DATA &SocketData, DWORD dwSize, DWORD dwTi
 		// Blocking mode: Wait for event
 		dwBytes = ReadPacketData(m_SocketData, sizeof(m_SocketData), dwTimeout);
 		// Error? - need to signal error
-		if (dwBytes > 0)
+		if (dwBytes >= 0)
 		{
 			OnDataReceived();
 		}

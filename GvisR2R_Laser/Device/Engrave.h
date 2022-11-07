@@ -362,7 +362,7 @@ public:
 	void SwAoiDnLsrPt(BOOL bOn);
 
 	void SwAoiDnClrRoll(BOOL bOn);
-	void SwAoiDnSonicBlw(BOOL bOn);
+	void SwAoiDnVelSonicBlw(BOOL bOn);
 
 	void SwAoiDnTest(BOOL bOn);
 	void SwAoiDnReset(BOOL bOn);
@@ -402,7 +402,7 @@ public:
 	void SwEngLsrPt(BOOL bOn);
 
 	void SwEngDcRSol(BOOL bOn);
-	void SwEngSonicBlw(BOOL bOn);
+	void SwEngVelSonicBlw(BOOL bOn);
 
 	// Uncoiler
 	void SwUcRelation(BOOL bOn);

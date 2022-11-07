@@ -44,6 +44,7 @@ public:
 	CDlgInfo(CWnd* pParent = NULL);   // standard constructor
 	~CDlgInfo();
 	
+	BOOL Create();
 	void AtDlgShow();
 	void AtDlgHide();
 

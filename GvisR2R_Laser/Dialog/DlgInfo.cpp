@@ -39,6 +39,11 @@ CDlgInfo::~CDlgInfo()
 		pView->m_pDlgMenu01->UpdateData();
 }
 
+BOOL CDlgInfo::Create()
+{
+	return CDialog::Create(CDlgInfo::IDD);
+}
+
 void CDlgInfo::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -392,7 +397,7 @@ void CDlgInfo::InitStcTitle()
 	myStcTitle[57].SubclassDlgItem(IDC_STC_195, this); //양품율
 	myStcTitle[58].SubclassDlgItem(IDC_STC_66, this); //%
 
-	myStcTitle[59].SubclassDlgItem(IDC_STC_34, this); //불량 확인
+	myStcTitle[59].SubclassDlgItem(IDC_STC_199, this); //불량 확인
 	myStcTitle[60].SubclassDlgItem(IDC_STC_35, this); //Period
 	myStcTitle[61].SubclassDlgItem(IDC_STC_37, this); //Shot
 
@@ -648,12 +653,12 @@ void CDlgInfo::Disp()
 	else
 		myBtn[20].SetCheck(FALSE);
 
-	if (pDoc->WorkingInfo.LastJob.bUseAoiDnCleanner) //AOI초음파세정기
+	if (pDoc->WorkingInfo.LastJob.bUseAoiDnUltrasonic) //AOI초음파세정기
 		myBtn[21].SetCheck(TRUE);
 	else
 		myBtn[21].SetCheck(FALSE);
 
-	if (pDoc->WorkingInfo.LastJob.bUseEngraveCleanner) //각인부초음파세정기
+	if (pDoc->WorkingInfo.LastJob.bUseEngraveUltrasonic) //각인부초음파세정기
 		myBtn[22].SetCheck(TRUE);
 	else
 		myBtn[22].SetCheck(FALSE);
@@ -1751,20 +1756,20 @@ void CDlgInfo::OnBnClickedChk1187()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	if (myBtn[21].GetCheck()) //AOI초음파세정기
 	{
-		pDoc->WorkingInfo.LastJob.bUseAoiDnCleanner = TRUE;
+		pDoc->WorkingInfo.LastJob.bUseAoiDnUltrasonic = TRUE;
 #ifdef USE_MPE
 		pView->m_pMpe->Write(_T("MB44016F"), 1);
 #endif
 	}
 	else
 	{
-		pDoc->WorkingInfo.LastJob.bUseAoiDnCleanner = FALSE;
+		pDoc->WorkingInfo.LastJob.bUseAoiDnUltrasonic = FALSE;
 #ifdef USE_MPE
 		pView->m_pMpe->Write(_T("MB44016F"), 0);
 #endif
 	}
 
-	CString sData = pDoc->WorkingInfo.LastJob.bUseAoiDnCleanner ? _T("1") : _T("0");
+	CString sData = pDoc->WorkingInfo.LastJob.bUseAoiDnUltrasonic ? _T("1") : _T("0");
 	::WritePrivateProfileString(_T("Last Job"), _T("Use AoiDn Cleanner"), sData, PATH_WORKING_INFO); //AOI초음파세정기
 
 #ifdef USE_ENGRAVE
@@ -1779,20 +1784,20 @@ void CDlgInfo::OnBnClickedChk1188()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	if (myBtn[22].GetCheck()) //각인부초음파세정기
 	{
-		pDoc->WorkingInfo.LastJob.bUseEngraveCleanner = TRUE;
+		pDoc->WorkingInfo.LastJob.bUseEngraveUltrasonic = TRUE;
 #ifdef USE_MPE
 		pView->m_pMpe->Write(_T("MB44016E"), 1);
 #endif
 	}
 	else
 	{
-		pDoc->WorkingInfo.LastJob.bUseEngraveCleanner = FALSE;
+		pDoc->WorkingInfo.LastJob.bUseEngraveUltrasonic = FALSE;
 #ifdef USE_MPE
 		pView->m_pMpe->Write(_T("MB44016E"), 0);
 #endif
 	}
 
-	CString sData = pDoc->WorkingInfo.LastJob.bUseEngraveCleanner ? _T("1") : _T("0");
+	CString sData = pDoc->WorkingInfo.LastJob.bUseEngraveUltrasonic ? _T("1") : _T("0");
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Engrave Cleanner"), sData, PATH_WORKING_INFO);
 
 #ifdef USE_ENGRAVE

@@ -701,8 +701,8 @@ struct stLastJob
 	CString sEngraveOrgX, sEngraveOrgY, sEngravePosOffsetX, sEngravePosOffsetY, sEngravePosTheta;
 	int nAlignMethode;
 	BOOL bUseAoiUpCleanRoler, bUseAoiDnCleanRoler;
-	BOOL bUseEngraveCleanner, bUseAoiDnCleanner;
-	BOOL bEngraveCleanner, bAoiDnCleanner;
+	BOOL bUseEngraveUltrasonic, bUseAoiDnUltrasonic;
+	BOOL bVelEngraveUltrasonic, bVelAoiDnUltrasonic;
 
 	stLastJob()
 	{
@@ -740,8 +740,8 @@ struct stLastJob
 		bDualTest = TRUE; bSampleTest = FALSE; nTestMode = 0;
 		bCore150Recoiler = FALSE; bCore150Uncoiler = FALSE;
 		sSampleTestShotNum = _T("");
-		bUseEngraveCleanner = FALSE; bUseAoiDnCleanner = FALSE;
-		bEngraveCleanner = FALSE; bAoiDnCleanner = FALSE;
+		bUseEngraveUltrasonic = FALSE; bUseAoiDnUltrasonic = FALSE;
+		bVelEngraveUltrasonic = FALSE; bVelAoiDnUltrasonic = FALSE;
 
 		bUse2Layer = FALSE;
 
@@ -1232,13 +1232,13 @@ struct stBtnAOIDn
 	BOOL Relation, FdCw, FdCcw, FdVac;
 	BOOL PushUp, TblBlw, TblVac, FdClp;
 	BOOL TqClp, MvOne, LsrPt;
-	BOOL ClrRoll, SonicBlw, Test, Reset, LotEnd;
+	BOOL ClrRoll, VelSonicBlw, Test, Reset, LotEnd;
 	stBtnAOIDn()
 	{
 		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; FdVac = FALSE;
 		PushUp = FALSE; TblBlw = FALSE; TblVac = FALSE; FdClp = FALSE;
 		TqClp = FALSE; MvOne = FALSE; LsrPt = FALSE;
-		ClrRoll = FALSE; SonicBlw = FALSE; Test = FALSE; Reset = FALSE; LotEnd = FALSE;
+		ClrRoll = FALSE; VelSonicBlw = FALSE; Test = FALSE; Reset = FALSE; LotEnd = FALSE;
 	}
 };
 
@@ -1262,13 +1262,13 @@ struct stBtnEngrave
 	BOOL Relation, FdCw, FdCcw, FdVac;
 	BOOL PushUp, TblBlw, TblVac, FdClp;
 	BOOL TqClp, MvOne, LsrPt;
-	BOOL DcRSol, SonicBlw;
+	BOOL DcRSol, VelSonicBlw;
 	stBtnEngrave()
 	{
 		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; FdVac = FALSE;
 		PushUp = FALSE; TblBlw = FALSE; TblVac = FALSE; FdClp = FALSE;
 		TqClp = FALSE; MvOne = FALSE; LsrPt = FALSE;
-		DcRSol = FALSE; DcRSol = SonicBlw;
+		DcRSol = FALSE; DcRSol = VelSonicBlw;
 	}
 };
 

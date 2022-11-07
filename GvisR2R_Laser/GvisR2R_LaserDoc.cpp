@@ -1599,6 +1599,27 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	else
 		WorkingInfo.LastJob.nAlignMethode = TWO_POINT;
 
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use Engrave Cleanner"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.bUseEngraveUltrasonic = _ttoi(szData);
+	else
+		WorkingInfo.LastJob.bUseEngraveUltrasonic = FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use AoiDn Cleanner"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.bUseAoiDnUltrasonic = _ttoi(szData);
+	else
+		WorkingInfo.LastJob.bUseAoiDnUltrasonic = FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Engrave Cleanner Vel"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.bVelEngraveUltrasonic = _ttoi(szData);
+	else
+		WorkingInfo.LastJob.bVelEngraveUltrasonic = FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("AoiDn Cleanner Vel"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.bVelAoiDnUltrasonic = _ttoi(szData);
+	else
+		WorkingInfo.LastJob.bVelAoiDnUltrasonic = FALSE;
+
+
 
 	// [Motion]
 	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("BUFFER_ROLLAR_HOMMING_RUN"), NULL, szData, sizeof(szData), sPath))
@@ -3289,11 +3310,11 @@ void CGvisR2R_LaserDoc::SaveWorkingInfo()
 	sData = WorkingInfo.LastJob.sPartialSpd;
 	::WritePrivateProfileString(_T("Last Job"), _T("Partial Speed"), sData, sPath);
 
-	sData.Format(_T("%d"), WorkingInfo.LastJob.bEngraveCleanner ? 1 : 0);
-	::WritePrivateProfileString(_T("Last Job"), _T("Engrave Cleanner"), sData, sPath);
+	sData.Format(_T("%d"), WorkingInfo.LastJob.bVelEngraveUltrasonic ? 1 : 0);
+	::WritePrivateProfileString(_T("Last Job"), _T("Engrave Cleanner Vel"), sData, sPath);
 
-	sData.Format(_T("%d"), WorkingInfo.LastJob.bAoiDnCleanner ? 1 : 0);
-	::WritePrivateProfileString(_T("Last Job"), _T("AoiDn Cleanner"), sData, sPath);
+	sData.Format(_T("%d"), WorkingInfo.LastJob.bVelAoiDnUltrasonic ? 1 : 0);
+	::WritePrivateProfileString(_T("Last Job"), _T("AoiDn Cleanner Vel"), sData, sPath);
 
 
 

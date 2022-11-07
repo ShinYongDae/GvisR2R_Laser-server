@@ -9,6 +9,7 @@
 #include "Dialog/DlgMyMsg.h"
 #include "Dialog/DlgMsgBox.h"
 #include "Dialog/DlgFrameHigh.h"
+#include "Dialog/DlgInfo.h"
 #include "Dialog/DlgMenu01.h"
 #include "Dialog/DlgMenu02.h"
 #include "Dialog/DlgMenu03.h"
@@ -273,7 +274,6 @@ class CGvisR2R_LaserView : public CFormView
 	BOOL SetCollision(double dCollisionMargin);
 	void DispStsMainMsg(int nIdx = 0);
 	void SetPlcParam();
-	void GetPlcParam();
 
 
 	BOOL SortingInUp(CString sPath, int nIndex);
@@ -312,6 +312,7 @@ public:
 	CDlgMsgBox* m_pDlgMsgBox;
 	CEvent      m_evtWaitClrDispMsg;
 
+	CDlgInfo *m_pDlgInfo;
 	CDlgFrameHigh *m_pDlgFrameHigh;
 	CDlgMenu01 *m_pDlgMenu01;
 	CDlgMenu02 *m_pDlgMenu02;
@@ -442,6 +443,7 @@ public:
 	void BuzzerFromThread(BOOL bOn, int nCh = 0);
 
 
+	void GetPlcParam();
 	BOOL WatiDispMain(int nDelay);
 
 	void RestoreReelmap();

@@ -20,7 +20,6 @@
 
 #include "Process/DataFile.h"
 
-#include "Dialog/DlgInfo.h"
 #include "Dialog/DlgMyPassword.h"
 #include "Dialog/DlgMyMsgSub00.h"
 #include "Dialog/DlgMyMsgSub01.h"
@@ -111,6 +110,7 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 	m_pDlgMyMsg = NULL;
 	m_pDlgMsgBox = NULL;
 
+	m_pDlgInfo = NULL;
 	m_pDlgFrameHigh = NULL;
 	m_pDlgMenu01 = NULL;
 	m_pDlgMenu02 = NULL;
@@ -1598,6 +1598,22 @@ void CGvisR2R_LaserView::ShowDlg(int nID)
 
 	switch (nID)
 	{
+	case IDD_DLG_INFO:
+		if (!m_pDlgInfo)
+		{
+			m_pDlgInfo = new CDlgInfo(this);
+			if (m_pDlgInfo->GetSafeHwnd() == 0)
+			{
+				m_pDlgInfo->Create();
+				m_pDlgInfo->ShowWindow(SW_SHOW);
+			}
+		}
+		else
+		{
+			m_pDlgInfo->ShowWindow(SW_SHOW);
+		}
+		break;
+
 	case IDD_DLG_FRAME_HIGH:
 		if (!m_pDlgFrameHigh)
 		{
@@ -1714,6 +1730,11 @@ void CGvisR2R_LaserView::ShowDlg(int nID)
 
 void CGvisR2R_LaserView::HideAllDlg()
 {
+	if (m_pDlgInfo && m_pDlgInfo->GetSafeHwnd())
+	{
+		if (m_pDlgInfo->IsWindowVisible())
+			m_pDlgInfo->ShowWindow(SW_HIDE);
+	}
 	if (m_pDlgMenu01 && m_pDlgMenu01->GetSafeHwnd())
 	{
 		if (m_pDlgMenu01->IsWindowVisible())
@@ -1744,6 +1765,11 @@ void CGvisR2R_LaserView::HideAllDlg()
 
 void CGvisR2R_LaserView::DelAllDlg()
 {
+	if (m_pDlgInfo != NULL)
+	{
+		delete m_pDlgInfo;
+		m_pDlgInfo = NULL;
+	}
 	if (m_pDlgMenu05 != NULL)
 	{
 		delete m_pDlgMenu05;
@@ -1788,7 +1814,9 @@ LRESULT CGvisR2R_LaserView::OnDlgInfo(WPARAM wParam, LPARAM lParam)
 {
 	ClrDispMsg();
 	CDlgInfo Dlg;
+	m_pDlgInfo = &Dlg;
 	Dlg.DoModal();
+	m_pDlgInfo = NULL;
 
 	if (m_pDlgMenu01)
 		m_pDlgMenu01->ChkUserInfo(FALSE);
@@ -13083,6 +13111,8 @@ void CGvisR2R_LaserView::SetPlcParam()
 
 void CGvisR2R_LaserView::GetPlcParam()
 {
+	if (!m_pMpe)
+		return;
 #ifdef USE_MPE
 	// Main
 	pDoc->BtnStatus.Main.Ready = m_pMpe->Read(_T("MB005503")) ? TRUE : FALSE;
@@ -13149,7 +13179,7 @@ void CGvisR2R_LaserView::GetPlcParam()
 	pDoc->BtnStatus.AoiDn.TqClp = m_pMpe->Read(_T("MB00570A")) ? TRUE : FALSE;
 	pDoc->BtnStatus.AoiDn.MvOne = m_pMpe->Read(_T("MB440151")) ? TRUE : FALSE;
 	pDoc->BtnStatus.AoiDn.LsrPt = m_pMpe->Read(_T("MB005708")) ? TRUE : FALSE;
-	pDoc->BtnStatus.AoiDn.SonicBlw = m_pMpe->Read(_T("MB44014F")) ? TRUE : FALSE;
+	pDoc->BtnStatus.AoiDn.VelSonicBlw = m_pMpe->Read(_T("MB44014F")) ? TRUE : FALSE;
 
 	// AOIUp
 	pDoc->BtnStatus.AoiUp.Relation = m_pMpe->Read(_T("MB005601")) ? TRUE : FALSE;
@@ -13177,7 +13207,7 @@ void CGvisR2R_LaserView::GetPlcParam()
 	pDoc->BtnStatus.Eng.MvOne = m_pMpe->Read(_T("MB440151")) ? TRUE : FALSE;
 	//pDoc->BtnStatus.Eng.LsrPt = m_pMpe->Read(_T("")) ? TRUE : FALSE;
 	//pDoc->BtnStatus.Eng.DcRSol = m_pMpe->Read(_T("")) ? TRUE : FALSE;
-	pDoc->BtnStatus.Eng.SonicBlw = m_pMpe->Read(_T("MB44014E")) ? TRUE : FALSE;
+	pDoc->BtnStatus.Eng.VelSonicBlw = m_pMpe->Read(_T("MB44014E")) ? TRUE : FALSE;
 
 	// Uncoiler
 	pDoc->BtnStatus.Uc.Relation = m_pMpe->Read(_T("MB005401")) ? TRUE : FALSE;
@@ -14648,6 +14678,12 @@ LRESULT CGvisR2R_LaserView::wmServerReceived(WPARAM wParam, LPARAM lParam)
 	case _SetSig:
 		if (m_pEngrave)
 			m_pEngrave->GetSysSignal(rSockData);
+
+		if (m_pDlgInfo)
+			m_pDlgInfo->UpdateData();
+
+		if (m_pDlgMenu01)
+			m_pDlgMenu01->UpdateData();
 
 		if (m_pDlgMenu03)
 			m_pDlgMenu03->UpdateSignal();
