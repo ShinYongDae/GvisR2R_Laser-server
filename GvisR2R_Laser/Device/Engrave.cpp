@@ -442,6 +442,8 @@ void CEngrave::GetSysSignal(SOCKET_DATA SockData)
 	GetSignalAOIUp(SockData);
 	GetSignalEngrave(SockData);
 	GetSignalUncoiler(SockData);
+
+	GetSignalEngraveAutoSequence(SockData);
 }
 
 void CEngrave::GetSignalMain(SOCKET_DATA SockData)
@@ -899,6 +901,32 @@ void CEngrave::GetSignalUncoiler(SOCKET_DATA SockData)
 			break;
 		case _SigInx::_ClrRollPushUn:
 			pDoc->BtnStatus.Uc.ClRlPshUpDn = (SockData.nData1 > 0) ? TRUE : FALSE;
+			break;
+		}
+	}
+}
+
+void CEngrave::GetSignalEngraveAutoSequence(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+	CString sVal;
+
+	if (nCmdCode == _SetSig)
+	{
+		switch (nMsgId)
+		{
+		case _SigInx::_EngAutoSeqMkSt:
+			pDoc->BtnStatus.EngAuto.MkSt = (SockData.nData1 > 0) ? TRUE : FALSE;
+			break;
+		case _SigInx::_EngAutoSeqOnMkIng:
+			pDoc->BtnStatus.EngAuto.OnMking = (SockData.nData1 > 0) ? TRUE : FALSE;
+			break;
+		case _SigInx::_EngAutoSeq2dReadSt:
+			pDoc->BtnStatus.EngAuto.Read2dSt = (SockData.nData1 > 0) ? TRUE : FALSE;
+			break;
+		case _SigInx::_EngAutoSeqOnReading2d:
+			pDoc->BtnStatus.EngAuto.OnRead2d = (SockData.nData1 > 0) ? TRUE : FALSE;
 			break;
 		}
 	}
@@ -5867,6 +5895,48 @@ void CEngrave::SwAoiEmg(BOOL bOn)
 	SocketData.nCmdCode = _SetSig;
 
 	SocketData.nMsgID = _SigInx::_EmgAoi;
+	SocketData.nData1 = bOn ? 1 : 0;
+	SendCommand(SocketData);
+}
+
+// EngraveAutoSequence
+
+void CEngrave::SwEngAutoMkSt(BOOL bOn) // 각인부 마킹중 ON (PC가 ON, OFF)
+{
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_EngAutoSeqMkSt;
+	SocketData.nData1 = bOn ? 1 : 0;
+	SendCommand(SocketData);
+}
+
+void CEngrave::SwEngAutoOnMking(BOOL bOn) // 각인부 마킹중 ON (PC가 ON, OFF)
+{
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_EngAutoSeqOnMkIng;
+	SocketData.nData1 = bOn ? 1 : 0;
+	SendCommand(SocketData);
+}
+
+void CEngrave::SwEngAuto2dReadSt(BOOL bOn) // 각인부 2D Read 시작 ON (PC가 ON, OFF)
+{
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_EngAutoSeq2dReadSt;
+	SocketData.nData1 = bOn ? 1 : 0;
+	SendCommand(SocketData);
+}
+
+void CEngrave::SwEngAutoOnReading2d(BOOL bOn) // 각인부 Read중 ON (PC가 ON, OFF)
+{
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_EngAutoSeqOnReading2d;
 	SocketData.nData1 = bOn ? 1 : 0;
 	SendCommand(SocketData);
 }

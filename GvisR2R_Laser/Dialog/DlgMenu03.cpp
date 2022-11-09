@@ -3143,6 +3143,8 @@ void CDlgMenu03::SetAoiOnePnl(BOOL bOn)
 
 BOOL CDlgMenu03::DoReset()
 {
+	pView->InitAutoEng();
+
 /*	pView->DispThreadTick();
 
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;

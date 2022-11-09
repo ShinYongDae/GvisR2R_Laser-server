@@ -304,6 +304,14 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 	m_bMkStSw = FALSE;
 	m_nMkStAuto = 0;
 
+	m_bEngSt = FALSE;
+	m_bEngStSw = FALSE;
+	m_nEngStAuto = FALSE;
+
+	m_bEng2dSt = FALSE;
+	m_bEng2dStSw = FALSE;
+	m_nEng2dStAuto = FALSE;
+
 	m_bLotEnd = FALSE;
 	m_nLotEndAuto = 0;
 
@@ -3959,7 +3967,8 @@ void CGvisR2R_LaserView::DoIO()
 	}
 	else if (pDoc->Status.bAuto)
 	{
-		DoAuto();
+		//DoAuto();
+		DoAutoEng();
 	}
 
 	// 	DoSignal();
@@ -12236,11 +12245,6 @@ void CGvisR2R_LaserView::DispDefImg()
 
 }
 
-void CGvisR2R_LaserView::DoAuto()
-{
-
-}
-
 BOOL CGvisR2R_LaserView::IsSameUpDnLot()
 {
 	if (pDoc->Status.PcrShare[0].sLot == pDoc->Status.PcrShare[1].sLot)
@@ -14721,6 +14725,32 @@ void CGvisR2R_LaserView::SetEngraveFdPitch(double dPitch)
 }
 
 
+BOOL CGvisR2R_LaserView::IsConnected()
+{
+#ifdef USE_ENGRAVE
+	if (m_pEngrave)
+	{
+		if (m_pEngrave->IsConnected())
+		{
+			if (!m_bContEngraveF)
+			{
+				m_bContEngraveF = TRUE;
+			}
+			return TRUE;
+		}
+		else
+		{
+			if (m_bContEngraveF)
+			{
+				m_bContEngraveF = FALSE;
+			}
+			return FALSE;
+		}
+	}
+#endif
+	return FALSE;
+}
+
 BOOL CGvisR2R_LaserView::IsConnectedMdx()
 {
 	if (m_pMdx2500)
@@ -14785,4 +14815,253 @@ BOOL CGvisR2R_LaserView::IsPinPos0()
 		return FALSE;
 
 	return TRUE;
+}
+
+
+void CGvisR2R_LaserView::InitAutoEng()
+{
+	m_bMkSt = FALSE;
+	m_bMkStSw = FALSE;
+	m_nMkStAuto = 0;
+
+	m_bEngSt = FALSE;
+	m_bEngStSw = FALSE;
+	m_nEngStAuto = FALSE;
+
+	m_bEng2dSt = FALSE;
+	m_bEng2dStSw = FALSE;
+	m_nEng2dStAuto = FALSE;
+
+	pDoc->BtnStatus.EngAuto.Init();
+}
+
+void CGvisR2R_LaserView::DoAutoEng()
+{
+	if ( !IsAuto() || (MODE_INNER != pDoc->WorkingInfo.LastJob.nTestMode) )
+		return;
+
+	CString str;
+	str.Format(_T("%d : %d"), m_nStepTHREAD_DISP_DEF, m_bTHREAD_DISP_DEF ? 1 : 0);
+	pView->DispStsBar(str, 6);
+
+	// 각인부 마킹시작 신호를 확인
+	DoAtuoGetEngStSignal();
+
+	// 각인부 2D 코드 Reading신호를 확인
+	DoAtuoGet2dReadStSignal();
+
+	//// CycleStop
+	//DoAutoChkCycleStop();
+
+	//// DispMsg
+	//DoAutoDispMsg();
+
+	// 각인부 Marking Start
+	DoAutoMarking();
+
+	// 각인부 2D 코드 Reading Start
+	DoAuto2dReading();
+}
+
+void CGvisR2R_LaserView::DoAtuoGetEngStSignal()
+{
+	if (!m_bEngSt)
+	{
+		if ((pDoc->BtnStatus.EngAuto.MkSt || m_bMkStSw) && !pDoc->BtnStatus.EngAuto.MkStF)  // AlignTest		// 마킹시작(PC가 확인하고 Reset시킴.)-20141029
+		{
+			m_bEngStSw = FALSE;
+			pDoc->BtnStatus.EngAuto.MkStF = TRUE;
+
+			if (IsRun())
+			{
+				//m_pMpe->Write(_T("MB440110"), 0);			// 마킹시작(PC가 확인하고 Reset시킴.)-20141029
+				//if (pDoc->m_pMpeSignal[0] & (0x01 << 1))	// 마킹부 Feeding완료(PLC가 On시키고 PC가 확인하고 Reset시킴.)-20141030
+				//	m_pMpe->Write(_T("MB440101"), 0);		// 마킹부 Feeding완료
+				if (m_pEngrave)
+					m_pEngrave->SwEngAutoMkSt(FALSE);
+
+				m_bEngSt = TRUE;
+				m_nEngStAuto = ENG_ST;
+			}
+		}
+		else if(!pDoc->BtnStatus.EngAuto.MkSt && pDoc->BtnStatus.EngAuto.MkStF)
+			pDoc->BtnStatus.EngAuto.MkStF = FALSE;
+	}
+}
+
+void CGvisR2R_LaserView::DoAtuoGet2dReadStSignal()
+{
+	if (!m_bEng2dSt)
+	{
+		if ((pDoc->BtnStatus.EngAuto.Read2dSt || m_bMkStSw) && !pDoc->BtnStatus.EngAuto.Read2dStF)  // 2D(GUI) Reading 동작 Start신호(PLC On->PC Off)
+		{
+			m_bEng2dStSw = FALSE;
+			pDoc->BtnStatus.EngAuto.Read2dStF = TRUE;
+
+			if (IsRun())
+			{
+				//m_pMpe->Write(_T("MB440110"), 0);			// 마킹시작(PC가 확인하고 Reset시킴.)-20141029
+				//if (pDoc->m_pMpeSignal[0] & (0x01 << 1))	// 마킹부 Feeding완료(PLC가 On시키고 PC가 확인하고 Reset시킴.)-20141030
+				//	m_pMpe->Write(_T("MB440101"), 0);		// 마킹부 Feeding완료
+				if (m_pEngrave)
+					m_pEngrave->SwEngAuto2dReadSt(FALSE);
+
+				m_bEng2dSt = TRUE;
+				m_nEng2dStAuto = ENG_ST;
+			}
+		}
+		else if(!pDoc->BtnStatus.EngAuto.Read2dSt && pDoc->BtnStatus.EngAuto.Read2dStF)
+			pDoc->BtnStatus.EngAuto.Read2dStF = FALSE;
+	}
+}
+
+void CGvisR2R_LaserView::DoAuto2dReading()
+{
+	if (MODE_INNER == pDoc->WorkingInfo.LastJob.nTestMode)
+	{
+		//MarkingWith1PointAlign();
+	}
+}
+
+void CGvisR2R_LaserView::DoAutoMarking()
+{
+	if (MODE_INNER == pDoc->WorkingInfo.LastJob.nTestMode)
+	{
+		MarkingWith1PointAlign();
+	}
+}
+
+void CGvisR2R_LaserView::MarkingWith1PointAlign()
+{
+	Eng1PtReady();
+	//Eng1PtChkSerial();
+	//Eng1PtInit();
+	//Eng1PtAlignPt0();
+	//Eng1PtAlignPt1();
+	//Eng1PtMoveInitPos();
+	//Eng1PtElecChk();
+	//Eng1PtDoMarking();
+	//Eng1PtLotDiff();
+	//Eng1PtReject();
+	//Eng1PtErrStop();
+}
+
+void CGvisR2R_LaserView::Eng1PtReady()
+{
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	int nSerial;
+
+	if (m_bEngSt)
+	{
+		switch (m_nEngStAuto)
+		{
+		case ENG_ST:	// PLC MK 신호 확인	
+			if (IsRun())
+			{
+				SetListBuf();
+				m_nEngStAuto++;
+			}
+			break;
+		case ENG_ST + 1:
+			if (m_pEngrave)
+				m_pEngrave->SwEngAutoOnMking(TRUE);
+			m_nEngStAuto++;
+			break;
+		case ENG_ST + (Mk1PtIdx::Start) :	// 2
+			m_nEngStAuto++;
+			nSerial = pDoc->GetLastShotEngrave();
+			break;
+		case ENG_ST + (Mk2PtIdx::Start) + 1:
+			m_nEngStAuto++;
+
+			// 			if(bDualTest)
+			// 			{
+			// 				if(pDoc->m_ListBuf[1].nTot > 0) // AOI-Dn
+			// 				{
+			// 					m_nMkStAuto++;
+			// 
+			//					m_nBufDnSerial[1] = pDoc->m_ListBuf[1].Pop();
+			// 				}
+			// 				else
+			// 				{
+			//					m_nBufDnSerial[1] = 0;
+			// 					m_nMkStAuto++;
+			// 				}
+			// 			}
+			// 			else
+			// 			{
+			// 				if(pDoc->m_ListBuf[0].nTot > 0) // AOI-Up
+			// 				{
+			// 					m_nMkStAuto++;
+			//					m_nBufUpSerial[1] = pDoc->m_ListBuf[0].Pop();
+			// 				}
+			// 				else
+			// 				{
+			//					m_nBufUpSerial[1] = 0;
+			// 					m_nMkStAuto++;
+			// 				}
+			// 			}
+			break;
+		}
+	}
+}
+
+void CGvisR2R_LaserView::Eng2dReadReady()
+{
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	int nSerial;
+
+	if (m_bEng2dSt)
+	{
+		switch (m_nEng2dStAuto)
+		{
+		case ENG_2D_ST:	// PLC MK 신호 확인	
+			if (IsRun())
+			{
+				SetListBuf();
+				m_nEng2dStAuto++;
+			}
+			break;
+		case ENG_2D_ST + 1:
+			if (m_pEngrave)
+				m_pEngrave->SwEngAutoOnReading2d(TRUE);
+			m_nEng2dStAuto++;
+			break;
+		case ENG_2D_ST + (Read2dIdx::Start) :	// 2
+			m_nEng2dStAuto++;
+			nSerial = pDoc->GetLastShotEngrave();
+			break;
+		case ENG_2D_ST + (Read2dIdx::Start) + 1:
+			m_nEng2dStAuto++;
+
+			// 			if(bDualTest)
+			// 			{
+			// 				if(pDoc->m_ListBuf[1].nTot > 0) // AOI-Dn
+			// 				{
+			// 					m_nMkStAuto++;
+			// 
+			//					m_nBufDnSerial[1] = pDoc->m_ListBuf[1].Pop();
+			// 				}
+			// 				else
+			// 				{
+			//					m_nBufDnSerial[1] = 0;
+			// 					m_nMkStAuto++;
+			// 				}
+			// 			}
+			// 			else
+			// 			{
+			// 				if(pDoc->m_ListBuf[0].nTot > 0) // AOI-Up
+			// 				{
+			// 					m_nMkStAuto++;
+			//					m_nBufUpSerial[1] = pDoc->m_ListBuf[0].Pop();
+			// 				}
+			// 				else
+			// 				{
+			//					m_nBufUpSerial[1] = 0;
+			// 					m_nMkStAuto++;
+			// 				}
+			// 			}
+			break;
+		}
+	}
 }

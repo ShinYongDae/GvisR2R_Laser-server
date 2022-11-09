@@ -43,6 +43,8 @@ typedef enum _stSigInx {
 	_MkResetLf, _MkResetRt, _MkBuffJogCw, _MkBuffJogCcw, _MkBuffOrgMv, _MkBuffInitPosMv, _MkBuffPosSave,
 	// Menu04 (Engrave)
 	_EngBuffJogCw, _EngBuffJogCcw, _EngBuffOrgMv, _EngBuffOrgMvDone, _EngBuffInitPosMv, _EngBuffInitPosMvDone, _EngBuffInitPosSave,
+	// EngraveAutoSequence
+	_EngAutoSeqMkSt, _EngAutoSeqOnMkIng, _EngAutoSeq2dReadSt, _EngAutoSeqOnReading2d,
 }_SigInx;
 
 typedef enum _stPageInx {

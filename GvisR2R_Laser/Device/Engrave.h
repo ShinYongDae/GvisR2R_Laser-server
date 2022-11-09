@@ -75,6 +75,7 @@ public:
 	void GetSignalAOIUp(SOCKET_DATA SockData);
 	void GetSignalEngrave(SOCKET_DATA SockData);
 	void GetSignalUncoiler(SOCKET_DATA SockData);
+	void GetSignalEngraveAutoSequence(SOCKET_DATA SockData);
 
 	// GetSysData
 	void GetSysData(SOCKET_DATA SockData);
@@ -418,6 +419,12 @@ public:
 	void SwUcPaperCcw(BOOL bOn);
 	void SwUcClRlUpDn(BOOL bOn);
 	void SwUcClRlPshUpDn(BOOL bOn);
+
+	// Engrave Auto Sequence
+	void SwEngAutoMkSt(BOOL bOn);
+	void SwEngAutoOnMking(BOOL bOn);
+	void SwEngAuto2dReadSt(BOOL bOn);
+	void SwEngAutoOnReading2d(BOOL bOn);
 
 	// End Switch
 
