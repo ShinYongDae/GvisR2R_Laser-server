@@ -348,6 +348,7 @@ public:
 	int GetStripRejectMkNum();
 
 	int GetLastShotEngrave();
+	void SetEngraveLastShot(int nSerial);
 	void SetEngraveReaderDist(double dLen);
 	double GetEngraveReaderDist();
 	void SetEngraveAoiDist(double dLen);

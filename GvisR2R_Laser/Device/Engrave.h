@@ -423,8 +423,10 @@ public:
 	// Engrave Auto Sequence
 	void SwEngAutoMkSt(BOOL bOn);
 	void SwEngAutoOnMking(BOOL bOn);
+	void SwEngAutoMkDone(BOOL bOn);
 	void SwEngAuto2dReadSt(BOOL bOn);
 	void SwEngAutoOnReading2d(BOOL bOn);
+	void SwEngAuto2dReadDone(BOOL bOn);
 
 	// End Switch
 

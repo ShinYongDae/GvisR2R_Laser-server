@@ -556,11 +556,9 @@ public:
 	//void Marking();
 	//void DoReject0();
 
-
 	BOOL IsReady();				// not used
 	void Shift2Buf();
 	void Shift2Mk();
-	void CompletedMk(int nCam); // 0: Only Cam0, 1: Only Cam1, 2: Cam0 and Cam1, 3: None
 	void SetTestSts(int nStep);
 	void SetMkSts(int nStep);
 	void SetAoiFdSts();
@@ -932,8 +930,21 @@ public:
 
 	void InitAutoEng();
 	void MarkingWith1PointAlign();
+
 	void Eng1PtReady();
+	void Eng1PtInit();
+	void Eng1PtAlignPt0();
+	void Eng1PtDoMarking();
+
 	void Eng2dReadReady();
+
+	void AdjPinPosEng();
+	BOOL OnePointAlign0(int nPos);
+	BOOL SetMk(BOOL bRun = TRUE);
+	BOOL IsMkDone();
+
+	//void CompletedMk(int nCam); // 0: Only Cam0, 1: Only Cam1, 2: Cam0 and Cam1, 3: None
+
 
 // 재정의입니다.
 public:

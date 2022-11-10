@@ -3370,7 +3370,8 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 	long lSzY = (long)((double)ALIGN_IMG_DISP_SIZEY * dRsRto);
 	MilPatImg = m_pMil->AllocBuf(ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
 	MilPatRzImg = m_pMil->AllocBuf(lSzX, lSzY, 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
-	MimBinarize(MilBufAlignTemp[nPos], MilPatImg->m_MilImage, M_GREATER, 0, 0);
+	//MimBinarize(MilBufAlignTemp[nPos], MilPatImg->m_MilImage, M_GREATER, 0, 0);
+	MimBinarize(MilBufPinTemp, MilPatImg->m_MilImage, M_GREATER, 0, 0);
 	MimResize(MilPatImg->m_MilImage, MilPatRzImg->m_MilImage, dRsRto, dRsRto, M_DEFAULT);
 
 	dScore = _tstof(pDoc->WorkingInfo.Vision[m_nIdx].sStdScr);
@@ -3386,7 +3387,7 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 
 	#ifdef _DEBUG
 	//char szFileName[100];
-	//sprintf(szFileName, "C:\\PinPat.tif");
+	//sprintf(szFileName, "C:\\AlignPat.tif");
 	TCHAR szFileName[30];
 	_stprintf(szFileName, _T("C:\\PinPat.tif"));
 	MbufSave(szFileName, MilPatRzImg->m_MilImage);
@@ -3406,28 +3407,28 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 		//Sleep(100);
 		if(m_pIRayple->OneshotGrab())
 		{ 
-		if (m_pMil->OneshotGrab(MilGrabImg->m_MilImage, GRAB_COLOR_COLOR) == FALSE)
-		{
-			m_pMil->PatternMatchingFree();
+			if (m_pMil->OneshotGrab(MilGrabImg->m_MilImage, GRAB_COLOR_COLOR) == FALSE)
+			{
+				m_pMil->PatternMatchingFree();
 
-			if (bDraw)
-				pView->MsgBox(_T("Image Grab Fail !!"));
-			SetClrOverlay();
+				if (bDraw)
+					pView->MsgBox(_T("Image Grab Fail !!"));
+				SetClrOverlay();
 
-			if (MilGrabImg)
-				delete MilGrabImg;
-			if (MilGrabBinImg)
-				delete MilGrabBinImg;
-			if (MilPatImg)
-				delete MilPatImg;
-			if (MilPatRzImg)
-				delete MilPatRzImg;
+				if (MilGrabImg)
+					delete MilGrabImg;
+				if (MilGrabBinImg)
+					delete MilGrabBinImg;
+				if (MilPatImg)
+					delete MilPatImg;
+				if (MilPatRzImg)
+					delete MilPatRzImg;
 
-			//StartLive();
-			//Sleep(30);
+				//StartLive();
+				//Sleep(30);
 
-			return FALSE;
-		}
+				return FALSE;
+			}
 		}
 
 		//StartLive();
@@ -3445,14 +3446,14 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
 
 	#ifdef _DEBUG
-		//sprintf(szFileName, "C:\\PinGrab.tif");
 		//sprintf(szFileName, "C:\\AlignGrab0.tif");
-		_stprintf(szFileName, _T("C:\\AlignGrab0.tif"));
+		//_stprintf(szFileName, _T("C:\\AlignGrab0.tif"));
+		_stprintf(szFileName, _T("C:\\PinGrab.tif"));
 		MbufSave(szFileName, MilGrabImg->m_MilImage);
 
-		//sprintf(szFileName, "C:\\PinGrabBin.tif");
 		//sprintf(szFileName, "C:\\AlignGrabBin0.tif");
-		_stprintf(szFileName, _T("C:\\AlignGrabBin0.tif"));
+		//_stprintf(szFileName, _T("C:\\AlignGrabBin0.tif"));
+		_stprintf(szFileName, _T("C:\\PinGrabBin.tif"));
 		MbufSave(szFileName, MilGrabBinImg->m_MilImage);
 	#endif
 

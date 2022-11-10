@@ -306,11 +306,11 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 
 	m_bEngSt = FALSE;
 	m_bEngStSw = FALSE;
-	m_nEngStAuto = FALSE;
+	m_nEngStAuto = 0;
 
 	m_bEng2dSt = FALSE;
 	m_bEng2dStSw = FALSE;
-	m_nEng2dStAuto = FALSE;
+	m_nEng2dStAuto = 0;
 
 	m_bLotEnd = FALSE;
 	m_nLotEndAuto = 0;
@@ -14826,13 +14826,14 @@ void CGvisR2R_LaserView::InitAutoEng()
 
 	m_bEngSt = FALSE;
 	m_bEngStSw = FALSE;
-	m_nEngStAuto = FALSE;
+	m_nEngStAuto = 0;
 
 	m_bEng2dSt = FALSE;
 	m_bEng2dStSw = FALSE;
-	m_nEng2dStAuto = FALSE;
+	m_nEng2dStAuto = 0;
 
-	pDoc->BtnStatus.EngAuto.Init();
+	pDoc->BtnStatus.EngAuto._Init();
+	pDoc->SetEngraveLastShot(0); // m_nEngraveLastShot = 0;
 }
 
 void CGvisR2R_LaserView::DoAutoEng()
@@ -14856,6 +14857,7 @@ void CGvisR2R_LaserView::DoAutoEng()
 	//// DispMsg
 	//DoAutoDispMsg();
 
+	// Engrave Auto Sequence
 	// 각인부 Marking Start
 	DoAutoMarking();
 
@@ -14907,7 +14909,7 @@ void CGvisR2R_LaserView::DoAtuoGet2dReadStSignal()
 					m_pEngrave->SwEngAuto2dReadSt(FALSE);
 
 				m_bEng2dSt = TRUE;
-				m_nEng2dStAuto = ENG_ST;
+				m_nEng2dStAuto = ENG_2D_ST;
 			}
 		}
 		else if(!pDoc->BtnStatus.EngAuto.Read2dSt && pDoc->BtnStatus.EngAuto.Read2dStF)
@@ -14923,6 +14925,9 @@ void CGvisR2R_LaserView::DoAuto2dReading()
 	}
 }
 
+
+
+// DoAutoMarking
 void CGvisR2R_LaserView::DoAutoMarking()
 {
 	if (MODE_INNER == pDoc->WorkingInfo.LastJob.nTestMode)
@@ -14935,12 +14940,12 @@ void CGvisR2R_LaserView::MarkingWith1PointAlign()
 {
 	Eng1PtReady();
 	//Eng1PtChkSerial();
-	//Eng1PtInit();
-	//Eng1PtAlignPt0();
+	Eng1PtInit();
+	Eng1PtAlignPt0();
 	//Eng1PtAlignPt1();
 	//Eng1PtMoveInitPos();
 	//Eng1PtElecChk();
-	//Eng1PtDoMarking();
+	Eng1PtDoMarking();
 	//Eng1PtLotDiff();
 	//Eng1PtReject();
 	//Eng1PtErrStop();
@@ -14949,7 +14954,7 @@ void CGvisR2R_LaserView::MarkingWith1PointAlign()
 void CGvisR2R_LaserView::Eng1PtReady()
 {
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	int nSerial;
+	int nSerial = pDoc->GetLastShotEngrave() + 1;
 
 	if (m_bEngSt)
 	{
@@ -14958,7 +14963,6 @@ void CGvisR2R_LaserView::Eng1PtReady()
 		case ENG_ST:	// PLC MK 신호 확인	
 			if (IsRun())
 			{
-				SetListBuf();
 				m_nEngStAuto++;
 			}
 			break;
@@ -14969,42 +14973,259 @@ void CGvisR2R_LaserView::Eng1PtReady()
 			break;
 		case ENG_ST + (Mk1PtIdx::Start) :	// 2
 			m_nEngStAuto++;
-			nSerial = pDoc->GetLastShotEngrave();
 			break;
-		case ENG_ST + (Mk2PtIdx::Start) + 1:
-			m_nEngStAuto++;
-
-			// 			if(bDualTest)
-			// 			{
-			// 				if(pDoc->m_ListBuf[1].nTot > 0) // AOI-Dn
-			// 				{
-			// 					m_nMkStAuto++;
-			// 
-			//					m_nBufDnSerial[1] = pDoc->m_ListBuf[1].Pop();
-			// 				}
-			// 				else
-			// 				{
-			//					m_nBufDnSerial[1] = 0;
-			// 					m_nMkStAuto++;
-			// 				}
-			// 			}
-			// 			else
-			// 			{
-			// 				if(pDoc->m_ListBuf[0].nTot > 0) // AOI-Up
-			// 				{
-			// 					m_nMkStAuto++;
-			//					m_nBufUpSerial[1] = pDoc->m_ListBuf[0].Pop();
-			// 				}
-			// 				else
-			// 				{
-			//					m_nBufUpSerial[1] = 0;
-			// 					m_nMkStAuto++;
-			// 				}
-			// 			}
+		case ENG_ST + (Mk1PtIdx::Start) + 1:
+			m_nEngStAuto = ENG_ST + (Mk1PtIdx::InitMk);			// InitMk()
 			break;
 		}
 	}
 }
+
+void CGvisR2R_LaserView::Eng1PtInit()
+{
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	int nSerial = pDoc->GetLastShotEngrave() + 1;
+
+	if (m_bEngSt)
+	{
+		switch (m_nEngStAuto)
+		{
+		case ENG_ST + (Mk1PtIdx::InitMk) :
+			m_nEngStAuto++;
+			if (nSerial > 2)
+			{
+				AdjPinPosEng();
+				// 각인부 작업완료.(PC가 On, PLC가 확인 후 Off) - ?
+			}
+			break;
+
+		case ENG_ST + (Mk1PtIdx::InitMk) + 1:
+			if (IsRun())
+				m_nEngStAuto = ENG_ST + (Mk1PtIdx::Move0Cam0);	// Move - Cam1 - Pt0
+			break;
+		}
+	}
+}
+
+void CGvisR2R_LaserView::Eng1PtAlignPt0()
+{
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	int nSerial = pDoc->GetLastShotEngrave() + 1;
+
+	if (m_bEngSt)
+	{
+		switch (m_nEngStAuto)
+		{
+		case ENG_ST + (Mk1PtIdx::Move0Cam0) :	// Move - Cam1 - Pt0
+			if(MovePinPos())	//if (MoveAlign0(0))
+				m_nEngStAuto++;
+			break;
+		case ENG_ST + (Mk1PtIdx::Move0Cam0) + 1:
+			if (IsRun())
+				m_nEngStAuto++;
+			break;
+		case ENG_ST + (Mk1PtIdx::Move0Cam0) + 2:
+			if (IsMoveDone())
+			{
+				Sleep(100);
+				m_nEngStAuto++;
+			}
+			break;
+		case ENG_ST + (Mk1PtIdx::Move0Cam0) + 3:
+			m_nEngStAuto++;
+			break;
+		case ENG_ST + (Mk1PtIdx::Align0_0) :		// 1PtAlign - Cam0 - Pt0
+			m_nEngStAuto++;
+			if (!m_bSkipAlign[0][0])
+			{
+				if (OnePointAlign0(0))
+					m_bFailAlign[0][0] = FALSE;
+				else
+					m_bFailAlign[0][0] = TRUE;
+			}
+			break;
+		case ENG_ST + (Mk1PtIdx::Align0_0) + 1:
+			if (m_bFailAlign[0][0])
+			{
+				Buzzer(TRUE, 0);
+				//if(IDNO == DoMyMsgBox(_T("카메라의 원점 정렬을 다시하시겠습니까?"), MB_YESNO))
+				if (IDNO == MsgBox(_T("카메라의 원점 정렬을 다시하시겠습니까?"), 0, MB_YESNO))
+				{
+					Buzzer(FALSE, 0);
+
+					//if(IDYES == DoMyMsgBox(_T("카메라의 원점 정렬을 정말 않하시겠습니까?"), MB_YESNO))
+					if (IDYES == MsgBox(_T("카메라의 원점 정렬을 정말 않하시겠습니까?"), 0, MB_YESNO))
+					{
+						m_bReAlign[0][0] = FALSE;
+						m_bSkipAlign[0][0] = TRUE;
+						m_bSkipAlign[0][1] = TRUE;
+						m_bSkipAlign[0][2] = TRUE;
+						m_bSkipAlign[0][3] = TRUE;
+						//if(IDNO == DoMyMsgBox(_T("판넬에 레이저 2D 마킹을 하시겠습니까?"), MB_YESNO))
+						if (IDNO == MsgBox(_T("판넬에 레이저 2D 마킹을 하시겠습니까?"), 0, MB_YESNO))
+						{
+							m_bDoMk[0] = FALSE;
+							m_bDoneMk[0] = TRUE;
+						}
+						else
+						{
+							m_bDoMk[0] = TRUE;
+							m_bDoneMk[0] = FALSE;
+						}
+					}
+					else
+					{
+						// 원점 정렬을 다시 함.
+						m_bReAlign[0][0] = TRUE;
+						m_bSkipAlign[0][0] = FALSE;
+						m_bSkipAlign[0][1] = FALSE;
+						m_bSkipAlign[0][2] = FALSE;
+						m_bSkipAlign[0][3] = FALSE;
+						m_nEngStAuto = ENG_ST + (Mk1PtIdx::Move0Cam0); // OnePointAlign0(0) 으로 진행. - 카메라 재정렬
+																	 //m_nEngStAuto = MK_ST + (Mk1PtIdx::Move0Cam0); // TwoPointAlign0(0) 으로 진행. - 카메라 재정렬
+																	 //m_nEngStAuto = MK_ST + (Mk1PtIdx::Move0Cam1); // TwoPointAlign1(0) 으로 진행. - 카메라 재정렬
+						Stop();
+						TowerLamp(RGB_YELLOW, TRUE);
+					}
+				}
+				else
+				{ 
+					// 원점 정렬을 다시 함.
+					Buzzer(FALSE, 0);
+
+					m_bReAlign[0][0] = TRUE;
+					m_bSkipAlign[0][0] = FALSE;
+					m_bSkipAlign[0][1] = FALSE;
+					m_nEngStAuto = ENG_ST + (Mk1PtIdx::Move0Cam0); // OnePointAlign0(0) 으로 진행. - 카메라 재정렬
+																 //m_nEngStAuto = MK_ST + (Mk1PtIdx::Move0Cam0); // TwoPointAlign0(0) 으로 진행. - 카메라 재정렬
+																 //m_nEngStAuto = MK_ST + (Mk1PtIdx::Move0Cam1); // TwoPointAlign1(0) 으로 진행. - 카메라 재정렬
+					Stop();
+					TowerLamp(RGB_YELLOW, TRUE);
+				}
+			}
+
+			if (m_bFailAlign[0][0])
+			{
+				if (!m_bReAlign[0][0])
+				{
+					if (m_bDoMk[0])
+						m_nEngStAuto++; // DoMk
+					else
+					{
+						if (!IsInitPos0())
+							MoveInitPos0();
+
+						m_nEngStAuto = ENG_ST + (Mk1PtIdx::DoneMk); // Align변수 초기화 (Skip 65 : Mk())
+					}
+				}
+				else
+				{
+					m_nEngStAuto = ENG_ST + (Mk1PtIdx::Move0Cam0); // OnePointAlign0(0) 으로 진행. - 카메라 재정렬
+																 //m_nEngStAuto = MK_ST + (Mk1PtIdx::Move0Cam0); // TwoPointAlign1(0) 으로 진행. - 카메라 재정렬
+				}
+			}
+			else
+				m_nEngStAuto++; // DoMk
+
+			break;
+		case ENG_ST + (Mk1PtIdx::Align0_0) + 2:
+			if (IsRun())
+				m_nEngStAuto = ENG_ST + (Mk1PtIdx::DoMk);
+			break;
+		}
+	}
+}
+
+void CGvisR2R_LaserView::Eng1PtDoMarking()
+{
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	int nSerial = pDoc->GetLastShotEngrave() + 1;
+
+	if (m_bEngSt)
+	{
+		switch (m_nEngStAuto)
+		{
+		case ENG_ST + (Mk1PtIdx::DoMk) :			// Mk 마킹 시작
+			SetMk(TRUE);							// Mk 마킹 시작
+			m_nEngStAuto++;
+			break;
+
+		case ENG_ST + (Mk1PtIdx::DoMk) + 1:
+			Sleep(100);
+			m_nEngStAuto++;
+			break;
+		case ENG_ST + (Mk1PtIdx::DoMk) + 2:
+			if (IsMkDone())
+				m_nEngStAuto = ENG_ST + (Mk1PtIdx::DoneMk);	// Mk 마킹 완료
+			break;
+		case ENG_ST + (Mk1PtIdx::DoneMk) :
+			if(IsRun())
+				m_nEngStAuto++;					
+			break;
+		case ENG_ST + (Mk1PtIdx::DoneMk) + 1:
+			if (m_pEngrave)
+			{
+				m_pEngrave->SwEngAutoOnMking(FALSE);
+				m_pEngrave->SwEngAutoMkDone(TRUE);
+			}
+			m_nEngStAuto++;
+			break;
+		case ENG_ST + (Mk1PtIdx::DoneMk) + 2:
+			m_bEngSt = FALSE;
+			break;
+		}
+	}
+}
+
+BOOL  CGvisR2R_LaserView::IsMkDone()
+{
+	if (!pView || !pView->m_pMdx2500)
+		return FALSE;
+
+	return (!pView->m_pMdx2500->IsRunning());
+}
+
+BOOL CGvisR2R_LaserView::SetMk(BOOL bRun)	// Marking Start
+{
+	if (!pView || !pView->m_pMdx2500)
+		return FALSE;
+
+	return (pView->m_pMdx2500->LaserMarking());
+}
+
+void CGvisR2R_LaserView::AdjPinPosEng()
+{
+	if (m_pDlgMenu02)
+	{
+		if (m_pDlgMenu02->m_dMkFdOffsetY[0][0] > -2.0 &&
+			m_pDlgMenu02->m_dMkFdOffsetY[0][0] < 2.0)
+		{
+			double dOffsetY = -1.0*(m_pDlgMenu02->m_dMkFdOffsetY[0][0]);
+			dOffsetY *= pDoc->m_dShiftAdjustRatio;
+
+			CfPoint ptPnt[2];
+			ptPnt[0].x = _tstof(pDoc->WorkingInfo.Motion.sPinPosX[0]);
+			ptPnt[0].y = _tstof(pDoc->WorkingInfo.Motion.sPinPosY[0]) + dOffsetY;
+
+			m_pDlgMenu02->SetPinPos(0, ptPnt[0]);
+		}
+	}
+}
+
+BOOL CGvisR2R_LaserView::OnePointAlign0(int nPos)
+{
+	if (!m_pDlgMenu02)
+		return FALSE;
+	BOOL bRtn;
+	CfPoint ptPnt;
+	bRtn = m_pDlgMenu02->OnePointAlign(ptPnt); // 비전으로 확인한 원점위치 (Motion의 절대좌표계).
+
+	return bRtn;
+	//return m_pDlgMenu02->Do2PtAlign0(nPos);
+}
+
+
+// DoAutoReading
 
 void CGvisR2R_LaserView::Eng2dReadReady()
 {
@@ -15018,7 +15239,7 @@ void CGvisR2R_LaserView::Eng2dReadReady()
 		case ENG_2D_ST:	// PLC MK 신호 확인	
 			if (IsRun())
 			{
-				SetListBuf();
+				//SetListBuf();
 				m_nEng2dStAuto++;
 			}
 			break;
@@ -15033,35 +15254,10 @@ void CGvisR2R_LaserView::Eng2dReadReady()
 			break;
 		case ENG_2D_ST + (Read2dIdx::Start) + 1:
 			m_nEng2dStAuto++;
-
-			// 			if(bDualTest)
-			// 			{
-			// 				if(pDoc->m_ListBuf[1].nTot > 0) // AOI-Dn
-			// 				{
-			// 					m_nMkStAuto++;
-			// 
-			//					m_nBufDnSerial[1] = pDoc->m_ListBuf[1].Pop();
-			// 				}
-			// 				else
-			// 				{
-			//					m_nBufDnSerial[1] = 0;
-			// 					m_nMkStAuto++;
-			// 				}
-			// 			}
-			// 			else
-			// 			{
-			// 				if(pDoc->m_ListBuf[0].nTot > 0) // AOI-Up
-			// 				{
-			// 					m_nMkStAuto++;
-			//					m_nBufUpSerial[1] = pDoc->m_ListBuf[0].Pop();
-			// 				}
-			// 				else
-			// 				{
-			//					m_nBufUpSerial[1] = 0;
-			// 					m_nMkStAuto++;
-			// 				}
-			// 			}
 			break;
 		}
 	}
 }
+
+
+

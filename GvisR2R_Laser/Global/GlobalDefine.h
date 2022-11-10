@@ -1287,18 +1287,18 @@ struct stBtnUncoiler
 
 struct stBtnEngAuto
 {
-	BOOL MkSt, OnMking, Read2dSt, OnRead2d;
-	BOOL MkStF, OnMkingF, Read2dStF, OnRead2dF;
+	BOOL Init, MkSt, OnMking, MkDone, Read2dSt, OnRead2d, Read2dDone;
+	BOOL InitF, MkStF, OnMkingF, MkDoneF, Read2dStF, OnRead2dF, Read2dDoneF;
 
 	stBtnEngAuto()
 	{
-		Init();
+		_Init();
 	}
 
-	void Init()
+	void _Init()
 	{
-		MkSt = FALSE; OnMking = FALSE; Read2dSt = FALSE; OnRead2d = FALSE;
-		MkStF = FALSE; OnMkingF = FALSE; Read2dStF = FALSE; OnRead2dF = FALSE;
+		Init = FALSE; MkSt = FALSE; OnMking = FALSE; MkDone = FALSE; Read2dSt = FALSE; OnRead2d = FALSE; Read2dDone = FALSE;
+		InitF = FALSE; MkStF = FALSE; OnMkingF = FALSE; MkDoneF = FALSE; Read2dStF = FALSE; OnRead2dF = FALSE; Read2dDoneF = FALSE;
 	}
 };
 

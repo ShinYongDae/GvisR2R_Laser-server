@@ -8285,6 +8285,12 @@ int CGvisR2R_LaserDoc::GetLastShotEngrave()
 	return (nLastShot);
 }
 
+void CGvisR2R_LaserDoc::SetEngraveLastShot(int nSerial)
+{
+	if (pView && pView->m_pDlgFrameHigh)
+		pView->m_pDlgFrameHigh->SetEngraveLastShot(nSerial); // m_nEngraveLastShot = nSerial;
+}
+
 double CGvisR2R_LaserDoc::GetEngraveAoiDist()
 {
 	return (_tstof(WorkingInfo.Motion.sFdEngraveAoiInitDist));

@@ -2048,13 +2048,13 @@ BOOL CDlgMenu02::OnePointAlign(CfPoint &ptPnt)
 	dTgtPinY = pView->m_pMotion->m_dPinPosY[0] + (dY - double(nCamSzY/2)) * dResY;
 	m_dMkFdOffsetX[0][0] = (double(nCamSzX / 2) - dX) * dResX;
 	m_dMkFdOffsetY[0][0] = (double(nCamSzY / 2) - dY) * dResY;
-	// 	dTgtPinY = pView->m_pMotion->m_dPinPosY + m_dMkFdOffsetX;
+	//dTgtPinY = pView->m_pMotion->m_dPinPosY + m_dMkFdOffsetX;
 
 	ptPnt.x = dTgtPinX;
 	ptPnt.y = dTgtPinY;
 
-	pView->m_Align[0].SetAlignData(dRefPinX, dRefPinY, dTgtPinX, dTgtPinY);
-//	pDoc->m_pPcsRgn->SetMkPnt();
+	//pView->m_Align[0].SetAlignData(dRefPinX, dRefPinY, dTgtPinX, dTgtPinY);
+	//pDoc->m_pPcsRgn->SetMkPnt();
 #endif
 	return TRUE;
 }
