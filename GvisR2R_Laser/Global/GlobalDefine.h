@@ -1156,46 +1156,72 @@ struct stMkIo
 struct stBtnMain
 {
 	BOOL Ready, Run, Reset, Stop, Auto, Manual;
+
+	BOOL PrevReady, PrevRun, PrevReset, PrevStop, PrevAuto, PrevManual;
+
 	stBtnMain()
 	{
 		Ready = FALSE; Run = FALSE; Reset = FALSE; Stop = FALSE;
 		Auto = FALSE; Manual = FALSE;
+
+		PrevReady = FALSE; PrevRun = FALSE; PrevReset = FALSE; PrevStop = FALSE;
+		PrevAuto = FALSE; PrevManual = FALSE;
 	}
 };
 
 struct stBtnTqMotor
 {
 	BOOL Mk, Aoi, Eng;
+
+	BOOL PrevMk, PrevAoi, PrevEng;
+
 	stBtnTqMotor()
 	{
 		Mk = FALSE; Aoi = FALSE; Eng = FALSE;
+
+		PrevMk = FALSE; PrevAoi = FALSE; PrevEng = FALSE;
 	}
 };
 
 struct stBtnInductMotor
 {
 	BOOL Uc, Rc;
+
+	BOOL PrevUc, PrevRc;
+
 	stBtnInductMotor()
 	{
 		Uc = FALSE; Rc = FALSE;
+
+		PrevUc = FALSE; PrevRc = FALSE;
 	}
 };
 
 struct stBtnCore150
 {
 	BOOL Uc, Rc;
+
+	BOOL PrevUc, PrevRc;
+
 	stBtnCore150()
 	{
 		Uc = FALSE; Rc = FALSE;
+
+		PrevUc = FALSE; PrevRc = FALSE;
 	}
 };
 
 struct stBtnEtc
 {
 	BOOL BufR, EmgAoi;
+
+	BOOL PrevBufR, PrevEmgAoi;
+
 	stBtnEtc()
 	{
 		BufR = FALSE; EmgAoi = FALSE;
+
+		PrevBufR = FALSE; PrevEmgAoi = FALSE;
 	}
 };
 
@@ -1204,11 +1230,20 @@ struct stBtnRecoiler
 	BOOL Relation, FdCw, FdCcw, ReelChuck;
 	BOOL DcRlUpDn, ReelJoinL, ReelJoinR, ReelJoinVac;
 	BOOL PprChuck, PprCw, PprCcw, Rewine, RewineReelPpr;
+
+	BOOL PrevRelation, PrevFdCw, PrevFdCcw, PrevReelChuck;
+	BOOL PrevDcRlUpDn, PrevReelJoinL, PrevReelJoinR, PrevReelJoinVac;
+	BOOL PrevPprChuck, PrevPprCw, PrevPprCcw, PrevRewine, PrevRewineReelPpr;
+
 	stBtnRecoiler()
 	{
 		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; ReelChuck = FALSE;
 		DcRlUpDn = FALSE; ReelJoinL = FALSE; ReelJoinR = FALSE; ReelJoinVac = FALSE;
 		PprChuck = FALSE; PprCw = FALSE; PprCcw = FALSE; Rewine = FALSE; RewineReelPpr = FALSE;
+
+		PrevRelation = FALSE; PrevFdCw = FALSE; PrevFdCcw = FALSE; PrevReelChuck = FALSE;
+		PrevDcRlUpDn = FALSE; PrevReelJoinL = FALSE; PrevReelJoinR = FALSE; PrevReelJoinVac = FALSE;
+		PrevPprChuck = FALSE; PrevPprCw = FALSE; PrevPprCcw = FALSE; PrevRewine = FALSE; PrevRewineReelPpr = FALSE;
 	}
 };
 
@@ -1218,12 +1253,23 @@ struct stBtnPunch
 	BOOL PushUp, TblBlw, TblVac, FdClp;
 	BOOL TqClp, MvOne, LsrPt;
 	BOOL DcRSol;
+
+	BOOL PrevRelation, PrevFdCw, PrevFdCcw, PrevFdVac;
+	BOOL PrevPushUp, PrevTblBlw, PrevTblVac, PrevFdClp;
+	BOOL PrevTqClp, PrevMvOne, PrevLsrPt;
+	BOOL PrevDcRSol;
+
 	stBtnPunch()
 	{
 		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; FdVac = FALSE;
 		PushUp = FALSE; TblBlw = FALSE; TblVac = FALSE; FdClp = FALSE;
 		TqClp = FALSE; MvOne = FALSE; LsrPt = FALSE;
 		DcRSol = FALSE;
+
+		PrevRelation = FALSE; PrevFdCw = FALSE; PrevFdCcw = FALSE; PrevFdVac = FALSE;
+		PrevPushUp = FALSE; PrevTblBlw = FALSE; PrevTblVac = FALSE; PrevFdClp = FALSE;
+		PrevTqClp = FALSE; PrevMvOne = FALSE; PrevLsrPt = FALSE;
+		PrevDcRSol = FALSE;
 	}
 };
 
@@ -1233,12 +1279,23 @@ struct stBtnAOIDn
 	BOOL PushUp, TblBlw, TblVac, FdClp;
 	BOOL TqClp, MvOne, LsrPt;
 	BOOL ClrRoll, VelSonicBlw, Test, Reset, LotEnd;
+
+	BOOL PrevRelation, PrevFdCw, PrevFdCcw, PrevFdVac;
+	BOOL PrevPushUp, PrevTblBlw, PrevTblVac, PrevFdClp;
+	BOOL PrevTqClp, PrevMvOne, PrevLsrPt;
+	BOOL PrevClrRoll, PrevVelSonicBlw, PrevTest, PrevReset, PrevLotEnd;
+
 	stBtnAOIDn()
 	{
 		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; FdVac = FALSE;
 		PushUp = FALSE; TblBlw = FALSE; TblVac = FALSE; FdClp = FALSE;
 		TqClp = FALSE; MvOne = FALSE; LsrPt = FALSE;
 		ClrRoll = FALSE; VelSonicBlw = FALSE; Test = FALSE; Reset = FALSE; LotEnd = FALSE;
+
+		PrevRelation = FALSE; PrevFdCw = FALSE; PrevFdCcw = FALSE; PrevFdVac = FALSE;
+		PrevPushUp = FALSE; PrevTblBlw = FALSE; PrevTblVac = FALSE; PrevFdClp = FALSE;
+		PrevTqClp = FALSE; PrevMvOne = FALSE; PrevLsrPt = FALSE;
+		PrevClrRoll = FALSE; PrevVelSonicBlw = FALSE; PrevTest = FALSE; PrevReset = FALSE; PrevLotEnd = FALSE;
 	}
 };
 
@@ -1248,12 +1305,23 @@ struct stBtnAOIUp
 	BOOL PushUp, TblBlw, TblVac, FdClp;
 	BOOL TqClp, MvOne, LsrPt;
 	BOOL ClrRoll, TqVac, Test, Reset, LotEnd;
+
+	BOOL PrevRelation, PrevFdCw, PrevFdCcw, PrevFdVac;
+	BOOL PrevPushUp, PrevTblBlw, PrevTblVac, PrevFdClp;
+	BOOL PrevTqClp, PrevMvOne, PrevLsrPt;
+	BOOL PrevClrRoll, PrevTqVac, PrevTest, PrevReset, PrevLotEnd;
+
 	stBtnAOIUp()
 	{
 		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; FdVac = FALSE;
 		PushUp = FALSE; TblBlw = FALSE; TblVac = FALSE; FdClp = FALSE;
 		TqClp = FALSE; MvOne = FALSE; LsrPt = FALSE;
 		ClrRoll = FALSE; TqVac = FALSE; Test = FALSE; Reset = FALSE; LotEnd = FALSE;
+
+		PrevRelation = FALSE; PrevFdCw = FALSE; PrevFdCcw = FALSE; PrevFdVac = FALSE;
+		PrevPushUp = FALSE; PrevTblBlw = FALSE; PrevTblVac = FALSE; PrevFdClp = FALSE;
+		PrevTqClp = FALSE; PrevMvOne = FALSE; PrevLsrPt = FALSE;
+		PrevClrRoll = FALSE; PrevTqVac = FALSE; PrevTest = FALSE; PrevReset = FALSE; PrevLotEnd = FALSE;
 	}
 };
 
@@ -1263,12 +1331,23 @@ struct stBtnEngrave
 	BOOL PushUp, TblBlw, TblVac, FdClp;
 	BOOL TqClp, MvOne, LsrPt;
 	BOOL DcRSol, VelSonicBlw;
+
+	BOOL PrevRelation, PrevFdCw, PrevFdCcw, PrevFdVac;
+	BOOL PrevPushUp, PrevTblBlw, PrevTblVac, PrevFdClp;
+	BOOL PrevTqClp, PrevMvOne, PrevLsrPt;
+	BOOL PrevDcRSol, PrevVelSonicBlw;
+
 	stBtnEngrave()
 	{
 		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; FdVac = FALSE;
 		PushUp = FALSE; TblBlw = FALSE; TblVac = FALSE; FdClp = FALSE;
 		TqClp = FALSE; MvOne = FALSE; LsrPt = FALSE;
 		DcRSol = FALSE; DcRSol = VelSonicBlw;
+
+		PrevRelation = FALSE; PrevFdCw = FALSE; PrevFdCcw = FALSE; PrevFdVac = FALSE;
+		PrevPushUp = FALSE; PrevTblBlw = FALSE; PrevTblVac = FALSE; PrevFdClp = FALSE;
+		PrevTqClp = FALSE; PrevMvOne = FALSE; PrevLsrPt = FALSE;
+		PrevDcRSol = FALSE; PrevVelSonicBlw = FALSE;
 	}
 };
 
@@ -1277,11 +1356,20 @@ struct stBtnUncoiler
 	BOOL Relation, FdCw, FdCcw, ReelChuck;
 	BOOL DcRlUpDn, ReelJoinL, ReelJoinR, ReelJoinVac;
 	BOOL PprChuck, PprCw, PprCcw, ClRlUpDn, ClRlPshUpDn;
+
+	BOOL PrevRelation, PrevFdCw, PrevFdCcw, PrevReelChuck;
+	BOOL PrevDcRlUpDn, PrevReelJoinL, PrevReelJoinR, PrevReelJoinVac;
+	BOOL PrevPprChuck, PrevPprCw, PrevPprCcw, PrevClRlUpDn, PrevClRlPshUpDn;
+
 	stBtnUncoiler()
 	{
 		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; ReelChuck = FALSE;
 		DcRlUpDn = FALSE; ReelJoinL = FALSE; ReelJoinR = FALSE; ReelJoinVac = FALSE;
 		PprChuck = FALSE; PprCw = FALSE; PprCcw = FALSE; ClRlUpDn = FALSE; ClRlPshUpDn = FALSE;
+
+		PrevRelation = FALSE; PrevFdCw = FALSE; PrevFdCcw = FALSE; PrevReelChuck = FALSE;
+		PrevDcRlUpDn = FALSE; PrevReelJoinL = FALSE; PrevReelJoinR = FALSE; PrevReelJoinVac = FALSE;
+		PrevPprChuck = FALSE; PrevPprCw = FALSE; PrevPprCcw = FALSE; PrevClRlUpDn = FALSE; PrevClRlPshUpDn = FALSE;
 	}
 };
 
