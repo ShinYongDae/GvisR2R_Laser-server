@@ -14919,9 +14919,9 @@ void CGvisR2R_LaserView::DoAtuoGet2dReadStSignal()
 
 void CGvisR2R_LaserView::DoAuto2dReading()
 {
-	if (MODE_INNER == pDoc->WorkingInfo.LastJob.nTestMode)
+	if (MODE_INNER == pDoc->WorkingInfo.LastJob.nTestMode || MODE_OUTER == pDoc->WorkingInfo.LastJob.nTestMode)
 	{
-		//MarkingWith1PointAlign();
+		Eng2dRead();
 	}
 }
 
@@ -15227,7 +15227,7 @@ BOOL CGvisR2R_LaserView::OnePointAlign0(int nPos)
 
 // DoAutoReading
 
-void CGvisR2R_LaserView::Eng2dReadReady()
+void CGvisR2R_LaserView::Eng2dRead()
 {
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	int nSerial;
@@ -15239,7 +15239,6 @@ void CGvisR2R_LaserView::Eng2dReadReady()
 		case ENG_2D_ST:	// PLC MK 신호 확인	
 			if (IsRun())
 			{
-				//SetListBuf();
 				m_nEng2dStAuto++;
 			}
 			break;
@@ -15250,13 +15249,56 @@ void CGvisR2R_LaserView::Eng2dReadReady()
 			break;
 		case ENG_2D_ST + (Read2dIdx::Start) :	// 2
 			m_nEng2dStAuto++;
-			nSerial = pDoc->GetLastShotEngrave();
 			break;
 		case ENG_2D_ST + (Read2dIdx::Start) + 1:
 			m_nEng2dStAuto++;
 			break;
+		case ENG_2D_ST + (Read2dIdx::DoRead) :			// 2D Reading 시작
+			Set2dRead(TRUE);							// 2D Reading 시작
+			m_nEng2dStAuto++;
+			break;
+		case ENG_2D_ST + (Read2dIdx::DoRead) + 1:
+			Sleep(100);
+			m_nEng2dStAuto++;
+			break;
+		case ENG_2D_ST + (Read2dIdx::DoRead) + 2:
+			if (Is2dReadDone())
+				m_nEng2dStAuto = ENG_2D_ST + (Read2dIdx::DoneRead);	// 2D Reading 완료
+			break;
+		case ENG_2D_ST + (Read2dIdx::DoneRead) :
+			if (IsRun())
+				m_nEng2dStAuto++;
+			break;
+		case ENG_2D_ST + (Read2dIdx::DoneRead) + 1:
+			if (m_pEngrave)
+			{
+				m_pEngrave->SwEngAutoOnReading2d(FALSE);
+				m_pEngrave->SwEngAuto2dReadDone(TRUE);
+			}
+			m_nEng2dStAuto++;
+			break;
+		case ENG_2D_ST + (Read2dIdx::DoneRead) + 2:
+			m_bEng2dSt = FALSE;
+			break;
 		}
 	}
+}
+
+
+BOOL  CGvisR2R_LaserView::Is2dReadDone()
+{
+	if (!pView || !pView->m_pSr1000w)
+		return FALSE;
+
+	return (!pView->m_pSr1000w->IsRunning());
+}
+
+BOOL CGvisR2R_LaserView::Set2dRead(BOOL bRun)	// Marking Start
+{
+	if (!pView || !pView->m_pSr1000w)
+		return FALSE;
+
+	return (pView->m_pSr1000w->DoRead2DCode());
 }
 
 

@@ -77,9 +77,9 @@
 namespace Read2dIdx
 {
 	typedef enum Index {
-		Start = 2, ChkSn = 4, InitMk = 10, Move0Cam1 = 12, Move0Cam0 = 14, Align1_0 = 17, Align0_0 = 18,
-		Move1Cam1 = 21, Move1Cam0 = 23, Align1_1 = 26, Align0_1 = 27, MoveInitPt = 29, ChkElec = 32, DoMk = 35,
-		Verify = 37, DoneMk = 38, LotDiff = 50
+		Start = 2, ChkSn = 4, InitRead = 10, Move0Cam1 = 12, Move0Cam0 = 14, Align1_0 = 17, Align0_0 = 18,
+		Move1Cam1 = 21, Move1Cam0 = 23, Align1_1 = 26, Align0_1 = 27, MoveInitPt = 29, ChkElec = 32, DoRead = 35,
+		Verify = 37, DoneRead = 38, LotDiff = 50
 	};
 }
 
@@ -936,12 +936,15 @@ public:
 	void Eng1PtAlignPt0();
 	void Eng1PtDoMarking();
 
-	void Eng2dReadReady();
+	void Eng2dRead();
 
 	void AdjPinPosEng();
 	BOOL OnePointAlign0(int nPos);
 	BOOL SetMk(BOOL bRun = TRUE);
 	BOOL IsMkDone();
+
+	BOOL Set2dRead(BOOL bRun = TRUE);
+	BOOL Is2dReadDone();
 
 	//void CompletedMk(int nCam); // 0: Only Cam0, 1: Only Cam1, 2: Cam0 and Cam1, 3: None
 
