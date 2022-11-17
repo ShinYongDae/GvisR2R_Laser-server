@@ -33,6 +33,13 @@ public:
 	CEngrave(CString sAddrCli, CString sAddrSvr, CString sPortSvr, CWnd* pParent = NULL);
 	~CEngrave();
 
+	BOOL m_bGetOpInfo, m_bGetInfo, m_bGetEngInfo;
+	BOOL m_bGetSignalMain, m_bGetSignalTorqueMotor, m_bGetSignalInductionMotor, m_bGetSignalCore150mm, m_bGetSignalEtc;
+	BOOL m_bGetSignalRecoiler, m_bGetSignalPunch, m_bGetSignalAOIDn, m_bGetSignalAOIUp, m_bGetSignalEngrave, m_bGetSignalUncoiler;
+	BOOL m_bGetSignalEngraveAutoSequence;
+	BOOL m_bGetTotRatio, m_bGetStTime, m_bGetRunTime, m_bGetEdTime, m_bGetStripRatio, m_bGetDef;
+	BOOL m_bGet2DReader, m_bGetFdInfo, m_bGetAoiInfo, m_bGetMkInfo, m_bGetMkInfoLf, m_bGetMkInfoRt;
+
 	void SetHwnd(HWND hParentWnd);
 	BOOL IsRunning();
 	int WriteComm(CString sMsg, DWORD dwTimeout = INFINITE);
@@ -164,6 +171,7 @@ public:
 	void SetFixDef();
 	void SetNumContFixDef();
 	void SetUltraSonicStTim();
+	void SetEngOrderNum();
 
 	// SetInfo()
 	void SetModelUpName();
@@ -420,7 +428,12 @@ public:
 	void SwUcClRlUpDn(BOOL bOn);
 	void SwUcClRlPshUpDn(BOOL bOn);
 
+	// Set Engrave Data
+	void SetEngraveAoiDist();
+	void SetEngraveFdPitch();
+
 	// Engrave Auto Sequence
+	void SwEngAutoInit(BOOL bOn); // 각인부 초기화(Reset)
 	void SwEngAutoMkSt(BOOL bOn);
 	void SwEngAutoOnMking(BOOL bOn);
 	void SwEngAutoMkDone(BOOL bOn);

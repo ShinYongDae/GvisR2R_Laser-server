@@ -844,10 +844,10 @@ void CDlgMenu04::OnStc004()
 	pDoc->SetOnePnlLen(_tstof(sData));
 	pView->SetLotLastShot();
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetOnePnlLen();	//_ItemInx::_OnePnlLen
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetOnePnlLen();	//_ItemInx::_OnePnlLen
+#endif
 }
 
 void CDlgMenu04::OnStc007() 
@@ -868,10 +868,10 @@ void CDlgMenu04::OnStc007()
 	GetDlgItem(IDC_STC_007)->GetWindowText(sData);
 	pDoc->SetOnePnlVel(_tstof(sData));
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetOnePnlVel();	//_ItemInx::_OnePnlVel
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetOnePnlVel();	//_ItemInx::_OnePnlVel
+#endif
 }
 
 void CDlgMenu04::OnStc010() 
@@ -891,11 +891,11 @@ void CDlgMenu04::OnStc010()
 	CString sData;
 	GetDlgItem(IDC_STC_010)->GetWindowText(sData);
 	pDoc->SetOnePnlAcc(_tstof(sData));
-//
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetOnePnlAcc();	//_ItemInx::_OnePnlAcc
-//#endif
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetOnePnlAcc();	//_ItemInx::_OnePnlAcc
+#endif
 }
 
 void CDlgMenu04::OnStc014() 
@@ -916,10 +916,10 @@ void CDlgMenu04::OnStc014()
 	GetDlgItem(IDC_STC_014)->GetWindowText(sData);
 	pView->SetAoiFdPitch(_tstof(sData));	
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetAoiLeadPitch();	//_ItemInx::_AoiLeadPitch
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetAoiLeadPitch();	//_ItemInx::_AoiLeadPitch
+#endif
 }
 
 void CDlgMenu04::OnStc22() 
@@ -940,10 +940,10 @@ void CDlgMenu04::OnStc22()
 	GetDlgItem(IDC_STC_22)->GetWindowText(sData);
 	pView->SetMkFdPitch(_tstof(sData));	
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkLeadPitch();	//_ItemInx::_MkLeadPitch
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkLeadPitch();	//_ItemInx::_MkLeadPitch
+#endif
 }
 
 void CDlgMenu04::OnStc018() 
@@ -964,10 +964,10 @@ void CDlgMenu04::OnStc018()
 	GetDlgItem(IDC_STC_018)->GetWindowText(sData);
 	pDoc->SetFdErrLmt(_tstof(sData));
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetFdDiffMax();	//_ItemInx::_FdDiffMax
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetFdDiffMax();	//_ItemInx::_FdDiffMax
+#endif
 }
 
 void CDlgMenu04::OnStc021() 
@@ -988,10 +988,10 @@ void CDlgMenu04::OnStc021()
 	GetDlgItem(IDC_STC_021)->GetWindowText(sData);
 	pDoc->SetFdErrRng(_tstof(sData));
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetFdDiffRng();	//_ItemInx::_FdDiffRng
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetFdDiffRng();	//_ItemInx::_FdDiffRng
+#endif
 }
 
 void CDlgMenu04::OnStc024() 
@@ -1012,10 +1012,10 @@ void CDlgMenu04::OnStc024()
 	GetDlgItem(IDC_STC_024)->GetWindowText(sData);
 	pDoc->SetFdErrNum(_tstoi(sData));
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetFdDiffNum();	//_ItemInx::_FdDiffNum
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetFdDiffNum();	//_ItemInx::_FdDiffNum
+#endif
 }
 
 void CDlgMenu04::OnStc104() 
@@ -1104,10 +1104,10 @@ void CDlgMenu04::OnStc204()
 	GetDlgItem(IDC_STC_204)->GetWindowText(sData);
 	pDoc->SetBufInitPos(_tstoi(sData));
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkBuffInitPos();	//_ItemInx::_MkBuffInitPos
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkBuffInitPos();	//_ItemInx::_MkBuffInitPos
+#endif
 }
 
 void CDlgMenu04::OnStc209() 
@@ -1128,10 +1128,10 @@ void CDlgMenu04::OnStc209()
 	GetDlgItem(IDC_STC_209)->GetWindowText(sData);
 	pDoc->SetAoiMkDist(_tstof(sData));
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetAoiMkLen();	//_ItemInx::_AoiMkLen
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetAoiMkLen();	//_ItemInx::_AoiMkLen
+#endif
 }
 
 void CDlgMenu04::OnStc25() 
@@ -1152,10 +1152,10 @@ void CDlgMenu04::OnStc25()
 	GetDlgItem(IDC_STC_25)->GetWindowText(sData);
 	pDoc->SetFdJogVel(_tstof(sData));
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetFdVel();	//_ItemInx::_FdVel
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetFdVel();	//_ItemInx::_FdVel
+#endif
 }
 
 void CDlgMenu04::OnStc28() 
@@ -1176,10 +1176,10 @@ void CDlgMenu04::OnStc28()
 	GetDlgItem(IDC_STC_28)->GetWindowText(sData);
 	pDoc->SetFdJogAcc(_tstof(sData));
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetFdAcc();	//_ItemInx::_FdAcc
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetFdAcc();	//_ItemInx::_FdAcc
+#endif
 }
 
 BOOL CDlgMenu04::PreTranslateMessage(MSG* pMsg) 
@@ -1725,10 +1725,10 @@ void CDlgMenu04::OnStc71()
 	GetDlgItem(IDC_STC_71)->GetWindowText(sData);
 	pDoc->SetPosX1_1(_tstof(sData));	
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtPosX1Lf();	//_ItemInx::_MkHgtPosX1Lf
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosX1Lf();	//_ItemInx::_MkHgtPosX1Lf
+#endif
 }
 
 void CDlgMenu04::OnStc86() 
@@ -1749,10 +1749,10 @@ void CDlgMenu04::OnStc86()
 	GetDlgItem(IDC_STC_86)->GetWindowText(sData);
 	pDoc->SetPosY1_1(_tstof(sData));	
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtPosY1Lf();	//_ItemInx::_MkHgtPosY1Lf
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosY1Lf();	//_ItemInx::_MkHgtPosY1Lf
+#endif
 }
 
 void CDlgMenu04::OnStc75() 
@@ -1773,10 +1773,10 @@ void CDlgMenu04::OnStc75()
 	GetDlgItem(IDC_STC_75)->GetWindowText(sData);
 	pDoc->SetPosX1_2(_tstof(sData));		
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtPosX2Lf();	//_ItemInx::_MkHgtPosX2Lf
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosX2Lf();	//_ItemInx::_MkHgtPosX2Lf
+#endif
 }
 
 void CDlgMenu04::OnStc87() 
@@ -1797,10 +1797,10 @@ void CDlgMenu04::OnStc87()
 	GetDlgItem(IDC_STC_87)->GetWindowText(sData);
 	pDoc->SetPosY1_2(_tstof(sData));		
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtPosY2Lf();	//_ItemInx::_MkHgtPosY2Lf
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosY2Lf();	//_ItemInx::_MkHgtPosY2Lf
+#endif
 }
 
 void CDlgMenu04::OnStc78() 
@@ -1821,10 +1821,10 @@ void CDlgMenu04::OnStc78()
 	GetDlgItem(IDC_STC_78)->GetWindowText(sData);
 	pDoc->SetPosX1_3(_tstof(sData));		
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtPosX3Lf();	//_ItemInx::_MkHgtPosX3Lf
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosX3Lf();	//_ItemInx::_MkHgtPosX3Lf
+#endif
 }
 
 void CDlgMenu04::OnStc88() 
@@ -1845,10 +1845,10 @@ void CDlgMenu04::OnStc88()
 	GetDlgItem(IDC_STC_88)->GetWindowText(sData);
 	pDoc->SetPosY1_3(_tstof(sData));		
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtPosY3Lf();	//_ItemInx::_MkHgtPosY3Lf
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosY3Lf();	//_ItemInx::_MkHgtPosY3Lf
+#endif
 }
 
 void CDlgMenu04::OnStc81() 
@@ -1869,10 +1869,10 @@ void CDlgMenu04::OnStc81()
 	GetDlgItem(IDC_STC_81)->GetWindowText(sData);
 	pDoc->SetPosX1_4(_tstof(sData));		
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtPosX4Lf();	//_ItemInx::_MkHgtPosX4Lf
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosX4Lf();	//_ItemInx::_MkHgtPosX4Lf
+#endif
 }
 
 void CDlgMenu04::OnStc89() 
@@ -1893,10 +1893,10 @@ void CDlgMenu04::OnStc89()
 	GetDlgItem(IDC_STC_89)->GetWindowText(sData);
 	pDoc->SetPosY1_4(_tstof(sData));			
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtPosY4Lf();	//_ItemInx::_MkHgtPosY4Lf
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosY4Lf();	//_ItemInx::_MkHgtPosY4Lf
+#endif
 }
 
 void CDlgMenu04::OnStc84() 
@@ -1917,10 +1917,10 @@ void CDlgMenu04::OnStc84()
 	GetDlgItem(IDC_STC_84)->GetWindowText(sData);
  	pDoc->SetAverDist1(_tstoi(sData));		
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtAvgPosLf();	//_ItemInx::_MkHgtAvgPosLf
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtAvgPosLf();	//_ItemInx::_MkHgtAvgPosLf
+#endif
 }
 
 void CDlgMenu04::OnStc93() 
@@ -2123,10 +2123,10 @@ void CDlgMenu04::OnStc126()
 	GetDlgItem(IDC_STC_126)->GetWindowText(sData);
 	pDoc->SetPosX2_1(_tstof(sData));	
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtPosX1Rt();	//_ItemInx::_MkHgtPosX1Rt
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosX1Rt();	//_ItemInx::_MkHgtPosX1Rt
+#endif
 }
 
 void CDlgMenu04::OnStc141() 
@@ -2147,10 +2147,10 @@ void CDlgMenu04::OnStc141()
 	GetDlgItem(IDC_STC_141)->GetWindowText(sData);
 	pDoc->SetPosY2_1(_tstof(sData));		
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtPosY1Rt();	//_ItemInx::_MkHgtPosY1Rt
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosY1Rt();	//_ItemInx::_MkHgtPosY1Rt
+#endif
 }
 
 void CDlgMenu04::OnStc130() 
@@ -2171,10 +2171,10 @@ void CDlgMenu04::OnStc130()
 	GetDlgItem(IDC_STC_130)->GetWindowText(sData);
 	pDoc->SetPosX2_2(_tstof(sData));	
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtPosX2Rt();	//_ItemInx::_MkHgtPosX2Rt
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosX2Rt();	//_ItemInx::_MkHgtPosX2Rt
+#endif
 }
 
 void CDlgMenu04::OnStc142() 
@@ -2195,10 +2195,10 @@ void CDlgMenu04::OnStc142()
 	GetDlgItem(IDC_STC_142)->GetWindowText(sData);
 	pDoc->SetPosY2_2(_tstof(sData));	
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtPosY2Rt();	//_ItemInx::_MkHgtPosY2Rt
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosY2Rt();	//_ItemInx::_MkHgtPosY2Rt
+#endif
 }
 
 void CDlgMenu04::OnStc133() 
@@ -2219,10 +2219,10 @@ void CDlgMenu04::OnStc133()
 	GetDlgItem(IDC_STC_133)->GetWindowText(sData);
 	pDoc->SetPosX2_3(_tstof(sData));		
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtPosX3Rt();	//_ItemInx::_MkHgtPosX3Rt
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosX3Rt();	//_ItemInx::_MkHgtPosX3Rt
+#endif
 }
 
 void CDlgMenu04::OnStc143() 
@@ -2243,10 +2243,10 @@ void CDlgMenu04::OnStc143()
 	GetDlgItem(IDC_STC_143)->GetWindowText(sData);
 	pDoc->SetPosY2_3(_tstof(sData));	
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtPosY3Rt();	//_ItemInx::_MkHgtPosY3Rt
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosY3Rt();	//_ItemInx::_MkHgtPosY3Rt
+#endif
 }
 
 void CDlgMenu04::OnStc136() 
@@ -2267,10 +2267,10 @@ void CDlgMenu04::OnStc136()
 	GetDlgItem(IDC_STC_136)->GetWindowText(sData);
 	pDoc->SetPosX2_4(_tstof(sData));		
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtPosX4Rt();	//_ItemInx::_MkHgtPosX4Rt
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosX4Rt();	//_ItemInx::_MkHgtPosX4Rt
+#endif
 }
 
 void CDlgMenu04::OnStc144() 
@@ -2291,10 +2291,10 @@ void CDlgMenu04::OnStc144()
 	GetDlgItem(IDC_STC_144)->GetWindowText(sData);
 	pDoc->SetPosY2_4(_tstof(sData));	
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtPosY4Rt();	//_ItemInx::_MkHgtPosY4Rt
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtPosY4Rt();	//_ItemInx::_MkHgtPosY4Rt
+#endif
 }
 
 void CDlgMenu04::OnStc139() 
@@ -2315,10 +2315,10 @@ void CDlgMenu04::OnStc139()
 	GetDlgItem(IDC_STC_139)->GetWindowText(sData);
  	pDoc->SetAverDist2(_tstof(sData));
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkHgtAvgPosRt();	//_ItemInx::_MkHgtAvgPosRt
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkHgtAvgPosRt();	//_ItemInx::_MkHgtAvgPosRt
+#endif
 }
 
 void CDlgMenu04::OnStc148() 
@@ -2339,10 +2339,10 @@ void CDlgMenu04::OnStc148()
 	GetDlgItem(IDC_STC_148)->GetWindowText(sData);
  	pDoc->SetAOIToq(_tstof(sData));
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetAoiTqVal();	//_ItemInx::_AoiTqVal
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetAoiTqVal();	//_ItemInx::_AoiTqVal
+#endif
 }
 
 void CDlgMenu04::OnStc152() 
@@ -2363,10 +2363,10 @@ void CDlgMenu04::OnStc152()
 	GetDlgItem(IDC_STC_152)->GetWindowText(sData);
  	pDoc->SetMarkingToq(_tstof(sData));
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkTqVal();	//_ItemInx::_MkTqVal
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkTqVal();	//_ItemInx::_MkTqVal
+#endif
 }
 
 void CDlgMenu04::OnStc158() 
@@ -2386,6 +2386,11 @@ void CDlgMenu04::OnStc158()
 	CString sData;
 	GetDlgItem(IDC_STC_158)->GetWindowText(sData);
  	pDoc->SetTotalReelDist(_tstof(sData));
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetTotReelLen();	//_ItemInx::_TotReelLen
+#endif
 }
 
 void CDlgMenu04::OnStc162() 
@@ -2406,6 +2411,11 @@ void CDlgMenu04::OnStc162()
 	GetDlgItem(IDC_STC_162)->GetWindowText(sData);
  	pDoc->SetSeparateDist(_tstof(sData));
 	pView->SetLotLastShot();
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetLotCutLen();	//_ItemInx::_SetData
+#endif
 }
 
 void CDlgMenu04::OnStc165() 
@@ -2425,6 +2435,10 @@ void CDlgMenu04::OnStc165()
 	CString sData;
 	GetDlgItem(IDC_STC_165)->GetWindowText(sData);
  	pDoc->SetCuttingDist(_tstof(sData));
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetLotCutPosLen();	//_ItemInx::_LotCutPosLen
+#endif
 }
 
 void CDlgMenu04::OnStc170() 
@@ -2445,10 +2459,10 @@ void CDlgMenu04::OnStc170()
 	GetDlgItem(IDC_STC_170)->GetWindowText(sData);
  	pDoc->SetStopDist(_tstof(sData));
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetTempStopLen();	//_ItemInx::_TempStopLen
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetTempStopLen();	//_ItemInx::_TempStopLen
+#endif
 }
 
 void CDlgMenu04::OnStc212() 
@@ -2469,10 +2483,10 @@ void CDlgMenu04::OnStc212()
 	GetDlgItem(IDC_STC_212)->GetWindowText(sData);
 	pDoc->SetAoiAoiDist(_tstoi(sData));
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetAoiBuffShotNum();	//_ItemInx::_AoiBuffShotNum
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetAoiBuffShotNum();	//_ItemInx::_AoiBuffShotNum
+#endif
 }
 
 void CDlgMenu04::OnStc221() 
@@ -2493,10 +2507,10 @@ void CDlgMenu04::OnStc221()
 	GetDlgItem(IDC_STC_221)->GetWindowText(sData);
 	pDoc->SetMkLimitL(_tstoi(sData));	
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkMaxNumLf();	//_ItemInx::_MkMaxNumLf
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkMaxNumLf();	//_ItemInx::_MkMaxNumLf
+#endif
 }
 
 void CDlgMenu04::OnStc222() 
@@ -2517,10 +2531,10 @@ void CDlgMenu04::OnStc222()
 	GetDlgItem(IDC_STC_222)->GetWindowText(sData);
 	pDoc->SetMkLimitR(_tstoi(sData));		
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetMkMaxNumRt();	//_ItemInx::_MkMaxNumRt
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetMkMaxNumRt();	//_ItemInx::_MkMaxNumRt
+#endif
 }
 
 void CDlgMenu04::OnBtnResetMkL() 
@@ -2532,10 +2546,10 @@ void CDlgMenu04::OnBtnResetMkL()
 		pDoc->SetMkCntL(0);
 		GetDlgItem(IDC_STC_215)->SetWindowText(_T("0"));
 
-//#ifdef USE_ENGRAVE
-//		if (pView && pView->m_pEngrave)
-//			pView->m_pEngrave->SetMkNumLf();	//_ItemInx::_MkNumLf
-//#endif
+#ifdef USE_ENGRAVE
+		if (pView && pView->m_pEngrave)
+			pView->m_pEngrave->SetMkNumLf();	//_ItemInx::_MkNumLf
+#endif
 	}
 }
 
@@ -2548,10 +2562,10 @@ void CDlgMenu04::OnBtnResetMkR()
 		pDoc->SetMkCntR(0);
 		GetDlgItem(IDC_STC_220)->SetWindowText(_T("0"));
 
-//#ifdef USE_ENGRAVE
-//		if (pView && pView->m_pEngrave)
-//			pView->m_pEngrave->SetMkNumRt();	//_ItemInx::_MkNumRt
-//#endif
+#ifdef USE_ENGRAVE
+		if (pView && pView->m_pEngrave)
+			pView->m_pEngrave->SetMkNumRt();	//_ItemInx::_MkNumRt
+#endif
 	}
 }
 

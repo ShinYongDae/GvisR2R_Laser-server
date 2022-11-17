@@ -73,6 +73,7 @@
 #define TIM_SHOW_MENU02			19
 #define TIM_CHK_TEMP_STOP		20
 #define TIM_SAFTY_STOP			21
+#define TIM_TCPIP_UPDATE		22
 
 namespace Read2dIdx
 {
@@ -191,6 +192,7 @@ class CGvisR2R_LaserView : public CFormView
 	double m_dTotVel, m_dPartVel;
 	BOOL m_bTIM_CHK_TEMP_STOP;
 	BOOL m_bTIM_SAFTY_STOP;
+	BOOL m_bTIM_TCPIP_UPDATE;
 	CString m_sMyMsg; int m_nTypeMyMsg;
 	int m_nVsBufLastSerial[2];
 	BOOL m_bOpenShareUp, m_bOpenShareDn;
@@ -945,6 +947,9 @@ public:
 
 	BOOL Set2dRead(BOOL bRun = TRUE);
 	BOOL Is2dReadDone();
+	BOOL m_bSetSig, m_bSetSigF, m_bSetData, m_bSetDataF;
+	BOOL m_bLoadMstInfo, m_bLoadMstInfoF;
+	void LoadMstInfo();
 
 	//void CompletedMk(int nCam); // 0: Only Cam0, 1: Only Cam1, 2: Cam0 and Cam1, 3: None
 

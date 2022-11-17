@@ -115,6 +115,9 @@ public:
 	BOOL m_bTimDlgMyMsg;
 	int m_nThreadIdBuf[MAX_THREAD_ID];
 
+	void* m_pDlgMyMsgSub01; // CDlgMyMsgSub01
+	void* m_pDlgMyMsgSub02; // CDlgMyMsgSub02
+
 	virtual BOOL Create();
 
 	afx_msg LRESULT OnMyMsgExit(WPARAM wPara, LPARAM lPara);

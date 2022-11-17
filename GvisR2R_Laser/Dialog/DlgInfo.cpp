@@ -100,6 +100,7 @@ BEGIN_MESSAGE_MAP(CDlgInfo, CDialog)
 	ON_BN_CLICKED(IDC_CHK_1187, &CDlgInfo::OnBnClickedChk1187)
 	ON_BN_CLICKED(IDC_CHK_1188, &CDlgInfo::OnBnClickedChk1188)
 	ON_STN_CLICKED(IDC_STC_36, &CDlgInfo::OnStnClickedStc36)
+	ON_STN_CLICKED(IDC_STC_17, &CDlgInfo::OnStnClickedStc17)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -401,6 +402,8 @@ void CDlgInfo::InitStcTitle()
 	myStcTitle[60].SubclassDlgItem(IDC_STC_35, this); //Period
 	myStcTitle[61].SubclassDlgItem(IDC_STC_37, this); //Shot
 
+	myStcTitle[62].SubclassDlgItem(IDC_STC_16, this); //오더번호
+
 	for(int i=0; i<MAX_INFO_STC; i++)
 	{
 		myStcTitle[i].SetFontName(_T("Arial"));
@@ -414,6 +417,7 @@ void CDlgInfo::InitStcTitle()
 		case 0:
 		case 3:
 		case 20:
+		case 62:
 			myStcTitle[i].SetTextColor(RGB_NAVY);
 			myStcTitle[i].SetBkColor(RGB_LTDKORANGE);
 			myStcTitle[i].SetFontBold(TRUE);
@@ -474,6 +478,9 @@ void CDlgInfo::InitStcData()
 	myStcData[14].SubclassDlgItem(IDC_STC_196, this); // 고객출하수율
 
 	myStcData[15].SubclassDlgItem(IDC_STC_36, this); // 불량 확인 Period [Shot]
+
+	myStcData[16].SubclassDlgItem(IDC_STC_17, this); // 오더번호
+
 
 	for(int i=0; i<MAX_INFO_STC_DATA; i++)
 	{
@@ -544,6 +551,7 @@ void CDlgInfo::Disp()
 	myStcData[14].SetText(pDoc->WorkingInfo.LastJob.sCustomNeedRatio);
 	str.Format(_T("%d"), pDoc->WorkingInfo.LastJob.nVerifyPeriod);
 	myStcData[15].SetText(str);
+	myStcData[16].SetText(pDoc->WorkingInfo.LastJob.sEngOrderNum);	// IDC_STC_17	오더번호
 
 	if(pDoc->WorkingInfo.LastJob.bLotSep)
 		myBtn[1].SetCheck(TRUE);
@@ -662,6 +670,23 @@ void CDlgInfo::Disp()
 		myBtn[22].SetCheck(TRUE);
 	else
 		myBtn[22].SetCheck(FALSE);
+
+	switch (pDoc->WorkingInfo.LastJob.nTestMode)
+	{
+	case MODE_NONE:		// 0
+		myBtn[23].SetCheck(FALSE); // IDC_CHK_USE_AOI_INNER
+		myBtn[24].SetCheck(FALSE); // IDC_CHK_USE_AOI_OUTER
+		break;
+	case MODE_INNER:	// 1
+		myBtn[23].SetCheck(TRUE); // IDC_CHK_USE_AOI_INNER
+		myBtn[24].SetCheck(FALSE); // IDC_CHK_USE_AOI_OUTER
+		break;
+	case MODE_OUTER:	// 2
+		myBtn[23].SetCheck(FALSE); // IDC_CHK_USE_AOI_INNER
+		myBtn[24].SetCheck(TRUE); // IDC_CHK_USE_AOI_OUTER
+		break;
+	}
+
 }
 
 void CDlgInfo::OnStc0008() 
@@ -706,8 +731,11 @@ void CDlgInfo::OnStc0012()
 	CString sVal;
 	GetDlgItem(IDC_STC_0012)->GetWindowText(sVal);
 	pDoc->SetOnePnlLen(_tstof(sVal));
-
 	pView->SetLotLastShot();
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetOnePnlLen();	//_ItemInx::_OnePnlLen
+#endif
 }
 
 void CDlgInfo::OnStc0016() 
@@ -756,10 +784,10 @@ void CDlgInfo::OnStc0020()
 	GetDlgItem(IDC_STC_0020)->GetWindowText(sVal);
 	pDoc->SetCuttingDist(_tstof(sVal));
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetLotCutLen();	//_ItemInx::_LotCutLen
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetLotCutLen();	//_ItemInx::_LotCutLen
+#endif
 }
 
 void CDlgInfo::OnStc0024() 
@@ -788,10 +816,10 @@ void CDlgInfo::OnStc0024()
 // 	//pView->IoWrite(_T("ML45006", long(_tstof(sVal)*1000.0));	// 일시정지 길이 (단위 M * 1000)
 // 	pView->m_pMpe->Write(_T("ML45006", long(_tstof(sVal)*1000.0));
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetLotCutPosLen();	//_ItemInx::_LotCutPosLen
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetLotCutPosLen();	//_ItemInx::_LotCutPosLen
+#endif
 }
 
 void CDlgInfo::OnStc0030() 
@@ -1461,6 +1489,11 @@ void CDlgInfo::SetTwoMetal(BOOL bOn)
 		}
 		pView->SetTwoMetal(bOn, bChk[1]);
 
+#ifdef USE_ENGRAVE
+		if (pView && pView->m_pEngrave)
+			pView->m_pEngrave->SetUncoilerCcw();	//_stSigInx::_UncoilerCcw
+#endif
+
 // 		if(bChk[0])
 // 			myBtn[15].SetCheck(FALSE);
 // 		if(!bChk[1])
@@ -1480,6 +1513,11 @@ void CDlgInfo::SetTwoMetal(BOOL bOn)
 			myBtn[15].SetWindowText(_T("Recoiler\r정방향"));
 		}
 		pView->SetTwoMetal(bOn, bChk[0]);
+
+#ifdef USE_ENGRAVE
+		if (pView && pView->m_pEngrave)
+			pView->m_pEngrave->SetRecoilerCcw();	//_stSigInx::_RecoilerCcw
+#endif
 
 // 		if(!bChk[0])
 // 			myBtn[15].SetCheck(TRUE);
@@ -1564,8 +1602,8 @@ void CDlgInfo::OnChkOneMetal()
 {
 	// TODO: Add your control notification handler code here
 	//SetTwoMetal(FALSE);
-	//BOOL bOn = myBtn[15].GetCheck();
-	BOOL bOn = !pDoc->WorkingInfo.LastJob.bOneMetal;
+	BOOL bOn = myBtn[15].GetCheck();
+	//BOOL bOn = !pDoc->WorkingInfo.LastJob.bOneMetal;
 	if (bOn)
 	{
 		pDoc->WorkingInfo.LastJob.bOneMetal = TRUE;
@@ -1593,8 +1631,8 @@ void CDlgInfo::OnChkTwoMetal()
 {
 	// TODO: Add your control notification handler code here
 	//SetTwoMetal(TRUE);
-	//BOOL bOn = myBtn[16].GetCheck();
-	BOOL bOn = !pDoc->WorkingInfo.LastJob.bTwoMetal;
+	BOOL bOn = myBtn[16].GetCheck();
+	//BOOL bOn = !pDoc->WorkingInfo.LastJob.bTwoMetal;
 	if(bOn)
 	{
 		pDoc->WorkingInfo.LastJob.bTwoMetal = TRUE;
@@ -1831,4 +1869,29 @@ void CDlgInfo::OnStnClickedStc36()
 	pDoc->WorkingInfo.LastJob.nVerifyPeriod = _ttoi(sVal);
 
 	::WritePrivateProfileString(_T("Last Job"), _T("Verify Period"), sVal, PATH_WORKING_INFO);
+}
+
+
+void CDlgInfo::OnStnClickedStc17()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	myStcData[16].SetBkColor(RGB_RED);
+	myStcData[16].RedrawWindow();
+
+	CPoint pt;	CRect rt;
+	GetDlgItem(IDC_STC_17)->GetWindowRect(&rt);
+	pt.x = rt.right; pt.y = rt.bottom;
+	ShowKeypad(IDC_STC_17, pt, TO_BOTTOM | TO_RIGHT);
+
+	myStcData[16].SetBkColor(RGB_WHITE);
+	myStcData[16].RedrawWindow();
+
+	CString sData;
+	GetDlgItem(IDC_STC_17)->GetWindowText(sData);
+	pDoc->SetEngOrderNum(sData);
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetEngOrderNum();	//_ItemInx::_EngOrderNum
+#endif
 }

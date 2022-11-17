@@ -11,6 +11,9 @@
 
 
 //#define TEST_MODE		1
+#ifndef MAX_STRIP
+	#define MAX_STRIP				4
+#endif
 
 
 #ifdef TEST_MODE
@@ -679,7 +682,7 @@ struct stLastJob
 	CString sTempPauseLen, sLmtTotYld, sLmtPatlYld;
 	CString sStripOutRatio, sCustomNeedRatio;
 	BOOL bContFixDef;
-	CString sNumRangeFixDef, sNumContFixDef, sUltraSonicCleannerStTim;
+	CString sNumRangeFixDef, sNumContFixDef, sUltraSonicCleannerStTim, sEngOrderNum;
 	BOOL bRclDrSen, bMkDrSen, bBufDrSen, bAoiUpDrSen, bAoiDnDrSen, bEngvDrSen, bUclDrSen;
 	BOOL bDispMkPcs, bStopFixDef, bMkSftySen, bAoiSftySen;
 	CString sJogSpd, sLotSerial; //sLightVal, 
@@ -750,6 +753,7 @@ struct stLastJob
 		nAlignMethode = TWO_POINT;
 
 		bUseAoiUpCleanRoler = FALSE; bUseAoiDnCleanRoler = FALSE;
+		sEngOrderNum = _T("");
 	}
 };
 

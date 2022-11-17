@@ -153,7 +153,7 @@ void CDlgMenu03::AtDlgShow()
 	LoadImg();
 	m_bTIM_MENU03_DISP = TRUE;
 	SetTimer(TIM_MENU03_DISP, 300, NULL);	// Disp();
-	SetTimer(TIM_CHK_MREG, 300, NULL);
+	//SetTimer(TIM_CHK_MREG, 300, NULL);
 
 	UpdateSignal();
 }
@@ -1770,11 +1770,11 @@ void CDlgMenu03::OnTimer(UINT_PTR nIDEvent)//(UINT nIDEvent)
 			SetTimer(TIM_CHK_DONE_AOI, 100, NULL);
 	}
 
-	if(nIDEvent == TIM_CHK_MREG)
-	{
-		KillTimer(TIM_CHK_MREG);
-		pView->ChkMRegOut();
-	}
+	//if(nIDEvent == TIM_CHK_MREG)
+	//{
+	//	KillTimer(TIM_CHK_MREG);
+	//	pView->ChkMRegOut();
+	//}
 	
 	if(nIDEvent == TIM_CHK_DONE_BUF_HOME)
 	{
@@ -2259,11 +2259,19 @@ void CDlgMenu03::SwMpeBtn(int nCtrlID, long lData)
 		// [One Metal]
 	case IDC_CHK_68:
 		pView->SetTwoMetal(FALSE, TRUE);
+#ifdef USE_ENGRAVE
+		if (pView && pView->m_pEngrave)
+			pView->m_pEngrave->SetRecoilerCcw();	//_stSigInx::_RecoilerCcw
+#endif
 		break;
 
 		// [Two Metal]
 	case IDC_CHK_69:
 		pView->SetTwoMetal(TRUE, TRUE);
+#ifdef USE_ENGRAVE
+		if (pView && pView->m_pEngrave)
+			pView->m_pEngrave->SetUncoilerCcw();	//_stSigInx::_UncoilerCcw
+#endif
 		break;
 
 		// [Core 150mm] - Recoiler
@@ -3143,9 +3151,9 @@ void CDlgMenu03::SetAoiOnePnl(BOOL bOn)
 
 BOOL CDlgMenu03::DoReset()
 {
-	pView->InitAutoEng();
+	//pView->InitAutoEng();
 
-/*	pView->DispThreadTick();
+	//pView->DispThreadTick();
 
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
@@ -3158,12 +3166,11 @@ BOOL CDlgMenu03::DoReset()
 			m_bTIM_CHK_DONE_READY = FALSE;
 			//pView->ClrDispMsg();
 			pView->m_bReadyDone = FALSE;
-			if(pView->m_pMpe)
-				pView->m_pMpe->Write(_T("MB440100"), 0);	// PLC 운전준비 완료(PC가 확인하고 Reset시킴.)
+			//if(pView->m_pMpe)
+			//	pView->m_pMpe->Write(_T("MB440100"), 0);	// PLC 운전준비 완료(PC가 확인하고 Reset시킴.)
 		}
 		pView->ClrDispMsg();
 		
-//		if(IDNO == pView->DoMyMsgBox(_T("초기화 하시겠습니까?"), MB_YESNO))
 		if(IDNO == pView->MsgBox(_T("초기화 하시겠습니까?"), 0, MB_YESNO))
 			bInit = FALSE;
 		else
@@ -3174,7 +3181,6 @@ BOOL CDlgMenu03::DoReset()
 
 		if(!bInit)
 		{
-//			if(IDNO == pView->DoMyMsgBox(_T("이어가기를 하시겠습니까?"), MB_YESNO))
 			if(IDNO == pView->MsgBox(_T("이어가기를 하시겠습니까?"), 0, MB_YESNO))
 			{
 				pView->m_bCont = FALSE;
@@ -3182,17 +3188,16 @@ BOOL CDlgMenu03::DoReset()
 			}
 			pView->m_bCont = TRUE;
 		}
-		//pView->InitAuto(bInit);
 
+		pView->InitAutoEng();
+		return TRUE;
+/*
 		pView->SetPathAtBuf();
 
 		pView->SetAoiDummyShot(0, pView->GetAoiUpDummyShot());
 		if(bDualTest)
 			pView->SetAoiDummyShot(1, pView->GetAoiDnDummyShot());
 			
-		//pView->IoWrite("MB440162", 0); // 마킹부 정지 스위치 램프 ON(PC가 On/Off시킴)  - 20141021	
-		//pView->m_pMpe->Write(_T("MB440162", 0);
-
 		pView->m_bAoiFdWrite[0] = FALSE;
 		pView->m_bAoiFdWrite[1] = FALSE;
 		pView->m_bAoiFdWriteF[0] = FALSE;
@@ -3229,7 +3234,6 @@ BOOL CDlgMenu03::DoReset()
 		pView->TowerLamp(RGB_RED, TRUE, FALSE);
 		pView->DispStsBar(_T("정지-2"), 0);
 		pView->DispMain(_T("정 지"), RGB_RED);	
-//		SwStop();
 		SwAoiReset(TRUE);
 
 		if(bInit)
@@ -3243,8 +3247,9 @@ BOOL CDlgMenu03::DoReset()
 		}
 		
 		return TRUE;
+*/	
 	}
-*/
+
 	return FALSE;		
 }
 

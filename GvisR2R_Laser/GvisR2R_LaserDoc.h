@@ -375,6 +375,11 @@ public:
 
 	BOOL DirectoryExists(LPCTSTR szPath);
 
+	CString m_strSharedDir;
+	void CheckCurrentInfo();
+	void WriteFdOffset(double dOffsetX, double dOffsetY);
+	void SetEngOrderNum(CString sOrderNum);
+
 // 재정의입니다.
 public:
 	virtual BOOL OnNewDocument();
