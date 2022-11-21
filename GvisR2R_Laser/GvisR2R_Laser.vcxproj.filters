@@ -315,6 +315,9 @@
     <ClInclude Include="Device\HardwareInfoEx.h">
       <Filter>Device</Filter>
     </ClInclude>
+    <ClInclude Include="Dialog\DlgUtil02.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GvisR2R_Laser.cpp">
@@ -541,6 +544,9 @@
     </ClCompile>
     <ClCompile Include="Device\HardwareInfoEx.cpp">
       <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgUtil02.cpp">
+      <Filter>Dialog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

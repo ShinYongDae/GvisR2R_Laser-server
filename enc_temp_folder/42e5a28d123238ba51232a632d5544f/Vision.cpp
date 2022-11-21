@@ -3419,22 +3419,13 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 
 	MIL_ID MilBufAlignCld = M_NULL;
 	MbufChild2d(MilCapPinImgBuf, (640 - ALIGN_IMG_DISP_SIZEX) / 2, (480 - ALIGN_IMG_DISP_SIZEY) / 2, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignCld);
-
-	MilPatImg = m_pMil->AllocBuf(ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
-
-	if (MilBufAlignCld != M_NULL && MilPatImg != M_NULL)
-		MbufCopy(MilBufAlignCld, MilPatImg->m_MilImage);
-
 #ifdef _DEBUG
 	TCHAR szFileName[30];
-	_stprintf(szFileName, _T("C:\\MilCapPinImgBuf.tif"));
-	MbufSave(szFileName, MilCapPinImgBuf);
 	_stprintf(szFileName, _T("C:\\MilBufAlignCld.tif"));
 	MbufSave(szFileName, MilBufAlignCld);
 #endif
 
 	DWORD dwSt = GetTickCount();
-
 	//double dRsRto = (_tstof(pDoc->WorkingInfo.Vision[m_nIdx].sCamPxlRes) / 10000.0) / _tstof(pDoc->WorkingInfo.Vision[m_nIdx].sResX);
 	//long lSzX = (long)(ALIGN_IMG_DISP_SIZEX * dRsRto);
 	//long lSzY = (long)(ALIGN_IMG_DISP_SIZEY * dRsRto);
@@ -3455,7 +3446,7 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 	if (dScore < 10.0)
 		dScore = 10.0;
 
-	m_pMil->PatternMatchingAlloc(MilPatImg->m_MilImage, dScore);
+	m_pMil->PatternMatchingAlloc(MilBufAlignCld, dScore);
 	//m_pMil->PatternMatchingAlloc(MilPatRzImg->m_MilImage, dScore);
 
 	CString str;
@@ -3466,8 +3457,8 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 #ifdef _DEBUG
 	//TCHAR szFileName[30];
 	_stprintf(szFileName, _T("C:\\PinPat.tif"));
-	MbufSave(szFileName, MilPatImg->m_MilImage);
-	//MbufSave(szFileName, MilBufAlignCld);
+	//MbufSave(szFileName, MilPatImg->m_MilImage);
+	MbufSave(szFileName, MilPatRzImg->m_MilImage);
 	//MbufSave(szFileName, MilPinImgBuf);
 #endif
 
@@ -3521,11 +3512,11 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 
 		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
 		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
-		//MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
-		//MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
-		//MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
-		//MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
-		//MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
+		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
+		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
+		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
+		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
+		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
 
 #ifdef _DEBUG
 		//sprintf(szFileName, "C:\\AlignGrab0.tif");
@@ -3568,12 +3559,8 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 		CString sMsg = _T("Pattern Matching Fail !");
 
 		long lImageSizeX, lImageSizeY;
-		lImageSizeX = MbufInquire(MilPatImg->m_MilImage, M_SIZE_X, M_NULL);		//MbufInquire(MilPatRzImg->m_MilImage,M_SIZE_X,&lImageSizeX);
-		lImageSizeY = MbufInquire(MilPatImg->m_MilImage, M_SIZE_Y, M_NULL);		//MbufInquire(MilPatRzImg->m_MilImage,M_SIZE_Y,&lImageSizeY);
-		//lImageSizeX = MbufInquire(MilBufAlignCld, M_SIZE_X, M_NULL);
-		//lImageSizeY = MbufInquire(MilBufAlignCld, M_SIZE_Y, M_NULL);
-		//lImageSizeX = MbufInquire(MilPatRzImg->m_MilImage, M_SIZE_X, M_NULL);		//MbufInquire(MilPatRzImg->m_MilImage,M_SIZE_X,&lImageSizeX);
-		//lImageSizeY = MbufInquire(MilPatRzImg->m_MilImage, M_SIZE_Y, M_NULL);		//MbufInquire(MilPatRzImg->m_MilImage,M_SIZE_Y,&lImageSizeY);
+		lImageSizeX = MbufInquire(MilPatRzImg->m_MilImage, M_SIZE_X, M_NULL);		//MbufInquire(MilPatRzImg->m_MilImage,M_SIZE_X,&lImageSizeX);
+		lImageSizeY = MbufInquire(MilPatRzImg->m_MilImage, M_SIZE_Y, M_NULL);		//MbufInquire(MilPatRzImg->m_MilImage,M_SIZE_Y,&lImageSizeY);
 																					//MgraText(m_pMilDrawOverlay->m_MilGraphicContextID, m_pMilDrawOverlay->m_MilBuffer, lImageSizeX/2, lImageSizeY/2, szText);
 		m_pMil->DrawText(sMsg, lImageSizeX / 2, lImageSizeY / 2, RGB_RED);
 		m_pMil->PatternMatchingFree();

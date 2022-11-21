@@ -706,11 +706,11 @@ void CLibMil::PatternMatchingAlloc(MIL_ID MilImage, double dScore)
 	// Edge Effect : iteration = 2
 	MimConvolve(MilImage, MilImage, M_SMOOTH);
 	MimConvolve(MilImage, MilImage, M_SMOOTH);
-	MimConvolve(MilImage, MilImage, M_SMOOTH);
-	MimConvolve(MilImage, MilImage, M_SMOOTH);
-	MimConvolve(MilImage, MilImage, M_SMOOTH);
-	MimConvolve(MilImage, MilImage, M_SMOOTH);
-	MimConvolve(MilImage, MilImage, M_SMOOTH);
+	//MimConvolve(MilImage, MilImage, M_SMOOTH);
+	//MimConvolve(MilImage, MilImage, M_SMOOTH);
+	//MimConvolve(MilImage, MilImage, M_SMOOTH);
+	//MimConvolve(MilImage, MilImage, M_SMOOTH);
+	//MimConvolve(MilImage, MilImage, M_SMOOTH);
 
 #ifdef _DEBUG
 // 	char szFileName[100];

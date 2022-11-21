@@ -48,13 +48,13 @@ CDlgMenu05::CDlgMenu05(CWnd* pParent /*=NULL*/)
 
 CDlgMenu05::~CDlgMenu05()
 {
-	if(m_pRect)
+	if (m_pRect)
 	{
 		delete m_pRect;
 		m_pRect = NULL;
 	}
 
-	if(m_pDlgUtil01 != NULL) 
+	if (m_pDlgUtil01 != NULL)
 	{
 		delete m_pDlgUtil01;
 		m_pDlgUtil01 = NULL;

@@ -33,6 +33,13 @@ public:
 	CEngrave(CString sAddrCli, CString sAddrSvr, CString sPortSvr, CWnd* pParent = NULL);
 	~CEngrave();
 
+	BOOL m_bGetOpInfo, m_bGetInfo, m_bGetEngInfo;
+	BOOL m_bGetSignalMain, m_bGetSignalTorqueMotor, m_bGetSignalInductionMotor, m_bGetSignalCore150mm, m_bGetSignalEtc;
+	BOOL m_bGetSignalRecoiler, m_bGetSignalPunch, m_bGetSignalAOIDn, m_bGetSignalAOIUp, m_bGetSignalEngrave, m_bGetSignalUncoiler;
+	BOOL m_bGetSignalEngraveAutoSequence;
+	BOOL m_bGetTotRatio, m_bGetStTime, m_bGetRunTime, m_bGetEdTime, m_bGetStripRatio, m_bGetDef;
+	BOOL m_bGet2DReader, m_bGetFdInfo, m_bGetAoiInfo, m_bGetMkInfo, m_bGetMkInfoLf, m_bGetMkInfoRt;
+
 	void SetHwnd(HWND hParentWnd);
 	BOOL IsRunning();
 	int WriteComm(CString sMsg, DWORD dwTimeout = INFINITE);
@@ -64,6 +71,7 @@ public:
 
 	// GetSysSignal
 	void GetSysSignal(SOCKET_DATA SockData);
+	void GetSignalDisp(SOCKET_DATA SockData);
 	void GetSignalMain(SOCKET_DATA SockData);
 	void GetSignalTorqueMotor(SOCKET_DATA SockData);
 	void GetSignalInductionMotor(SOCKET_DATA SockData);
@@ -76,6 +84,7 @@ public:
 	void GetSignalEngrave(SOCKET_DATA SockData);
 	void GetSignalUncoiler(SOCKET_DATA SockData);
 	void GetSignalEngraveAutoSequence(SOCKET_DATA SockData);
+	void GetSignalMyMsg(SOCKET_DATA SockData);
 
 	// GetSysData
 	void GetSysData(SOCKET_DATA SockData);
@@ -164,6 +173,7 @@ public:
 	void SetFixDef();
 	void SetNumContFixDef();
 	void SetUltraSonicStTim();
+	void SetEngOrderNum();
 
 	// SetInfo()
 	void SetModelUpName();
@@ -289,6 +299,12 @@ public:
 	void SetMkHgtPosY4Rt();
 	void SetMkHgtAvgPosRt();
 
+	// Set Engrave Data
+	void SetEngraveAoiDist();
+	void SetEngraveFdPitch();
+	//void IsSetEngraveAoiDist();
+	//void IsSetEngraveFdPitch();
+
 	// End for SetSysData()
 
 	// Start Switch
@@ -300,22 +316,36 @@ public:
 	void SwStop(BOOL bOn);
 	void SwAuto(BOOL bOn);
 	void SwManual(BOOL bOn);
+	void IsSwReady(BOOL bOn);
+	void IsSwRun(BOOL bOn);
+	void IsSwReset(BOOL bOn);
+	void IsSwStop(BOOL bOn);
+	void IsSwAuto(BOOL bOn);
+	void IsSwManual(BOOL bOn);
 
 	// Torque Motor
 	void SwMkTq(BOOL bOn);
 	void SwAoiTq(BOOL bOn);
 	void SwEngTq(BOOL bOn);
+	void IsSwMkTq(BOOL bOn);
+	void IsSwAoiTq(BOOL bOn);
+	void IsSwEngTq(BOOL bOn);
 
 	// Induction Motor
 	void SwRcInductionCcw(BOOL bOn);	// SetOneMetal
 	void SwUcInductionCcw(BOOL bOn);	// SetTwoMetal
+	void IsSwRcInductionCcw(BOOL bOn);	// SetOneMetal
+	void IsSwUcInductionCcw(BOOL bOn);	// SetTwoMetal
 
 	// Core 150mm
 	void SwRcCore150mm(BOOL bOn);
 	void SwUcCore150mm(BOOL bOn);
+	void IsSwRcCore150mm(BOOL bOn);
+	void IsSwUcCore150mm(BOOL bOn);
 
 	// Etc
 	void SwAoiEmg(BOOL bOn);
+	void IsSwAoiEmg(BOOL bOn);
 	//void SwBufRolSol(BOOL bOn);
 	//void SwMkDnSol(BOOL bOn);
 
@@ -333,6 +363,19 @@ public:
 	void SwRcPaperCcw(BOOL bOn);
 	void SwRcRewinder(BOOL bOn);
 	void SwRcRewinderReelPaper(BOOL bOn);
+	void IsSwRcRelation(BOOL bOn);
+	void IsSwRcFdCw(BOOL bOn);
+	void IsSwRcFdCcw(BOOL bOn);
+	void IsSwRcReelChuck(BOOL bOn);
+	void IsSwRcDcRlUpDn(BOOL bOn);
+	void IsSwRcReelJoinL(BOOL bOn);
+	void IsSwRcReelJoinR(BOOL bOn);
+	void IsSwRcReelJoinVac(BOOL bOn);
+	void IsSwRcPaperChuck(BOOL bOn);
+	void IsSwRcPaperCw(BOOL bOn);
+	void IsSwRcPaperCcw(BOOL bOn);
+	void IsSwRcRewinder(BOOL bOn);
+	void IsSwRcRewinderReelPaper(BOOL bOn);
 
 	// Punching
 	void SwMkRelation(BOOL bOn);
@@ -346,8 +389,19 @@ public:
 	void SwMkTqClp(BOOL bOn);
 	void SwMkMvOne(BOOL bOn);
 	void SwMkLsrPt(BOOL bOn);
-
 	void SwMkDcRSol(BOOL bOn);
+	void IsSwMkRelation(BOOL bOn);
+	void IsSwMkFdCw(BOOL bOn);
+	void IsSwMkFdCcw(BOOL bOn);
+	void IsSwMkFdVac(BOOL bOn);
+	void IsSwMkPushUp(BOOL bOn);
+	void IsSwMkTblBlw(BOOL bOn);
+	void IsSwMkTblVac(BOOL bOn);
+	void IsSwMkFdClp(BOOL bOn);
+	void IsSwMkTqClp(BOOL bOn);
+	void IsSwMkMvOne(BOOL bOn);
+	void IsSwMkLsrPt(BOOL bOn);
+	void IsSwMkDcRSol(BOOL bOn);
 
 	// AOIDn
 	void SwAoiDnRelation(BOOL bOn);
@@ -361,13 +415,27 @@ public:
 	void SwAoiDnTqClp(BOOL bOn);
 	void SwAoiDnMvOne(BOOL bOn);
 	void SwAoiDnLsrPt(BOOL bOn);
-
 	void SwAoiDnClrRoll(BOOL bOn);
 	void SwAoiDnVelSonicBlw(BOOL bOn);
-
 	void SwAoiDnTest(BOOL bOn);
 	void SwAoiDnReset(BOOL bOn);
 	void SwAoiDnLotEnd(BOOL bOn);
+	void IsSwAoiDnRelation(BOOL bOn);
+	void IsSwAoiDnFdCw(BOOL bOn);
+	void IsSwAoiDnFdCcw(BOOL bOn);
+	void IsSwAoiDnFdVac(BOOL bOn);
+	void IsSwAoiDnPushUp(BOOL bOn);
+	void IsSwAoiDnTblBlw(BOOL bOn);
+	void IsSwAoiDnTblVac(BOOL bOn);
+	void IsSwAoiDnFdClp(BOOL bOn);
+	void IsSwAoiDnTqClp(BOOL bOn);
+	void IsSwAoiDnMvOne(BOOL bOn);
+	void IsSwAoiDnLsrPt(BOOL bOn);
+	void IsSwAoiDnClrRoll(BOOL bOn);
+	void IsSwAoiDnVelSonicBlw(BOOL bOn);
+	void IsSwAoiDnTest(BOOL bOn);
+	void IsSwAoiDnReset(BOOL bOn);
+	void IsSwAoiDnLotEnd(BOOL bOn);
 
 	// AOIUp
 	void SwAoiUpRelation(BOOL bOn);
@@ -381,13 +449,27 @@ public:
 	void SwAoiUpTqClp(BOOL bOn);
 	void SwAoiUpMvOne(BOOL bOn);
 	void SwAoiUpLsrPt(BOOL bOn);
-
 	void SwAoiUpClrRoll(BOOL bOn);
-	void SwAoiUpTqVac(BOOL bOn);
-
+	//void SwAoiUpTqVac(BOOL bOn);
 	void SwAoiUpTest(BOOL bOn);
 	void SwAoiUpReset(BOOL bOn);
 	void SwAoiUpLotEnd(BOOL bOn);
+	void IsSwAoiUpRelation(BOOL bOn);
+	void IsSwAoiUpFdCw(BOOL bOn);
+	void IsSwAoiUpFdCcw(BOOL bOn);
+	void IsSwAoiUpFdVac(BOOL bOn);
+	void IsSwAoiUpPushUp(BOOL bOn);
+	void IsSwAoiUpTblBlw(BOOL bOn);
+	void IsSwAoiUpTblVac(BOOL bOn);
+	void IsSwAoiUpFdClp(BOOL bOn);
+	void IsSwAoiUpTqClp(BOOL bOn);
+	void IsSwAoiUpMvOne(BOOL bOn);
+	void IsSwAoiUpLsrPt(BOOL bOn);
+	void IsSwAoiUpClrRoll(BOOL bOn);
+	//void IsSwAoiUpTqVac(BOOL bOn);
+	void IsSwAoiUpTest(BOOL bOn);
+	void IsSwAoiUpReset(BOOL bOn);
+	void IsSwAoiUpLotEnd(BOOL bOn);
 
 	// Engrave
 	void SwEngRelation(BOOL bOn);
@@ -401,9 +483,21 @@ public:
 	void SwEngTqClp(BOOL bOn);
 	void SwEngMvOne(BOOL bOn);
 	void SwEngLsrPt(BOOL bOn);
-
 	void SwEngDcRSol(BOOL bOn);
 	void SwEngVelSonicBlw(BOOL bOn);
+	void IsSwEngRelation(BOOL bOn);
+	void IsSwEngFdCw(BOOL bOn);
+	void IsSwEngFdCcw(BOOL bOn);
+	void IsSwEngFdVac(BOOL bOn);
+	void IsSwEngPushUp(BOOL bOn);
+	void IsSwEngTblBlw(BOOL bOn);
+	void IsSwEngTblVac(BOOL bOn);
+	void IsSwEngFdClp(BOOL bOn);
+	void IsSwEngTqClp(BOOL bOn);
+	void IsSwEngMvOne(BOOL bOn);
+	void IsSwEngLsrPt(BOOL bOn);
+	void IsSwEngDcRSol(BOOL bOn);
+	void IsSwEngVelSonicBlw(BOOL bOn);
 
 	// Uncoiler
 	void SwUcRelation(BOOL bOn);
@@ -419,14 +513,41 @@ public:
 	void SwUcPaperCcw(BOOL bOn);
 	void SwUcClRlUpDn(BOOL bOn);
 	void SwUcClRlPshUpDn(BOOL bOn);
+	void IsSwUcRelation(BOOL bOn);
+	void IsSwUcFdCw(BOOL bOn);
+	void IsSwUcFdCcw(BOOL bOn);
+	void IsSwUcReelChuck(BOOL bOn);
+	void IsSwUcDcRlUpDn(BOOL bOn);
+	void IsSwUcReelJoinL(BOOL bOn);
+	void IsSwUcReelJoinR(BOOL bOn);
+	void IsSwUcReelJoinVac(BOOL bOn);
+	void IsSwUcPaperChuck(BOOL bOn);
+	void IsSwUcPaperCw(BOOL bOn);
+	void IsSwUcPaperCcw(BOOL bOn);
+	void IsSwUcClRlUpDn(BOOL bOn);
+	void IsSwUcClRlPshUpDn(BOOL bOn);
+
+	// DlgMyMsg
+	void SetMyMsgYes();
+	void SetMyMsgNo();
+	void IsSetMyMsgYes();
+	void IsSetMyMsgNo();
 
 	// Engrave Auto Sequence
+	void SwEngAutoInit(BOOL bOn); // 각인부 초기화(Reset)
 	void SwEngAutoMkSt(BOOL bOn);
 	void SwEngAutoOnMking(BOOL bOn);
 	void SwEngAutoMkDone(BOOL bOn);
 	void SwEngAuto2dReadSt(BOOL bOn);
 	void SwEngAutoOnReading2d(BOOL bOn);
 	void SwEngAuto2dReadDone(BOOL bOn);
+	void IsSwEngAutoInit(BOOL bOn); // 각인부 초기화(Reset)
+	void IsSwEngAutoMkSt(BOOL bOn);
+	void IsSwEngAutoOnMking(BOOL bOn);
+	void IsSwEngAutoMkDone(BOOL bOn);
+	void IsSwEngAuto2dReadSt(BOOL bOn);
+	void IsSwEngAutoOnReading2d(BOOL bOn);
+	void IsSwEngAuto2dReadDone(BOOL bOn);
 
 	// End Switch
 

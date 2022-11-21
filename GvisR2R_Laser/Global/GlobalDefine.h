@@ -11,6 +11,9 @@
 
 
 //#define TEST_MODE		1
+#ifndef MAX_STRIP
+	#define MAX_STRIP				4
+#endif
 
 
 #ifdef TEST_MODE
@@ -616,6 +619,9 @@ struct stSystem
 	CString sPathVrsShareDn, sPathVrsBufDn;
 	CString sPathVsShareDn;
 
+	CString sPathEng, sPathEngCurrInfo, sPathEngOffset;
+
+
 	CString sPathOldFile;
 	CString sPathSapp3;
 	BOOL bSaveLog;
@@ -645,6 +651,8 @@ struct stSystem
 		sPathAoiDnOffset = _T(""); sPathAoiDnVrsData = _T("");
 		sPathVrsShareDn = _T(""); sPathVrsBufDn = _T("");
 		sPathVsShareDn = _T("");
+
+		sPathEng = _T(""); sPathEngCurrInfo = _T(""); sPathEngOffset = _T("");
 
 		sPathOldFile = _T("");
 		bSaveLog = FALSE;
@@ -679,7 +687,7 @@ struct stLastJob
 	CString sTempPauseLen, sLmtTotYld, sLmtPatlYld;
 	CString sStripOutRatio, sCustomNeedRatio;
 	BOOL bContFixDef;
-	CString sNumRangeFixDef, sNumContFixDef, sUltraSonicCleannerStTim;
+	CString sNumRangeFixDef, sNumContFixDef, sUltraSonicCleannerStTim, sEngOrderNum;
 	BOOL bRclDrSen, bMkDrSen, bBufDrSen, bAoiUpDrSen, bAoiDnDrSen, bEngvDrSen, bUclDrSen;
 	BOOL bDispMkPcs, bStopFixDef, bMkSftySen, bAoiSftySen;
 	CString sJogSpd, sLotSerial; //sLightVal, 
@@ -750,6 +758,7 @@ struct stLastJob
 		nAlignMethode = TWO_POINT;
 
 		bUseAoiUpCleanRoler = FALSE; bUseAoiDnCleanRoler = FALSE;
+		sEngOrderNum = _T("");
 	}
 };
 
@@ -1153,75 +1162,142 @@ struct stMkIo
 	stMpeIo MpeIo, MpeSignal, MpeData;
 };
 
+struct stBtnMsg
+{
+	BOOL Yes, No, Ok, Cancel;
+	BOOL IsYes, IsNo, IsOk, IsCancel;
+
+	stBtnMsg()
+	{
+		Init();
+	}
+
+	void Init()
+	{
+		Yes = FALSE; No = FALSE; Ok = FALSE; Cancel = FALSE;
+		IsYes = FALSE; IsNo = FALSE; IsOk = FALSE; IsCancel = FALSE;
+	}
+};
+
 struct stBtnMain
 {
 	BOOL Ready, Run, Reset, Stop, Auto, Manual;
-
 	BOOL PrevReady, PrevRun, PrevReset, PrevStop, PrevAuto, PrevManual;
+
+	BOOL IsReady, IsRun, IsReset, IsStop, IsAuto, IsManual;
+	BOOL IsPrevReady, IsPrevRun, IsPrevReset, IsPrevStop, IsPrevAuto, IsPrevManual;
 
 	stBtnMain()
 	{
-		Ready = FALSE; Run = FALSE; Reset = FALSE; Stop = FALSE;
-		Auto = FALSE; Manual = FALSE;
+		Init();
+	}
 
-		PrevReady = FALSE; PrevRun = FALSE; PrevReset = FALSE; PrevStop = FALSE;
-		PrevAuto = FALSE; PrevManual = FALSE;
+	void Init()
+	{
+		Ready = FALSE; Run = FALSE; Reset = FALSE; Stop = FALSE; Auto = FALSE; Manual = FALSE;
+		PrevReady = FALSE; PrevRun = FALSE; PrevReset = FALSE; PrevStop = FALSE; PrevAuto = FALSE; PrevManual = FALSE;
+
+		IsReady = FALSE; IsRun = FALSE; IsReset = FALSE; IsStop = FALSE; IsAuto = FALSE; IsManual = FALSE;
+		IsPrevReady = FALSE; IsPrevRun = FALSE; IsPrevReset = FALSE; IsPrevStop = FALSE; IsPrevAuto = FALSE; IsPrevManual = FALSE;
+	}
+};
+
+struct stBtnDisp
+{
+	BOOL DualSample, SingleSample, DualTest, SingleTest, InitRun, Ready, Run, Stop;
+	BOOL PrevDualSample, PrevSingleSample, PrevDualTest, PrevSingleTest, PrevInitRun, PrevReady, PrevRun, PrevStop;
+
+	BOOL IsDualSample, IsSingleSample, IsDualTest, IsSingleTest, IsInitRun, IsReady, IsRun, IsStop;
+	BOOL IsPrevDualSample, IsPrevSingleSample, IsPrevDualTest, IsPrevSingleTest, IsPrevInitRun, IsPrevReady, IsPrevRun, IsPrevStop;
+
+	stBtnDisp()
+	{
+		Init();
+	}
+
+	void Init()
+	{
+		DualSample = FALSE; SingleSample = FALSE; DualTest = FALSE; SingleTest = FALSE; InitRun = FALSE;
+		Ready = FALSE; Run = FALSE; Stop = FALSE;
+		PrevDualSample = FALSE; PrevSingleSample = FALSE; PrevDualTest = FALSE; PrevSingleTest = FALSE;
+		PrevInitRun = FALSE; PrevReady = FALSE; PrevRun = FALSE; PrevStop = FALSE;
+
+		IsDualSample = FALSE; IsSingleSample = FALSE; IsDualTest = FALSE; IsSingleTest = FALSE; IsInitRun = FALSE;
+		IsReady = FALSE; IsRun = FALSE; IsStop = FALSE;
+		IsPrevDualSample = FALSE; IsPrevSingleSample = FALSE; IsPrevDualTest = FALSE; IsPrevSingleTest = FALSE;
+		IsPrevInitRun = FALSE; IsPrevReady = FALSE; IsPrevRun = FALSE; IsPrevStop = FALSE;
 	}
 };
 
 struct stBtnTqMotor
 {
 	BOOL Mk, Aoi, Eng;
-
 	BOOL PrevMk, PrevAoi, PrevEng;
+
+	BOOL IsMk, IsAoi, IsEng;
+	BOOL IsPrevMk, IsPrevAoi, IsPrevEng;
 
 	stBtnTqMotor()
 	{
 		Mk = FALSE; Aoi = FALSE; Eng = FALSE;
-
 		PrevMk = FALSE; PrevAoi = FALSE; PrevEng = FALSE;
+
+		IsMk = FALSE; IsAoi = FALSE; IsEng = FALSE;
+		IsPrevMk = FALSE; IsPrevAoi = FALSE; IsPrevEng = FALSE;
 	}
 };
 
 struct stBtnInductMotor
 {
 	BOOL Uc, Rc;
-
 	BOOL PrevUc, PrevRc;
+
+	BOOL IsUc, IsRc;
+	BOOL IsPrevUc, IsPrevRc;
 
 	stBtnInductMotor()
 	{
 		Uc = FALSE; Rc = FALSE;
-
 		PrevUc = FALSE; PrevRc = FALSE;
+
+		IsUc = FALSE; IsRc = FALSE;
+		IsPrevUc = FALSE; IsPrevRc = FALSE;
 	}
 };
 
 struct stBtnCore150
 {
 	BOOL Uc, Rc;
-
 	BOOL PrevUc, PrevRc;
+
+	BOOL IsUc, IsRc;
+	BOOL IsPrevUc, IsPrevRc;
 
 	stBtnCore150()
 	{
 		Uc = FALSE; Rc = FALSE;
-
 		PrevUc = FALSE; PrevRc = FALSE;
+
+		IsUc = FALSE; IsRc = FALSE;
+		IsPrevUc = FALSE; IsPrevRc = FALSE;
 	}
 };
 
 struct stBtnEtc
 {
 	BOOL BufR, EmgAoi;
-
 	BOOL PrevBufR, PrevEmgAoi;
+
+	BOOL IsBufR, IsEmgAoi;
+	BOOL IsPrevBufR, IsPrevEmgAoi;
 
 	stBtnEtc()
 	{
 		BufR = FALSE; EmgAoi = FALSE;
-
 		PrevBufR = FALSE; PrevEmgAoi = FALSE;
+
+		IsBufR = FALSE; IsEmgAoi = FALSE;
+		IsPrevBufR = FALSE; IsPrevEmgAoi = FALSE;
 	}
 };
 
@@ -1235,6 +1311,14 @@ struct stBtnRecoiler
 	BOOL PrevDcRlUpDn, PrevReelJoinL, PrevReelJoinR, PrevReelJoinVac;
 	BOOL PrevPprChuck, PrevPprCw, PrevPprCcw, PrevRewine, PrevRewineReelPpr;
 
+	BOOL IsRelation, IsFdCw, IsFdCcw, IsReelChuck;
+	BOOL IsDcRlUpDn, IsReelJoinL, IsReelJoinR, IsReelJoinVac;
+	BOOL IsPprChuck, IsPprCw, IsPprCcw, IsRewine, IsRewineReelPpr;
+
+	BOOL IsPrevRelation, IsPrevFdCw, IsPrevFdCcw, IsPrevReelChuck;
+	BOOL IsPrevDcRlUpDn, IsPrevReelJoinL, IsPrevReelJoinR, IsPrevReelJoinVac;
+	BOOL IsPrevPprChuck, IsPrevPprCw, IsPrevPprCcw, IsPrevRewine, IsPrevRewineReelPpr;
+
 	stBtnRecoiler()
 	{
 		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; ReelChuck = FALSE;
@@ -1244,6 +1328,14 @@ struct stBtnRecoiler
 		PrevRelation = FALSE; PrevFdCw = FALSE; PrevFdCcw = FALSE; PrevReelChuck = FALSE;
 		PrevDcRlUpDn = FALSE; PrevReelJoinL = FALSE; PrevReelJoinR = FALSE; PrevReelJoinVac = FALSE;
 		PrevPprChuck = FALSE; PrevPprCw = FALSE; PrevPprCcw = FALSE; PrevRewine = FALSE; PrevRewineReelPpr = FALSE;
+
+		IsRelation = FALSE; IsFdCw = FALSE; IsFdCcw = FALSE; IsReelChuck = FALSE;
+		IsDcRlUpDn = FALSE; IsReelJoinL = FALSE; IsReelJoinR = FALSE; IsReelJoinVac = FALSE;
+		IsPprChuck = FALSE; IsPprCw = FALSE; IsPprCcw = FALSE; IsRewine = FALSE; IsRewineReelPpr = FALSE;
+
+		IsPrevRelation = FALSE; IsPrevFdCw = FALSE; IsPrevFdCcw = FALSE; IsPrevReelChuck = FALSE;
+		IsPrevDcRlUpDn = FALSE; IsPrevReelJoinL = FALSE; IsPrevReelJoinR = FALSE; IsPrevReelJoinVac = FALSE;
+		IsPrevPprChuck = FALSE; IsPrevPprCw = FALSE; IsPrevPprCcw = FALSE; IsPrevRewine = FALSE; IsPrevRewineReelPpr = FALSE;
 	}
 };
 
@@ -1259,6 +1351,16 @@ struct stBtnPunch
 	BOOL PrevTqClp, PrevMvOne, PrevLsrPt;
 	BOOL PrevDcRSol;
 
+	BOOL IsRelation, IsFdCw, IsFdCcw, IsFdVac;
+	BOOL IsPushUp, IsTblBlw, IsTblVac, IsFdClp;
+	BOOL IsTqClp, IsMvOne, IsLsrPt;
+	BOOL IsDcRSol;
+
+	BOOL IsPrevRelation, IsPrevFdCw, IsPrevFdCcw, IsPrevFdVac;
+	BOOL IsPrevPushUp, IsPrevTblBlw, IsPrevTblVac, IsPrevFdClp;
+	BOOL IsPrevTqClp, IsPrevMvOne, IsPrevLsrPt;
+	BOOL IsPrevDcRSol;
+
 	stBtnPunch()
 	{
 		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; FdVac = FALSE;
@@ -1270,6 +1372,16 @@ struct stBtnPunch
 		PrevPushUp = FALSE; PrevTblBlw = FALSE; PrevTblVac = FALSE; PrevFdClp = FALSE;
 		PrevTqClp = FALSE; PrevMvOne = FALSE; PrevLsrPt = FALSE;
 		PrevDcRSol = FALSE;
+
+		IsRelation = FALSE; IsFdCw = FALSE; IsFdCcw = FALSE; IsFdVac = FALSE;
+		IsPushUp = FALSE; IsTblBlw = FALSE; IsTblVac = FALSE; IsFdClp = FALSE;
+		IsTqClp = FALSE; IsMvOne = FALSE; IsLsrPt = FALSE;
+		IsDcRSol = FALSE;
+
+		IsPrevRelation = FALSE; IsPrevFdCw = FALSE; IsPrevFdCcw = FALSE; IsPrevFdVac = FALSE;
+		IsPrevPushUp = FALSE; IsPrevTblBlw = FALSE; IsPrevTblVac = FALSE; IsPrevFdClp = FALSE;
+		IsPrevTqClp = FALSE; IsPrevMvOne = FALSE; IsPrevLsrPt = FALSE;
+		IsPrevDcRSol = FALSE;
 	}
 };
 
@@ -1285,6 +1397,16 @@ struct stBtnAOIDn
 	BOOL PrevTqClp, PrevMvOne, PrevLsrPt;
 	BOOL PrevClrRoll, PrevVelSonicBlw, PrevTest, PrevReset, PrevLotEnd;
 
+	BOOL IsRelation, IsFdCw, IsFdCcw, IsFdVac;
+	BOOL IsPushUp, IsTblBlw, IsTblVac, IsFdClp;
+	BOOL IsTqClp, IsMvOne, IsLsrPt;
+	BOOL IsClrRoll, IsVelSonicBlw, IsTest, IsReset, IsLotEnd;
+
+	BOOL IsPrevRelation, IsPrevFdCw, IsPrevFdCcw, IsPrevFdVac;
+	BOOL IsPrevPushUp, IsPrevTblBlw, IsPrevTblVac, IsPrevFdClp;
+	BOOL IsPrevTqClp, IsPrevMvOne, IsPrevLsrPt;
+	BOOL IsPrevClrRoll, IsPrevVelSonicBlw, IsPrevTest, IsPrevReset, IsPrevLotEnd;
+
 	stBtnAOIDn()
 	{
 		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; FdVac = FALSE;
@@ -1296,6 +1418,16 @@ struct stBtnAOIDn
 		PrevPushUp = FALSE; PrevTblBlw = FALSE; PrevTblVac = FALSE; PrevFdClp = FALSE;
 		PrevTqClp = FALSE; PrevMvOne = FALSE; PrevLsrPt = FALSE;
 		PrevClrRoll = FALSE; PrevVelSonicBlw = FALSE; PrevTest = FALSE; PrevReset = FALSE; PrevLotEnd = FALSE;
+
+		IsRelation = FALSE; IsFdCw = FALSE; IsFdCcw = FALSE; IsFdVac = FALSE;
+		IsPushUp = FALSE; IsTblBlw = FALSE; IsTblVac = FALSE; IsFdClp = FALSE;
+		IsTqClp = FALSE; IsMvOne = FALSE; IsLsrPt = FALSE;
+		IsClrRoll = FALSE; IsVelSonicBlw = FALSE; IsTest = FALSE; IsReset = FALSE; IsLotEnd = FALSE;
+
+		IsPrevRelation = FALSE; IsPrevFdCw = FALSE; IsPrevFdCcw = FALSE; IsPrevFdVac = FALSE;
+		IsPrevPushUp = FALSE; IsPrevTblBlw = FALSE; IsPrevTblVac = FALSE; IsPrevFdClp = FALSE;
+		IsPrevTqClp = FALSE; IsPrevMvOne = FALSE; IsPrevLsrPt = FALSE;
+		IsPrevClrRoll = FALSE; IsPrevVelSonicBlw = FALSE; IsPrevTest = FALSE; IsPrevReset = FALSE; IsPrevLotEnd = FALSE;
 	}
 };
 
@@ -1311,6 +1443,16 @@ struct stBtnAOIUp
 	BOOL PrevTqClp, PrevMvOne, PrevLsrPt;
 	BOOL PrevClrRoll, PrevTqVac, PrevTest, PrevReset, PrevLotEnd;
 
+	BOOL IsRelation, IsFdCw, IsFdCcw, IsFdVac;
+	BOOL IsPushUp, IsTblBlw, IsTblVac, IsFdClp;
+	BOOL IsTqClp, IsMvOne, IsLsrPt;
+	BOOL IsClrRoll, IsTqVac, IsTest, IsReset, IsLotEnd;
+
+	BOOL IsPrevRelation, IsPrevFdCw, IsPrevFdCcw, IsPrevFdVac;
+	BOOL IsPrevPushUp, IsPrevTblBlw, IsPrevTblVac, IsPrevFdClp;
+	BOOL IsPrevTqClp, IsPrevMvOne, IsPrevLsrPt;
+	BOOL IsPrevClrRoll, IsPrevTqVac, IsPrevTest, IsPrevReset, IsPrevLotEnd;
+
 	stBtnAOIUp()
 	{
 		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; FdVac = FALSE;
@@ -1322,6 +1464,16 @@ struct stBtnAOIUp
 		PrevPushUp = FALSE; PrevTblBlw = FALSE; PrevTblVac = FALSE; PrevFdClp = FALSE;
 		PrevTqClp = FALSE; PrevMvOne = FALSE; PrevLsrPt = FALSE;
 		PrevClrRoll = FALSE; PrevTqVac = FALSE; PrevTest = FALSE; PrevReset = FALSE; PrevLotEnd = FALSE;
+
+		IsRelation = FALSE; IsFdCw = FALSE; IsFdCcw = FALSE; IsFdVac = FALSE;
+		IsPushUp = FALSE; IsTblBlw = FALSE; IsTblVac = FALSE; IsFdClp = FALSE;
+		IsTqClp = FALSE; IsMvOne = FALSE; IsLsrPt = FALSE;
+		IsClrRoll = FALSE; IsTqVac = FALSE; IsTest = FALSE; IsReset = FALSE; IsLotEnd = FALSE;
+
+		IsPrevRelation = FALSE; IsPrevFdCw = FALSE; IsPrevFdCcw = FALSE; IsPrevFdVac = FALSE;
+		IsPrevPushUp = FALSE; IsPrevTblBlw = FALSE; IsPrevTblVac = FALSE; IsPrevFdClp = FALSE;
+		IsPrevTqClp = FALSE; IsPrevMvOne = FALSE; IsPrevLsrPt = FALSE;
+		IsPrevClrRoll = FALSE; IsPrevTqVac = FALSE; IsPrevTest = FALSE; IsPrevReset = FALSE; IsPrevLotEnd = FALSE;
 	}
 };
 
@@ -1337,17 +1489,37 @@ struct stBtnEngrave
 	BOOL PrevTqClp, PrevMvOne, PrevLsrPt;
 	BOOL PrevDcRSol, PrevVelSonicBlw;
 
+	BOOL IsRelation, IsFdCw, IsFdCcw, IsFdVac;
+	BOOL IsPushUp, IsTblBlw, IsTblVac, IsFdClp;
+	BOOL IsTqClp, IsMvOne, IsLsrPt;
+	BOOL IsDcRSol, IsVelSonicBlw;
+
+	BOOL IsPrevRelation, IsPrevFdCw, IsPrevFdCcw, IsPrevFdVac;
+	BOOL IsPrevPushUp, IsPrevTblBlw, IsPrevTblVac, IsPrevFdClp;
+	BOOL IsPrevTqClp, IsPrevMvOne, IsPrevLsrPt;
+	BOOL IsPrevDcRSol, IsPrevVelSonicBlw;
+
 	stBtnEngrave()
 	{
 		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; FdVac = FALSE;
 		PushUp = FALSE; TblBlw = FALSE; TblVac = FALSE; FdClp = FALSE;
 		TqClp = FALSE; MvOne = FALSE; LsrPt = FALSE;
-		DcRSol = FALSE; DcRSol = VelSonicBlw;
+		DcRSol = FALSE; DcRSol = FALSE; VelSonicBlw = FALSE;
 
 		PrevRelation = FALSE; PrevFdCw = FALSE; PrevFdCcw = FALSE; PrevFdVac = FALSE;
 		PrevPushUp = FALSE; PrevTblBlw = FALSE; PrevTblVac = FALSE; PrevFdClp = FALSE;
 		PrevTqClp = FALSE; PrevMvOne = FALSE; PrevLsrPt = FALSE;
 		PrevDcRSol = FALSE; PrevVelSonicBlw = FALSE;
+
+		IsRelation = FALSE; IsFdCw = FALSE; IsFdCcw = FALSE; IsFdVac = FALSE;
+		IsPushUp = FALSE; IsTblBlw = FALSE; IsTblVac = FALSE; IsFdClp = FALSE;
+		IsTqClp = FALSE; IsMvOne = FALSE; IsLsrPt = FALSE;
+		IsDcRSol = FALSE; IsDcRSol = FALSE;  IsVelSonicBlw = FALSE;
+
+		IsPrevRelation = FALSE; IsPrevFdCw = FALSE; IsPrevFdCcw = FALSE; IsPrevFdVac = FALSE;
+		IsPrevPushUp = FALSE; IsPrevTblBlw = FALSE; IsPrevTblVac = FALSE; IsPrevFdClp = FALSE;
+		IsPrevTqClp = FALSE; IsPrevMvOne = FALSE; IsPrevLsrPt = FALSE;
+		IsPrevDcRSol = FALSE; IsPrevVelSonicBlw = FALSE;
 	}
 };
 
@@ -1361,6 +1533,14 @@ struct stBtnUncoiler
 	BOOL PrevDcRlUpDn, PrevReelJoinL, PrevReelJoinR, PrevReelJoinVac;
 	BOOL PrevPprChuck, PrevPprCw, PrevPprCcw, PrevClRlUpDn, PrevClRlPshUpDn;
 
+	BOOL IsRelation, IsFdCw, IsFdCcw, IsReelChuck;
+	BOOL IsDcRlUpDn, IsReelJoinL, IsReelJoinR, IsReelJoinVac;
+	BOOL IsPprChuck, IsPprCw, IsPprCcw, IsClRlUpDn, IsClRlPshUpDn;
+
+	BOOL IsPrevRelation, IsPrevFdCw, IsPrevFdCcw, IsPrevReelChuck;
+	BOOL IsPrevDcRlUpDn, IsPrevReelJoinL, IsPrevReelJoinR, IsPrevReelJoinVac;
+	BOOL IsPrevPprChuck, IsPrevPprCw, IsPrevPprCcw, IsPrevClRlUpDn, IsPrevClRlPshUpDn;
+
 	stBtnUncoiler()
 	{
 		Relation = FALSE; FdCw = FALSE; FdCcw = FALSE; ReelChuck = FALSE;
@@ -1370,6 +1550,14 @@ struct stBtnUncoiler
 		PrevRelation = FALSE; PrevFdCw = FALSE; PrevFdCcw = FALSE; PrevReelChuck = FALSE;
 		PrevDcRlUpDn = FALSE; PrevReelJoinL = FALSE; PrevReelJoinR = FALSE; PrevReelJoinVac = FALSE;
 		PrevPprChuck = FALSE; PrevPprCw = FALSE; PrevPprCcw = FALSE; PrevClRlUpDn = FALSE; PrevClRlPshUpDn = FALSE;
+
+		IsRelation = FALSE; IsFdCw = FALSE; IsFdCcw = FALSE; IsReelChuck = FALSE;
+		IsDcRlUpDn = FALSE; IsReelJoinL = FALSE; IsReelJoinR = FALSE; IsReelJoinVac = FALSE;
+		IsPprChuck = FALSE; IsPprCw = FALSE; IsPprCcw = FALSE; IsClRlUpDn = FALSE; IsClRlPshUpDn = FALSE;
+
+		IsPrevRelation = FALSE; IsPrevFdCw = FALSE; IsPrevFdCcw = FALSE; IsPrevReelChuck = FALSE;
+		IsPrevDcRlUpDn = FALSE; IsPrevReelJoinL = FALSE; IsPrevReelJoinR = FALSE; IsPrevReelJoinVac = FALSE;
+		IsPrevPprChuck = FALSE; IsPrevPprCw = FALSE; IsPrevPprCcw = FALSE; IsPrevClRlUpDn = FALSE; IsPrevClRlPshUpDn = FALSE;
 	}
 };
 
@@ -1377,6 +1565,9 @@ struct stBtnEngAuto
 {
 	BOOL Init, MkSt, OnMking, MkDone, Read2dSt, OnRead2d, Read2dDone;
 	BOOL InitF, MkStF, OnMkingF, MkDoneF, Read2dStF, OnRead2dF, Read2dDoneF;
+
+	BOOL IsInit, IsMkSt, IsOnMking, IsMkDone, IsRead2dSt, IsOnRead2d, IsRead2dDone;
+	BOOL IsInitF, IsMkStF, IsOnMkingF, IsMkDoneF, IsRead2dStF, IsOnRead2dF, IsRead2dDoneF;
 
 	stBtnEngAuto()
 	{
@@ -1387,12 +1578,17 @@ struct stBtnEngAuto
 	{
 		Init = FALSE; MkSt = FALSE; OnMking = FALSE; MkDone = FALSE; Read2dSt = FALSE; OnRead2d = FALSE; Read2dDone = FALSE;
 		InitF = FALSE; MkStF = FALSE; OnMkingF = FALSE; MkDoneF = FALSE; Read2dStF = FALSE; OnRead2dF = FALSE; Read2dDoneF = FALSE;
+
+		IsInit = FALSE; IsMkSt = FALSE; IsOnMking = FALSE; IsMkDone = FALSE; IsRead2dSt = FALSE; IsOnRead2d = FALSE; IsRead2dDone = FALSE;
+		IsInitF = FALSE; IsMkStF = FALSE; IsOnMkingF = FALSE; IsMkDoneF = FALSE; IsRead2dStF = FALSE; IsOnRead2dF = FALSE; IsRead2dDoneF = FALSE;
 	}
 };
 
 struct stBtnStatus
 {
+	stBtnMsg Msg;
 	stBtnMain Main;
+	stBtnDisp Disp;
 	stBtnTqMotor Tq;
 	stBtnInductMotor Induct;
 	stBtnCore150 Core150;

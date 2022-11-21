@@ -366,22 +366,14 @@ BOOL CDlgMenu02::OnInitDialog()
 	GetDlgItem(IDC_STC_VISION2)->ShowWindow(SW_HIDE);
 #endif
 
-
 	if(pView->m_pVision[0])
 	{
 		pView->m_pVision[0]->ClearOverlay();
 		pView->m_pVision[0]->DrawCenterMark();
 	}
-
-	//if(pView->m_pVision[1])
-	//{
-	//	pView->m_pVision[1]->ClearOverlay();
-	//	pView->m_pVision[1]->DrawCenterMark();
-	//}
 #endif
 	InitStatic();
 	InitBtn();
-//	InitGL();
 	InitSlider();
 
 	InitCadImg();
@@ -391,25 +383,19 @@ BOOL CDlgMenu02::OnInitDialog()
 	myStcData[2].SetText(pDoc->WorkingInfo.Vision[0].sResY);
 
 
-// 	if(pDoc->m_pSpecLocal)
-// 	{
-// 		CfPoint ptOfst(pDoc->m_pSpecLocal->m_dPcsOffsetX, pDoc->m_pSpecLocal->m_dPcsOffsetY);
-// 		SetMkPos(ptOfst);
-// 	}
-
 	m_bTIM_BUF_ENC = TRUE;
  	SetTimer(TIM_BUF_ENC, 100, NULL);
 
-	//GetDlgItem(IDC_GRP_LT6)->ShowWindow(SW_HIDE);
-	//GetDlgItem(IDC_STC_BUF_ROL)->ShowWindow(SW_HIDE);
-	//GetDlgItem(IDC_STC_BUF_HI)->ShowWindow(SW_HIDE);
-	//GetDlgItem(IDC_STC_BUF_POS)->ShowWindow(SW_HIDE);
-	//GetDlgItem(IDC_BTN_BUFF_UP)->ShowWindow(SW_HIDE);
-	//GetDlgItem(IDC_BTN_BUFF_DN)->ShowWindow(SW_HIDE);
-	//GetDlgItem(IDC_BTN_BUFF_HOME)->ShowWindow(SW_HIDE);
-	//GetDlgItem(IDC_BTN_BUFF_INIT_MOVE)->ShowWindow(SW_HIDE);
-	//GetDlgItem(IDC_BTN_BUFF_INIT_SAVE)->ShowWindow(SW_HIDE);
- 	//GetDlgItem(IDC_CHK_ELEC_TEST)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_GRP_LT4)->ShowWindow(SW_HIDE);
+ 	GetDlgItem(IDC_STC_MK_OFFSET)->ShowWindow(SW_HIDE);
+ 	GetDlgItem(IDC_STC_CAM_MK_X)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_STC_CAM_MK_Y)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_STC_CAM_MK_OFFSET_X)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_STC_CAM_MK_OFFSET_Y)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_STC_MK_POS1)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_STC_MK_POS2)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_CHK_MK_OFFSET_ST)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_CHK_MK_OFFSET_ED)->ShowWindow(SW_HIDE);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -428,8 +414,8 @@ void CDlgMenu02::InitCadImg()
 		pView->m_pVision[0]->SelDispPin(hWin, rect, 0);
 		pView->m_pVision[0]->ShowDispPin(0);
 
-		pView->m_pVision[0]->SelDispAlign(hWin, rect, 0);
-		pView->m_pVision[0]->ShowDispAlign();
+		//pView->m_pVision[0]->SelDispAlign(hWin, rect, 0);
+		//pView->m_pVision[0]->ShowDispAlign();
 
 		pView->m_pVision[0]->SetDispAxisPos();
 	}
@@ -1603,19 +1589,25 @@ void CDlgMenu02::OnBtnPinSave()
 
 	SetPinPos(0, ptPnt);
 
-	if(pView->m_nMkStAuto > MK_ST+11 && pView->m_nMkStAuto < MK_ST+29)
-		pView->m_nMkStAuto = MK_ST+11;
+	//if(pView->m_nMkStAuto > MK_ST+11 && pView->m_nMkStAuto < MK_ST+29)
+	//	pView->m_nMkStAuto = MK_ST+11;
 
- 	if(pDoc->m_pSpecLocal)
- 	{
- 		pDoc->SetMkPnt(CAM_LF);
-// 		if(myBtn[16].GetCheck())
-// 		{
-// 			if(m_pDlgUtil03)
-// 				m_pDlgUtil03->Disp(ROT_NONE);
-// // 				m_pDlgUtil03->Disp(ROT_CCW_90);
-// 		}
- 	}
+// 	if(pDoc->m_pSpecLocal)
+// 	{
+// 		pDoc->SetMkPnt(CAM_LF);
+//// 		if(myBtn[16].GetCheck())
+//// 		{
+//// 			if(m_pDlgUtil03)
+//// 				m_pDlgUtil03->Disp(ROT_NONE);
+//// // 				m_pDlgUtil03->Disp(ROT_CCW_90);
+//// 		}
+// 	}
+
+
+	if (pView->m_pVision[0]->UploadPinImg())
+		pDoc->m_bUploadPinImg = TRUE;
+	else
+		pView->MsgBox(_T("카메라 정렬이미지 저장에 실패하였습니다."), 0, MB_OK);
 
 }
 
@@ -1814,6 +1806,8 @@ void CDlgMenu02::OnChkMkOffsetEd()
 void CDlgMenu02::OnBtnAlignMove() 
 {
 	// TODO: Add your control notification handler code here
+	MovePinPos();
+
 	//if(m_nMoveAlign[0] == 0)
 	//{
 	//	MoveAlign0(0);
@@ -1833,14 +1827,22 @@ void CDlgMenu02::OnBtnGrab()
 	CString str;
 	double dX, dY, dAgl, dScr;
 
+	if (!pDoc->m_bUploadPinImg)
+	{
+		pView->MsgBox(_T("카메라 정렬이미지가 저장되지 않았습니다.\r\n핀위치를 저장하세요."), 0, MB_OK);
+		return;
+	}
+
 	double dCurrX = pView->m_dEnc[AXIS_X0];
 	double dCurrY = pView->m_dEnc[AXIS_Y0];
 
 	double pPos[8];
-	pPos[0] = pDoc->m_Master[0].m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[0];
-	pPos[1] = pDoc->m_Master[0].m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[0];
-	pPos[2] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[0];
-	pPos[3] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[0];
+	pPos[0] = pView->m_pMotion->m_dPinPosX[0];
+	pPos[1] = pView->m_pMotion->m_dPinPosY[0];
+	//pPos[0] = pDoc->m_Master[0].m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[0];
+	//pPos[1] = pDoc->m_Master[0].m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[0];
+	//pPos[2] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[0];
+	//pPos[3] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[0];
 
 	//if(pDoc->WorkingInfo.LastJob.nAlignMethode == FOUR_POINT)
 	//{
@@ -1853,8 +1855,8 @@ void CDlgMenu02::OnBtnGrab()
 	int nPos=-1;
 	if( (dCurrX > pPos[0]-0.1 && dCurrX < pPos[0]+0.1) && (dCurrY > pPos[1]-0.1 && dCurrY < pPos[1]+0.1) )
 		nPos = 0;
-	else if( (dCurrX > pPos[2]-0.1 && dCurrX < pPos[2]+0.1) && (dCurrY > pPos[3]-0.1 && dCurrY < pPos[3]+0.1) )
-		nPos = 1;
+	//else if( (dCurrX > pPos[2]-0.1 && dCurrX < pPos[2]+0.1) && (dCurrY > pPos[3]-0.1 && dCurrY < pPos[3]+0.1) )
+	//	nPos = 1;
 	//if (pDoc->WorkingInfo.LastJob.nAlignMethode == FOUR_POINT)
 	//{
 	//	if ((dCurrX > pPos[4] - 0.1 && dCurrX < pPos[4] + 0.1) && (dCurrY > pPos[5] - 0.1 && dCurrY < pPos[5] + 0.1))
@@ -1862,8 +1864,11 @@ void CDlgMenu02::OnBtnGrab()
 	//	else if ((dCurrX > pPos[6] - 0.1 && dCurrX < pPos[6] + 0.1) && (dCurrY > pPos[7] - 0.1 && dCurrY < pPos[7] + 0.1))
 	//		nPos = 3;
 	//}
-	if(nPos==-1)
+	if (nPos == -1)
+	{
+		AfxMessageBox(_T("Pin위치가 아닙니다."));
 		return;
+	}
 
 #ifdef USE_VISION
 	if(pView->m_pVision[0]->Grab(nPos))
@@ -1893,6 +1898,8 @@ void CDlgMenu02::OnBtnGrab()
 		myStcData[8].SetText(_T(""));
 	}
 #endif
+
+	pView->OnePointAlign0(0);
 }
 
 BOOL CDlgMenu02::GetPmRst0(double &dX, double &dY, double &dAgl, double &dScr)
@@ -2454,14 +2461,14 @@ void CDlgMenu02::ChgModel()
 	{
 // 		pView->m_pVision[0]->ShowDispPcs(nLayer);
  		pView->m_pVision[0]->ShowDispPin(0);
-		pView->m_pVision[0]->ShowDispAlign();
+//		pView->m_pVision[0]->ShowDispAlign();
 	}
 
 	if(pView->m_pVision[1])
 	{
 // 		pView->m_pVision[0]->ShowDispPcs(nLayer);
  		pView->m_pVision[1]->ShowDispPin(0);
-		pView->m_pVision[1]->ShowDispAlign();
+//		pView->m_pVision[1]->ShowDispAlign();
 	}
 #endif
 }
@@ -2473,7 +2480,7 @@ void CDlgMenu02::ChgModelUp()
 	{
 // 		pView->m_pVision[0]->ShowDispPcs(nLayer);
  		pView->m_pVision[0]->ShowDispPin(0);
-		pView->m_pVision[0]->ShowDispAlign();
+//		pView->m_pVision[0]->ShowDispAlign();
 	}
 #endif
 }
@@ -2485,7 +2492,7 @@ void CDlgMenu02::ChgModelDn()
 	{
 // 		pView->m_pVision[0]->ShowDispPcs(nLayer);
  		pView->m_pVision[1]->ShowDispPin(0);
-		pView->m_pVision[1]->ShowDispAlign();
+//		pView->m_pVision[1]->ShowDispAlign();
 	}
 #endif
 }
@@ -2720,6 +2727,11 @@ void CDlgMenu02::OnStnClickedStc5()
 	GetDlgItem(IDC_STC_5)->GetWindowText(sData);
 	pDoc->SetEngraveReaderDist(_tstoi(sData));
 
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->Set2DEngLen();	//_ItemInx::_2DEngLen
+#endif
+
 	DispOneShotRemainLen();
 }
 
@@ -2773,6 +2785,10 @@ void CDlgMenu02::OnStnClickedStc45()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	Input_myStcData(20, IDC_STC_45);	// Lead\rPitch
+
+	CString sData;
+	GetDlgItem(IDC_STC_45)->GetWindowText(sData);
+	pView->SetEngraveFdPitch(_tstof(sData));
 }
 
 void CDlgMenu02::OnStnClickedStc180()
@@ -2795,6 +2811,11 @@ void CDlgMenu02::OnStnClickedStc184()
 	CString sData;
 	GetDlgItem(IDC_STC_184)->GetWindowText(sData);
 	pDoc->SetMarkingToq(_tstoi(sData));
+
+//#ifdef USE_ENGRAVE
+//	if (pView && pView->m_pEngrave)
+//		pView->m_pEngrave->SetMkTqVal();	//_ItemInx::_MkTqVal
+//#endif
 }
 
 void CDlgMenu02::OnStnClickedStc218()
@@ -2804,13 +2825,27 @@ void CDlgMenu02::OnStnClickedStc218()
 
 	CString sData;
 	GetDlgItem(IDC_STC_218)->GetWindowText(sData);
-	pDoc->SetEngraveAoiDist(_tstoi(sData));
+	pDoc->SetEngraveAoiDist(_tstof(sData));
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetEngraveAoiDist();	//_stItemInx::_EngAoiLen
+#endif
 }
 
 void CDlgMenu02::OnStnClickedStc225()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	Input_myStcData(24, IDC_STC_225);	// 버퍼롤러 초기위치
+
+	CString sData;
+	GetDlgItem(IDC_STC_225)->GetWindowText(sData);
+	pDoc->SetEngraveBufInitPos(_tstof(sData));
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetEngBuffInitPos();	//_stItemInx::_EngBuffInitPos
+#endif
 }
 
 void CDlgMenu02::DispBufEnc()

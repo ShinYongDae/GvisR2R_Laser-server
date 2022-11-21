@@ -221,6 +221,8 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 	m_dTotVel = 0.0; m_dPartVel = 0.0;
 	m_bTIM_CHK_TEMP_STOP = FALSE;
 	m_bTIM_SAFTY_STOP = FALSE;
+	m_bTIM_TCPIP_UPDATE = FALSE;
+	m_bTIM_START_UPDATE = FALSE;
 	m_sMyMsg = _T("");
 	m_nTypeMyMsg = IDOK;
 
@@ -372,6 +374,16 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 	m_bContEngraveF = FALSE;
 
 	m_bStopF_Verify = FALSE;
+
+	m_bLoadMstInfo = FALSE;
+	m_bLoadMstInfoF = FALSE;
+	m_bSetSig = FALSE; 
+	m_bSetSigF = FALSE;
+	m_bSetData = FALSE;
+	m_bSetDataF = FALSE;
+
+	m_pDlgUtil01 = NULL;
+	//m_pDlgUtil02 = NULL;
 }
 
 CGvisR2R_LaserView::~CGvisR2R_LaserView()
@@ -528,78 +540,18 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 		case 0:
 			m_nStepInitView++;
 			DispMsg(_T("프로그램을 초기화합니다."), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
-
-#ifdef TEST_MODE
-			pDoc->GetCamPxlRes();
-			if (IsLastJob(0)) // Up
-			{
-				pDoc->m_Master[0].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
-					pDoc->WorkingInfo.LastJob.sModelUp,
-					pDoc->WorkingInfo.LastJob.sLayerUp);
-				pDoc->m_Master[0].LoadMstInfo();
-			}
-			if (IsLastJob(1)) // Dn
-			{
-				pDoc->m_Master[1].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
-					pDoc->WorkingInfo.LastJob.sModelDn,
-					pDoc->WorkingInfo.LastJob.sLayerDn,
-					pDoc->WorkingInfo.LastJob.sLayerUp);
-				pDoc->m_Master[1].LoadMstInfo();
-			}
-
-			// 			pDoc->LoadMasterSpec();
-			// 			pDoc->LoadPinImg();
-			// 			pDoc->GetCamPxlRes();
-			// 			pDoc->LoadStripRgnFromCam();
-			// 			pDoc->LoadPcsRgnFromCam();
-			// 			pDoc->LoadPcsImg();
-			// 			pDoc->LoadCadImg();
-#else
-			pDoc->GetCamPxlRes();
-
-			if (IsLastJob(0)) // Up
-			{
-				pDoc->m_Master[0].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
-					pDoc->WorkingInfo.LastJob.sModelUp,
-					pDoc->WorkingInfo.LastJob.sLayerUp);
-				pDoc->m_Master[0].LoadMstInfo();
-				pDoc->m_Master[0].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
-			}
-
-			if (IsLastJob(1)) // Dn
-			{
-				pDoc->m_Master[1].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
-					pDoc->WorkingInfo.LastJob.sModelDn,
-					pDoc->WorkingInfo.LastJob.sLayerDn,
-					pDoc->WorkingInfo.LastJob.sLayerUp);
-				pDoc->m_Master[1].LoadMstInfo();
-				pDoc->m_Master[1].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotDn);
-			}
-
-			SetAlignPos();
-#endif
-			// Reelmap 정보 Loading.....
-			InitReelmap();
-
+	
 			// H/W Device 초기화.....
 			HwInit();
-
 			break;
 		case 1:
 			m_nStepInitView++;
 			InitIO();
-
-			// 			if(!SetCollision(-10.0))
-			// 			{
-			// 				DispMsg(_T("Collision"),_T("Failed to Set Collision ..."),RGB_GREEN,2000,TRUE);
-			// 			}
 			break;
 		case 2:
 			m_nStepInitView++;
 			InitIoWrite();
 			SetMainMc(TRUE);
-			// 			m_bTIM_MPE_IO = TRUE;
-			// 			SetTimer(TIM_MPE_IO, 50, NULL);
 
 			m_nMonAlmF = 0;
 			m_nClrAlmF = 0;
@@ -611,51 +563,37 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 			break;
 		case 4:
 			m_nStepInitView++;
-			// 			if(m_pMotion)
-			// 				TowerLamp(RGB_YELLOW, TRUE, TRUE);
-
 			break;
 		case 5:
 			m_nStepInitView++;
 			DispMsg(_T("화면구성을 생성합니다.- 1"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
 			ShowDlg(IDD_DLG_MENU_02);
-			// 			ShowDlg(IDD_DLG_UTIL_01);
 			break;
 		case 6:
-			m_nStepInitView++;
-			// 			ShowDlg(IDD_DLG_UTIL_02);
-			break;
-		case 7:
-			m_nStepInitView++;
-			// 			DispMsg(_T("화면구성을 생성합니다.- 2"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
-			// 			ShowDlg(IDD_DLG_UTIL_03);
-			break;
-		case 8:
 			m_nStepInitView++;
 			DispMsg(_T("화면구성을 생성합니다.-2"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
 			ShowDlg(IDD_DLG_MENU_01);
 			break;
-		case 9:
+		case 7:
 			m_nStepInitView++;
 			DispMsg(_T("화면구성을 생성합니다.- 3"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
-			// 			ShowDlg(IDD_DLG_MENU_02);
 			break;
-		case 10:
+		case 8:
 			m_nStepInitView++;
 			DispMsg(_T("화면구성을 생성합니다.- 4"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
 			ShowDlg(IDD_DLG_MENU_03);
 			break;
-		case 11:
+		case 9:
 			m_nStepInitView++;
 			DispMsg(_T("화면구성을 생성합니다.- 5"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
 			ShowDlg(IDD_DLG_MENU_04);
 			break;
-		case 12:
+		case 10:
 			m_nStepInitView++;
 			DispMsg(_T("화면구성을 생성합니다.- 6"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
 			ShowDlg(IDD_DLG_MENU_05);
 			break;
-		case 13:
+		case 11:
 			m_nStepInitView++;
 			DispMsg(_T("화면구성을 생성합니다.- 7"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
 			ShowDlg(IDD_DLG_FRAME_HIGH);
@@ -663,41 +601,12 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 				m_pDlgFrameHigh->ChkMenu01();
 			SetDualTest(pDoc->WorkingInfo.LastJob.bDualTest);
 			break;
-		case 14:
-			m_nStepInitView++;
-#ifndef TEST_MODE
-			if (m_pDlgMenu01)
-				m_pDlgMenu01->RedrawWindow();
-
-			DispMsg(_T("릴맵을 초기화합니다."), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
-			OpenReelmap();
-#endif
-			SetPathAtBuf(); // Reelmap path를 설정함.
-			LoadPcrFromBuf();
-
-			//MakeResultMDS(); // For Test - 20220421
-#ifdef TEST_MODE
-			//pDoc->LoadPCR(TEST_SHOT);					// for Test
-			//m_pDlgMenu01->OpenReelmap(PATH_REELMAP);	// for Test
-			//m_pDlgMenu01->DispReelmap(2);				// for Test
-			//m_pDlgMenu01->SelMap(ALL);
-			//SetSerial(TEST_SHOT);						// for Test
-#else
-			//nSrl = pDoc->GetLastSerial();
-			nSrl = pDoc->GetLastShotMk();
-			SetMkFdLen();
-			if (nSrl >= 0)
-			{
-				if (bDualTest)
-					m_pDlgMenu01->SelMap(ALL);
-				else
-					m_pDlgMenu01->SelMap(UP);
-			}
-#endif
-			Init();
+		case 12:
+			Init(); // AmpReset()
 			Sleep(300);
+			m_nStepInitView++;
 			break;
-		case 15:
+		case 13:
 			m_nStepInitView++;
 			DispMsg(_T("H/W를 초기화합니다."), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
 			InitAct();
@@ -708,7 +617,7 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 #endif
 			Sleep(300);
 			break;
-		case 16:
+		case 14:
 			if (m_pMotion)
 			{
 				DispMsg(_T("Homming"), _T("Searching Home Position..."), RGB_GREEN, 2000, TRUE);
@@ -722,7 +631,7 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 				PostMessage(WM_CLOSE);
 			}
 			break;
-		case 17:
+		case 15:
 			if (m_pMotion)
 			{
 				if (m_pMotion->IsHomeDone())// && m_pMotion->IsHomeDone(MS_MKFD))
@@ -742,7 +651,7 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 				PostMessage(WM_CLOSE);
 			}
 			break;
-		case 18:
+		case 16:
 			m_nStepInitView++;
 			//if (m_pMotion)
 			//{
@@ -751,18 +660,34 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 			//	m_pMotion->ResetEStopTime(MS_X1Y1);
 			//}
 			break;
-		case 19:
+		case 17:
 			m_nStepInitView++;
 			DispMsg(_T("Completed Searching Home Pos..."), _T("Homming"), RGB_GREEN, 2000, TRUE);
 			m_pMotion->ObjectMapping();
 			break;
+		case 18:
+			TcpIpInit();
+			m_nStepInitView++;
+			break;
+		case 19:
+			m_nStepInitView++;
+			SetAlignPos();
+			break;
 		case 20:
+			m_nStepInitView++;
+			m_bTIM_START_UPDATE = TRUE;
+			SetTimer(TIM_START_UPDATE, 500, NULL);
+			//m_bTIM_TCPIP_UPDATE = TRUE;
+			//SetTimer(TIM_TCPIP_UPDATE, 500, NULL);
+			break;
+
+		case 21:
+			m_nStepInitView++;
 			m_bStopFeeding = FALSE;
 #ifdef USE_MPE
 			if (m_pMpe)
 				m_pMpe->Write(_T("MB440115"), 0); // 마킹부Feeding금지
 #endif
-			m_nStepInitView++;
 			if(m_pDlgMenu02)
 				m_pDlgMenu02->SetJogSpd(_tstoi(pDoc->WorkingInfo.LastJob.sJogSpd));
 			if (m_pDlgMenu03)
@@ -771,30 +696,30 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 			//Sleep(30);
 			//m_pMotion->SetFeedRate(MS_X1Y1, 1.0);
 			m_pMotion->SetR2RConf();
-			// 			m_pMotion->SetTorque(AXIS_MKTQ, _tstof(pDoc->WorkingInfo.Motion.sMkTq));
-			// 			m_pMotion->SetTorque(AXIS_AOITQ, _tstof(pDoc->WorkingInfo.Motion.sAoiTq));
-			// 			TowerLamp(RGB_YELLOW, FALSE, TRUE);
+			//m_pMotion->SetTorque(AXIS_MKTQ, _tstof(pDoc->WorkingInfo.Motion.sMkTq));
+			//m_pMotion->SetTorque(AXIS_AOITQ, _tstof(pDoc->WorkingInfo.Motion.sAoiTq));
+			//TowerLamp(RGB_YELLOW, FALSE, TRUE);
 			TowerLamp(RGB_YELLOW, TRUE);
-			// 			TowerLamp(RGB_RED, TRUE);
+			//TowerLamp(RGB_RED, TRUE);
 
-			//			if(!SetCollision(-10.0))
+			//if(!SetCollision(-10.0))
 			if (!SetCollision(-1.0*_tstof(pDoc->WorkingInfo.Motion.sCollisionLength)))
 			{
 				DispMsg(_T("Collision"), _T("Failed to Set Collision ..."), RGB_GREEN, 2000, TRUE);
 			}
 
 			break;
-		case 21:
+		case 22:
 			m_nStepInitView++;
 			//MoveMkInitPos();
 			InitPLC();
 			SetPlcParam();
 			GetPlcParam();
-			TcpIpInit();
+			//TcpIpInit();
 			m_bTIM_DISP_STATUS = TRUE;
 			SetTimer(TIM_DISP_STATUS, 100, NULL);
 			break;
-		case 22:
+		case 23:
 			m_nStepInitView++;
 			ClrDispMsg();
 			if (m_pDlgMenu01)
@@ -817,9 +742,9 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 				}
 			}
 
-			//// ChkCollision
-			//if (!m_bThread[1])
-			//	m_Thread[1].Start(GetSafeHwnd(), this, ThreadProc1);
+			//// Check Encoder
+			if (!m_bThread[1])
+				m_Thread[1].Start(GetSafeHwnd(), this, ThreadProc1);
 
 			//// DispDefImg
 			//if (!m_bThread[2])
@@ -855,11 +780,12 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 	{
 		KillTimer(TIM_MPE_IO);
 
-		CntMk();
-		GetMpeIO();
-		GetMpeSignal();
+		//CntMk();
+		//GetMpeIO();
+		//GetMpeSignal();
 		//GetMpeData();
-		DoIO();
+
+		DoIO(); // DoAutoEng()
 
 		ChkMyMsg();
 
@@ -960,6 +886,101 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 		KillTimer(TIM_SAFTY_STOP);
 		MsgBox(_T("일시정지 - 마킹부 안전센서가 감지되었습니다."));
 		m_bTIM_SAFTY_STOP = FALSE;
+	}
+
+	if (nIDEvent == TIM_START_UPDATE)
+	{
+		KillTimer(TIM_START_UPDATE);
+
+		if (m_bLoadMstInfo && !m_bLoadMstInfoF)
+		{
+			m_bLoadMstInfoF = TRUE;
+			//if (m_bTIM_TCPIP_UPDATE)
+				SetTimer(TIM_TCPIP_UPDATE, 500, NULL);
+		}
+
+		if (m_bSetSig && !m_bSetSigF)
+		{
+			m_bSetSigF = TRUE;
+
+			if (m_pEngrave->m_bGetOpInfo || m_pEngrave->m_bGetInfo)
+			{
+				if (m_pDlgInfo)
+					m_pDlgInfo->UpdateData();
+
+				if (m_pDlgMenu01)
+					m_pDlgMenu01->UpdateData();
+			}
+
+			if (m_pDlgMenu03)
+				m_pDlgMenu03->UpdateSignal();
+
+			m_bSetSig = FALSE;
+		}
+		else if (!m_bSetSig && m_bSetSigF)
+		{
+			m_bSetSigF = FALSE;
+		}
+
+		if (m_bSetData && !m_bSetDataF)
+		{
+			m_bSetDataF = TRUE;
+
+			if (m_pEngrave->m_bGetOpInfo || m_pEngrave->m_bGetInfo)
+			{
+				if (m_pDlgInfo)
+					m_pDlgInfo->UpdateData();
+
+				if (m_pDlgMenu01)
+					m_pDlgMenu01->UpdateData();
+			}
+
+			if (m_pDlgMenu02)
+				m_pDlgMenu02->UpdateData();
+
+			if (m_pDlgMenu03)
+				m_pDlgMenu03->UpdateData();
+
+			if (m_pDlgMenu04)
+				m_pDlgMenu04->UpdateData();
+
+			m_bSetData = FALSE;
+		}
+		else if (!m_bSetData && m_bSetDataF)
+		{
+			m_bSetDataF = FALSE;
+		}
+
+		if (m_bTIM_START_UPDATE)
+			SetTimer(TIM_START_UPDATE, 100, NULL);
+	}
+
+	if (nIDEvent == TIM_TCPIP_UPDATE)
+	{
+		KillTimer(TIM_TCPIP_UPDATE);
+		LoadMstInfo();
+		if (m_pDlgMenu01)
+			m_pDlgMenu01->UpdateData();
+		m_bLoadMstInfoF = FALSE;
+		m_bLoadMstInfo = FALSE;
+
+		//if (m_bLoadMstInfo && !m_bLoadMstInfoF)
+		//{
+		//	m_bLoadMstInfoF = TRUE;
+		//	LoadMstInfo();
+		//	if(m_pDlgMenu01)
+		//		m_pDlgMenu01->UpdateData();
+		//	m_bLoadMstInfo = FALSE;
+		//}
+		//else if (!m_bLoadMstInfo && m_bLoadMstInfoF)
+		//{
+		//	m_bLoadMstInfoF = FALSE;
+		//}
+		//else
+		//{
+		//	if (m_bTIM_TCPIP_UPDATE)
+		//		SetTimer(TIM_TCPIP_UPDATE, 500, NULL);
+		//}
 	}
 
 	CFormView::OnTimer(nIDEvent);
@@ -1098,18 +1119,11 @@ void CGvisR2R_LaserView::ExitProgram()
 
 void CGvisR2R_LaserView::Init()
 {
-	// 	if(m_pDlgMenu03)
-	// 	{
-	// 		m_pDlgMenu03->SwStop();
-	// 	}
-
 	int nAxis;
 	if (m_pMotion)
 	{
-		// 		for(int nMsId=0; nMsId<m_pMotion->m_ParamCtrl.nTotMotion; nMsId++)
 		for (nAxis = 0; nAxis < m_pMotion->m_ParamCtrl.nTotAxis; nAxis++)
 		{
-			// 			m_pMotion->AmpReset(nMsId);
 			m_pMotion->AmpReset(nAxis);
 			Sleep(30);
 		}
@@ -1733,11 +1747,36 @@ void CGvisR2R_LaserView::ShowDlg(int nID)
 		// 			m_pDlgUtil01->ShowWindow(SW_SHOW);
 		// 		}
 		break;
+	case IDD_DLG_UTIL_02:
+		//if (!m_pDlgUtil02)
+		//{
+		//	m_pDlgUtil02 = new CDlgUtil02(this);
+		//	if (m_pDlgUtil02->GetSafeHwnd() == 0)
+		//	{
+		//		m_pDlgUtil02->Create();
+		//		m_pDlgUtil02->ShowWindow(SW_SHOW);
+		//	}
+		//}
+		//else
+		//{
+		//	m_pDlgUtil02->ShowWindow(SW_SHOW);
+		//}
+		break;
 	}
 }
 
 void CGvisR2R_LaserView::HideAllDlg()
 {
+	if (m_pDlgUtil01 && m_pDlgUtil01->GetSafeHwnd())
+	{
+		if (m_pDlgUtil01->IsWindowVisible())
+			m_pDlgUtil01->ShowWindow(SW_HIDE);
+	}
+	//if (m_pDlgUtil02 && m_pDlgUtil02->GetSafeHwnd())
+	//{
+	//	if (m_pDlgUtil02->IsWindowVisible())
+	//		m_pDlgUtil02->ShowWindow(SW_HIDE);
+	//}
 	if (m_pDlgInfo && m_pDlgInfo->GetSafeHwnd())
 	{
 		if (m_pDlgInfo->IsWindowVisible())
@@ -1773,6 +1812,19 @@ void CGvisR2R_LaserView::HideAllDlg()
 
 void CGvisR2R_LaserView::DelAllDlg()
 {
+
+	if (m_pDlgUtil01 != NULL)
+	{
+		delete m_pDlgUtil01;
+		m_pDlgUtil01 = NULL;
+	}
+
+	//if (m_pDlgUtil02 != NULL)
+	//{
+	//	delete m_pDlgUtil02;
+	//	m_pDlgUtil02 = NULL;
+	//}
+
 	if (m_pDlgInfo != NULL)
 	{
 		delete m_pDlgInfo;
@@ -1963,8 +2015,8 @@ void CGvisR2R_LaserView::Buzzer(BOOL bOn, int nCh)
 
 void CGvisR2R_LaserView::ThreadInit()
 {
-	//if (!m_bThread[0])
-	//	m_Thread[0].Start(GetSafeHwnd(), this, ThreadProc0);
+	if (!m_bThread[0])
+		m_Thread[0].Start(GetSafeHwnd(), this, ThreadProc0);
 }
 
 void CGvisR2R_LaserView::ThreadKill()
@@ -2016,10 +2068,22 @@ UINT CGvisR2R_LaserView::ThreadProc0(LPVOID lpContext)
 		if (!bLock)
 		{
 			bLock = TRUE;
-			;
+
+			if (pDoc->BtnStatus.EngAuto.IsMkSt)
+			{
+				pDoc->BtnStatus.EngAuto.IsMkSt = FALSE;
+				pThread->m_pEngrave->IsSwEngAutoMkSt(pDoc->BtnStatus.EngAuto.MkSt);
+			}
+
+			if (pDoc->BtnStatus.EngAuto.IsRead2dSt)
+			{
+				pDoc->BtnStatus.EngAuto.IsRead2dSt = FALSE;
+				pThread->m_pEngrave->IsSwEngAuto2dReadSt(pDoc->BtnStatus.EngAuto.Read2dSt);
+			}
+
 			bLock = FALSE;
 		}
-		Sleep(1000);
+		Sleep(30);
 	}
 	pThread->m_bThread[0] = FALSE;
 
@@ -2044,10 +2108,10 @@ UINT CGvisR2R_LaserView::ThreadProc1(LPVOID lpContext)
 		if (!bLock)
 		{
 			bLock = TRUE;
-			;
+			pThread->GetEnc();
 			bLock = FALSE;
 		}
-		Sleep(1000);
+		Sleep(100);
 	}
 	pThread->m_bThread[1] = FALSE;
 
@@ -3937,43 +4001,48 @@ void CGvisR2R_LaserView::DoIO()
 {
 	//	ChkEmg();
 
-	DoEmgSens();	//20220607
-	DoSaftySens();	//20220603
-	DoDoorSens();	//20220607
+	//DoEmgSens();	//20220607
+	//DoSaftySens();	//20220603
+	//DoDoorSens();	//20220607
 
-	DoModeSel();
-	DoMainSw();
+	//DoModeSel();
+	//DoMainSw();
 
-	DoInterlock();
+	//DoInterlock();
 
-	MonPlcAlm();
+	//MonPlcAlm();
 	MonDispMain();
 
-	if (m_bCycleStop)
-	{
-		m_bCycleStop = FALSE;
-		//Stop();
-		TowerLamp(RGB_YELLOW, TRUE);
-		Buzzer(TRUE);
-		//MyMsgBox(pDoc->m_sAlmMsg);
-		MsgBox(pDoc->m_sAlmMsg);
-		pDoc->m_sAlmMsg = _T("");
-		pDoc->m_sPrevAlmMsg = _T("");
-	}
+	//if (m_bCycleStop)
+	//{
+	//	m_bCycleStop = FALSE;
+	//	//Stop();
+	//	TowerLamp(RGB_YELLOW, TRUE);
+	//	Buzzer(TRUE);
+	//	//MyMsgBox(pDoc->m_sAlmMsg);
+	//	MsgBox(pDoc->m_sAlmMsg);
+	//	pDoc->m_sAlmMsg = _T("");
+	//	pDoc->m_sPrevAlmMsg = _T("");
+	//}
 
-	if (pDoc->Status.bManual)
-	{
-		DoBoxSw();
-	}
-	else if (pDoc->Status.bAuto)
-	{
-		//DoAuto();
-		DoAutoEng();
-	}
+	//if (pDoc->Status.bManual)
+	//{
+	//	DoBoxSw();
+	//}
+	//else if (pDoc->Status.bAuto)
+	//{
+	//	//DoAuto();
+	//	DoAutoEng();
+	//}
 
 	// 	DoSignal();
 	// 	DoSens();
 	// 	DoEmgSw();
+
+
+	if (pDoc->Status.bAuto)
+		DoAutoEng();
+
 
 	if (IsRun())
 	{
@@ -8013,6 +8082,9 @@ void CGvisR2R_LaserView::Stop()
 	{
 		m_pDlgMenu03->SwStop();
 	}
+
+	if (m_pEngrave)
+		m_pEngrave->SwStop(pView->m_bSwStop);
 }
 
 BOOL CGvisR2R_LaserView::IsStop()
@@ -8030,7 +8102,7 @@ BOOL CGvisR2R_LaserView::IsStop()
 BOOL CGvisR2R_LaserView::IsRun()
 {
 	//return TRUE; // AlignTest
-	if (m_sDispMain == _T("운전중") || m_sDispMain == _T("초기운전") || m_sDispMain == _T("단면샘플")
+	if (m_sDispMain == _T("운전중") || m_sDispMain == _T("초기운전") || m_sDispMain == _T("단면샘플") || m_sDispMain == _T("운전준비")
 		|| m_sDispMain == _T("단면검사") || m_sDispMain == _T("양면검사") || m_sDispMain == _T("양면샘플"))
 		return TRUE;
 	return FALSE;
@@ -10801,22 +10873,104 @@ void CGvisR2R_LaserView::InitReelmapDn()
 	pDoc->UpdateData();
 }
 
-// void CGvisR2R_LaserView::LoadMstInfo()
-// {
-// 	CString sPath;
-// 
-// 	pDoc->LoadMasterSpec();
-// 	pDoc->LoadPinImg();
-// 	pDoc->LoadAlignImg();
-// 	pDoc->GetCamPxlRes();
-// 	pDoc->LoadStripRgnFromCam();
-// 
-// 	pDoc->LoadPcsRgnFromCam();
-// 	pDoc->LoadPcsImg();
-// 	pDoc->LoadCadImg();
-// 
-// 	pDoc->LoadCadMk(); //.pch
-// }
+ void CGvisR2R_LaserView::LoadMstInfo()
+ {
+	 BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+
+#ifdef TEST_MODE
+	 pDoc->GetCamPxlRes();
+	 if (IsLastJob(0)) // Up
+	 {
+		 pDoc->m_Master[0].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
+			 pDoc->WorkingInfo.LastJob.sModelUp,
+			 pDoc->WorkingInfo.LastJob.sLayerUp);
+		 pDoc->m_Master[0].LoadMstInfo();
+	 }
+	 if (IsLastJob(1)) // Dn
+	 {
+		 pDoc->m_Master[1].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
+			 pDoc->WorkingInfo.LastJob.sModelDn,
+			 pDoc->WorkingInfo.LastJob.sLayerDn,
+			 pDoc->WorkingInfo.LastJob.sLayerUp);
+		 pDoc->m_Master[1].LoadMstInfo();
+	 }
+
+	 // 			pDoc->LoadMasterSpec();
+	 // 			pDoc->LoadPinImg();
+	 // 			pDoc->GetCamPxlRes();
+	 // 			pDoc->LoadStripRgnFromCam();
+	 // 			pDoc->LoadPcsRgnFromCam();
+	 // 			pDoc->LoadPcsImg();
+	 // 			pDoc->LoadCadImg();
+#else
+	 pDoc->GetCamPxlRes();
+
+	 if (IsLastJob(0)) // Up
+	 {
+		 pDoc->m_Master[0].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
+			 pDoc->WorkingInfo.LastJob.sModelUp,
+			 pDoc->WorkingInfo.LastJob.sLayerUp);
+		 pDoc->m_Master[0].LoadMstInfo();
+		 pDoc->m_Master[0].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
+	 }
+
+	 if (IsLastJob(1)) // Dn
+	 {
+		 pDoc->m_Master[1].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
+			 pDoc->WorkingInfo.LastJob.sModelDn,
+			 pDoc->WorkingInfo.LastJob.sLayerDn,
+			 pDoc->WorkingInfo.LastJob.sLayerUp);
+		 pDoc->m_Master[1].LoadMstInfo();
+		 pDoc->m_Master[1].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotDn);
+	 }
+
+#endif
+	 // Reelmap 정보 Loading.....
+	 InitReelmap(); // Delete & New
+
+	 if (m_pDlgMenu01)
+	 {
+		 m_pDlgMenu01->InitGL();
+		 m_bDrawGL = TRUE;
+		 m_pDlgMenu01->RefreshRmap();
+	 }
+
+	 if (m_pDlgMenu02)
+	 {
+		 m_pDlgMenu02->ChgModelUp(); // PinImg, AlignImg를 Display함.
+	 }
+
+#ifndef TEST_MODE
+	 if (m_pDlgMenu01)
+		 m_pDlgMenu01->RedrawWindow();
+
+	 DispMsg(_T("릴맵을 초기화합니다."), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
+	 OpenReelmap();
+#endif
+	 SetPathAtBuf(); // Reelmap path를 설정함.
+	 LoadPcrFromBuf();
+
+	 //MakeResultMDS(); // For Test - 20220421
+#ifdef TEST_MODE
+	 //pDoc->LoadPCR(TEST_SHOT);					// for Test
+	 //m_pDlgMenu01->OpenReelmap(PATH_REELMAP);	// for Test
+	 //m_pDlgMenu01->DispReelmap(2);				// for Test
+	 //m_pDlgMenu01->SelMap(ALL);
+	 //SetSerial(TEST_SHOT);						// for Test
+#else
+	 //nSrl = pDoc->GetLastSerial();
+	 int nSrl = pDoc->GetLastShotMk();
+	 SetMkFdLen();
+	 if (nSrl >= 0)
+	 {
+		 if (bDualTest)
+			 m_pDlgMenu01->SelMap(ALL);
+		 else
+			 m_pDlgMenu01->SelMap(UP);
+	 }
+#endif
+
+ }
 
 BOOL CGvisR2R_LaserView::IsPinMkData()
 {
@@ -13371,104 +13525,65 @@ BOOL CGvisR2R_LaserView::IsLastJob(int nAoi) // 0 : AOI-Up , 1 : AOI-Dn , 2 : AO
 
 void CGvisR2R_LaserView::MonDispMain()
 {
-	//BOOL bDispStop = TRUE;
+	if (pDoc->BtnStatus.Disp.Run)		// 운전중(PLC가 PC에 알려주는 설비 상태) - 20141031
+	{
+		if (m_sDispMain != _T("운전중"))
+		{
+			DispMain(_T("운전중"), RGB_GREEN);
+		}
+	}
 
-	//if (pDoc->m_pMpeSignal[2] & (0x01 << 0))		// 운전중(PLC가 PC에 알려주는 설비 상태) - 20141031
-	//{
-	//	if (m_sDispMain != _T("운전중"))
-	//		DispMain(_T("운전중"), RGB_GREEN);
-	//}
+	if (pDoc->BtnStatus.Disp.Ready)		// 운전준비(PLC가 PC에 알려주는 설비 상태) - 20141031
+	{
+		if (m_sDispMain != _T("운전준비"))
+		{
+			DispMain(_T("운전준비"), RGB_GREEN);
+		}
+	}
+	else
+	{
+		if (pDoc->BtnStatus.Disp.DualSample)
+		{
+			if (m_sDispMain != _T("양면샘플"))
+			{
+				DispMain(_T("양면샘플"), RGB_GREEN);
+			}
+		}
+		else if (pDoc->BtnStatus.Disp.DualTest)
+		{
+			if (m_sDispMain != _T("양면검사"))
+			{
+				DispMain(_T("양면검사"), RGB_GREEN);
+			}
+		}
+		else if (pDoc->BtnStatus.Disp.SingleTest)
+		{
+			if (m_sDispMain != _T("단면검사"))
+			{
+				DispMain(_T("단면검사"), RGB_GREEN);
+			}
+		}
+		//else
+		//{
+		//	if (m_sDispMain != _T("운전준비"))
+		//	{
+		//		if (m_sDispMain != _T("정 지"))
+		//		{
+		//			pView->DispStsBar(_T("정지-44"), 0);
+		//			DispMain(_T("정 지"), RGB_RED);
+		//		}
+		//	}
+		//}
 
-	//if (pDoc->m_pMpeSignal[2] & (0x01 << 2))		// 운전준비(PLC가 PC에 알려주는 설비 상태) - 20141031
-	//{
-	//	bDispStop = FALSE;
-	//	//if(!WatiDispMain(10))
-	//	{
-	//		if (m_sDispMain != _T("운전준비"))
-	//		{
-	//			DispMain(_T("운전준비"), RGB_GREEN);
-	//		}
-	//	}
-	//}
-	//else
-	//{
-	//	if (pDoc->m_pMpeSignal[2] & (0x01 << 3))		// 초기운전(PLC가 PC에 알려주는 설비 상태) - 20141031
-	//	{
-	//		bDispStop = FALSE;
-	//		//if(!WatiDispMain(10))
-	//		{
-	//			if (pDoc->WorkingInfo.LastJob.bSampleTest)
-	//			{
-	//				if (pDoc->WorkingInfo.LastJob.bDualTest)
-	//				{
-	//					if (m_sDispMain != _T("양면샘플"))
-	//					{
-	//						DispMain(_T("양면샘플"), RGB_GREEN);
-	//					}
-	//					else
-	//					{
-	//						;
-	//					}
-	//				}
-	//				else
-	//				{
-	//					if (m_sDispMain != _T("단면샘플"))
-	//					{
-	//						DispMain(_T("단면샘플"), RGB_GREEN);
-	//					}
-	//					else
-	//					{
-	//						;
-	//					}
-	//				}
-	//			}
-	//			else if (pDoc->WorkingInfo.LastJob.bDualTest)
-	//			{
-	//				if (m_sDispMain != _T("양면검사"))
-	//				{
-	//					DispMain(_T("양면검사"), RGB_GREEN);
-	//				}
-	//				else
-	//				{
-	//					;
-	//				}
-	//			}
-	//			else
-	//			{
-	//				if (m_sDispMain != _T("단면검사"))
-	//				{
-	//					DispMain(_T("단면검사"), RGB_GREEN);
-	//				}
-	//				else
-	//				{
-	//					;
-	//				}
-	//				//if(m_sDispMain != _T("초기운전")
-	//				//DispMain(_T("초기운전", RGB_GREEN);
-	//			}
-	//		}
-	//	}
-	//	else
-	//	{
-	//		if (m_sDispMain != _T("운전준비"))
-	//			bDispStop = TRUE;
-	//		else
-	//			bDispStop = FALSE;
-	//	}
-	//}
-
-
-	//if (pDoc->m_pMpeSignal[2] & (0x01 << 1))		// 정지(PLC가 PC에 알려주는 설비 상태) - 20141031
-	//{
-	//	if (bDispStop)
-	//	{
-	//		if (m_sDispMain != _T("정 지"))
-	//		{
-	//			pView->DispStsBar(_T("정지-44"), 0);
-	//			DispMain(_T("정 지"), RGB_RED);
-	//		}
-	//	}
-	//}
+		if (pDoc->BtnStatus.Disp.Stop)
+		{
+			if (m_sDispMain != _T("정 지"))
+			{
+				pView->DispStsBar(_T("정지-44"), 0);
+				DispMain(_T("정 지"), RGB_RED);
+			}
+		}
+	}
 
 }
 
@@ -14179,22 +14294,22 @@ void CGvisR2R_LaserView::SetReject()
 
 void CGvisR2R_LaserView::DoInterlock()
 {
-	if (m_dEnc[AXIS_Y0] < 20.0 )//&& m_dEnc[AXIS_Y1] < 20.0)
-	{
-		if (m_bStopFeeding)
-		{
-			m_bStopFeeding = FALSE;
-			m_pMpe->Write(_T("MB440115"), 0); // 마킹부Feeding금지
-		}
-	}
-	else
-	{
-		if (!m_bStopFeeding)
-		{
-			m_bStopFeeding = TRUE;
-			m_pMpe->Write(_T("MB440115"), 1); // 마킹부Feeding금지
-		}
-	}
+	//if (m_dEnc[AXIS_Y0] < 20.0 )//&& m_dEnc[AXIS_Y1] < 20.0)
+	//{
+	//	if (m_bStopFeeding)
+	//	{
+	//		m_bStopFeeding = FALSE;
+	//		m_pMpe->Write(_T("MB440115"), 0); // 마킹부Feeding금지
+	//	}
+	//}
+	//else
+	//{
+	//	if (!m_bStopFeeding)
+	//	{
+	//		m_bStopFeeding = TRUE;
+	//		m_pMpe->Write(_T("MB440115"), 1); // 마킹부Feeding금지
+	//	}
+	//}
 }
 
 BOOL CGvisR2R_LaserView::ChkLightErr()
@@ -14321,10 +14436,10 @@ void CGvisR2R_LaserView::SetTwoMetal(BOOL bSel, BOOL bOn)
 			::WritePrivateProfileString(_T("Last Job"), _T("Two Metal On"), _T("0"), PATH_WORKING_INFO);// IDC_CHK_TWO_METAL - Uncoiler\r정방향 ON : TRUE	
 		}
 
-#ifdef USE_ENGRAVE
-		if (pView && pView->m_pEngrave)
-			pView->m_pEngrave->SetUncoilerCcw();	//_stSigInx::_UncoilerCcw
-#endif
+//#ifdef USE_ENGRAVE
+//		if (pView && pView->m_pEngrave)
+//			pView->m_pEngrave->SetUncoilerCcw();	//_stSigInx::_UncoilerCcw
+//#endif
 	}
 	else
 	{
@@ -14341,10 +14456,10 @@ void CGvisR2R_LaserView::SetTwoMetal(BOOL bSel, BOOL bOn)
 			::WritePrivateProfileString(_T("Last Job"), _T("One Metal On"), _T("0"), PATH_WORKING_INFO);// IDC_CHK_ONE_METAL - Recoiler\r정방향 CW : FALSE
 		}
 
-#ifdef USE_ENGRAVE
-		if (pView && pView->m_pEngrave)
-			pView->m_pEngrave->SetRecoilerCcw();	//_stSigInx::_RecoilerCcw
-#endif
+//#ifdef USE_ENGRAVE
+//		if (pView && pView->m_pEngrave)
+//			pView->m_pEngrave->SetRecoilerCcw();	//_stSigInx::_RecoilerCcw
+//#endif
 	}
 }
 
@@ -14683,30 +14798,41 @@ LRESULT CGvisR2R_LaserView::wmServerReceived(WPARAM wParam, LPARAM lParam)
 		if (m_pEngrave)
 			m_pEngrave->GetSysSignal(rSockData);
 
-		if (m_pDlgInfo)
-			m_pDlgInfo->UpdateData();
+		pView->m_bSetSig = TRUE;
+		//if (m_pEngrave->m_bGetOpInfo || m_pEngrave->m_bGetInfo)
+		//{
+		//	if (m_pDlgInfo)
+		//		m_pDlgInfo->UpdateData();
 
-		if (m_pDlgMenu01)
-			m_pDlgMenu01->UpdateData();
+		//	if (m_pDlgMenu01)
+		//		m_pDlgMenu01->UpdateData();
+		//}
 
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->UpdateSignal();
+		//if (m_pDlgMenu03)
+		//	m_pDlgMenu03->UpdateSignal();
 		break;
 	case _SetData:
 		if (m_pEngrave)
 			m_pEngrave->GetSysData(rSockData);
 
-		if (m_pDlgMenu01)
-			m_pDlgMenu01->UpdateData();
+		pView->m_bSetData = TRUE;
+		//if (m_pEngrave->m_bGetOpInfo || m_pEngrave->m_bGetInfo)
+		//{
+		//	if (m_pDlgInfo)
+		//		m_pDlgInfo->UpdateData();
+
+		//	if (m_pDlgMenu01)
+		//		m_pDlgMenu01->UpdateData();
+		//}
 
 		//if (m_pDlgMenu02)
 		//	m_pDlgMenu02->UpdateData();
 
-		if (m_pDlgMenu03)
-			m_pDlgMenu03->UpdateData();
+		//if (m_pDlgMenu03)
+		//	m_pDlgMenu03->UpdateData();
 
-		if (m_pDlgMenu04)
-			m_pDlgMenu04->UpdateData();
+		//if (m_pDlgMenu04)
+		//	m_pDlgMenu04->UpdateData();
 		break;
 	default:
 		break;
@@ -14832,10 +14958,12 @@ void CGvisR2R_LaserView::InitAutoEng()
 	m_bEng2dStSw = FALSE;
 	m_nEng2dStAuto = 0;
 
+	pDoc->m_bUploadPinImg = FALSE;
 	pDoc->BtnStatus.EngAuto._Init();
 	pDoc->SetEngraveLastShot(0); // m_nEngraveLastShot = 0;
 }
 
+// DoAuto
 void CGvisR2R_LaserView::DoAutoEng()
 {
 	if ( !IsAuto() || (MODE_INNER != pDoc->WorkingInfo.LastJob.nTestMode) )
@@ -14844,18 +14972,18 @@ void CGvisR2R_LaserView::DoAutoEng()
 	CString str;
 	str.Format(_T("%d : %d"), m_nStepTHREAD_DISP_DEF, m_bTHREAD_DISP_DEF ? 1 : 0);
 	pView->DispStsBar(str, 6);
-
-	// 각인부 마킹시작 신호를 확인
-	DoAtuoGetEngStSignal();
-
-	// 각인부 2D 코드 Reading신호를 확인
-	DoAtuoGet2dReadStSignal();
-
+/*
 	//// CycleStop
 	//DoAutoChkCycleStop();
 
 	//// DispMsg
 	//DoAutoDispMsg();
+*/
+	// 각인부 마킹시작 신호를 확인
+	DoAtuoGetEngStSignal();
+
+	// 각인부 2D 코드 Reading신호를 확인
+	DoAtuoGet2dReadStSignal();
 
 	// Engrave Auto Sequence
 	// 각인부 Marking Start
@@ -14869,25 +14997,29 @@ void CGvisR2R_LaserView::DoAtuoGetEngStSignal()
 {
 	if (!m_bEngSt)
 	{
-		if ((pDoc->BtnStatus.EngAuto.MkSt || m_bMkStSw) && !pDoc->BtnStatus.EngAuto.MkStF)  // AlignTest		// 마킹시작(PC가 확인하고 Reset시킴.)-20141029
+		if (IsRun())
 		{
-			m_bEngStSw = FALSE;
-			pDoc->BtnStatus.EngAuto.MkStF = TRUE;
-
-			if (IsRun())
+			if ((pDoc->BtnStatus.EngAuto.MkSt || m_bMkStSw) && !pDoc->BtnStatus.EngAuto.MkStF)  // AlignTest		// 마킹시작(PC가 확인하고 Reset시킴.)-20141029
 			{
+				m_bEngStSw = FALSE;
+				pDoc->BtnStatus.EngAuto.MkStF = TRUE;
+
 				//m_pMpe->Write(_T("MB440110"), 0);			// 마킹시작(PC가 확인하고 Reset시킴.)-20141029
 				//if (pDoc->m_pMpeSignal[0] & (0x01 << 1))	// 마킹부 Feeding완료(PLC가 On시키고 PC가 확인하고 Reset시킴.)-20141030
 				//	m_pMpe->Write(_T("MB440101"), 0);		// 마킹부 Feeding완료
+				
 				if (m_pEngrave)
+				{
+					pDoc->BtnStatus.EngAuto.MkSt = FALSE;
 					m_pEngrave->SwEngAutoMkSt(FALSE);
+				}
 
 				m_bEngSt = TRUE;
 				m_nEngStAuto = ENG_ST;
 			}
+			else if (!pDoc->BtnStatus.EngAuto.MkSt && pDoc->BtnStatus.EngAuto.MkStF)
+				pDoc->BtnStatus.EngAuto.MkStF = FALSE;
 		}
-		else if(!pDoc->BtnStatus.EngAuto.MkSt && pDoc->BtnStatus.EngAuto.MkStF)
-			pDoc->BtnStatus.EngAuto.MkStF = FALSE;
 	}
 }
 
@@ -14895,25 +15027,29 @@ void CGvisR2R_LaserView::DoAtuoGet2dReadStSignal()
 {
 	if (!m_bEng2dSt)
 	{
-		if ((pDoc->BtnStatus.EngAuto.Read2dSt || m_bMkStSw) && !pDoc->BtnStatus.EngAuto.Read2dStF)  // 2D(GUI) Reading 동작 Start신호(PLC On->PC Off)
+		if (IsRun())
 		{
-			m_bEng2dStSw = FALSE;
-			pDoc->BtnStatus.EngAuto.Read2dStF = TRUE;
-
-			if (IsRun())
+			if ((pDoc->BtnStatus.EngAuto.Read2dSt || m_bMkStSw) && !pDoc->BtnStatus.EngAuto.Read2dStF)  // 2D(GUI) Reading 동작 Start신호(PLC On->PC Off)
 			{
+				m_bEng2dStSw = FALSE;
+				pDoc->BtnStatus.EngAuto.Read2dStF = TRUE;
+
 				//m_pMpe->Write(_T("MB440110"), 0);			// 마킹시작(PC가 확인하고 Reset시킴.)-20141029
 				//if (pDoc->m_pMpeSignal[0] & (0x01 << 1))	// 마킹부 Feeding완료(PLC가 On시키고 PC가 확인하고 Reset시킴.)-20141030
 				//	m_pMpe->Write(_T("MB440101"), 0);		// 마킹부 Feeding완료
+				
 				if (m_pEngrave)
+				{
+					pDoc->BtnStatus.EngAuto.Read2dSt = FALSE;
 					m_pEngrave->SwEngAuto2dReadSt(FALSE);
+				}
 
 				m_bEng2dSt = TRUE;
 				m_nEng2dStAuto = ENG_2D_ST;
 			}
+			else if(!pDoc->BtnStatus.EngAuto.Read2dSt && pDoc->BtnStatus.EngAuto.Read2dStF)
+				pDoc->BtnStatus.EngAuto.Read2dStF = FALSE;
 		}
-		else if(!pDoc->BtnStatus.EngAuto.Read2dSt && pDoc->BtnStatus.EngAuto.Read2dStF)
-			pDoc->BtnStatus.EngAuto.Read2dStF = FALSE;
 	}
 }
 
@@ -14969,7 +15105,7 @@ void CGvisR2R_LaserView::Eng1PtReady()
 		case ENG_ST + 1:
 			if (m_pEngrave)
 				m_pEngrave->SwEngAutoOnMking(TRUE);
-			m_nEngStAuto++;
+			m_nEngStAuto = ENG_ST + (Mk1PtIdx::Start);
 			break;
 		case ENG_ST + (Mk1PtIdx::Start) :	// 2
 			m_nEngStAuto++;
@@ -15002,6 +15138,7 @@ void CGvisR2R_LaserView::Eng1PtInit()
 		case ENG_ST + (Mk1PtIdx::InitMk) + 1:
 			if (IsRun())
 				m_nEngStAuto = ENG_ST + (Mk1PtIdx::Move0Cam0);	// Move - Cam1 - Pt0
+				//m_nEngStAuto = ENG_ST + (Mk1PtIdx::DoMk);
 			break;
 		}
 	}
@@ -15145,8 +15282,9 @@ void CGvisR2R_LaserView::Eng1PtDoMarking()
 	{
 		switch (m_nEngStAuto)
 		{
-		case ENG_ST + (Mk1PtIdx::DoMk) :			// Mk 마킹 시작
-			SetMk(TRUE);							// Mk 마킹 시작
+		case ENG_ST + (Mk1PtIdx::DoMk) :				// Mk 마킹 시작
+			//if(!pDoc->WorkingInfo.System.bNoMk)
+			//	SetMk(TRUE);							// Mk 마킹 시작
 			m_nEngStAuto++;
 			break;
 
@@ -15159,14 +15297,18 @@ void CGvisR2R_LaserView::Eng1PtDoMarking()
 				m_nEngStAuto = ENG_ST + (Mk1PtIdx::DoneMk);	// Mk 마킹 완료
 			break;
 		case ENG_ST + (Mk1PtIdx::DoneMk) :
-			if(IsRun())
-				m_nEngStAuto++;					
+			if (IsRun())
+			{
+				Sleep(1000);
+				m_nEngStAuto++;
+			}
 			break;
 		case ENG_ST + (Mk1PtIdx::DoneMk) + 1:
 			if (m_pEngrave)
 			{
 				m_pEngrave->SwEngAutoOnMking(FALSE);
 				m_pEngrave->SwEngAutoMkDone(TRUE);
+				pDoc->BtnStatus.EngAuto.MkStF = FALSE;
 			}
 			m_nEngStAuto++;
 			break;
@@ -15217,11 +15359,15 @@ BOOL CGvisR2R_LaserView::OnePointAlign0(int nPos)
 	if (!m_pDlgMenu02)
 		return FALSE;
 	BOOL bRtn;
-	CfPoint ptPnt;
+	CfPoint ptPnt(0.0, 0.0);
+	CfPoint _ptPnt(0.0, 0.0);
 	bRtn = m_pDlgMenu02->OnePointAlign(ptPnt); // 비전으로 확인한 원점위치 (Motion의 절대좌표계).
+	if(bRtn)
+		SetEngOffset(ptPnt);
+	else
+		SetEngOffset(_ptPnt);
 
 	return bRtn;
-	//return m_pDlgMenu02->Do2PtAlign0(nPos);
 }
 
 
@@ -15245,16 +15391,16 @@ void CGvisR2R_LaserView::Eng2dRead()
 		case ENG_2D_ST + 1:
 			if (m_pEngrave)
 				m_pEngrave->SwEngAutoOnReading2d(TRUE);
-			m_nEng2dStAuto++;
+			m_nEng2dStAuto = ENG_2D_ST + (Read2dIdx::Start);
 			break;
 		case ENG_2D_ST + (Read2dIdx::Start) :	// 2
 			m_nEng2dStAuto++;
 			break;
 		case ENG_2D_ST + (Read2dIdx::Start) + 1:
-			m_nEng2dStAuto++;
+			m_nEng2dStAuto = ENG_2D_ST + (Read2dIdx::DoRead);
 			break;
 		case ENG_2D_ST + (Read2dIdx::DoRead) :			// 2D Reading 시작
-			Set2dRead(TRUE);							// 2D Reading 시작
+			//Set2dRead(TRUE);							// 2D Reading 시작
 			m_nEng2dStAuto++;
 			break;
 		case ENG_2D_ST + (Read2dIdx::DoRead) + 1:
@@ -15274,6 +15420,7 @@ void CGvisR2R_LaserView::Eng2dRead()
 			{
 				m_pEngrave->SwEngAutoOnReading2d(FALSE);
 				m_pEngrave->SwEngAuto2dReadDone(TRUE);
+				pDoc->BtnStatus.EngAuto.Read2dStF = FALSE;
 			}
 			m_nEng2dStAuto++;
 			break;
@@ -15299,6 +15446,22 @@ BOOL CGvisR2R_LaserView::Set2dRead(BOOL bRun)	// Marking Start
 		return FALSE;
 
 	return (pView->m_pSr1000w->DoRead2DCode());
+}
+
+BOOL CGvisR2R_LaserView::SetEngOffset(CfPoint &OfSt)
+{
+	// Write Feeding Offset data....
+	return pDoc->SetEngOffset(OfSt);
+}
+
+void CGvisR2R_LaserView::SetMyMsgYes()
+{
+
+}
+
+void CGvisR2R_LaserView::SetMyMsgNo()
+{
+
 }
 
 

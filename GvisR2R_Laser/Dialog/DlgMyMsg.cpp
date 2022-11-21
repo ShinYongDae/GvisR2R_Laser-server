@@ -31,6 +31,9 @@ CDlgMyMsg::CDlgMyMsg(CWnd* pParent /*=NULL*/, int nIDD)
 	m_pRect = NULL;
 
 	m_pDlgMyMsg = NULL;
+	m_pDlgMyMsgSub01 = NULL;
+	m_pDlgMyMsgSub02 = NULL;
+
 
 	m_nRtnVal = 0;
 	m_bTimDlgMyMsg = FALSE;
@@ -527,11 +530,13 @@ int CDlgMyMsg::SyncMsgBox(CString sMsg, int nThreadIdx, int nType, int nTimOut)
 	{
 		pDlgMyMsgSub01 = new CDlgMyMsgSub01(this);
 		pDlgMyMsg = (CDlgMyMsg*)pDlgMyMsgSub01;
+		m_pDlgMyMsgSub01 = pDlgMyMsgSub01;
 	}
 	else if(MB_OK == nType)
 	{
 		pDlgMyMsgSub02 = new CDlgMyMsgSub02(this);
 		pDlgMyMsg = (CDlgMyMsg*)pDlgMyMsgSub02;
+		m_pDlgMyMsgSub02 = pDlgMyMsgSub02;
 	}
 
 	stMyMsgBox stData(sMsg, nThreadIdx, nType, nTimOut); 
@@ -544,6 +549,8 @@ int CDlgMyMsg::SyncMsgBox(CString sMsg, int nThreadIdx, int nType, int nTimOut)
 
 	delete pDlgMyMsg;
 	pDlgMyMsg = NULL;
+	m_pDlgMyMsgSub01 = NULL;
+	m_pDlgMyMsgSub02 = NULL;
 
 	int nCount = m_ArrayMyMsgBoxSync.GetSize();
 	if(nCount > 0)
