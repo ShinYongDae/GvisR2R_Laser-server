@@ -46,6 +46,10 @@ CGvisR2R_LaserDoc::CGvisR2R_LaserDoc()
 	pDoc = this;
 	m_strUserNameList = _T("");
 
+	m_sLotNum = _T(""); m_sProcessNum = _T("");
+	m_sModelUp = _T(""); m_sLayerUp = _T("");
+	m_sModelDn = _T(""); m_sLayerDn = _T("");
+
 	m_bBufEmpty[0] = FALSE; // Exist
 	m_bBufEmpty[1] = FALSE; // Exist
 	m_bBufEmptyF[0] = FALSE; // Exist
@@ -218,6 +222,7 @@ CGvisR2R_LaserDoc::CGvisR2R_LaserDoc()
 		m_nDef[i] = 0;		
 
 	m_dMkBuffCurrPos = 0.0;
+	m_bUploadPinImg = FALSE;
 }
 
 CGvisR2R_LaserDoc::~CGvisR2R_LaserDoc()
@@ -922,6 +927,31 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	}
 
 
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("EngravePath"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.System.sPathEng = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("EngravePath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathEng = CString(_T(""));
+	}
+
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("EngraveCurrentInfoPath"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.System.sPathEngCurrInfo = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("EngraveCurrentInfoPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathEngCurrInfo = CString(_T("C:\\EngraveWork\\CurrentInfo.ini"));
+	}
+
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("EngraveCurrentOffsetInfoPath"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.System.sPathEngOffset = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("EngraveCurrentOffsetInfoPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathEngOffset = CString(_T("C:\\EngraveWork\\OffsetData.txt"));
+	}
+
+
 	if (0 < ::GetPrivateProfileString(_T("System"), _T("AOIUpPath"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.System.sPathAoiUp = CString(szData);
 	else
@@ -1228,6 +1258,13 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	{
 		AfxMessageBox(_T("LotDn가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
 		WorkingInfo.LastJob.sLotDn = CString(_T(""));
+	}
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Process Unit Code"), NULL, szData, sizeof(szData), sPath))
+		m_sProcessNum = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("Process Code가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		m_sProcessNum = CString(_T("VS90"));
 	}
 
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Last SerialUp"), NULL, szData, sizeof(szData), sPath))
@@ -7394,6 +7431,38 @@ void CGvisR2R_LaserDoc::SetModelInfoDn()
 	::WritePrivateProfileString(_T("Last Job"), _T("LotDn No"), sData, sPath);
 }
 
+void CGvisR2R_LaserDoc::SetModelInfoProcessNum()
+{
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+
+	CString sData, sPath = PATH_WORKING_INFO;
+	sData = m_sProcessNum;
+	::WritePrivateProfileString(_T("Last Job"), _T("Process Unit Code"), sData, sPath);
+}
+
+void CGvisR2R_LaserDoc::SetCurrentInfo()
+{
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+
+	CString sData, sPath = WorkingInfo.System.sPathEngCurrInfo;
+	sData = m_sLotNum;
+	::WritePrivateProfileString(_T("Infomation"), _T("Current Lot"), sData, sPath);
+	sData = m_sProcessNum;
+	::WritePrivateProfileString(_T("Infomation"), _T("Process Unit Code"), sData, sPath);
+	sData = WorkingInfo.LastJob.sModelUp;
+	::WritePrivateProfileString(_T("Infomation"), _T("Current Model Up"), sData, sPath);
+	sData = WorkingInfo.LastJob.sLayerUp;
+	::WritePrivateProfileString(_T("Infomation"), _T("Current Layer Up"), sData, sPath);
+
+	if (bDualTest)
+	{
+		sData = WorkingInfo.LastJob.sModelDn;
+		::WritePrivateProfileString(_T("Infomation"), _T("Current Model Dn"), sData, sPath);
+		sData = WorkingInfo.LastJob.sLayerDn;
+		::WritePrivateProfileString(_T("Infomation"), _T("Current Layer Dn"), sData, sPath);
+	}
+}
+
 BOOL CGvisR2R_LaserDoc::MakeMkDir(CString sModel, CString sLot, CString sLayer)
 {
 	CString sMsg = _T("");
@@ -8561,4 +8630,32 @@ void CGvisR2R_LaserDoc::SetEngOrderNum(CString sOrderNum)
 	//	if (pView && pView->m_pEngrave)
 	//		pView->m_pEngrave->SetEngOrderNum();	//_ItemInx::_TotReelLen
 	//#endif
+}
+
+
+BOOL CGvisR2R_LaserDoc::SetEngOffset(CfPoint &OfSt)
+{
+	// Write Feeding Offset data....
+	CString sPath = WorkingInfo.System.sPathEngOffset; // OffsetData.txt
+	TCHAR szData[200];
+	CString strMenu, strTitle, strData;
+	double dOffX = 0.0;
+	double dOffY = 0.0;
+
+	if (OfSt.x - pView->m_pMotion->m_dPinPosX[0] > -3.0 && OfSt.x - pView->m_pMotion->m_dPinPosX[0] < 3.0)
+		dOffX = OfSt.x - pView->m_pMotion->m_dPinPosX[0];
+	if (OfSt.y - pView->m_pMotion->m_dPinPosY[0] > -3.0 && OfSt.y - pView->m_pMotion->m_dPinPosY[0] < 3.0)
+		dOffY = OfSt.y - pView->m_pMotion->m_dPinPosY[0];
+
+	strTitle.Format(_T("OFFSET"));
+
+	strMenu.Format(_T("ALIGN X"));
+	strData.Format(_T("%.3f"), dOffX);
+	::WritePrivateProfileString(strTitle, strMenu, strData, sPath);
+
+	strMenu.Format(_T("ALIGN Y"));
+	strData.Format(_T("%.3f"), dOffY);
+	::WritePrivateProfileString(_T("OFFSET"), strMenu, strData, sPath);
+
+	return TRUE;
 }

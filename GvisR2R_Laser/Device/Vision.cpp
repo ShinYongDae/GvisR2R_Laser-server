@@ -85,6 +85,7 @@ CVision::CVision(int nIdx, MIL_ID MilSysId, HWND *hCtrl, CWnd* pParent /*=NULL*/
 	MilBufCADTemp = M_NULL;
 	MilBufPinTemp = M_NULL;
 	MilPinImgBuf = M_NULL;
+	MilCapPinImgBuf = M_NULL;
 	MilBufAlignTemp[0] = M_NULL;
 	MilAlignImgBuf[0] = M_NULL;
 	MilBufAlignTemp[1] = M_NULL;
@@ -174,6 +175,12 @@ CVision::~CVision()
 	{
 		MbufFree(MilPinImgBuf);
 		MilPinImgBuf = M_NULL;
+	}
+
+	if (MilCapPinImgBuf != M_NULL)
+	{
+		MbufFree(MilCapPinImgBuf);
+		MilCapPinImgBuf = M_NULL;
 	}
 
 	if(m_pMilBufPin)
@@ -341,11 +348,11 @@ CVision::~CVision()
 		m_pMilPinOverlayDelete = NULL;
 	}
 
-// 	if(m_pMilDrawOverlay)
-// 	{
-// 		delete m_pMilDrawOverlay;
-// 		m_pMilDrawOverlay = NULL;
-// 	}
+ 	//if(m_pMilDrawOverlay)
+ 	//{
+ 	//	delete m_pMilDrawOverlay;
+ 	//	m_pMilDrawOverlay = NULL;
+ 	//}
 // 	if(m_pMilDrawOverlayDelete)
 // 	{
 // 		delete m_pMilDrawOverlayDelete;
@@ -2415,7 +2422,7 @@ void CVision::DrawCrossOnPin(int nCenterX, int nCenterY, int nLineLength)
 
 void CVision::InitPinBuf()
 {
-	if(MilPinImgBuf != M_NULL)
+	if (MilPinImgBuf != M_NULL)
 		MbufFree(MilPinImgBuf);
 	if(m_pMil)
 		MbufAlloc2d(m_pMil->GetSystemID(), 1024, 1024, 1L + M_UNSIGNED, M_IMAGE+M_PROC, &MilPinImgBuf);
@@ -2522,23 +2529,23 @@ void CVision::LoadAlignBuf()
 		if (VicFileLoadFromMem(MilAlignImgBuf[0], pDoc->m_Master[0].m_pAlignImg[0], tdat))
 		{
 
-		MbufChild2d(MilAlignImgBuf[0], (1024-ALIGN_IMG_DISP_SIZEX)/2, (1024-ALIGN_IMG_DISP_SIZEY)/2, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignCld);
-		MbufChild2d(MilBufAlignTemp[0], 0, 0, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignTempCld);
+			MbufChild2d(MilAlignImgBuf[0], (1024-ALIGN_IMG_DISP_SIZEX)/2, (1024-ALIGN_IMG_DISP_SIZEY)/2, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignCld);
+			MbufChild2d(MilBufAlignTemp[0], 0, 0, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignTempCld);
 
-		if(MilBufAlignCld != M_NULL && MilBufAlignTempCld != M_NULL)
-			MbufCopy(MilBufAlignCld, MilBufAlignTempCld);
+			if(MilBufAlignCld != M_NULL && MilBufAlignTempCld != M_NULL)
+				MbufCopy(MilBufAlignCld, MilBufAlignTempCld);
 
-		if (MilBufAlignTempCld)
-		{
-			MbufFree(MilBufAlignTempCld);
-			MilBufAlignTempCld = M_NULL;
-		}
+			if (MilBufAlignTempCld)
+			{
+				MbufFree(MilBufAlignTempCld);
+				MilBufAlignTempCld = M_NULL;
+			}
 		
-		if (MilBufAlignCld)
-		{
-			MbufFree(MilBufAlignCld);
-			MilBufAlignCld = M_NULL;
-		}
+			if (MilBufAlignCld)
+			{
+				MbufFree(MilBufAlignCld);
+				MilBufAlignCld = M_NULL;
+			}
 		}
 	}
 
@@ -2883,6 +2890,51 @@ void CVision::DispAxisPos(BOOL bForceWrite)
 	//		m_pMil->DrawText(szText, m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+m_nDisplayAxisPosLineHeight*2, M_COLOR_GREEN);
 	//	}
 	//}
+}
+
+BOOL CVision::UploadPinImg()
+{
+	if (MilCapPinImgBuf != M_NULL)
+		MbufFree(MilCapPinImgBuf);
+	if (m_pMil)
+		MbufAlloc2d(m_pMil->GetSystemID(), (long)m_pIRayple->GetImgWidth(), (long)m_pIRayple->GetImgHeight(), 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC, &MilCapPinImgBuf);
+
+	// MilCapPinImgBuf
+	CLibMilBuf *MilGrabImg = NULL;
+
+//#ifdef USE_IRAYPLE
+//	MilGrabImg = m_pMil->AllocBuf((long)m_pIRayple->GetImgWidth(), (long)m_pIRayple->GetImgHeight(), 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
+//#endif
+
+
+#ifdef USE_IRAYPLE
+	// 	if(m_pIds->OneshotGrab(MilGrabImg, GRAB_COLOR_GREEN) == FALSE)
+	//if (m_pIRayple->OneshotGrab() == FALSE || m_pMil->OneshotGrab(MilGrabImg->m_MilImage, GRAB_COLOR_COLOR) == FALSE)
+	//{
+	//	if (MilGrabImg)
+	//		delete MilGrabImg;
+
+	//	pView->MsgBox(_T("Image Grab Fail !!"));
+	//	//AfxMessageBox(_T("Image Grab Fail !!"));
+	//	return FALSE;
+	//}
+	if (m_pIRayple->OneshotGrab() == FALSE || m_pMil->OneshotGrab(MilCapPinImgBuf, GRAB_COLOR_COLOR) == FALSE)
+	{
+		pView->MsgBox(_T("Image Grab Fail !!"));
+		//AfxMessageBox(_T("Image Grab Fail !!"));
+		return FALSE;
+	}
+
+	//MilGrabImg->ChildBuffer2d(m_pIRayple->GetImgWidth() * 3 / 8, m_pIRayple->GetImgHeight() * 3 / 8, m_pIRayple->GetImgWidth() * 2 / 8, m_pIRayple->GetImgHeight() * 2 / 8);
+#endif
+
+#ifdef _DEBUG
+	TCHAR szFileName[30];
+	_stprintf(szFileName, _T("C:\\MilCapPinImgBuf.tif"));
+	MbufSave(szFileName, MilCapPinImgBuf);
+#endif
+
+	return TRUE;
 }
 
 double CVision::CalcCameraPixelSize()
@@ -3345,6 +3397,7 @@ double CVision::CalcCameraPixelSize()
 	return dVal;
 }
 
+
 BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 {
 	int i = 0, nRepeatMeasureNum = 1, nEffectiveMeasureNum = 1;
@@ -3364,36 +3417,59 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 	MilGrabImg = m_pMil->AllocBuf(nSizeX, nSizeY, 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
 	MilGrabBinImg = m_pMil->AllocBuf(nSizeX, nSizeY, 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
 
-	DWORD dwSt = GetTickCount();
-	double dRsRto = (_tstof(pDoc->WorkingInfo.Vision[m_nIdx].sCamPxlRes) / 10000.0) / _tstof(pDoc->WorkingInfo.Vision[m_nIdx].sResX);
-	long lSzX = (long)((double)ALIGN_IMG_DISP_SIZEX * dRsRto);
-	long lSzY = (long)((double)ALIGN_IMG_DISP_SIZEY * dRsRto);
+	MIL_ID MilBufAlignCld = M_NULL;
+	MbufChild2d(MilCapPinImgBuf, (640 - ALIGN_IMG_DISP_SIZEX) / 2, (480 - ALIGN_IMG_DISP_SIZEY) / 2, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignCld);
+
 	MilPatImg = m_pMil->AllocBuf(ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
-	MilPatRzImg = m_pMil->AllocBuf(lSzX, lSzY, 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
+
+	if (MilBufAlignCld != M_NULL && MilPatImg != M_NULL)
+		MbufCopy(MilBufAlignCld, MilPatImg->m_MilImage);
+
+#ifdef _DEBUG
+	TCHAR szFileName[30];
+	_stprintf(szFileName, _T("C:\\MilCapPinImgBuf.tif"));
+	MbufSave(szFileName, MilCapPinImgBuf);
+	_stprintf(szFileName, _T("C:\\MilBufAlignCld.tif"));
+	MbufSave(szFileName, MilBufAlignCld);
+#endif
+
+	DWORD dwSt = GetTickCount();
+
+	//double dRsRto = (_tstof(pDoc->WorkingInfo.Vision[m_nIdx].sCamPxlRes) / 10000.0) / _tstof(pDoc->WorkingInfo.Vision[m_nIdx].sResX);
+	//long lSzX = (long)(ALIGN_IMG_DISP_SIZEX * dRsRto);
+	//long lSzY = (long)(ALIGN_IMG_DISP_SIZEY * dRsRto);
+
+	//long lSzX = (long)((double)ALIGN_IMG_DISP_SIZEX * dRsRto);
+	//long lSzY = (long)((double)ALIGN_IMG_DISP_SIZEY * dRsRto);
+	//MilPatImg = m_pMil->AllocBuf(ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
+	//MilPatImg = m_pMil->AllocBuf(ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
+	//MilPatRzImg = m_pMil->AllocBuf(lSzX, lSzY, 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
 	//MimBinarize(MilBufAlignTemp[nPos], MilPatImg->m_MilImage, M_GREATER, 0, 0);
-	MimBinarize(MilBufPinTemp, MilPatImg->m_MilImage, M_GREATER, 0, 0);
-	MimResize(MilPatImg->m_MilImage, MilPatRzImg->m_MilImage, dRsRto, dRsRto, M_DEFAULT);
+	//MimBinarize(MilBufAlignCld, MilPatImg->m_MilImage, M_GREATER, 0, 0);
+	//MbufCopy(MilBufAlignCld, MilPatImg->m_MilImage);
+	//MimResize(MilPatImg->m_MilImage, MilPatRzImg->m_MilImage, dRsRto, dRsRto, M_DEFAULT);
+
+
 
 	dScore = _tstof(pDoc->WorkingInfo.Vision[m_nIdx].sStdScr);
 	if (dScore < 10.0)
 		dScore = 10.0;
 
-	m_pMil->PatternMatchingAlloc(MilPatRzImg->m_MilImage, dScore);
+	m_pMil->PatternMatchingAlloc(MilPatImg->m_MilImage, dScore);
+	//m_pMil->PatternMatchingAlloc(MilPatRzImg->m_MilImage, dScore);
 
 	CString str;
 	str.Format(_T("%d [mSec]"), GetTickCount() - dwSt);
 
 	/////// 	pView->DispStsBar(str, 0);
 
-	#ifdef _DEBUG
-	//char szFileName[100];
-	//sprintf(szFileName, "C:\\AlignPat.tif");
-	TCHAR szFileName[30];
+#ifdef _DEBUG
+	//TCHAR szFileName[30];
 	_stprintf(szFileName, _T("C:\\PinPat.tif"));
-	MbufSave(szFileName, MilPatRzImg->m_MilImage);
-	//MilPatRzImg->BufferSave(szFileName);
-	//MilPatRtImg->BufferSave(szFileName);
-	#endif
+	MbufSave(szFileName, MilPatImg->m_MilImage);
+	//MbufSave(szFileName, MilBufAlignCld);
+	//MbufSave(szFileName, MilPinImgBuf);
+#endif
 
 	int nRealMeasureNum;
 
@@ -3405,8 +3481,8 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 		//Sleep(30);
 		//StopLive();
 		//Sleep(100);
-		if(m_pIRayple->OneshotGrab())
-		{ 
+		if (m_pIRayple->OneshotGrab())
+		{
 			if (m_pMil->OneshotGrab(MilGrabImg->m_MilImage, GRAB_COLOR_COLOR) == FALSE)
 			{
 				m_pMil->PatternMatchingFree();
@@ -3427,6 +3503,12 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 				//StartLive();
 				//Sleep(30);
 
+				if (MilBufAlignCld)
+				{
+					MbufFree(MilBufAlignCld);
+					MilBufAlignCld = M_NULL;
+				}
+
 				return FALSE;
 			}
 		}
@@ -3439,13 +3521,13 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 
 		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
 		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
-		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
-		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
-		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
-		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
-		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
+		//MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
+		//MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
+		//MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
+		//MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
+		//MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
 
-	#ifdef _DEBUG
+#ifdef _DEBUG
 		//sprintf(szFileName, "C:\\AlignGrab0.tif");
 		//_stprintf(szFileName, _T("C:\\AlignGrab0.tif"));
 		_stprintf(szFileName, _T("C:\\PinGrab.tif"));
@@ -3455,7 +3537,7 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 		//_stprintf(szFileName, _T("C:\\AlignGrabBin0.tif"));
 		_stprintf(szFileName, _T("C:\\PinGrabBin.tif"));
 		MbufSave(szFileName, MilGrabBinImg->m_MilImage);
-	#endif
+#endif
 
 		if (m_pMil->PatternMatchingAction(MilGrabBinImg->m_MilImage, bDraw))//, m_pMilDrawOverlay->m_MilBuffer, m_pMilDrawOverlay->m_MilGraphicContextID, bDraw))
 		{
@@ -3486,8 +3568,12 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 		CString sMsg = _T("Pattern Matching Fail !");
 
 		long lImageSizeX, lImageSizeY;
-		lImageSizeX = MbufInquire(MilPatRzImg->m_MilImage, M_SIZE_X, M_NULL);		//MbufInquire(MilPatRzImg->m_MilImage,M_SIZE_X,&lImageSizeX);
-		lImageSizeY = MbufInquire(MilPatRzImg->m_MilImage, M_SIZE_Y, M_NULL);		//MbufInquire(MilPatRzImg->m_MilImage,M_SIZE_Y,&lImageSizeY);
+		lImageSizeX = MbufInquire(MilPatImg->m_MilImage, M_SIZE_X, M_NULL);		//MbufInquire(MilPatRzImg->m_MilImage,M_SIZE_X,&lImageSizeX);
+		lImageSizeY = MbufInquire(MilPatImg->m_MilImage, M_SIZE_Y, M_NULL);		//MbufInquire(MilPatRzImg->m_MilImage,M_SIZE_Y,&lImageSizeY);
+		//lImageSizeX = MbufInquire(MilBufAlignCld, M_SIZE_X, M_NULL);
+		//lImageSizeY = MbufInquire(MilBufAlignCld, M_SIZE_Y, M_NULL);
+		//lImageSizeX = MbufInquire(MilPatRzImg->m_MilImage, M_SIZE_X, M_NULL);		//MbufInquire(MilPatRzImg->m_MilImage,M_SIZE_X,&lImageSizeX);
+		//lImageSizeY = MbufInquire(MilPatRzImg->m_MilImage, M_SIZE_Y, M_NULL);		//MbufInquire(MilPatRzImg->m_MilImage,M_SIZE_Y,&lImageSizeY);
 																					//MgraText(m_pMilDrawOverlay->m_MilGraphicContextID, m_pMilDrawOverlay->m_MilBuffer, lImageSizeX/2, lImageSizeY/2, szText);
 		m_pMil->DrawText(sMsg, lImageSizeX / 2, lImageSizeY / 2, RGB_RED);
 		m_pMil->PatternMatchingFree();
@@ -3505,6 +3591,12 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 
 		//StartLive();
 		//Sleep(30);
+
+		if (MilBufAlignCld)
+		{
+			MbufFree(MilBufAlignCld);
+			MilBufAlignCld = M_NULL;
+		}
 
 		return FALSE;
 	}
@@ -3524,8 +3616,228 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 #endif // USE_MIL
 #endif
 
+	if (MilBufAlignCld)
+	{
+		MbufFree(MilBufAlignCld);
+		MilBufAlignCld = M_NULL;
+	}
+
 	return TRUE;
 }
+
+//
+//BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
+//{
+//	int i = 0, nRepeatMeasureNum = 1, nEffectiveMeasureNum = 1;
+//	double dAngle = 0.0, dScore = 0.0;
+//	double dPosX, dPosY;
+//	dPosX = 0.0;
+//	dPosY = 0.0;
+//
+//#ifdef USE_IRAYPLE
+//	if (!m_pIRayple)
+//		return FALSE;
+//
+//#ifdef USE_MIL
+//	int nSizeX = m_pIRayple->GetImgWidth();
+//	int nSizeY = m_pIRayple->GetImgHeight();
+//	CLibMilBuf *MilGrabImg = NULL, *MilGrabBinImg = NULL, *MilPatImg = NULL, *MilPatRzImg = NULL;//, *MilPatRtImg=NULL;
+//	MilGrabImg = m_pMil->AllocBuf(nSizeX, nSizeY, 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
+//	MilGrabBinImg = m_pMil->AllocBuf(nSizeX, nSizeY, 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
+//
+//	MIL_ID MilBufAlignCld = M_NULL;
+//	MbufChild2d(MilPinImgBuf, (1024 - ALIGN_IMG_DISP_SIZEX) / 2, (1024 - ALIGN_IMG_DISP_SIZEY) / 2, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignCld);
+//#ifdef _DEBUG
+//	TCHAR szFileName[30];
+//	_stprintf(szFileName, _T("C:\\MilBufAlignCld.tif"));
+//	MbufSave(szFileName, MilBufAlignCld);
+//#endif
+//
+//	DWORD dwSt = GetTickCount();
+//	double dRsRto = (_tstof(pDoc->WorkingInfo.Vision[m_nIdx].sCamPxlRes) / 10000.0) / _tstof(pDoc->WorkingInfo.Vision[m_nIdx].sResX);
+//	long lSzX = (long)(ALIGN_IMG_DISP_SIZEX * dRsRto);
+//	long lSzY = (long)(ALIGN_IMG_DISP_SIZEY * dRsRto);
+//	//long lSzX = (long)((double)ALIGN_IMG_DISP_SIZEX * dRsRto);
+//	//long lSzY = (long)((double)ALIGN_IMG_DISP_SIZEY * dRsRto);
+//	//MilPatImg = m_pMil->AllocBuf(ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
+//	MilPatImg = m_pMil->AllocBuf(ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
+//	MilPatRzImg = m_pMil->AllocBuf(lSzX, lSzY, 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
+//	//MimBinarize(MilBufAlignTemp[nPos], MilPatImg->m_MilImage, M_GREATER, 0, 0);
+//	MimBinarize(MilBufAlignCld, MilPatImg->m_MilImage, M_GREATER, 0, 0);
+//	//MbufCopy(MilBufAlignCld, MilPatImg->m_MilImage);
+//	MimResize(MilPatImg->m_MilImage, MilPatRzImg->m_MilImage, dRsRto, dRsRto, M_DEFAULT);
+//
+//
+//
+//	dScore = _tstof(pDoc->WorkingInfo.Vision[m_nIdx].sStdScr);
+//	if (dScore < 10.0)
+//		dScore = 10.0;
+//
+//	m_pMil->PatternMatchingAlloc(MilPatRzImg->m_MilImage, dScore);
+//	//m_pMil->PatternMatchingAlloc(MilPatRzImg->m_MilImage, dScore);
+//
+//	CString str;
+//	str.Format(_T("%d [mSec]"), GetTickCount() - dwSt);
+//
+//	/////// 	pView->DispStsBar(str, 0);
+//
+//#ifdef _DEBUG
+//	//TCHAR szFileName[30];
+//	_stprintf(szFileName, _T("C:\\PinPat.tif"));
+//	//MbufSave(szFileName, MilPatImg->m_MilImage);
+//	MbufSave(szFileName, MilPatRzImg->m_MilImage);
+//	//MbufSave(szFileName, MilPinImgBuf);
+//#endif
+//
+//	int nRealMeasureNum;
+//
+//	// Measure Position
+//	dScore = 0.0;
+//	nRealMeasureNum = 0;
+//	for (i = 0; i < nRepeatMeasureNum; i++)
+//	{
+//		//Sleep(30);
+//		//StopLive();
+//		//Sleep(100);
+//		if(m_pIRayple->OneshotGrab())
+//		{ 
+//			if (m_pMil->OneshotGrab(MilGrabImg->m_MilImage, GRAB_COLOR_COLOR) == FALSE)
+//			{
+//				m_pMil->PatternMatchingFree();
+//
+//				if (bDraw)
+//					pView->MsgBox(_T("Image Grab Fail !!"));
+//				SetClrOverlay();
+//
+//				if (MilGrabImg)
+//					delete MilGrabImg;
+//				if (MilGrabBinImg)
+//					delete MilGrabBinImg;
+//				if (MilPatImg)
+//					delete MilPatImg;
+//				if (MilPatRzImg)
+//					delete MilPatRzImg;
+//
+//				//StartLive();
+//				//Sleep(30);
+//
+//				if (MilBufAlignCld)
+//				{
+//					MbufFree(MilBufAlignCld);
+//					MilBufAlignCld = M_NULL;
+//				}
+//
+//				return FALSE;
+//			}
+//		}
+//
+//		//StartLive();
+//		//Sleep(30);
+//
+//
+//		MimBinarize(MilGrabImg->m_MilImage, MilGrabBinImg->m_MilImage, M_GREATER, 128, 0);
+//
+//		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
+//		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
+//		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
+//		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
+//		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
+//		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
+//		MimConvolve(MilGrabImg->m_MilImage, MilGrabImg->m_MilImage, M_SMOOTH);
+//
+//	#ifdef _DEBUG
+//		//sprintf(szFileName, "C:\\AlignGrab0.tif");
+//		//_stprintf(szFileName, _T("C:\\AlignGrab0.tif"));
+//		_stprintf(szFileName, _T("C:\\PinGrab.tif"));
+//		MbufSave(szFileName, MilGrabImg->m_MilImage);
+//
+//		//sprintf(szFileName, "C:\\AlignGrabBin0.tif");
+//		//_stprintf(szFileName, _T("C:\\AlignGrabBin0.tif"));
+//		_stprintf(szFileName, _T("C:\\PinGrabBin.tif"));
+//		MbufSave(szFileName, MilGrabBinImg->m_MilImage);
+//	#endif
+//
+//		if (m_pMil->PatternMatchingAction(MilGrabBinImg->m_MilImage, bDraw))//, m_pMilDrawOverlay->m_MilBuffer, m_pMilDrawOverlay->m_MilGraphicContextID, bDraw))
+//		{
+//			if (nRealMeasureNum < nEffectiveMeasureNum)
+//			{
+//				dPosX += m_pMil->m_dPatternMatchingResultSelectPosX;
+//				dPosY += m_pMil->m_dPatternMatchingResultSelectPosY;
+//				dAngle += m_pMil->m_dPatternMatchingResultSelectAngle;
+//				dScore += m_pMil->m_dPatternMatchingResultSelectScore;
+//				nRealMeasureNum++;
+//			}
+//			else
+//				break;
+//		}
+//	}
+//
+//	if (dScore >= _tstof(pDoc->WorkingInfo.Vision[m_nIdx].sStdScr) && nRealMeasureNum > 0)
+//	{
+//		PtMtRst.dX = dPosX / (double)nRealMeasureNum;
+//		PtMtRst.dY = dPosY / (double)nRealMeasureNum;
+//		PtMtRst.dAngle = dAngle / (double)nRealMeasureNum;
+//		PtMtRst.dScore = dScore / (double)nRealMeasureNum;
+//	}
+//	else
+//	{
+//		//char szText[100];
+//		//sprintf(szText, _T("Pattern Matching Fail !"));
+//		CString sMsg = _T("Pattern Matching Fail !");
+//
+//		long lImageSizeX, lImageSizeY;
+//		lImageSizeX = MbufInquire(MilPatRzImg->m_MilImage, M_SIZE_X, M_NULL);		//MbufInquire(MilPatRzImg->m_MilImage,M_SIZE_X,&lImageSizeX);
+//		lImageSizeY = MbufInquire(MilPatRzImg->m_MilImage, M_SIZE_Y, M_NULL);		//MbufInquire(MilPatRzImg->m_MilImage,M_SIZE_Y,&lImageSizeY);
+//																					//MgraText(m_pMilDrawOverlay->m_MilGraphicContextID, m_pMilDrawOverlay->m_MilBuffer, lImageSizeX/2, lImageSizeY/2, szText);
+//		m_pMil->DrawText(sMsg, lImageSizeX / 2, lImageSizeY / 2, RGB_RED);
+//		m_pMil->PatternMatchingFree();
+//
+//		if (MilGrabImg)
+//			delete MilGrabImg;
+//		if (MilGrabBinImg)
+//			delete MilGrabBinImg;
+//		if (MilPatImg)
+//			delete MilPatImg;
+//		if (MilPatRzImg)
+//			delete MilPatRzImg;
+//
+//		SetClrOverlay();
+//
+//		//StartLive();
+//		//Sleep(30);
+//
+//		if (MilBufAlignCld)
+//		{
+//			MbufFree(MilBufAlignCld);
+//			MilBufAlignCld = M_NULL;
+//		}
+//
+//		return FALSE;
+//	}
+//
+//	m_pMil->PatternMatchingFree();
+//
+//	if (MilGrabImg)
+//		delete MilGrabImg;
+//	if (MilGrabBinImg)
+//		delete MilGrabBinImg;
+//	if (MilPatImg)
+//		delete MilPatImg;
+//	if (MilPatRzImg)
+//		delete MilPatRzImg;
+//
+//	SetClrOverlay();
+//#endif // USE_MIL
+//#endif
+//
+//	if (MilBufAlignCld)
+//	{
+//		MbufFree(MilBufAlignCld);
+//		MilBufAlignCld = M_NULL;
+//	}
+//
+//	return TRUE;
+//}
 
 BOOL CVision::GrabCrevis(int nPos, BOOL bDraw)
 {

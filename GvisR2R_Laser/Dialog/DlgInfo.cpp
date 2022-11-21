@@ -31,10 +31,17 @@ CDlgInfo::CDlgInfo(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 
 	m_bLoadImg = FALSE;
+	//m_pDlgUtil02 = NULL;
 }
 
 CDlgInfo::~CDlgInfo()
 {
+	//if (m_pDlgUtil02 != NULL)
+	//{
+	//	delete m_pDlgUtil02;
+	//	m_pDlgUtil02 = NULL;
+	//}
+
 	if (pView->m_pDlgMenu01)
 		pView->m_pDlgMenu01->UpdateData();
 }
@@ -190,6 +197,10 @@ BOOL CDlgInfo::OnInitDialog()
 // 	GetDlgItem(IDC_STC_0046)->ShowWindow(SW_HIDE);
 // 	GetDlgItem(IDC_CHK_011)->ShowWindow(SW_HIDE);
 	
+	GetDlgItem(IDC_STC_65)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_CHK_2_POINT_ALIGN)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_CHK_4_POINT_ALIGN)->ShowWindow(SW_HIDE);
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -1527,6 +1538,38 @@ void CDlgInfo::SetTwoMetal(BOOL bOn)
 
 }
 
+void CDlgInfo::ShowDlg(int nID)
+{
+	CString sLot;
+
+	switch (nID)
+	{
+	case IDD_DLG_UTIL_02:
+		GetDlgItem(IDC_STC_17)->GetWindowText(sLot);
+		CDlgUtil02 dlg;
+		dlg.DoModal();
+		if (sLot != pDoc->m_sLotNum)
+		{
+			GetDlgItem(IDC_STC_17)->SetWindowText(pDoc->m_sLotNum); // IDC_LOT_EDIT
+		}
+
+		//if (!m_pDlgUtil02)
+		//{
+		//	m_pDlgUtil02 = new CDlgUtil02(this);
+		//	if (m_pDlgUtil02->GetSafeHwnd() == 0)
+		//	{
+		//		m_pDlgUtil02->Create();
+		//		m_pDlgUtil02->ShowWindow(SW_SHOW);
+		//	}
+		//}
+		//else
+		//{
+		//	m_pDlgUtil02->ShowWindow(SW_SHOW);
+		//}
+		break;
+	}
+}
+
 void CDlgInfo::OnChkUseAoiInner() 
 {
 	// TODO: Add your control notification handler code here
@@ -1538,9 +1581,13 @@ void CDlgInfo::OnChkUseAoiInner()
 	{
 		myBtn[24].SetCheck(FALSE);
 		SetTestMode(MODE_INNER);
+		ShowDlg(IDD_DLG_UTIL_02);
 	}
 	else if (bOn[0] && !bOn[1])
+	{
 		SetTestMode(MODE_INNER);
+		ShowDlg(IDD_DLG_UTIL_02);
+	}
 	else if (!bOn[0] && bOn[1])
 		SetTestMode(MODE_OUTER);
 	else
@@ -1558,11 +1605,15 @@ void CDlgInfo::OnChkUseAoiOuter()
 	{
 		myBtn[23].SetCheck(FALSE);
 		SetTestMode(MODE_OUTER);
+		ShowDlg(IDD_DLG_UTIL_02);
 	}
 	else if (bOn[0] && !bOn[1])
 		SetTestMode(MODE_INNER);
 	else if (!bOn[0] && bOn[1])
+	{
 		SetTestMode(MODE_OUTER);
+		ShowDlg(IDD_DLG_UTIL_02);
+	}
 	else
 		SetTestMode(MODE_NONE);
 }

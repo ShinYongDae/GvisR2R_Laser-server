@@ -126,7 +126,7 @@ void CTcpIpAccept::StopThread() // Worker Thread 구동관련 Step9
 		m_evtThread.SetEvent();
 		WaitUntilThreadEnd(m_hThread);
 	}
-	m_pThread = NULL;
+	//m_pThread = NULL;
 	m_bModify = FALSE;
 }
 

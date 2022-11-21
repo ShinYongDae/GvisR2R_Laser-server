@@ -40,6 +40,7 @@ CGvisR2R_LaserApp::CGvisR2R_LaserApp()
 
 CGvisR2R_LaserApp::~CGvisR2R_LaserApp()
 {
+	Sleep(500);
 	wsaEndup();
 	Sleep(100);
 }

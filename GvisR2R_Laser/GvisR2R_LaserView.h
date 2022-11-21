@@ -16,6 +16,7 @@
 #include "Dialog/DlgMenu04.h"
 #include "Dialog/DlgMenu05.h"
 #include "Dialog/DlgUtil01.h"
+#include "Dialog/DlgUtil02.h"
 
 #include "Device/Motion.h"
 #include "Device/Light.h"
@@ -74,6 +75,7 @@
 #define TIM_CHK_TEMP_STOP		20
 #define TIM_SAFTY_STOP			21
 #define TIM_TCPIP_UPDATE		22
+#define TIM_START_UPDATE		100
 
 namespace Read2dIdx
 {
@@ -193,6 +195,7 @@ class CGvisR2R_LaserView : public CFormView
 	BOOL m_bTIM_CHK_TEMP_STOP;
 	BOOL m_bTIM_SAFTY_STOP;
 	BOOL m_bTIM_TCPIP_UPDATE;
+	BOOL m_bTIM_START_UPDATE;
 	CString m_sMyMsg; int m_nTypeMyMsg;
 	int m_nVsBufLastSerial[2];
 	BOOL m_bOpenShareUp, m_bOpenShareDn;
@@ -349,6 +352,7 @@ public:
 	CDlgMenu04 *m_pDlgMenu04;
 	CDlgMenu05 *m_pDlgMenu05;
 	CDlgUtil01 *m_pDlgUtil01;
+	//CDlgUtil02 *m_pDlgUtil02;
 
 
 	int m_nLotEndSerial;
@@ -953,6 +957,10 @@ public:
 
 	//void CompletedMk(int nCam); // 0: Only Cam0, 1: Only Cam1, 2: Cam0 and Cam1, 3: None
 
+	void SetMyMsgYes();
+	void SetMyMsgNo();
+
+	BOOL SetEngOffset(CfPoint &OfSt);
 
 // 재정의입니다.
 public:

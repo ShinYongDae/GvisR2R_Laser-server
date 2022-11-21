@@ -19,8 +19,8 @@ public:
 	CDlgUtil01(CWnd* pParent = NULL);   // standard constructor
 	~CDlgUtil01();
 
-	CRect* m_pRect;
 // 	CVision* m_pVision;
+	CRect* m_pRect;
 
 	BOOL Create();
 	void AtDlgShow();

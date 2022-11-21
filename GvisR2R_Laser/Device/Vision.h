@@ -106,7 +106,7 @@ class CVision : public CWnd
 	CLibMilDraw *m_pMilPinOverlayDelete;
 
 	MIL_ID MilCADImgBuf, MilBufCADTemp;
-	MIL_ID MilBufPinTemp, MilPinImgBuf;
+	MIL_ID MilBufPinTemp, MilPinImgBuf, MilCapPinImgBuf;
 	//MIL_ID MilBufAlignTemp[2], MilAlignImgBuf[2];	// 2 points
 	MIL_ID MilBufAlignTemp[4], MilAlignImgBuf[4];	// 4 points
 
@@ -209,6 +209,7 @@ public:
 	void GetIRaypleSize(int &nX, int &nY);
 
 	BOOL SaveMkImg(CString sPath);
+	BOOL UploadPinImg();
 
 // Overrides
 	// ClassWizard generated virtual function overrides

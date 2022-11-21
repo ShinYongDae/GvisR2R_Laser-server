@@ -414,8 +414,8 @@ void CDlgMenu02::InitCadImg()
 		pView->m_pVision[0]->SelDispPin(hWin, rect, 0);
 		pView->m_pVision[0]->ShowDispPin(0);
 
-		pView->m_pVision[0]->SelDispAlign(hWin, rect, 0);
-		pView->m_pVision[0]->ShowDispAlign();
+		//pView->m_pVision[0]->SelDispAlign(hWin, rect, 0);
+		//pView->m_pVision[0]->ShowDispAlign();
 
 		pView->m_pVision[0]->SetDispAxisPos();
 	}
@@ -1589,19 +1589,25 @@ void CDlgMenu02::OnBtnPinSave()
 
 	SetPinPos(0, ptPnt);
 
-	if(pView->m_nMkStAuto > MK_ST+11 && pView->m_nMkStAuto < MK_ST+29)
-		pView->m_nMkStAuto = MK_ST+11;
+	//if(pView->m_nMkStAuto > MK_ST+11 && pView->m_nMkStAuto < MK_ST+29)
+	//	pView->m_nMkStAuto = MK_ST+11;
 
- 	if(pDoc->m_pSpecLocal)
- 	{
- 		pDoc->SetMkPnt(CAM_LF);
-// 		if(myBtn[16].GetCheck())
-// 		{
-// 			if(m_pDlgUtil03)
-// 				m_pDlgUtil03->Disp(ROT_NONE);
-// // 				m_pDlgUtil03->Disp(ROT_CCW_90);
-// 		}
- 	}
+// 	if(pDoc->m_pSpecLocal)
+// 	{
+// 		pDoc->SetMkPnt(CAM_LF);
+//// 		if(myBtn[16].GetCheck())
+//// 		{
+//// 			if(m_pDlgUtil03)
+//// 				m_pDlgUtil03->Disp(ROT_NONE);
+//// // 				m_pDlgUtil03->Disp(ROT_CCW_90);
+//// 		}
+// 	}
+
+
+	if (pView->m_pVision[0]->UploadPinImg())
+		pDoc->m_bUploadPinImg = TRUE;
+	else
+		pView->MsgBox(_T("카메라 정렬이미지 저장에 실패하였습니다."), 0, MB_OK);
 
 }
 
@@ -1800,6 +1806,8 @@ void CDlgMenu02::OnChkMkOffsetEd()
 void CDlgMenu02::OnBtnAlignMove() 
 {
 	// TODO: Add your control notification handler code here
+	MovePinPos();
+
 	//if(m_nMoveAlign[0] == 0)
 	//{
 	//	MoveAlign0(0);
@@ -1819,14 +1827,22 @@ void CDlgMenu02::OnBtnGrab()
 	CString str;
 	double dX, dY, dAgl, dScr;
 
+	if (!pDoc->m_bUploadPinImg)
+	{
+		pView->MsgBox(_T("카메라 정렬이미지가 저장되지 않았습니다.\r\n핀위치를 저장하세요."), 0, MB_OK);
+		return;
+	}
+
 	double dCurrX = pView->m_dEnc[AXIS_X0];
 	double dCurrY = pView->m_dEnc[AXIS_Y0];
 
 	double pPos[8];
-	pPos[0] = pDoc->m_Master[0].m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[0];
-	pPos[1] = pDoc->m_Master[0].m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[0];
-	pPos[2] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[0];
-	pPos[3] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[0];
+	pPos[0] = pView->m_pMotion->m_dPinPosX[0];
+	pPos[1] = pView->m_pMotion->m_dPinPosY[0];
+	//pPos[0] = pDoc->m_Master[0].m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[0];
+	//pPos[1] = pDoc->m_Master[0].m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[0];
+	//pPos[2] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[0];
+	//pPos[3] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[0];
 
 	//if(pDoc->WorkingInfo.LastJob.nAlignMethode == FOUR_POINT)
 	//{
@@ -1839,8 +1855,8 @@ void CDlgMenu02::OnBtnGrab()
 	int nPos=-1;
 	if( (dCurrX > pPos[0]-0.1 && dCurrX < pPos[0]+0.1) && (dCurrY > pPos[1]-0.1 && dCurrY < pPos[1]+0.1) )
 		nPos = 0;
-	else if( (dCurrX > pPos[2]-0.1 && dCurrX < pPos[2]+0.1) && (dCurrY > pPos[3]-0.1 && dCurrY < pPos[3]+0.1) )
-		nPos = 1;
+	//else if( (dCurrX > pPos[2]-0.1 && dCurrX < pPos[2]+0.1) && (dCurrY > pPos[3]-0.1 && dCurrY < pPos[3]+0.1) )
+	//	nPos = 1;
 	//if (pDoc->WorkingInfo.LastJob.nAlignMethode == FOUR_POINT)
 	//{
 	//	if ((dCurrX > pPos[4] - 0.1 && dCurrX < pPos[4] + 0.1) && (dCurrY > pPos[5] - 0.1 && dCurrY < pPos[5] + 0.1))
@@ -1848,8 +1864,11 @@ void CDlgMenu02::OnBtnGrab()
 	//	else if ((dCurrX > pPos[6] - 0.1 && dCurrX < pPos[6] + 0.1) && (dCurrY > pPos[7] - 0.1 && dCurrY < pPos[7] + 0.1))
 	//		nPos = 3;
 	//}
-	if(nPos==-1)
+	if (nPos == -1)
+	{
+		AfxMessageBox(_T("Pin위치가 아닙니다."));
 		return;
+	}
 
 #ifdef USE_VISION
 	if(pView->m_pVision[0]->Grab(nPos))
@@ -1879,6 +1898,8 @@ void CDlgMenu02::OnBtnGrab()
 		myStcData[8].SetText(_T(""));
 	}
 #endif
+
+	pView->OnePointAlign0(0);
 }
 
 BOOL CDlgMenu02::GetPmRst0(double &dX, double &dY, double &dAgl, double &dScr)
@@ -2440,14 +2461,14 @@ void CDlgMenu02::ChgModel()
 	{
 // 		pView->m_pVision[0]->ShowDispPcs(nLayer);
  		pView->m_pVision[0]->ShowDispPin(0);
-		pView->m_pVision[0]->ShowDispAlign();
+//		pView->m_pVision[0]->ShowDispAlign();
 	}
 
 	if(pView->m_pVision[1])
 	{
 // 		pView->m_pVision[0]->ShowDispPcs(nLayer);
  		pView->m_pVision[1]->ShowDispPin(0);
-		pView->m_pVision[1]->ShowDispAlign();
+//		pView->m_pVision[1]->ShowDispAlign();
 	}
 #endif
 }
@@ -2459,7 +2480,7 @@ void CDlgMenu02::ChgModelUp()
 	{
 // 		pView->m_pVision[0]->ShowDispPcs(nLayer);
  		pView->m_pVision[0]->ShowDispPin(0);
-		pView->m_pVision[0]->ShowDispAlign();
+//		pView->m_pVision[0]->ShowDispAlign();
 	}
 #endif
 }
@@ -2471,7 +2492,7 @@ void CDlgMenu02::ChgModelDn()
 	{
 // 		pView->m_pVision[0]->ShowDispPcs(nLayer);
  		pView->m_pVision[1]->ShowDispPin(0);
-		pView->m_pVision[1]->ShowDispAlign();
+//		pView->m_pVision[1]->ShowDispAlign();
 	}
 #endif
 }

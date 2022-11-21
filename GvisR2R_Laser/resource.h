@@ -90,6 +90,7 @@
 #define IDD_DLG_KEY_NUM                 329
 #define IDD_DLG_MENU_05                 331
 #define IDD_PROGRESS                    333
+#define IDD_DLG_UTIL_02                 334
 #define IDC_SVR_PORT                    374
 #define IDC_CLIENT_ID                   375
 #define IDC_TXT_MESSAGE                 376
@@ -135,12 +136,19 @@
 #define IDC_PIC_CAD_008                 1008
 #define IDC_GRP_LT6                     1008
 #define IDC_PIC_CAD_009                 1009
+#define IDC_MODEL_COMBO_UP              1009
 #define IDC_PIC_CAD_010                 1010
+#define IDC_LAYER_COMBO_UP              1010
 #define IDC_PIC_CAD_011                 1011
+#define IDC_MODEL_COMBO_DN              1011
 #define IDC_PIC_CAD_012                 1012
+#define IDC_LAYER_COMBO_DN              1012
 #define IDC_PIC_DEF_001                 1013
+#define IDC_LOT_EDIT                    1013
 #define IDC_PIC_DEF_002                 1014
+#define IDC_BTN_CONFIRM                 1014
 #define IDC_PIC_DEF_003                 1015
+#define IDC_EDIT_PROCESS_NUM            1015
 #define IDC_PIC_DEF_004                 1016
 #define IDC_PIC_DEF_005                 1017
 #define IDC_PIC_DEF_006                 1018
@@ -1079,7 +1087,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        335
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1009
+#define _APS_NEXT_CONTROL_VALUE         1016
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

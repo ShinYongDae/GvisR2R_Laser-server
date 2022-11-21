@@ -29,6 +29,10 @@ protected: // serialization에서만 만들어집니다.
 
 // 특성입니다.
 public:
+	CString m_sLotNum, m_sProcessNum;
+	CString m_sModelUp, m_sLayerUp;
+	CString m_sModelDn, m_sLayerDn;
+
 	int m_nDelayShow;
 	BOOL m_bBufEmpty[2]; // [0]: Up, [1]: Dn
 	BOOL m_bBufEmptyF[2]; // [0]: Up, [1]: Dn
@@ -101,6 +105,8 @@ public:
 	double m_dTotRatio[3][5];					// [3]: Up/Dn/ALL , [5]: Strip 1~4 , ALL
 	int m_nDef[MAX_DEF];						// [3]: Up/Dn/ALL
 	double m_dMkBuffCurrPos;
+
+	BOOL m_bUploadPinImg;
 
 // 작업입니다.
 public:
@@ -291,6 +297,8 @@ public:
 	double GetFdJogAcc();
 	void SetModelInfoUp();
 	void SetModelInfoDn();
+	void SetModelInfoProcessNum();
+	void SetCurrentInfo();
 	BOOL GetAoiUpOffset(CfPoint &OfSt);
 	BOOL GetAoiDnOffset(CfPoint &OfSt);
 	void ClrPcr();
@@ -379,6 +387,7 @@ public:
 	void CheckCurrentInfo();
 	void WriteFdOffset(double dOffsetX, double dOffsetY);
 	void SetEngOrderNum(CString sOrderNum);
+	BOOL SetEngOffset(CfPoint &OfSt);
 
 // 재정의입니다.
 public:

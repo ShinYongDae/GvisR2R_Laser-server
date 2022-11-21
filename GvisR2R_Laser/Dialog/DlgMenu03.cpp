@@ -3390,6 +3390,7 @@ void CDlgMenu03::SwStop()
 	pView->m_pMpe->Write(_T("MB440162"), 1);
 #endif
 	pView->ClrDispMsg();
+
 }
 
 void CDlgMenu03::SwReady(BOOL bOn)
