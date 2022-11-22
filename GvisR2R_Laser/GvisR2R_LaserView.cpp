@@ -384,6 +384,7 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 
 	m_pDlgUtil01 = NULL;
 	//m_pDlgUtil02 = NULL;
+	m_bEngStop = FALSE;
 }
 
 CGvisR2R_LaserView::~CGvisR2R_LaserView()
@@ -8122,6 +8123,26 @@ void CGvisR2R_LaserView::StopFromThread()
 	m_bStopFromThread = TRUE;
 }
 
+
+void CGvisR2R_LaserView::EngStop(BOOL bOn)
+{
+	m_bEngStop = bOn;
+
+	if (m_pEngrave)
+	{
+		if (bOn)
+		{
+			m_pEngrave->SwStop(TRUE);
+			Sleep(100);
+		}
+	}
+}
+
+BOOL CGvisR2R_LaserView::IsEngStop()
+{
+	return m_bEngStop;
+}
+
 void CGvisR2R_LaserView::Stop()
 {
 	//StartLive();
@@ -8131,11 +8152,11 @@ void CGvisR2R_LaserView::Stop()
 		m_pDlgMenu03->SwStop();
 	}
 
-	if (m_pEngrave)
-	{
-		m_pEngrave->SwStop(pView->m_bSwStop);
-		Sleep(100);
-	}
+	//if (m_pEngrave)
+	//{
+	//	m_pEngrave->SwStop(pView->m_bSwStop);
+	//	Sleep(100);
+	//}
 }
 
 BOOL CGvisR2R_LaserView::IsStop()
@@ -8155,7 +8176,12 @@ BOOL CGvisR2R_LaserView::IsRun()
 	//return TRUE; // AlignTest
 	if (m_sDispMain == _T("운전중") || m_sDispMain == _T("초기운전") || m_sDispMain == _T("단면샘플") || m_sDispMain == _T("운전준비")
 		|| m_sDispMain == _T("단면검사") || m_sDispMain == _T("양면검사") || m_sDispMain == _T("양면샘플"))
+	{
+		if (IsEngStop())
+			return FALSE;
+
 		return TRUE;
+	}
 	return FALSE;
 	//	return m_bSwRun;
 }
@@ -15277,7 +15303,7 @@ void CGvisR2R_LaserView::Eng1PtAlignPt0()
 						m_nEngStAuto = ENG_ST + (Mk1PtIdx::Move0Cam0); // OnePointAlign0(0) 으로 진행. - 카메라 재정렬
 																	 //m_nEngStAuto = MK_ST + (Mk1PtIdx::Move0Cam0); // TwoPointAlign0(0) 으로 진행. - 카메라 재정렬
 																	 //m_nEngStAuto = MK_ST + (Mk1PtIdx::Move0Cam1); // TwoPointAlign1(0) 으로 진행. - 카메라 재정렬
-						Stop();
+						EngStop(TRUE);
 						TowerLamp(RGB_YELLOW, TRUE);
 					}
 				}
@@ -15292,7 +15318,7 @@ void CGvisR2R_LaserView::Eng1PtAlignPt0()
 					m_nEngStAuto = ENG_ST + (Mk1PtIdx::Move0Cam0); // OnePointAlign0(0) 으로 진행. - 카메라 재정렬
 																 //m_nEngStAuto = MK_ST + (Mk1PtIdx::Move0Cam0); // TwoPointAlign0(0) 으로 진행. - 카메라 재정렬
 																 //m_nEngStAuto = MK_ST + (Mk1PtIdx::Move0Cam1); // TwoPointAlign1(0) 으로 진행. - 카메라 재정렬
-					Stop();
+					EngStop(TRUE);
 					TowerLamp(RGB_YELLOW, TRUE);
 				}
 			}

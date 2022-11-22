@@ -144,6 +144,8 @@ typedef CArray<stDispMain, stDispMain> CArDispMain;
 
 class CGvisR2R_LaserView : public CFormView
 {
+	BOOL m_bEngStop;
+
 	BOOL m_bDestroyedView;
 	BOOL m_bBufEmpty[2];
 
@@ -961,6 +963,8 @@ public:
 	void SetMyMsgNo();
 
 	BOOL SetEngOffset(CfPoint &OfSt);
+	void EngStop(BOOL bOn);
+	BOOL IsEngStop();
 
 // 재정의입니다.
 public:
