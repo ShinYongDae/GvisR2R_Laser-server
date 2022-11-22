@@ -15456,12 +15456,24 @@ BOOL CGvisR2R_LaserView::SetEngOffset(CfPoint &OfSt)
 
 void CGvisR2R_LaserView::SetMyMsgYes()
 {
-
+	if (m_pDlgMyMsg)
+	{
+		if (m_pDlgMyMsg->m_pDlgMyMsgSub01)
+		{
+			((CDlgMyMsgSub01*)(m_pDlgMyMsg->m_pDlgMyMsgSub01))->ClickYes();
+		}
+	}
 }
 
 void CGvisR2R_LaserView::SetMyMsgNo()
 {
-
+	if (m_pDlgMyMsg)
+	{
+		if (m_pDlgMyMsg->m_pDlgMyMsgSub01)
+		{
+			((CDlgMyMsgSub01*)(m_pDlgMyMsg->m_pDlgMyMsgSub01))->ClickNo();
+		}
+	}
 }
 
 

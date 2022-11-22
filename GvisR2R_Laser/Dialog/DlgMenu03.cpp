@@ -3171,7 +3171,7 @@ BOOL CDlgMenu03::DoReset()
 		}
 		pView->ClrDispMsg();
 		
-		if(IDNO == pView->MsgBox(_T("초기화 하시겠습니까?"), 0, MB_YESNO))
+		if(IDNO == pView->MsgBox(_T("초기화를 하시겠습니까?"), 0, MB_YESNO))
 			bInit = FALSE;
 		else
 		{

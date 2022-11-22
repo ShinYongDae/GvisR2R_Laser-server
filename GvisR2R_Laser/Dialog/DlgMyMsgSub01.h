@@ -69,6 +69,9 @@ public:
 	afx_msg LRESULT OnMyMsg01(WPARAM wPara, LPARAM lPara);
 	BOOL CloseMsgDlg();
 
+	void ClickYes();
+	void ClickNo();
+
 // Dialog Data
 	//{{AFX_DATA(CDlgMyMsgSub01)
 	enum { IDD = IDD_DLG_MY_MSG_SUB01 };
