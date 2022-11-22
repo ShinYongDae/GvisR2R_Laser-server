@@ -309,6 +309,22 @@ public:
 
 	// Start Switch
 
+	// Disp
+	void SetDispReady(BOOL bOn = TRUE);
+	void SetDispRun(BOOL bOn = TRUE);
+	void SetDispStop(BOOL bOn = TRUE);
+	void SetDispDualSample(BOOL bOn = TRUE);
+	void SetDispSingleSample(BOOL bOn = TRUE);
+	void SetDispDualTest(BOOL bOn = TRUE);
+	void SetDispSingleTest(BOOL bOn = TRUE);
+	void IsSetDispReady(BOOL bOn = TRUE);
+	void IsSetDispRun(BOOL bOn = TRUE);
+	void IsSetDispStop(BOOL bOn = TRUE);
+	void IsSetDispDualSample(BOOL bOn = TRUE);
+	void IsSetDispSingleSample(BOOL bOn = TRUE);
+	void IsSetDispDualTest(BOOL bOn = TRUE);
+	void IsSetDispSingleTest(BOOL bOn = TRUE);
+
 	// Main
 	void SwReady(BOOL bOn);
 	void SwRun(BOOL bOn);

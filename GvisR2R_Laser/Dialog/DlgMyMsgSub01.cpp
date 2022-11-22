@@ -167,22 +167,41 @@ LRESULT CDlgMyMsgSub01::OnMyBtnUp(WPARAM wPara, LPARAM lPara)
 	switch(nCtrlID)
 	{
 	case IDC_BTN_00:
-		SetRtnVal(IDYES);
-		if(myBtn00.m_hParentWnd)
-			myBtn00.Refresh();
-		OnOK();
+		ClickYes();
+		//SetRtnVal(IDYES);
+		//if(myBtn00.m_hParentWnd)
+		//	myBtn00.Refresh();
+		//OnOK();
 		break;
 	case IDC_BTN_01:
-		SetRtnVal(IDNO);
-		if(myBtn00.m_hParentWnd)
-			myBtn01.Refresh();
-		OnCancel();
+		ClickNo();
+		//SetRtnVal(IDNO);
+		//if(myBtn00.m_hParentWnd)
+		//	myBtn01.Refresh();
+		//OnCancel();
 		break;
 	}
 
 	::PostMessage(m_hParentWnd, WM_MYMSG_EXIT, (WPARAM)NULL, (LPARAM)NULL);
 	return 0L;
 }
+
+void CDlgMyMsgSub01::ClickYes()
+{
+	SetRtnVal(IDYES);
+	if (myBtn00.m_hParentWnd)
+		myBtn00.Refresh();
+	OnOK();
+}
+
+void CDlgMyMsgSub01::ClickNo()
+{
+	SetRtnVal(IDNO);
+	if (myBtn00.m_hParentWnd)
+		myBtn01.Refresh();
+	OnCancel();
+}
+
 
 void CDlgMyMsgSub01::OnShowWindow(BOOL bShow, UINT nStatus) 
 {
