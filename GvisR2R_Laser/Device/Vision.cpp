@@ -601,7 +601,10 @@ BOOL CVision::StopLive(int nIdx)
 	if (nIdx > 1)
 		return FALSE;
 	if (m_pIRayple)
+	{
 		m_pIRayple->Connect(FALSE);
+		Sleep(100);
+	}
 #endif
 
 #ifdef USE_CREVIS
@@ -2897,7 +2900,8 @@ BOOL CVision::UploadPinImg()
 	if (MilCapPinImgBuf != M_NULL)
 		MbufFree(MilCapPinImgBuf);
 	if (m_pMil)
-		MbufAlloc2d(m_pMil->GetSystemID(), (long)m_pIRayple->GetImgWidth(), (long)m_pIRayple->GetImgHeight(), 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC, &MilCapPinImgBuf);
+		MbufAlloc2d(m_pMil->GetSystemID(), (long)640, (long)480, 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC, &MilCapPinImgBuf);
+		//MbufAlloc2d(m_pMil->GetSystemID(), (long)m_pIRayple->GetImgWidth(), (long)m_pIRayple->GetImgHeight(), 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC, &MilCapPinImgBuf);
 
 	// MilCapPinImgBuf
 	CLibMilBuf *MilGrabImg = NULL;
@@ -3613,14 +3617,16 @@ BOOL CVision::GrabIRayple(int nPos, BOOL bDraw)
 		delete MilPatRzImg;
 
 	SetClrOverlay();
-#endif // USE_MIL
-#endif
+
 
 	if (MilBufAlignCld)
 	{
 		MbufFree(MilBufAlignCld);
 		MilBufAlignCld = M_NULL;
 	}
+
+#endif // USE_MIL
+#endif
 
 	return TRUE;
 }

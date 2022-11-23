@@ -943,6 +943,14 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.System.sPathEngCurrInfo = CString(_T("C:\\EngraveWork\\CurrentInfo.ini"));
 	}
 
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("PunchingCurrentInfoPath"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.System.sPathMkCurrInfo = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("PunchingCurrentInfoPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathMkCurrInfo = CString(_T(""));
+	}
+
 	if (0 < ::GetPrivateProfileString(_T("System"), _T("EngraveCurrentOffsetInfoPath"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.System.sPathEngOffset = CString(szData);
 	else
@@ -7463,6 +7471,7 @@ void CGvisR2R_LaserDoc::SetCurrentInfo()
 	}
 }
 
+
 BOOL CGvisR2R_LaserDoc::MakeMkDir(CString sModel, CString sLot, CString sLayer)
 {
 	CString sMsg = _T("");
@@ -8658,4 +8667,27 @@ BOOL CGvisR2R_LaserDoc::SetEngOffset(CfPoint &OfSt)
 	::WritePrivateProfileString(_T("OFFSET"), strMenu, strData, sPath);
 
 	return TRUE;
+}
+
+
+void CGvisR2R_LaserDoc::SetCurrentInfoSignal(int nIdxSig, BOOL bOn)
+{
+	CString sData, sIdx, sPath = WorkingInfo.System.sPathEngCurrInfo;
+
+	sIdx.Format(_T("%d"), nIdxSig);
+	sData.Format(_T("%d"), bOn ? 1 : 0);
+	::WritePrivateProfileString(_T("Signal"), sIdx, sData, sPath);
+}
+
+
+BOOL CGvisR2R_LaserDoc::GetCurrentInfoSignal(int nIdxSig)
+{
+	TCHAR szData[200];
+	CString sData, sIdx, sPath = WorkingInfo.System.sPathMkCurrInfo;
+
+	sIdx.Format(_T("%d"), nIdxSig);
+	if (0 < ::GetPrivateProfileString(_T("Signal"), sIdx, NULL, szData, sizeof(szData), sPath))
+		return (_ttoi(szData) > 0 ? TRUE : FALSE);
+
+	return FALSE;
 }

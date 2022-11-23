@@ -291,12 +291,13 @@ BOOL CTcpIpServer::Stop()
 				CTcpIpAccept* pAccept = m_pAcceptAddr[i];
 				pAccept->Stop();
 				Sleep(10);
-				//pAccept->StopThread();
-				//Sleep(10);
+				pAccept->StopThread();
+				Sleep(10);
+				pAccept->Close();
 				//m_pAcceptAddr[i]->Close();
-				//delete pAccept;
+				delete pAccept;
 				m_pAcceptAddr[i] = NULL;
-				//Sleep(10);
+				Sleep(10);
 			}
 		}
 

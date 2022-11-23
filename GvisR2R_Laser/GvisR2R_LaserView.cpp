@@ -2069,7 +2069,9 @@ UINT CGvisR2R_LaserView::ThreadProc0(LPVOID lpContext)
 		if (!bLock)
 		{
 			bLock = TRUE;
+			pThread->GetCurrentInfoSignal();
 
+			/*
 			if (pDoc->BtnStatus.EngAuto.IsMkSt)
 			{
 				pDoc->BtnStatus.EngAuto.IsMkSt = FALSE;
@@ -2129,7 +2131,7 @@ UINT CGvisR2R_LaserView::ThreadProc0(LPVOID lpContext)
 				pDoc->BtnStatus.Disp.IsSingleTest = FALSE;
 				pThread->m_pEngrave->IsSetDispDualTest(pDoc->BtnStatus.Disp.SingleTest);
 			}
-
+			*/
 			bLock = FALSE;
 		}
 		Sleep(30);
@@ -15037,6 +15039,7 @@ void CGvisR2R_LaserView::InitAutoEng()
 
 	pDoc->m_bUploadPinImg = FALSE;
 	pDoc->BtnStatus.EngAuto._Init();
+	InitAutoEngSignal();
 	pDoc->SetEngraveLastShot(0); // m_nEngraveLastShot = 0;
 }
 
@@ -15076,27 +15079,21 @@ void CGvisR2R_LaserView::DoAtuoGetEngStSignal()
 	{
 		if (IsRun())
 		{
-			if ((pDoc->BtnStatus.EngAuto.MkSt || m_bMkStSw) && !pDoc->BtnStatus.EngAuto.MkStF)  // AlignTest		// 마킹시작(PC가 확인하고 Reset시킴.)-20141029
+			if ((pDoc->BtnStatus.EngAuto.IsMkSt || m_bMkStSw) && !pDoc->BtnStatus.EngAuto.MkStF)  // AlignTest		// 마킹시작(PC가 확인하고 Reset시킴.)-20141029
 			{
 				m_bEngStSw = FALSE;
 				pDoc->BtnStatus.EngAuto.MkStF = TRUE;
 
-				//m_pMpe->Write(_T("MB440110"), 0);			// 마킹시작(PC가 확인하고 Reset시킴.)-20141029
-				//if (pDoc->m_pMpeSignal[0] & (0x01 << 1))	// 마킹부 Feeding완료(PLC가 On시키고 PC가 확인하고 Reset시킴.)-20141030
-				//	m_pMpe->Write(_T("MB440101"), 0);		// 마킹부 Feeding완료
-
 				m_bEngSt = TRUE;
 				m_nEngStAuto = ENG_ST;
 				
-				if (m_pEngrave)
-				{
-					pDoc->BtnStatus.EngAuto.MkSt = FALSE;
-					m_pEngrave->SwEngAutoMkSt(FALSE);
-					Sleep(100);
-				}
+				pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeqMkSt, TRUE);
 			}
-			else if (!pDoc->BtnStatus.EngAuto.MkSt && pDoc->BtnStatus.EngAuto.MkStF)
+			else if (!pDoc->BtnStatus.EngAuto.IsMkSt && pDoc->BtnStatus.EngAuto.MkStF)
+			{
 				pDoc->BtnStatus.EngAuto.MkStF = FALSE;
+				pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeqMkSt, FALSE);
+			}
 		}
 	}
 }
@@ -15107,30 +15104,85 @@ void CGvisR2R_LaserView::DoAtuoGet2dReadStSignal()
 	{
 		if (IsRun())
 		{
-			if ((pDoc->BtnStatus.EngAuto.Read2dSt || m_bMkStSw) && !pDoc->BtnStatus.EngAuto.Read2dStF)  // 2D(GUI) Reading 동작 Start신호(PLC On->PC Off)
+			if ((pDoc->BtnStatus.EngAuto.IsRead2dSt || m_bMkStSw) && !pDoc->BtnStatus.EngAuto.Read2dStF)  // 2D(GUI) Reading 동작 Start신호(PLC On->PC Off)
 			{
 				m_bEng2dStSw = FALSE;
 				pDoc->BtnStatus.EngAuto.Read2dStF = TRUE;
 
-				//m_pMpe->Write(_T("MB440110"), 0);			// 마킹시작(PC가 확인하고 Reset시킴.)-20141029
-				//if (pDoc->m_pMpeSignal[0] & (0x01 << 1))	// 마킹부 Feeding완료(PLC가 On시키고 PC가 확인하고 Reset시킴.)-20141030
-				//	m_pMpe->Write(_T("MB440101"), 0);		// 마킹부 Feeding완료
-
 				m_bEng2dSt = TRUE;
 				m_nEng2dStAuto = ENG_2D_ST;
-				
-				if (m_pEngrave)
-				{
-					pDoc->BtnStatus.EngAuto.Read2dSt = FALSE;
-					m_pEngrave->SwEngAuto2dReadSt(FALSE);
-					Sleep(100);
-				}
+				pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeq2dReadSt, TRUE);
 			}
-			else if(!pDoc->BtnStatus.EngAuto.Read2dSt && pDoc->BtnStatus.EngAuto.Read2dStF)
+			else if (!pDoc->BtnStatus.EngAuto.IsRead2dSt && pDoc->BtnStatus.EngAuto.Read2dStF)
+			{
 				pDoc->BtnStatus.EngAuto.Read2dStF = FALSE;
+				pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeq2dReadSt, FALSE);
+			}
 		}
 	}
 }
+
+//void CGvisR2R_LaserView::DoAtuoGetEngStSignal()
+//{
+//	if (!m_bEngSt)
+//	{
+//		if (IsRun())
+//		{
+//			if ((pDoc->BtnStatus.EngAuto.MkSt || m_bMkStSw) && !pDoc->BtnStatus.EngAuto.MkStF)  // AlignTest		// 마킹시작(PC가 확인하고 Reset시킴.)-20141029
+//			{
+//				m_bEngStSw = FALSE;
+//				pDoc->BtnStatus.EngAuto.MkStF = TRUE;
+//
+//				//m_pMpe->Write(_T("MB440110"), 0);			// 마킹시작(PC가 확인하고 Reset시킴.)-20141029
+//				//if (pDoc->m_pMpeSignal[0] & (0x01 << 1))	// 마킹부 Feeding완료(PLC가 On시키고 PC가 확인하고 Reset시킴.)-20141030
+//				//	m_pMpe->Write(_T("MB440101"), 0);		// 마킹부 Feeding완료
+//
+//				m_bEngSt = TRUE;
+//				m_nEngStAuto = ENG_ST;
+//				
+//				if (m_pEngrave)
+//				{
+//					pDoc->BtnStatus.EngAuto.MkSt = FALSE;
+//					m_pEngrave->SwEngAutoMkSt(FALSE);
+//					Sleep(100);
+//				}
+//			}
+//			else if (!pDoc->BtnStatus.EngAuto.MkSt && pDoc->BtnStatus.EngAuto.MkStF)
+//				pDoc->BtnStatus.EngAuto.MkStF = FALSE;
+//		}
+//	}
+//}
+
+//void CGvisR2R_LaserView::DoAtuoGet2dReadStSignal()
+//{
+//	if (!m_bEng2dSt)
+//	{
+//		if (IsRun())
+//		{
+//			if ((pDoc->BtnStatus.EngAuto.Read2dSt || m_bMkStSw) && !pDoc->BtnStatus.EngAuto.Read2dStF)  // 2D(GUI) Reading 동작 Start신호(PLC On->PC Off)
+//			{
+//				m_bEng2dStSw = FALSE;
+//				pDoc->BtnStatus.EngAuto.Read2dStF = TRUE;
+//
+//				//m_pMpe->Write(_T("MB440110"), 0);			// 마킹시작(PC가 확인하고 Reset시킴.)-20141029
+//				//if (pDoc->m_pMpeSignal[0] & (0x01 << 1))	// 마킹부 Feeding완료(PLC가 On시키고 PC가 확인하고 Reset시킴.)-20141030
+//				//	m_pMpe->Write(_T("MB440101"), 0);		// 마킹부 Feeding완료
+//
+//				m_bEng2dSt = TRUE;
+//				m_nEng2dStAuto = ENG_2D_ST;
+//				
+//				if (m_pEngrave)
+//				{
+//					pDoc->BtnStatus.EngAuto.Read2dSt = FALSE;
+//					m_pEngrave->SwEngAuto2dReadSt(FALSE);
+//					Sleep(100);
+//				}
+//			}
+//			else if(!pDoc->BtnStatus.EngAuto.Read2dSt && pDoc->BtnStatus.EngAuto.Read2dStF)
+//				pDoc->BtnStatus.EngAuto.Read2dStF = FALSE;
+//		}
+//	}
+//}
 
 void CGvisR2R_LaserView::DoAuto2dReading()
 {
@@ -15182,15 +15234,19 @@ void CGvisR2R_LaserView::Eng1PtReady()
 			}
 			break;
 		case ENG_ST + 1:
-			if (m_pEngrave)
-			{
-				m_pEngrave->SwEngAutoOnMking(TRUE);
-				Sleep(100);
-			}
+			//if (m_pEngrave)
+			//{
+			//	m_pEngrave->SwEngAutoOnMking(TRUE);
+			//	Sleep(100);
+			//}
+			pDoc->BtnStatus.EngAuto.IsOnMking = FALSE;
+			pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeqOnMkIng, TRUE);
+
 			m_nEngStAuto = ENG_ST + (Mk1PtIdx::Start);
 			break;
 		case ENG_ST + (Mk1PtIdx::Start) :	// 2
-			m_nEngStAuto++;
+			if(pDoc->BtnStatus.EngAuto.IsOnMking)
+				m_nEngStAuto++;
 			break;
 		case ENG_ST + (Mk1PtIdx::Start) + 1:
 			m_nEngStAuto = ENG_ST + (Mk1PtIdx::InitMk);			// InitMk()
@@ -15381,22 +15437,29 @@ void CGvisR2R_LaserView::Eng1PtDoMarking()
 		case ENG_ST + (Mk1PtIdx::DoneMk) :
 			if (IsRun())
 			{
-				m_pEngrave->SwEngAutoOnMking(FALSE);
-				Sleep(100);
+				//m_pEngrave->SwEngAutoOnMking(FALSE);
+				//Sleep(100);
+				pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeqOnMkIng, FALSE);
 				m_nEngStAuto++;
 			}
 			break;
 		case ENG_ST + (Mk1PtIdx::DoneMk) + 1:
-			if (m_pEngrave)
-			{
-				m_pEngrave->SwEngAutoMkDone(TRUE);
-				pDoc->BtnStatus.EngAuto.MkStF = FALSE;
-				Sleep(100);
-			}
+			//if (m_pEngrave)
+			//{
+			//	m_pEngrave->SwEngAutoMkDone(TRUE);
+			//	pDoc->BtnStatus.EngAuto.MkStF = FALSE;
+			//	Sleep(100);
+			//}
+			pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeqMkDone, TRUE);
 			m_nEngStAuto++;
 			break;
 		case ENG_ST + (Mk1PtIdx::DoneMk) + 2:
-			m_bEngSt = FALSE;
+			if (pDoc->BtnStatus.EngAuto.IsMkDone)
+			{
+				m_nEngStAuto = 0;
+				m_bEngSt = FALSE;
+				pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeqMkDone, FALSE);
+			}
 			break;
 		}
 	}
@@ -15472,11 +15535,12 @@ void CGvisR2R_LaserView::Eng2dRead()
 			}
 			break;
 		case ENG_2D_ST + 1:
-			if (m_pEngrave)
-			{
-				m_pEngrave->SwEngAutoOnReading2d(TRUE);
-				Sleep(100);
-			}
+			//if (m_pEngrave)
+			//{
+			//	m_pEngrave->SwEngAutoOnReading2d(TRUE);
+			//	Sleep(100);
+			//}
+			pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeqOnReading2d, TRUE);
 			m_nEng2dStAuto = ENG_2D_ST + (Read2dIdx::Start);
 			break;
 		case ENG_2D_ST + (Read2dIdx::Start) :	// 2
@@ -15501,21 +15565,28 @@ void CGvisR2R_LaserView::Eng2dRead()
 			if (IsRun())
 			{
 				m_nEng2dStAuto++;
-				m_pEngrave->SwEngAutoOnReading2d(FALSE);
-				Sleep(100);
+				pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeqOnReading2d, FALSE);
+				//m_pEngrave->SwEngAutoOnReading2d(FALSE);
+				//Sleep(100);
 			}
 			break;
 		case ENG_2D_ST + (Read2dIdx::DoneRead) + 1:
-			if (m_pEngrave)
-			{
-				pDoc->BtnStatus.EngAuto.Read2dStF = FALSE;
-				m_pEngrave->SwEngAuto2dReadDone(TRUE);
-				Sleep(100);
-			}
+			//if (m_pEngrave)
+			//{
+			//	pDoc->BtnStatus.EngAuto.Read2dStF = FALSE;
+			//	m_pEngrave->SwEngAuto2dReadDone(TRUE);
+			//	Sleep(100);
+			//}
+			pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeq2dReadDone, TRUE);
 			m_nEng2dStAuto++;
 			break;
 		case ENG_2D_ST + (Read2dIdx::DoneRead) + 2:
-			m_bEng2dSt = FALSE;
+			if (pDoc->BtnStatus.EngAuto.IsRead2dDone)
+			{
+				m_nEng2dStAuto = 0;
+				m_bEng2dSt = FALSE;
+				pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeq2dReadDone, FALSE);
+			}
 			break;
 		}
 	}
@@ -15566,5 +15637,27 @@ void CGvisR2R_LaserView::SetMyMsgNo()
 	}
 }
 
+void CGvisR2R_LaserView::InitAutoEngSignal()
+{
+	pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeqMkSt, FALSE);
+	pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeq2dReadSt, FALSE);
+	pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeqOnMkIng, FALSE);
+	pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeqMkDone, FALSE);
+	pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeqOnReading2d, FALSE);
+	pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeq2dReadDone, FALSE);
+}
+
+BOOL CGvisR2R_LaserView::GetCurrentInfoSignal()
+{
+	pDoc->BtnStatus.EngAuto.IsInit = pDoc->GetCurrentInfoSignal(_SigInx::_EngAutoInit);
+	pDoc->BtnStatus.EngAuto.IsMkSt = pDoc->GetCurrentInfoSignal(_SigInx::_EngAutoSeqMkSt);
+	pDoc->BtnStatus.EngAuto.IsOnMking = pDoc->GetCurrentInfoSignal(_SigInx::_EngAutoSeqOnMkIng);
+	pDoc->BtnStatus.EngAuto.IsMkDone = pDoc->GetCurrentInfoSignal(_SigInx::_EngAutoSeqMkDone);
+	pDoc->BtnStatus.EngAuto.IsRead2dSt = pDoc->GetCurrentInfoSignal(_SigInx::_EngAutoSeq2dReadSt);
+	pDoc->BtnStatus.EngAuto.IsOnRead2d = pDoc->GetCurrentInfoSignal(_SigInx::_EngAutoSeqOnReading2d);
+	pDoc->BtnStatus.EngAuto.IsRead2dDone = pDoc->GetCurrentInfoSignal(_SigInx::_EngAutoSeq2dReadDone);
+
+	return TRUE;
+}
 
 

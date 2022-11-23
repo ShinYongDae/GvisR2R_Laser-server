@@ -1603,12 +1603,12 @@ void CDlgMenu02::OnBtnPinSave()
 //// 		}
 // 	}
 
-
+#ifdef USE_VISION
 	if (pView->m_pVision[0]->UploadPinImg())
 		pDoc->m_bUploadPinImg = TRUE;
 	else
 		pView->MsgBox(_T("카메라 정렬이미지 저장에 실패하였습니다."), 0, MB_OK);
-
+#endif
 }
 
 

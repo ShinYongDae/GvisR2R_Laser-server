@@ -75,7 +75,8 @@ void CMdx2500::StopClient()
 {
 	if (m_pClient)
 	{
-		if (!m_pClient->Stop()) // Called Destroy Function.
+		m_pClient->Stop();
+		//if (!m_pClient->Stop()) // Called Destroy Function.
 		{
 			Sleep(30);
 			delete m_pClient;

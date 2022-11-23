@@ -937,6 +937,7 @@ public:
 	BOOL IsPinPos0();
 
 	void InitAutoEng();
+	void InitAutoEngSignal();
 	void MarkingWith1PointAlign();
 
 	void Eng1PtReady();
@@ -965,6 +966,7 @@ public:
 	BOOL SetEngOffset(CfPoint &OfSt);
 	void EngStop(BOOL bOn);
 	BOOL IsEngStop();
+	BOOL GetCurrentInfoSignal();
 
 // 재정의입니다.
 public:

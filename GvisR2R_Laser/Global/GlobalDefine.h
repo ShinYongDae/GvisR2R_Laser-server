@@ -52,24 +52,25 @@
 #else
 	#define USE_CAM_MASTER
 	#define	USE_NMC
-	#define	USE_MIL
 	#define	USE_LIGHT
+
+	#define	USE_MIL
+	#define	USE_VISION
+	#define	USE_IRAYPLE
+/*
+*/
+	#define	USE_TCPIP
+	#define	USE_SR1000W
+	#define	USE_MDX2500
+	#define	USE_ENGRAVE
+
+	//#define	USE_IDS
+	//#define	USE_SONY
+	//#define	USE_CREVIS
 	//#define	USE_XMP
 	//#define	USE_MPE
 	//#define	USE_SMAC
 	//#define	USE_FLUCK
-
-	#define USE_VISION
-	#define	USE_IRAYPLE
-
- 	#define	USE_TCPIP
-	#define USE_ENGRAVE
-	#define	USE_MDX2500
-	#define	USE_SR1000W
-
-	//#define	USE_IDS
-	//#define	USE_SONY
-	//#define USE_CREVIS
 
 	#define PATH_PIN_IMG			_T("C:\\R2RSet\\Pin\\Pin.TIF")
 	#define PATH_ALIGN0_IMG			_T("C:\\R2RSet\\Align\\Align0.TIF")
@@ -619,7 +620,7 @@ struct stSystem
 	CString sPathVrsShareDn, sPathVrsBufDn;
 	CString sPathVsShareDn;
 
-	CString sPathEng, sPathEngCurrInfo, sPathEngOffset;
+	CString sPathEng, sPathEngCurrInfo, sPathEngOffset, sPathMkCurrInfo;
 
 
 	CString sPathOldFile;
@@ -652,7 +653,7 @@ struct stSystem
 		sPathVrsShareDn = _T(""); sPathVrsBufDn = _T("");
 		sPathVsShareDn = _T("");
 
-		sPathEng = _T(""); sPathEngCurrInfo = _T(""); sPathEngOffset = _T("");
+		sPathEng = _T(""); sPathEngCurrInfo = _T(""); sPathEngOffset = _T(""); sPathMkCurrInfo = _T("");
 
 		sPathOldFile = _T("");
 		bSaveLog = FALSE;
