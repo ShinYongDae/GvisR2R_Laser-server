@@ -963,6 +963,7 @@ public:
 
 	void SetMyMsgYes();
 	void SetMyMsgNo();
+	void SetMyMsgOk();
 
 	BOOL SetEngOffset(CfPoint &OfSt);
 	void EngStop(BOOL bOn);

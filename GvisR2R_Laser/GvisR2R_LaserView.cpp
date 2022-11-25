@@ -4061,20 +4061,20 @@ void CGvisR2R_LaserView::DoIO()
 
 	//DoInterlock();
 
-	//MonPlcAlm();
+	MonPlcAlm();
 	MonDispMain();
 
-	//if (m_bCycleStop)
-	//{
-	//	m_bCycleStop = FALSE;
-	//	//Stop();
-	//	TowerLamp(RGB_YELLOW, TRUE);
-	//	Buzzer(TRUE);
-	//	//MyMsgBox(pDoc->m_sAlmMsg);
-	//	MsgBox(pDoc->m_sAlmMsg);
-	//	pDoc->m_sAlmMsg = _T("");
-	//	pDoc->m_sPrevAlmMsg = _T("");
-	//}
+	if (m_bCycleStop)
+	{
+		m_bCycleStop = FALSE;
+		//Stop();
+		//TowerLamp(RGB_YELLOW, TRUE);
+		//Buzzer(TRUE);
+		//MyMsgBox(pDoc->m_sAlmMsg);
+		MsgBox(pDoc->m_sAlmMsg);
+		pDoc->m_sAlmMsg = _T("");
+		pDoc->m_sPrevAlmMsg = _T("");
+	}
 
 	//if (pDoc->Status.bManual)
 	//{
@@ -13680,14 +13680,14 @@ void CGvisR2R_LaserView::MonPlcAlm()
 	//else
 	//	PlcAlm(bMon, bClr);
 
-	//if (!pDoc->m_sAlmMsg.IsEmpty())
-	//{
-	//	if (pDoc->m_sAlmMsg != pDoc->m_sPrevAlmMsg)
-	//	{
-	//		pDoc->m_sPrevAlmMsg = pDoc->m_sAlmMsg;
-	//		CycleStop();
-	//	}
-	//}
+	if (!pDoc->m_sAlmMsg.IsEmpty())
+	{
+		if (pDoc->m_sAlmMsg != pDoc->m_sPrevAlmMsg)
+		{
+			pDoc->m_sPrevAlmMsg = pDoc->m_sAlmMsg;
+			CycleStop();
+		}
+	}
 }
 
 void CGvisR2R_LaserView::PlcAlm(BOOL bMon, BOOL bClr)
@@ -13774,6 +13774,7 @@ void CGvisR2R_LaserView::ClrAlarm()
 	if (!pDoc->m_sAlmMsg.IsEmpty())
 	{
 		pDoc->m_sAlmMsg = _T("");
+		pDoc->m_sIsAlmMsg = _T("");
 		pDoc->m_sPrevAlmMsg = _T("");
 	}
 }
@@ -15078,7 +15079,7 @@ void CGvisR2R_LaserView::DoAtuoGetEngStSignal()
 {
 	if (!m_bEngSt)
 	{
-		if (IsRun())
+		//if (IsRun())
 		{
 			if ((pDoc->BtnStatus.EngAuto.IsMkSt || m_bMkStSw) && !pDoc->BtnStatus.EngAuto.MkStF)  // AlignTest		// 마킹시작(PC가 확인하고 Reset시킴.)-20141029
 			{
@@ -15108,7 +15109,7 @@ void CGvisR2R_LaserView::DoAtuoGet2dReadStSignal()
 {
 	if (!m_bEng2dSt)
 	{
-		if (IsRun())
+		//if (IsRun())
 		{
 			if ((pDoc->BtnStatus.EngAuto.IsRead2dSt || m_bMkStSw) && !pDoc->BtnStatus.EngAuto.Read2dStF)  // 2D(GUI) Reading 동작 Start신호(PLC On->PC Off)
 			{
@@ -15239,7 +15240,7 @@ void CGvisR2R_LaserView::Eng1PtReady()
 		switch (m_nEngStAuto)
 		{
 		case ENG_ST:	// PLC MK 신호 확인	
-			if (IsRun())
+			//if (IsRun())
 			{
 				m_nEngStAuto++;
 			}
@@ -15286,7 +15287,7 @@ void CGvisR2R_LaserView::Eng1PtInit()
 			break;
 
 		case ENG_ST + (Mk1PtIdx::InitMk) + 1:
-			if (IsRun())
+			//if (IsRun())
 				m_nEngStAuto = ENG_ST + (Mk1PtIdx::Move0Cam0);	// Move - Cam1 - Pt0
 				//m_nEngStAuto = ENG_ST + (Mk1PtIdx::DoMk);
 			break;
@@ -15308,7 +15309,7 @@ void CGvisR2R_LaserView::Eng1PtAlignPt0()
 				m_nEngStAuto++;
 			break;
 		case ENG_ST + (Mk1PtIdx::Move0Cam0) + 1:
-			if (IsRun())
+			//if (IsRun())
 				m_nEngStAuto++;
 			break;
 		case ENG_ST + (Mk1PtIdx::Move0Cam0) + 2:
@@ -15416,7 +15417,7 @@ void CGvisR2R_LaserView::Eng1PtAlignPt0()
 
 			break;
 		case ENG_ST + (Mk1PtIdx::Align0_0) + 2:
-			if (IsRun())
+			//if (IsRun())
 				m_nEngStAuto = ENG_ST + (Mk1PtIdx::DoMk);
 			break;
 		}
@@ -15452,7 +15453,7 @@ void CGvisR2R_LaserView::Eng1PtDoMarking()
 				m_nEngStAuto = ENG_ST + (Mk1PtIdx::DoneMk);	// Mk 마킹 완료
 			break;
 		case ENG_ST + (Mk1PtIdx::DoneMk) :
-			if (IsRun())
+			//if (IsRun())
 			{
 				//m_pEngrave->SwEngAutoOnMking(FALSE);
 				//Sleep(100);
@@ -15590,7 +15591,7 @@ void CGvisR2R_LaserView::Eng2dRead()
 		switch (m_nEng2dStAuto)
 		{
 		case ENG_2D_ST:	// PLC MK 신호 확인	
-			if (IsRun())
+			//if (IsRun())
 			{
 				m_nEng2dStAuto++;
 			}
@@ -15625,7 +15626,7 @@ void CGvisR2R_LaserView::Eng2dRead()
 				m_nEng2dStAuto = ENG_2D_ST + (Read2dIdx::DoneRead);	// 2D Reading 완료
 			break;
 		case ENG_2D_ST + (Read2dIdx::DoneRead) :
-			if (IsRun())
+			//if (IsRun())
 			{
 				m_nEng2dStAuto++;
 				pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeqOnReading2d, FALSE);
@@ -15704,6 +15705,17 @@ void CGvisR2R_LaserView::SetMyMsgNo()
 		if (m_pDlgMyMsg->m_pDlgMyMsgSub01)
 		{
 			((CDlgMyMsgSub01*)(m_pDlgMyMsg->m_pDlgMyMsgSub01))->ClickNo();
+		}
+	}
+}
+
+void CGvisR2R_LaserView::SetMyMsgOk()
+{
+	if (m_pDlgMyMsg)
+	{
+		if (m_pDlgMyMsg->m_pDlgMyMsgSub02)
+		{
+			((CDlgMyMsgSub02*)(m_pDlgMyMsg->m_pDlgMyMsgSub02))->ClickOk();
 		}
 	}
 }

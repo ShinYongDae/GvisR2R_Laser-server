@@ -103,6 +103,7 @@ public:
 	void GetMkInfo(SOCKET_DATA SockData);
 	void GetMkInfoLf(SOCKET_DATA SockData);
 	void GetMkInfoRt(SOCKET_DATA SockData);
+	void GetAlarmMsg(SOCKET_DATA SockData);
 
 	// SetSysSignal
 	BOOL SetSysSignal();
@@ -546,8 +547,10 @@ public:
 	// DlgMyMsg
 	void SetMyMsgYes();
 	void SetMyMsgNo();
+	void SetMyMsgOk();
 	void IsSetMyMsgYes();
 	void IsSetMyMsgNo();
+	void IsSetMyMsgOk();
 
 	// Engrave Auto Sequence
 	void SwEngAutoInit(BOOL bOn); // 각인부 초기화(Reset)
@@ -566,6 +569,10 @@ public:
 	void IsSwEngAuto2dReadDone(BOOL bOn);
 
 	// End Switch
+
+	// Alarm
+	void SetAlarm(CString sMsg);
+	void IsSetAlarm(CString sMsg);
 
 protected:
 	afx_msg LRESULT wmAcceptReceived(WPARAM wParam, LPARAM lParam);

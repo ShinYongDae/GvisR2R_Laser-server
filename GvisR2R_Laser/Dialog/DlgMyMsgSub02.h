@@ -67,6 +67,7 @@ public:
 	void SetHwnd(HWND hParentWnd);
 	afx_msg LRESULT OnMyMsg02(WPARAM wPara, LPARAM lPara);
 	BOOL CloseMsgDlg();
+	void ClickOk();
 
 // Dialog Data
 	//{{AFX_DATA(CDlgMyMsgSub02)

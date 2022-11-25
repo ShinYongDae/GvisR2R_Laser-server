@@ -124,6 +124,7 @@ CGvisR2R_LaserDoc::CGvisR2R_LaserDoc()
 
 	m_sPassword = _T("");
 	m_sAlmMsg = _T("");
+	m_sIsAlmMsg = _T("");
 	m_sPrevAlmMsg = _T("");
 
 	m_nPrevSerial = 0;
@@ -192,10 +193,6 @@ CGvisR2R_LaserDoc::CGvisR2R_LaserDoc()
 	m_dRTRShiftVal = 0.0;
 	m_dShiftAdjustRatio = 0.0;
 
-	m_nOrderNum = 0;
-	m_nShotNum = 0;
-	m_sOrderNum = _T("");
-	m_sShotNum = _T("");
 	m_nTestOrderNum = 0;
 	m_nTestShotNum = 0;
 	m_sTestOrderNum = _T("");
@@ -223,6 +220,11 @@ CGvisR2R_LaserDoc::CGvisR2R_LaserDoc()
 
 	m_dMkBuffCurrPos = 0.0;
 	m_bUploadPinImg = FALSE;
+
+	m_nOrderNum = 0;
+	m_sOrderNum.Format(_T("%09d"), m_nOrderNum);
+	m_nShotNum = GetCurrentInfoEngShotNum();
+	m_sShotNum.Format(_T("%03d"), m_nShotNum);
 }
 
 CGvisR2R_LaserDoc::~CGvisR2R_LaserDoc()
@@ -8697,6 +8699,20 @@ void CGvisR2R_LaserDoc::SetCurrentInfoSignal(int nIdxSig, BOOL bOn)
 	sIdx.Format(_T("%d"), nIdxSig);
 	sData.Format(_T("%d"), bOn ? 1 : 0);
 	::WritePrivateProfileString(_T("Signal"), sIdx, sData, sPath);
+}
+
+int CGvisR2R_LaserDoc::GetCurrentInfoEngShotNum()
+{
+	CString sData, sIdx, sPath = WorkingInfo.System.sPathEngCurrInfo;
+	TCHAR szData[200];
+
+	if (sPath.IsEmpty())
+		return 0;
+
+	if (0 < ::GetPrivateProfileString(_T("Work"), _T("Shot Num"), NULL, szData, sizeof(szData), sPath))
+		return _ttoi(szData);
+
+	return 0;
 }
 
 void CGvisR2R_LaserDoc::SetCurrentInfoEngShotNum(int nSerial)

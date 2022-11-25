@@ -6,12 +6,20 @@
 #include "DlgMyMsg.h"
 #include "DlgMyMsgSub02.h"
 
+#include "../MainFrm.h"
+#include "../GvisR2R_LaserDoc.h"
+#include "../GvisR2R_LaserView.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
+
+extern CMainFrame* pFrm;
+extern CGvisR2R_LaserDoc* pDoc;
+extern CGvisR2R_LaserView* pView;
 
 /////////////////////////////////////////////////////////////////////////////
 // CDlgMyMsgSub02 dialog
@@ -137,7 +145,9 @@ LRESULT CDlgMyMsgSub02::OnMyBtnDown(WPARAM wPara, LPARAM lPara)
 	int nCtrlID = (int)lPara;
 	switch(nCtrlID)
 	{
-	case IDC_BTN_00: // Cancel...
+	case IDC_BTN_00: // Ok...
+		if (pView && pView->m_pEngrave)
+			pView->m_pEngrave->SetMyMsgOk();	//_SigInx::_MyMsgYes
 		break;
 	}
 	return 0L;
@@ -150,15 +160,20 @@ LRESULT CDlgMyMsgSub02::OnMyBtnUp(WPARAM wPara, LPARAM lPara)
 	switch(nCtrlID)
 	{
 	case IDC_BTN_00:
-		SetRtnVal(IDOK);
-		if(myBtn00.m_hParentWnd)
-			myBtn00.Refresh();
-		OnOK();
+		ClickOk();
 		break;
 	}
 
 	::PostMessage(m_hParentWnd, WM_MYMSG_EXIT, (WPARAM)NULL, (LPARAM)NULL);
 	return 0L;
+}
+
+void CDlgMyMsgSub02::ClickOk()
+{
+	SetRtnVal(IDOK);
+	if (myBtn00.m_hParentWnd)
+		myBtn00.Refresh();
+	OnOK();
 }
 
 void CDlgMyMsgSub02::OnShowWindow(BOOL bShow, UINT nStatus) 

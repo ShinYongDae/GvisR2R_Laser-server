@@ -154,3 +154,7 @@ typedef enum _stStatusInx {
 	_IsStErr, _IsStReady, _IsStStop, _IsStRun, _IsStInitRun, _IsStSglSample, _IsStSglTest, _IsStDblSample, _IsStDblTest,
 }_StatusInx;
 
+typedef enum _stAlarmInx {
+	_Alarm = 0, _IsAlarm,
+}_AlarmInx;
+
