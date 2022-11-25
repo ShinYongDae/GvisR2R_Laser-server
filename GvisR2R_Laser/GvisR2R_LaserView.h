@@ -950,6 +950,7 @@ public:
 	void AdjPinPosEng();
 	BOOL OnePointAlign0(int nPos);
 	BOOL SetMk(BOOL bRun = TRUE);
+	BOOL SetMdxLotAndShotNum(CString sLot, int nSerial);
 	BOOL IsMkDone();
 
 	BOOL Set2dRead(BOOL bRun = TRUE);
@@ -967,6 +968,10 @@ public:
 	void EngStop(BOOL bOn);
 	BOOL IsEngStop();
 	BOOL GetCurrentInfoSignal();
+	void SetLastSerialEng(int nSerial);
+	CString GetCurrentInfoBufUp();
+	CString GetCurrentInfoBufDn();
+	void SetCurrentInfoEngShotNum(int nSerial);
 
 // 재정의입니다.
 public:

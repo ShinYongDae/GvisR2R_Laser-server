@@ -1546,8 +1546,11 @@ void CDlgInfo::ShowDlg(int nID)
 	{
 	case IDD_DLG_UTIL_02:
 		GetDlgItem(IDC_STC_17)->GetWindowText(sLot);
+
 		CDlgUtil02 dlg;
 		dlg.DoModal();
+		pDoc->m_sOrderNum = pDoc->m_sLotNum;
+
 		if (sLot != pDoc->m_sLotNum)
 		{
 			GetDlgItem(IDC_STC_17)->SetWindowText(pDoc->m_sLotNum); // IDC_LOT_EDIT

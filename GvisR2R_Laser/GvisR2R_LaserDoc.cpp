@@ -951,6 +951,14 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.System.sPathMkCurrInfo = CString(_T(""));
 	}
 
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("PunchingCurrentInfoBufPath"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.System.sPathMkCurrInfoBuf = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("PunchingCurrentInfoPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathMkCurrInfoBuf = CString(_T(""));
+	}
+
 	if (0 < ::GetPrivateProfileString(_T("System"), _T("EngraveCurrentOffsetInfoPath"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.System.sPathEngOffset = CString(szData);
 	else
@@ -8591,6 +8599,9 @@ void CGvisR2R_LaserDoc::CheckCurrentInfo()
 	CString strTemp, strFolder;
 	TCHAR szData[512];
 
+	if (m_strSharedDir.IsEmpty())
+		return;
+
 	strFolder.Format(_T("%sCurrentInfo.ini"), m_strSharedDir);
 
 	if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Process Unit Code"), NULL, szData, sizeof(szData), strFolder))
@@ -8616,6 +8627,9 @@ void CGvisR2R_LaserDoc::WriteFdOffset(double dOffsetX, double dOffsetY)
 {
 	// Write Feeding Offset data....
 	CString strMenu, strTitle, strData, strPath;
+
+	if (m_strSharedDir.IsEmpty())
+		return;
 
 	strPath.Format(_T("%sOffsetData.txt"), m_strSharedDir);
 	strTitle.Format(_T("OFFSET"));
@@ -8651,6 +8665,9 @@ BOOL CGvisR2R_LaserDoc::SetEngOffset(CfPoint &OfSt)
 	double dOffX = 0.0;
 	double dOffY = 0.0;
 
+	if (sPath.IsEmpty())
+		return FALSE;
+
 	if (OfSt.x - pView->m_pMotion->m_dPinPosX[0] > -3.0 && OfSt.x - pView->m_pMotion->m_dPinPosX[0] < 3.0)
 		dOffX = OfSt.x - pView->m_pMotion->m_dPinPosX[0];
 	if (OfSt.y - pView->m_pMotion->m_dPinPosY[0] > -3.0 && OfSt.y - pView->m_pMotion->m_dPinPosY[0] < 3.0)
@@ -8674,9 +8691,23 @@ void CGvisR2R_LaserDoc::SetCurrentInfoSignal(int nIdxSig, BOOL bOn)
 {
 	CString sData, sIdx, sPath = WorkingInfo.System.sPathEngCurrInfo;
 
+	if (sPath.IsEmpty())
+		return;
+
 	sIdx.Format(_T("%d"), nIdxSig);
 	sData.Format(_T("%d"), bOn ? 1 : 0);
 	::WritePrivateProfileString(_T("Signal"), sIdx, sData, sPath);
+}
+
+void CGvisR2R_LaserDoc::SetCurrentInfoEngShotNum(int nSerial)
+{
+	CString sData, sIdx, sPath = WorkingInfo.System.sPathEngCurrInfo;
+
+	if (sPath.IsEmpty())
+		return;
+
+	sData.Format(_T("%d"), nSerial);
+	::WritePrivateProfileString(_T("Work"), _T("Shot Num"), sData, sPath);
 }
 
 
@@ -8685,9 +8716,78 @@ BOOL CGvisR2R_LaserDoc::GetCurrentInfoSignal(int nIdxSig)
 	TCHAR szData[200];
 	CString sData, sIdx, sPath = WorkingInfo.System.sPathMkCurrInfo;
 
+	if (sPath.IsEmpty())
+		return FALSE;
+
 	sIdx.Format(_T("%d"), nIdxSig);
 	if (0 < ::GetPrivateProfileString(_T("Signal"), sIdx, NULL, szData, sizeof(szData), sPath))
 		return (_ttoi(szData) > 0 ? TRUE : FALSE);
 
 	return FALSE;
+}
+
+CString CGvisR2R_LaserDoc::GetCurrentInfoBufUp()
+{
+	CString sPath = WorkingInfo.System.sPathMkCurrInfoBuf;
+	TCHAR szData[512];
+	CString sIdx = _T("");
+	int i = 0;
+	CString str = _T(""), sTemp = _T("");;
+	str = _T("UB: ");
+
+	if (sPath.IsEmpty())
+		return str;
+
+	int nUpTot = 0, nIdx = 0;
+
+	if (0 < ::GetPrivateProfileString(_T("Up"), _T("Total"), NULL, szData, sizeof(szData), sPath))
+		nUpTot = _ttoi(szData);
+
+	for (i = 0; i < nUpTot; i++)
+	{
+		sIdx.Format(_T("%d"), i);
+		if (0 < ::GetPrivateProfileString(_T("Up"), sIdx, NULL, szData, sizeof(szData), sPath))
+			nIdx = _ttoi(szData);
+
+		if (i == nUpTot - 1)
+			sTemp.Format(_T("%d"), nIdx);
+		else
+			sTemp.Format(_T("%d,"), nIdx);
+		str += sTemp;
+	}
+
+	return str;
+}
+
+CString CGvisR2R_LaserDoc::GetCurrentInfoBufDn()
+{
+	CString sPath = WorkingInfo.System.sPathMkCurrInfoBuf;
+	TCHAR szData[512];
+	CString sIdx = _T("");
+	int i = 0;
+	CString str = _T(""), sTemp = _T("");;
+	str = _T("DN: ");
+
+	if (sPath.IsEmpty())
+		return str;
+
+	int nUpTot = 0, nIdx = 0;
+
+	if (0 < ::GetPrivateProfileString(_T("Dn"), _T("Total"), NULL, szData, sizeof(szData), sPath))
+		nUpTot = _ttoi(szData);
+
+	for (i = 0; i < nUpTot; i++)
+	{
+		sIdx.Format(_T("%d"), i);
+		if (0 < ::GetPrivateProfileString(_T("Dn"), sIdx, NULL, szData, sizeof(szData), sPath))
+			nIdx = _ttoi(szData);
+
+		if (i == nUpTot - 1)
+			sTemp.Format(_T("%d"), nIdx);
+		else
+			sTemp.Format(_T("%d,"), nIdx);
+		str += sTemp;
+	}
+
+	return str;
 }

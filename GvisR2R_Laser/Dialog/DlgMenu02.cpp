@@ -269,6 +269,12 @@ void CDlgMenu02::LoadImg()
 	m_bLoadImg = TRUE;
 
 	int i;
+	for (i = 0; i < MAX_MENU02_LABEL; i++)
+	{
+		myLabel[i].LoadImage(ICO_LED_GRY_DlgFrameHigh, LBL_IMG_UP, CSize(28, 28), LBL_POS_CENTER);
+		myLabel[i].LoadImage(ICO_LED_BLU_DlgFrameHigh, LBL_IMG_DN, CSize(28, 28), LBL_POS_CENTER);
+	}
+
 	for(i=0; i<MAX_MENU02_BTN; i++)
 	{
 		if(i==1)
@@ -326,6 +332,10 @@ void CDlgMenu02::DelImg()
 	m_bLoadImg = FALSE;
 
 	int i;
+
+	for (i = 0; i < MAX_MENU02_LABEL; i++)
+		myLabel[i].DelImgList();
+
 	for(i=0; i<MAX_MENU02_BTN; i++)
 	{
 		myBtn[i].DelImgList();
@@ -372,6 +382,7 @@ BOOL CDlgMenu02::OnInitDialog()
 		pView->m_pVision[0]->DrawCenterMark();
 	}
 #endif
+	InitLabel();
 	InitStatic();
 	InitBtn();
 	InitSlider();
@@ -396,6 +407,10 @@ BOOL CDlgMenu02::OnInitDialog()
 	GetDlgItem(IDC_STC_MK_POS2)->ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_CHK_MK_OFFSET_ST)->ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_CHK_MK_OFFSET_ED)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_BTN_HOME_MOVE)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_BTN_START_SAVE)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_BTN_ALIGN)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_BTN_ALIGN_MOVE)->ShowWindow(SW_HIDE);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -420,6 +435,26 @@ void CDlgMenu02::InitCadImg()
 		pView->m_pVision[0]->SetDispAxisPos();
 	}
 #endif
+}
+
+void CDlgMenu02::InitLabel()
+{
+	myLabel[0].SubclassDlgItem(IDC_STC_SIG1, this);
+	myLabel[1].SubclassDlgItem(IDC_STC_SIG2, this);
+	myLabel[2].SubclassDlgItem(IDC_STC_SIG3, this);
+	myLabel[3].SubclassDlgItem(IDC_STC_SIG4, this);
+	myLabel[4].SubclassDlgItem(IDC_STC_SIG5, this);
+	myLabel[5].SubclassDlgItem(IDC_STC_SIG6, this);
+	myLabel[6].SubclassDlgItem(IDC_STC_SIG7, this);
+
+	for (int i = 0; i < MAX_MENU02_LABEL; i++)
+	{
+		myLabel[i].SetFontName(_T("Arial"));
+		myLabel[i].SetFontSize(18);
+		myLabel[i].SetFontBold(TRUE);
+		myLabel[i].SetTextColor(RGB_DARKRED);
+		myLabel[i].SetImageBk(LBL_IMG_UP);
+	}
 }
 
 void CDlgMenu02::InitSlider()
@@ -2501,7 +2536,7 @@ BOOL CDlgMenu02::PreTranslateMessage(MSG* pMsg)
 {
 	// TODO: Add your specialized code here and/or call the base class
 #ifdef USE_VISION
-	if(pView->m_pVision[0] && pView->m_pVision[1] && pView->m_pMotion)
+	if(pView->m_pVision[0] && pView->m_pMotion) //&& pView->m_pVision[1]
 	{
 		CString sMsg;
 		int nCamSzX, nCamSzY;
@@ -3629,4 +3664,12 @@ void CDlgMenu02::WaitResponse()
 void CDlgMenu02::UpdateData()
 {
 	Disp();
+}
+
+void CDlgMenu02::SetLed(int nIdx, BOOL bOn)
+{
+	if(bOn && myLabel[nIdx].GetImageBk() != LBL_IMG_DN)
+		myLabel[nIdx].SetImageBk(LBL_IMG_DN);
+	else if(!bOn && myLabel[nIdx].GetImageBk() != LBL_IMG_UP)
+		myLabel[nIdx].SetImageBk(LBL_IMG_UP);
 }

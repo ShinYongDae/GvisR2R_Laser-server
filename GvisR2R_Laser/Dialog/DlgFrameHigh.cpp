@@ -35,6 +35,8 @@ CDlgFrameHigh::CDlgFrameHigh(CWnd* pParent /*=NULL*/)
 	m_sStc[0] = _T("");
 	m_sStc[1] = _T("");
 	m_sStc[2] = _T("");
+	m_sStc[3] = _T("");
+	m_sStc[4] = _T("");
 	m_nMkLastShot = 0;
 	m_nAoiLastShot[0] = 0;
 	m_nAoiLastShot[1] = 0;
@@ -112,6 +114,7 @@ void CDlgFrameHigh::OnShowWindow(BOOL bShow, UINT nStatus)
 void CDlgFrameHigh::AtDlgShow()
 {
 	LoadImg();
+	myStc[6].SetText(pDoc->WorkingInfo.LastJob.sEngraveLastShot);
 }
 
 void CDlgFrameHigh::AtDlgHide()
@@ -650,9 +653,32 @@ void CDlgFrameHigh::SetEngraveLastShot(int nSerial)
 
 	CString str;
 	str.Format(_T("%d"), nSerial);
-	myStc[10].SetText(str);			// myStc[10].SubclassDlgItem(IDC_STC_0_10, this);	// LS-Value
+	myStc[6].SetText(str);			// myStc[10].SubclassDlgItem(IDC_STC_0_10, this);	// LS-Value
 
 	CString sPath = PATH_WORKING_INFO;
 	pDoc->WorkingInfo.LastJob.sEngraveLastShot = str;
 	::WritePrivateProfileString(_T("Last Job"), _T("Engrave Last Shot"), str, sPath);
 }
+
+
+BOOL CDlgFrameHigh::SetEngOffset(CfPoint &OfSt)
+{
+	double dOffX = 0.0;
+	double dOffY = 0.0;
+
+	if (OfSt.x - pView->m_pMotion->m_dPinPosX[0] > -3.0 && OfSt.x - pView->m_pMotion->m_dPinPosX[0] < 3.0)
+		dOffX = OfSt.x - pView->m_pMotion->m_dPinPosX[0];
+	if (OfSt.y - pView->m_pMotion->m_dPinPosY[0] > -3.0 && OfSt.y - pView->m_pMotion->m_dPinPosY[0] < 3.0)
+		dOffY = OfSt.y - pView->m_pMotion->m_dPinPosY[0];
+
+	CString str;
+	str.Format(_T("%.1f\r%.1f"), dOffY, dOffX);
+	if (str != m_sStc[4])
+	{
+		m_sStc[4] = str;
+		myStc[10].SetText(str);
+	}
+
+	return TRUE;
+}
+

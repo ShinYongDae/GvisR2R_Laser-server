@@ -391,6 +391,9 @@ public:
 
 	void SetCurrentInfoSignal(int nIdxSig, BOOL bOn);
 	BOOL GetCurrentInfoSignal(int nIdxSig);
+	CString GetCurrentInfoBufUp();
+	CString GetCurrentInfoBufDn();
+	void SetCurrentInfoEngShotNum(int nSerial);
 
 // 재정의입니다.
 public:

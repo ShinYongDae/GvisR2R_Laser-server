@@ -11,6 +11,7 @@
 #include "MyPic.h"
 #include "MyLabel.h"
 #include "MyStatic.h"
+#include "../Global/MyData.h"
 
 #define MAX_FRMHIGH_LABEL	3
 #define MAX_FRMHIGH_STC		11
@@ -29,7 +30,7 @@ class CDlgFrameHigh : public CDialog
 	CMyStatic myStc[MAX_FRMHIGH_STC];
 
 	BOOL m_bTIM_SIG_AOI;
-	CString m_sStc[3];
+	CString m_sStc[5];
 
 	void AtDlgShow();
 	void AtDlgHide();
@@ -64,6 +65,8 @@ public:
 	void SetDualTest(BOOL bOn=TRUE);
 
 	void SetEngraveLastShot(int nSerial);
+	BOOL SetEngOffset(CfPoint &OfSt);
+
 
 // Dialog Data
 	//{{AFX_DATA(CDlgFrameHigh)

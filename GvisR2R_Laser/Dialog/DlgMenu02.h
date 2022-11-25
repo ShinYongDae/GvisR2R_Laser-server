@@ -13,6 +13,8 @@
 #include "MyGL.h"
 #include "../Global/MyData.h"
 
+#define MAX_MENU02_LABEL			7
+
 #define MAX_MENU02_LBL				(14)
 #define MAX_MENU02_STC				(23+14+2+7+7)
 #define MAX_MENU02_STC_DATA			(10+10+5+1+2+3)
@@ -49,6 +51,7 @@ class CDlgMenu02 : public CDialog
 	CMyStatic myStcData[MAX_MENU02_STC_DATA];
 
 	CMyStatic myStcData2[MAX_MENU02_STC_DATA_DUO];
+	CMyLabel myLabel[MAX_MENU02_LABEL];
 
 	CMyGL *m_pPcsGL;//, *m_pPinGL;
 	BOOL m_bLoadImg, m_bLockTimer;
@@ -72,6 +75,7 @@ class CDlgMenu02 : public CDialog
 	void InitStcTitle();
 	void InitStcData();
 	void InitBtn();
+	void InitLabel();
 //	void InitGL();
 	void InitSlider();
 	void DispBufEnc();
@@ -170,6 +174,7 @@ public:
 	void WaitResponse();
 
 	void UpdateData();
+	void SetLed(int nIdx, BOOL bOn=TRUE);
 
 // Dialog Data
 	//{{AFX_DATA(CDlgMenu02)
