@@ -32,6 +32,7 @@
 extern CMainFrame* pFrm;
 extern CGvisR2R_LaserDoc* pDoc;
 CGvisR2R_LaserView* pView;
+extern CString PATH_WORKING_INFO;
 
 // CGvisR2R_LaserView
 
@@ -377,14 +378,20 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 
 	m_bLoadMstInfo = FALSE;
 	m_bLoadMstInfoF = FALSE;
-	m_bSetSig = FALSE; 
-	m_bSetSigF = FALSE;
-	m_bSetData = FALSE;
-	m_bSetDataF = FALSE;
 
 	m_pDlgUtil01 = NULL;
 	//m_pDlgUtil02 = NULL;
 	m_bEngStop = FALSE;
+
+	m_sGet2dCodeLot = _T("");
+	m_nGet2dCodeSerial = 0;
+
+	m_bSetSig = FALSE;
+	m_bSetSigF = FALSE;
+	m_bSetData = FALSE;
+	m_bSetDataF = FALSE;
+
+	m_sMonDisp = _T("");
 }
 
 CGvisR2R_LaserView::~CGvisR2R_LaserView()
@@ -654,12 +661,7 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 			break;
 		case 16:
 			m_nStepInitView++;
-			//if (m_pMotion)
-			//{
-			//	m_pMotion->ResetEStopTime(MS_X0Y0);
-			//	Sleep(30);
-			//	m_pMotion->ResetEStopTime(MS_X1Y1);
-			//}
+			m_bLoadMstInfo = TRUE;
 			break;
 		case 17:
 			m_nStepInitView++;
@@ -895,9 +897,14 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 
 		if (m_bLoadMstInfo && !m_bLoadMstInfoF)
 		{
-			m_bLoadMstInfoF = TRUE;
 			//if (m_bTIM_TCPIP_UPDATE)
+			if (!pDoc->WorkingInfo.LastJob.sModelUp.IsEmpty() && !pDoc->WorkingInfo.LastJob.sLayerUp.IsEmpty())
+			{
+				m_bLoadMstInfoF = TRUE;
 				SetTimer(TIM_TCPIP_UPDATE, 500, NULL);
+			}
+			else
+				m_bLoadMstInfo = FALSE;
 		}
 
 		if (m_bSetSig && !m_bSetSigF)
@@ -911,6 +918,9 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 
 				if (m_pDlgMenu01)
 					m_pDlgMenu01->UpdateData();
+
+				m_pEngrave->m_bGetOpInfo = FALSE;
+				m_pEngrave->m_bGetInfo = FALSE;
 			}
 
 			if (m_pDlgMenu03)
@@ -934,6 +944,9 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 
 				if (m_pDlgMenu01)
 					m_pDlgMenu01->UpdateData();
+
+				m_pEngrave->m_bGetOpInfo = FALSE;
+				m_pEngrave->m_bGetInfo = FALSE;
 			}
 
 			if (m_pDlgMenu02)
@@ -964,24 +977,6 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 			m_pDlgMenu01->UpdateData();
 		m_bLoadMstInfoF = FALSE;
 		m_bLoadMstInfo = FALSE;
-
-		//if (m_bLoadMstInfo && !m_bLoadMstInfoF)
-		//{
-		//	m_bLoadMstInfoF = TRUE;
-		//	LoadMstInfo();
-		//	if(m_pDlgMenu01)
-		//		m_pDlgMenu01->UpdateData();
-		//	m_bLoadMstInfo = FALSE;
-		//}
-		//else if (!m_bLoadMstInfo && m_bLoadMstInfoF)
-		//{
-		//	m_bLoadMstInfoF = FALSE;
-		//}
-		//else
-		//{
-		//	if (m_bTIM_TCPIP_UPDATE)
-		//		SetTimer(TIM_TCPIP_UPDATE, 500, NULL);
-		//}
 	}
 
 	CFormView::OnTimer(nIDEvent);
@@ -7406,6 +7401,7 @@ void CGvisR2R_LaserView::DispMain(CString sMsg, COLORREF rgb)
 	// 		m_pDlgMenu01->DispMain(sMsg, rgb);
 	// 	}
 	// 	m_cs.Unlock();
+	m_sMonDisp = sMsg;
 
 	m_csDispMain.Lock();
 	m_bDispMain = FALSE;
@@ -12570,6 +12566,8 @@ int CGvisR2R_LaserView::MyPassword(CString strMsg, int nCtrlId)
 
 BOOL CGvisR2R_LaserView::ReloadRst()
 {
+	return TRUE;
+
 	double dRatio = 0.0;
 	CString sVal = _T("");
 	CDlgProgress dlg;
@@ -12705,6 +12703,8 @@ BOOL CGvisR2R_LaserView::ReloadRst()
 
 BOOL CGvisR2R_LaserView::ReloadRst(int nSerial)
 {
+	return TRUE;
+
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	BOOL bRtn[5];
 	if (pDoc->m_pReelMap)
@@ -12741,6 +12741,8 @@ BOOL CGvisR2R_LaserView::ReloadRst(int nSerial)
 
 BOOL CGvisR2R_LaserView::OpenReelmapFromBuf(int nSerial)
 {
+	return TRUE;
+
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
 	stModelInfo stInfoUp, stInfoDn;
@@ -12781,6 +12783,8 @@ BOOL CGvisR2R_LaserView::OpenReelmapFromBuf(int nSerial)
 
 void CGvisR2R_LaserView::OpenReelmap()
 {
+	return;
+
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
 	if (pDoc->m_pReelMapUp)
@@ -12806,6 +12810,8 @@ void CGvisR2R_LaserView::OpenReelmap()
 
 void CGvisR2R_LaserView::OpenReelmapUp()
 {
+	return;
+
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
 	if (pDoc->m_pReelMapUp)
@@ -12837,6 +12843,8 @@ void CGvisR2R_LaserView::OpenReelmapUp()
 
 void CGvisR2R_LaserView::OpenReelmapDn()
 {
+	return;
+
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	if (!bDualTest)
 		return;
@@ -13604,65 +13612,99 @@ BOOL CGvisR2R_LaserView::IsLastJob(int nAoi) // 0 : AOI-Up , 1 : AOI-Dn , 2 : AO
 
 void CGvisR2R_LaserView::MonDispMain()
 {
-	if (pDoc->BtnStatus.Disp.Run)		// 운전중(PLC가 PC에 알려주는 설비 상태) - 20141031
-	{
-		if (m_sDispMain != _T("운전중"))
-		{
-			DispMain(_T("운전중"), RGB_GREEN);
-		}
+	CString sDisp = pDoc->GetMonDispMain();
+
+	if (sDisp == _T("운전중") && m_sMonDisp != _T("운전중"))
+	{		
+		DispMain(_T("운전중"), RGB_GREEN);
 	}
 
-	if (pDoc->BtnStatus.Disp.Ready)		// 운전준비(PLC가 PC에 알려주는 설비 상태) - 20141031
+	if (sDisp == _T("운전준비") && m_sMonDisp != _T("운전준비"))
 	{
-		if (m_sDispMain != _T("운전준비"))
-		{
-			DispMain(_T("운전준비"), RGB_GREEN);
-		}
+		DispMain(_T("운전준비"), RGB_GREEN);
 	}
-	else
-	{
-		if (pDoc->BtnStatus.Disp.DualSample)
-		{
-			if (m_sDispMain != _T("양면샘플"))
-			{
-				DispMain(_T("양면샘플"), RGB_GREEN);
-			}
-		}
-		else if (pDoc->BtnStatus.Disp.DualTest)
-		{
-			if (m_sDispMain != _T("양면검사"))
-			{
-				DispMain(_T("양면검사"), RGB_GREEN);
-			}
-		}
-		else if (pDoc->BtnStatus.Disp.SingleTest)
-		{
-			if (m_sDispMain != _T("단면검사"))
-			{
-				DispMain(_T("단면검사"), RGB_GREEN);
-			}
-		}
-		//else
-		//{
-		//	if (m_sDispMain != _T("운전준비"))
-		//	{
-		//		if (m_sDispMain != _T("정 지"))
-		//		{
-		//			pView->DispStsBar(_T("정지-44"), 0);
-		//			DispMain(_T("정 지"), RGB_RED);
-		//		}
-		//	}
-		//}
 
-		if (pDoc->BtnStatus.Disp.Stop)
-		{
-			if (m_sDispMain != _T("정 지"))
-			{
-				pView->DispStsBar(_T("정지-44"), 0);
-				DispMain(_T("정 지"), RGB_RED);
-			}
-		}
+	if (sDisp == _T("양면샘플") && m_sMonDisp != _T("양면샘플"))
+	{
+		DispMain(_T("양면샘플"), RGB_GREEN);
 	}
+
+	if (sDisp == _T("양면검사") && m_sMonDisp != _T("양면검사"))
+	{
+		DispMain(_T("양면검사"), RGB_GREEN);
+	}
+
+	if (sDisp == _T("단면검사") && m_sMonDisp != _T("단면검사"))
+	{
+		DispMain(_T("단면검사"), RGB_GREEN);
+	}
+
+	if (sDisp == _T("정 지") && m_sMonDisp != _T("정 지"))
+	{
+		pView->DispStsBar(_T("정지-44"), 0);
+		DispMain(_T("정 지"), RGB_RED);
+	}
+
+
+	//if (pDoc->BtnStatus.Disp.Run)		// 운전중(PLC가 PC에 알려주는 설비 상태) - 20141031
+	//{
+	//	if (m_sDispMain != _T("운전중"))
+	//	{
+	//		DispMain(_T("운전중"), RGB_GREEN);
+	//	}
+	//}
+
+	//if (pDoc->BtnStatus.Disp.Ready)		// 운전준비(PLC가 PC에 알려주는 설비 상태) - 20141031
+	//{
+	//	if (m_sDispMain != _T("운전준비"))
+	//	{
+	//		DispMain(_T("운전준비"), RGB_GREEN);
+	//	}
+	//}
+	//else
+	//{
+	//	if (pDoc->BtnStatus.Disp.DualSample)
+	//	{
+	//		if (m_sDispMain != _T("양면샘플"))
+	//		{
+	//			DispMain(_T("양면샘플"), RGB_GREEN);
+	//		}
+	//	}
+	//	else if (pDoc->BtnStatus.Disp.DualTest)
+	//	{
+	//		if (m_sDispMain != _T("양면검사"))
+	//		{
+	//			DispMain(_T("양면검사"), RGB_GREEN);
+	//		}
+	//	}
+	//	else if (pDoc->BtnStatus.Disp.SingleTest)
+	//	{
+	//		if (m_sDispMain != _T("단면검사"))
+	//		{
+	//			DispMain(_T("단면검사"), RGB_GREEN);
+	//		}
+	//	}
+	//	//else
+	//	//{
+	//	//	if (m_sDispMain != _T("운전준비"))
+	//	//	{
+	//	//		if (m_sDispMain != _T("정 지"))
+	//	//		{
+	//	//			pView->DispStsBar(_T("정지-44"), 0);
+	//	//			DispMain(_T("정 지"), RGB_RED);
+	//	//		}
+	//	//	}
+	//	//}
+
+	//	if (pDoc->BtnStatus.Disp.Stop)
+	//	{
+	//		if (m_sDispMain != _T("정 지"))
+	//		{
+	//			pView->DispStsBar(_T("정지-44"), 0);
+	//			DispMain(_T("정 지"), RGB_RED);
+	//		}
+	//	}
+	//}
 
 }
 
@@ -14835,6 +14877,7 @@ LRESULT CGvisR2R_LaserView::wmClientReceivedSr(WPARAM wParam, LPARAM lParam)
 	switch (nCmd)
 	{
 	case SrTriggerInputOn:
+		Get2dCode(m_sGet2dCodeLot, m_nGet2dCodeSerial);
 		if (m_pDlgMenu02)
 		{
 			m_pDlgMenu02->Disp2dCode();
@@ -14875,7 +14918,7 @@ LRESULT CGvisR2R_LaserView::wmServerReceived(WPARAM wParam, LPARAM lParam)
 	case _GetData:
 		break;
 	case _SetSig:
-		if (m_pEngrave)
+		if (m_pEngrave && m_pEngrave->IsConnected())
 			m_pEngrave->GetSysSignal(rSockData);
 
 		pView->m_bSetSig = TRUE;
@@ -14892,7 +14935,7 @@ LRESULT CGvisR2R_LaserView::wmServerReceived(WPARAM wParam, LPARAM lParam)
 		//	m_pDlgMenu03->UpdateSignal();
 		break;
 	case _SetData:
-		if (m_pEngrave)
+		if (m_pEngrave && m_pEngrave->IsConnected())
 			m_pEngrave->GetSysData(rSockData);
 
 		pView->m_bSetData = TRUE;
@@ -15305,8 +15348,8 @@ void CGvisR2R_LaserView::Eng1PtAlignPt0()
 		switch (m_nEngStAuto)
 		{
 		case ENG_ST + (Mk1PtIdx::Move0Cam0) :	// Move - Cam1 - Pt0
-			if(MovePinPos())	//if (MoveAlign0(0))
-				m_nEngStAuto++;
+			MovePinPos();	//if (MoveAlign0(0))
+			m_nEngStAuto++;
 			break;
 		case ENG_ST + (Mk1PtIdx::Move0Cam0) + 1:
 			//if (IsRun())
@@ -15806,4 +15849,74 @@ void CGvisR2R_LaserView::SetCurrentInfoEngShotNum(int nSerial)
 }
 
 
+BOOL CGvisR2R_LaserView::Get2dCode(CString &sLot, int &nSerial)
+{
+	if (!m_pSr1000w)
+		return FALSE;
+
+	CString sData;
+	if (m_pSr1000w->Get2DCode(sData))
+	{
+		int nPos = sData.ReverseFind('-');
+		if (nPos != -1)
+		{
+			pDoc->m_sOrderNum = sData.Left(nPos);
+			pDoc->m_sShotNum = sData.Right(sData.GetLength() - nPos - 1);
+			pDoc->m_nShotNum = _tstoi(pDoc->m_sShotNum);
+			sLot = pDoc->m_sOrderNum;
+			nSerial = pDoc->m_nShotNum;
+		}
+		else
+		{
+			pView->MsgBox(sData);
+			//AfxMessageBox(sData);
+		}
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+void CGvisR2R_LaserView::SetTotOpRto(CString sVal)		// 전체진행율
+{
+	if (m_pDlgMenu01)
+		m_pDlgMenu01->SetTotOpRto(sVal);
+}
+
+void CGvisR2R_LaserView::SetTotVel(CString sVal)		// 전체속도
+{
+	if (m_pDlgMenu01)
+		m_pDlgMenu01->SetTotVel(sVal);
+}
+
+void CGvisR2R_LaserView::SetPartVel(CString sVal)		// 구간속도
+{
+	if (m_pDlgMenu01)
+		m_pDlgMenu01->SetPartVel(sVal);
+}
+
+void CGvisR2R_LaserView::SetMkDoneLen(CString sVal)		// 마킹부 : Distance (FdDone) [M]
+{
+	if (m_pDlgMenu01)
+		m_pDlgMenu01->SetMkDoneLen(sVal);
+}
+
+void CGvisR2R_LaserView::SetAoiDnDoneLen(CString sVal)	// 검사부(하) : Distance (FdDone) [M]
+{
+	if (m_pDlgMenu01)
+		m_pDlgMenu01->SetAoiDnDoneLen(sVal);
+}
+
+void CGvisR2R_LaserView::SetAoiUpDoneLen(CString sVal)	// 검사부(상) : Distance (FdDone) [M]
+{
+	if (m_pDlgMenu01)
+		m_pDlgMenu01->SetAoiUpDoneLen(sVal);
+}
+
+void CGvisR2R_LaserView::SetEngDoneLen(CString sVal)	// 검사부(상) : Distance (FdDone) [M]
+{
+	if (m_pDlgMenu01)
+		m_pDlgMenu01->SetEngDoneLen(sVal);
+}
 

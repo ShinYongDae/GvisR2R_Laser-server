@@ -467,6 +467,7 @@ public:
 	CEngrave* m_pEngrave;
 
 	int m_nNewLot;
+	CString m_sMonDisp;
 
 // 작업입니다.
 public:
@@ -973,6 +974,18 @@ public:
 	CString GetCurrentInfoBufUp();
 	CString GetCurrentInfoBufDn();
 	void SetCurrentInfoEngShotNum(int nSerial);
+
+	CString m_sGet2dCodeLot;
+	int m_nGet2dCodeSerial;
+	BOOL Get2dCode(CString &sLot, int &nSerial);
+
+	void SetTotOpRto(CString sVal);		// 전체진행율
+	void SetTotVel(CString sVal);		// 전체속도
+	void SetPartVel(CString sVal);		// 구간속도
+	void SetMkDoneLen(CString sVal);	// 마킹부 : Distance (FdDone) [M]
+	void SetAoiDnDoneLen(CString sVal);	// 검사부(하) : Distance (FdDone) [M]
+	void SetAoiUpDoneLen(CString sVal);	// 검사부(상) : Distance (FdDone) [M]
+	void SetEngDoneLen(CString sVal);	// 각인부 : Distance (FdDone) [M]
 
 // 재정의입니다.
 public:

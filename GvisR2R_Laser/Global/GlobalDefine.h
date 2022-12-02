@@ -126,7 +126,8 @@ typedef enum {KOREAN=0, ENGLISH=1, JAPANESE=2} LANG;
 // #define PATH_SLICE_IO			_T("C:\\R2RSet\\SliceIoList.ini")
 #define PATH_MOTION_PARAM		_T("C:\\R2RSet\\MotionParam.ini")
 #define PATH_CONFIG				_T("C:\\R2RSet\\Config.ini")
-#define PATH_WORKING_INFO		_T("C:\\R2RSet\\WorkingInfo.ini")
+//#define PATH_WORKING_INFO		_T("C:\\R2RSet\\WorkingInfo.ini")
+#define WORKING_INFO			_T("WorkingInfo.ini")
 #define PATH_SMAC				_T("C:\\R2RSet\\SMAC.ini")
 #define PATH_ALARM				_T("C:\\R2RSet\\Alarm.ini")
 
@@ -621,7 +622,7 @@ struct stSystem
 	CString sPathVsShareDn;
 
 	CString sPathEng, sPathEngCurrInfo, sPathEngOffset, sPathMkCurrInfo, sPathMkCurrInfoBuf;
-
+	CString sPathMkMenu01, sPathMonDispMain;
 
 	CString sPathOldFile;
 	CString sPathSapp3;
@@ -654,7 +655,7 @@ struct stSystem
 		sPathVsShareDn = _T("");
 
 		sPathEng = _T(""); sPathEngCurrInfo = _T(""); sPathEngOffset = _T(""); sPathMkCurrInfo = _T("");
-		sPathMkCurrInfoBuf = _T("");
+		sPathMkCurrInfoBuf = _T(""); sPathMkMenu01 = _T(""); sPathMonDispMain = _T("");
 
 		sPathOldFile = _T("");
 		bSaveLog = FALSE;

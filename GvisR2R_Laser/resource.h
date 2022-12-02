@@ -613,6 +613,8 @@
 #define IDC_CHK_41                      1199
 #define IDC_STC_25                      1199
 #define IDC_STC_218                     1199
+#define IDC_STC_AOI_UP2                 1199
+#define IDC_STC_ENG                     1199
 #define IDC_STC_175                     1200
 #define IDC_CHK_7                       1200
 #define IDC_STC_00_5                    1200

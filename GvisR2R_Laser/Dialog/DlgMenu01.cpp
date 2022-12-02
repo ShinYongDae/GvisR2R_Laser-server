@@ -19,6 +19,7 @@ static char THIS_FILE[] = __FILE__;
 extern CMainFrame* pFrm;
 extern CGvisR2R_LaserDoc* pDoc;
 extern CGvisR2R_LaserView* pView;
+extern CString PATH_WORKING_INFO;
 
 /////////////////////////////////////////////////////////////////////////////
 // CDlgMenu01 dialog
@@ -1882,6 +1883,7 @@ void CDlgMenu01::InitStcData()
 
 	myStcData[81].SubclassDlgItem(IDC_STC_MK_CNT_L, this);
 	myStcData[82].SubclassDlgItem(IDC_STC_MK_CNT_R, this);
+	myStcData[83].SubclassDlgItem(IDC_STC_ENG, this);
 
 	for(int i=0; i<MAX_MENU01_STC_DATA; i++)
 	{
@@ -2840,6 +2842,9 @@ void CDlgMenu01::UpdateWorking()
 	}
 	sVal.Format(_T("%.2f"), pView->GetAoiUpFdLen() / 1000.0);	// [M]
 	myStcData[74].SetText(sVal);			// 검사부(상) : Distance (FdDone)
+
+	sVal.Format(_T("%.2f"), pView->GetEngraveFdLen() / 1000.0);	// [M]
+	myStcData[83].SetText(sVal);			// 각인부 : Distance (FdDone)
 
 #ifdef USE_MPE
 	if(pView->m_pMpe)
@@ -4691,4 +4696,39 @@ void CDlgMenu01::OnStnClickedStcLotSrl()
 	pDoc->WorkingInfo.LastJob.nVerifyPeriod = _ttoi(sVal);
 
 	::WritePrivateProfileString(_T("Last Job"), _T("Verify Period"), sVal, PATH_WORKING_INFO);
+}
+
+void CDlgMenu01::SetTotOpRto(CString sVal)		// 전체진행율
+{
+	myStcData[5].SetText(sVal);	
+}
+
+void CDlgMenu01::SetTotVel(CString sVal)		// 전체속도
+{
+	myStcData[7].SetText(sVal);	
+}
+
+void CDlgMenu01::SetPartVel(CString sVal)		// 구간속도
+{
+	myStcData[8].SetText(sVal);
+}
+
+void CDlgMenu01::SetMkDoneLen(CString sVal)		// 마킹부 : Distance (FdDone) [M]
+{
+	myStcData[12].SetText(sVal);
+}
+
+void CDlgMenu01::SetAoiDnDoneLen(CString sVal)	// 검사부(하) : Distance (FdDone) [M]
+{
+	myStcData[13].SetText(sVal);
+}
+
+void CDlgMenu01::SetAoiUpDoneLen(CString sVal)	// 검사부(상) : Distance (FdDone) [M]
+{
+	myStcData[74].SetText(sVal);
+}
+
+void CDlgMenu01::SetEngDoneLen(CString sVal)	// 각인부 : Distance (FdDone) [M]
+{
+	myStcData[83].SetText(sVal);
 }

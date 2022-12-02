@@ -382,6 +382,8 @@ double CReelMap::GetAdjRatio()
 
 BOOL CReelMap::Open(CString sPath)
 {
+	return TRUE;
+
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	int nNodeX = 0, nNodeY = 0;
 #ifndef TEST_MODE
@@ -626,6 +628,8 @@ BOOL CReelMap::OpenUser(CString sPath)
 
 BOOL CReelMap::Open(CString sPath, CString sModel, CString sLayer, CString sLot)
 {
+	return TRUE;
+
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
 	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
@@ -856,6 +860,8 @@ BOOL CReelMap::OpenUser(CString sPath, CString sModel, CString sLayer, CString s
 
 int CReelMap::Read(CString &sRead)
 {
+	return 0;
+
 	FILE *fp;
 	char *FileData;
 	char FileD[200];

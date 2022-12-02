@@ -18,6 +18,7 @@ static char THIS_FILE[] = __FILE__;
 extern CMainFrame* pFrm;
 extern CGvisR2R_LaserDoc* pDoc;
 extern CGvisR2R_LaserView* pView;
+extern CString PATH_WORKING_INFO;
 
 /////////////////////////////////////////////////////////////////////////////
 // CDlgFrameHigh dialog
@@ -658,6 +659,9 @@ void CDlgFrameHigh::SetEngraveLastShot(int nSerial)
 	CString sPath = PATH_WORKING_INFO;
 	pDoc->WorkingInfo.LastJob.sEngraveLastShot = str;
 	::WritePrivateProfileString(_T("Last Job"), _T("Engrave Last Shot"), str, sPath);
+
+	str.Format(_T("%.2f"), pView->GetEngraveFdLen() / 1000.0);	// [M]
+	pView->SetEngDoneLen(str);
 }
 
 

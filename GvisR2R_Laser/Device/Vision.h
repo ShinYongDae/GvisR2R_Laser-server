@@ -175,7 +175,7 @@ public:
 	void ShowDispDef(int nIdxMkInfo, int nSerial, int nLayer, int nDefPcs);
 	void ShowOvrCad(int nIdxMkInfo, int nSerial);
 	void ShowDispPin(int nLayer);
-	void ShowDispAlign();
+	//void ShowDispAlign();
 
 	void CropCadImg(int nIdxMkInfo, int nSerial, int nLayer, int nIdxDef);
 	void CropCadImg(short cell, short cx, short cy, int BufID, int nLayer);
@@ -191,7 +191,7 @@ public:
 	BOOL ClearPinCenterMarkArea(int nCenterX, int nCenterY, int nLineLength);
 
 	void InitAlignBuf();
-	void LoadAlignBuf();
+	//void LoadAlignBuf();
 
 	void ClearOverlay();
 	void DrawCenterMark(int nMode=0); // 0: Cross, 1: Rect, 2: None

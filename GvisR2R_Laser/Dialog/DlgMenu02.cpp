@@ -21,6 +21,7 @@ static char THIS_FILE[] = __FILE__;
 extern CMainFrame* pFrm;
 extern CGvisR2R_LaserDoc* pDoc;
 extern CGvisR2R_LaserView* pView;
+extern CString PATH_WORKING_INFO;
 
 /////////////////////////////////////////////////////////////////////////////
 // CDlgMenu02 dialog
@@ -917,7 +918,7 @@ void CDlgMenu02::SetLight(int nVal)
 		myStcData[0].SetText(str);
 
 		pDoc->WorkingInfo.Light.sVal[0] = str;
-		::WritePrivateProfileString(_T("Light0"), _T("LIGHT_VALUE"), str, PATH_WORKING_INFO);		
+		::WritePrivateProfileString(_T("Light0"), _T("LIGHT_VALUE"), str, pDoc->WorkingInfo.System.sPathEngCurrInfo);
 	}
 }
 
@@ -1056,7 +1057,7 @@ void CDlgMenu02::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		myStcData[0].SetText(str);
 
 		pDoc->WorkingInfo.Light.sVal[0] = str;
-		::WritePrivateProfileString(_T("Light0"), _T("LIGHT_VALUE"), str, PATH_WORKING_INFO);		
+		::WritePrivateProfileString(_T("Light0"), _T("LIGHT_VALUE"), str, pDoc->WorkingInfo.System.sPathEngCurrInfo);
 	}
 	
 	CDialog::OnVScroll(nSBCode, nPos, pScrollBar);
@@ -1600,13 +1601,13 @@ void CDlgMenu02::SetPinPos(int nCam, CfPoint ptPnt)
 
 	if(nCam==0)
 	{
-		::WritePrivateProfileString(_T("Motion"), _T("PIN_POS0_X"), pDoc->WorkingInfo.Motion.sPinPosX[nCam], sPath);
-		::WritePrivateProfileString(_T("Motion"), _T("PIN_POS0_Y"), pDoc->WorkingInfo.Motion.sPinPosY[nCam], sPath);
+		::WritePrivateProfileString(_T("Motion"), _T("PIN_POS0_X"), pDoc->WorkingInfo.Motion.sPinPosX[nCam], pDoc->WorkingInfo.System.sPathEngCurrInfo);
+		::WritePrivateProfileString(_T("Motion"), _T("PIN_POS0_Y"), pDoc->WorkingInfo.Motion.sPinPosY[nCam], pDoc->WorkingInfo.System.sPathEngCurrInfo);
 	}
 	else if(nCam==1)
 	{
-		::WritePrivateProfileString(_T("Motion"), _T("PIN_POS1_X"), pDoc->WorkingInfo.Motion.sPinPosX[nCam], sPath);
-		::WritePrivateProfileString(_T("Motion"), _T("PIN_POS1_Y"), pDoc->WorkingInfo.Motion.sPinPosY[nCam], sPath);
+		::WritePrivateProfileString(_T("Motion"), _T("PIN_POS1_X"), pDoc->WorkingInfo.Motion.sPinPosX[nCam], pDoc->WorkingInfo.System.sPathEngCurrInfo);
+		::WritePrivateProfileString(_T("Motion"), _T("PIN_POS1_Y"), pDoc->WorkingInfo.Motion.sPinPosY[nCam], pDoc->WorkingInfo.System.sPathEngCurrInfo);
 	}
 }
 
@@ -1818,12 +1819,12 @@ void CDlgMenu02::OnChkMkOffsetEd()
 
 		sData.Format(_T("%.3f"), dMkOffsetX);
 		pDoc->WorkingInfo.Vision[0].sMkOffsetX = sData;
-		::WritePrivateProfileString(_T("Vision0"), _T("MARKING_OFFSET_X"), sData, sPath);
+		::WritePrivateProfileString(_T("Vision0"), _T("MARKING_OFFSET_X"), sData, pDoc->WorkingInfo.System.sPathEngCurrInfo);
 		myStcData[3].SetText(sData);	// IDC_STC_CAM_MK_OFFSET_X
 
 		sData.Format(_T("%.3f"), dMkOffsetY);
 		pDoc->WorkingInfo.Vision[0].sMkOffsetY = sData;
-		::WritePrivateProfileString(_T("Vision0"), _T("MARKING_OFFSET_Y"), sData, sPath);
+		::WritePrivateProfileString(_T("Vision0"), _T("MARKING_OFFSET_Y"), sData, pDoc->WorkingInfo.System.sPathEngCurrInfo);
 		myStcData[4].SetText(sData);	// IDC_STC_CAM_MK_OFFSET_Y
 
 #ifdef USE_VISION
@@ -2648,7 +2649,7 @@ void CDlgMenu02::OnStcAlignStdScr()
 	CString sData;
 	GetDlgItem(IDC_STC_ALIGN_STD_SCR)->GetWindowText(sData);
 	pDoc->WorkingInfo.Vision[0].sStdScr = sData;
-	::WritePrivateProfileString(_T("Vision0"), _T("ALIGN_STD_SCORE"), sData, PATH_WORKING_INFO);
+	::WritePrivateProfileString(_T("Vision0"), _T("ALIGN_STD_SCORE"), sData, pDoc->WorkingInfo.System.sPathEngCurrInfo);
 }
 
 

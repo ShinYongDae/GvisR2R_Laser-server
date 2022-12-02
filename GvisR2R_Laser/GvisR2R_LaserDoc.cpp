@@ -27,6 +27,7 @@
 
 extern CMainFrame* pFrm;
 CGvisR2R_LaserDoc* pDoc;
+CString PATH_WORKING_INFO = _T("");
 extern CGvisR2R_LaserView* pView;
 
 // CGvisR2R_LaserDoc
@@ -225,6 +226,19 @@ CGvisR2R_LaserDoc::CGvisR2R_LaserDoc()
 	m_sOrderNum.Format(_T("%09d"), m_nOrderNum);
 	m_nShotNum = GetCurrentInfoEngShotNum();
 	m_sShotNum.Format(_T("%03d"), m_nShotNum);
+
+
+	WorkingInfo.System.sPathEngCurrInfo = CString(_T("C:\\EngraveWork\\CurrentInfo.ini"));
+	extern CString PATH_WORKING_INFO;
+	TCHAR szData[200];
+
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("PathWorkingInfo"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+		PATH_WORKING_INFO = CString(szData);
+	else
+	{
+		PATH_WORKING_INFO = CString(_T("C:\\R2RSet\\WorkingInfo.ini"));
+	}
+
 }
 
 CGvisR2R_LaserDoc::~CGvisR2R_LaserDoc()
@@ -929,7 +943,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	}
 
 
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("EngravePath"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("EngravePath"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sPathEng = CString(szData);
 	else
 	{
@@ -937,7 +951,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.System.sPathEng = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("EngraveCurrentInfoPath"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("EngraveCurrentInfoPath"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sPathEngCurrInfo = CString(szData);
 	else
 	{
@@ -945,7 +959,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.System.sPathEngCurrInfo = CString(_T("C:\\EngraveWork\\CurrentInfo.ini"));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("PunchingCurrentInfoPath"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("PunchingCurrentInfoPath"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sPathMkCurrInfo = CString(szData);
 	else
 	{
@@ -953,7 +967,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.System.sPathMkCurrInfo = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("PunchingCurrentInfoBufPath"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("PunchingCurrentInfoBufPath"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sPathMkCurrInfoBuf = CString(szData);
 	else
 	{
@@ -961,13 +975,31 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.System.sPathMkCurrInfoBuf = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("EngraveCurrentOffsetInfoPath"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("EngraveCurrentOffsetInfoPath"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sPathEngOffset = CString(szData);
 	else
 	{
 		AfxMessageBox(_T("EngraveCurrentOffsetInfoPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
 		WorkingInfo.System.sPathEngOffset = CString(_T("C:\\EngraveWork\\OffsetData.txt"));
 	}
+
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("MonDispMainPath"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+		WorkingInfo.System.sPathMonDispMain = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("PunchingCurrentInfoPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathMonDispMain = CString(_T("\\\\100.100.101.68\\EngraveWork\\MonDispMain.ini"));
+	}
+
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("MkMenu01Path"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+		WorkingInfo.System.sPathMkMenu01 = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("PunchingCurrentInfoPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathMkMenu01 = CString(_T("\\\\100.100.101.68\\EngraveWork\\MkMenu01.ini"));
+	}
+
+
 
 
 	if (0 < ::GetPrivateProfileString(_T("System"), _T("AOIUpPath"), NULL, szData, sizeof(szData), sPath))
@@ -1139,7 +1171,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	else
 		WorkingInfo.System.sMaxDispDefImg = CString(_T(""));
 
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("Cam1Sn"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("Cam1Sn"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sCamSn[0] = CString(szData);
 	else
 		WorkingInfo.System.sCamSn[0] = CString(_T(""));
@@ -1168,45 +1200,45 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 
 
 	// READER 2D BARCODE
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("IP_CLIENT_SR-1000W"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("IP_CLIENT_SR-1000W"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sIpClient[ID_SR1000W] = CString(szData);
 	else
 		WorkingInfo.System.sIpClient[ID_SR1000W] = CString(_T("192.168.100.99"));
 
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("IP_SERVER_SR-1000W"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("IP_SERVER_SR-1000W"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sIpServer[ID_SR1000W] = CString(szData);
 	else
 		WorkingInfo.System.sIpServer[ID_SR1000W] = CString(_T("192.168.100.100"));
 
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("Port_SR-1000W"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("Port_SR-1000W"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sPort[ID_SR1000W] = CString(szData);
 	else
 		WorkingInfo.System.sPort[ID_SR1000W] = CString(_T("9004"));
 
 
 	// ENGRAVE PC
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("IP_SERVER_ENGRAVE"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("IP_SERVER_ENGRAVE"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sIpServer[ID_ENGRAVE] = CString(szData);
 	else
 		WorkingInfo.System.sIpServer[ID_ENGRAVE] = CString(_T("100.100.100.125"));
 
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("Port_ENGRAVE"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("Port_ENGRAVE"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sPort[ID_ENGRAVE] = CString(szData);
 	else
 		WorkingInfo.System.sPort[ID_ENGRAVE] = CString(_T("8800"));
 
 	// PUNCH PC
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("IP_CLIENT_PUNCH"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("IP_CLIENT_PUNCH"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sIpClient[ID_PUNCH] = CString(szData);
 	else
 		WorkingInfo.System.sIpClient[ID_PUNCH] = CString(_T("100.100.101.113"));
 
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("Port_PUNCH"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("Port_PUNCH"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sPort[ID_PUNCH] = CString(szData);
 	else
 		WorkingInfo.System.sPort[ID_PUNCH] = CString(_T("8800"));
 
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("Delay Show Time"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("Delay Show Time"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		m_nDelayShow = _ttoi(szData);
 	else
 		m_nDelayShow = 500;
@@ -1216,7 +1248,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.LastJob.sProcessNum = CString(szData);
 	else
 	{
-		WorkingInfo.LastJob.sProcessNum = CString(_T(""));
+		WorkingInfo.LastJob.sProcessNum = CString(_T("VS90"));
 	}
 
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("ModelUp Name"), NULL, szData, sizeof(szData), sPath))
@@ -1865,7 +1897,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Motion.sAoiPatlVel = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("PIN_POS0_X"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("PIN_POS0_X"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Motion.sPinPosX[0] = CString(szData);
 	else
 	{
@@ -1873,7 +1905,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Motion.sPinPosX[0] = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("PIN_POS0_Y"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("PIN_POS0_Y"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Motion.sPinPosY[0] = CString(szData);
 	else
 	{
@@ -1881,7 +1913,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Motion.sPinPosY[0] = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("PIN_POS1_X"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("PIN_POS1_X"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Motion.sPinPosX[1] = CString(szData);
 	else
 	{
@@ -1889,7 +1921,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Motion.sPinPosX[1] = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("PIN_POS1_Y"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("PIN_POS1_Y"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Motion.sPinPosY[1] = CString(szData);
 	else
 	{
@@ -1897,7 +1929,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Motion.sPinPosY[1] = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("START_POSITION_X0"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("START_POSITION_X0"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Motion.sStPosX[0] = CString(szData);
 	else
 	{
@@ -1905,7 +1937,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Motion.sStPosX[0] = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("START_POSITION_Y0"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("START_POSITION_Y0"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Motion.sStPosY[0] = CString(szData);
 	else
 	{
@@ -1913,7 +1945,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Motion.sStPosY[0] = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("START_POSITION_X1"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("START_POSITION_X1"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Motion.sStPosX[1] = CString(szData);
 	else
 	{
@@ -1921,7 +1953,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Motion.sStPosX[1] = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("START_POSITION_Y1"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("START_POSITION_Y1"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Motion.sStPosY[1] = CString(szData);
 	else
 	{
@@ -2384,7 +2416,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 #endif
 
 	// [Light RS232 DATA]
-	if (0 < ::GetPrivateProfileString(_T("Light"), _T("LIGHT_CONTROL_COM_PORT"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Light"), _T("LIGHT_CONTROL_COM_PORT"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Light.sPort = CString(szData);
 	else
 	{
@@ -2392,7 +2424,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Light.sPort = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Light"), _T("LIGHT_CONTROL_BAUDRATE"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Light"), _T("LIGHT_CONTROL_BAUDRATE"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Light.sBaudRate = CString(szData);
 	else
 	{
@@ -2400,19 +2432,19 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Light.sBaudRate = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Light"), _T("LIGHT_CR"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Light"), _T("LIGHT_CR"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Light.bCr = _ttoi(szData) ? TRUE : FALSE;
 	else
 		WorkingInfo.Light.bCr = FALSE;
 
-	if (0 < ::GetPrivateProfileString(_T("Light"), _T("LIGHT_LF"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Light"), _T("LIGHT_LF"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Light.bLf = _ttoi(szData) ? TRUE : FALSE;
 	else
 		WorkingInfo.Light.bLf = FALSE;
 
 	// [Light0]
 
-	if (0 < ::GetPrivateProfileString(_T("Light0"), _T("LIGHT_CHANNEL"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Light0"), _T("LIGHT_CHANNEL"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Light.sCh[0] = CString(szData);
 	else
 	{
@@ -2420,7 +2452,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Light.sCh[0] = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Light0"), _T("LIGHT_VALUE"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Light0"), _T("LIGHT_VALUE"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Light.sVal[0] = CString(szData);
 	else
 	{
@@ -2430,26 +2462,26 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 
 	// [Light1]
 
-	if (0 < ::GetPrivateProfileString(_T("Light1"), _T("LIGHT_CHANNEL"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.Light.sCh[1] = CString(szData);
-	else
-	{
-		AfxMessageBox(_T("조명1의 Channel이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.Light.sCh[1] = CString(_T(""));
-	}
+	//if (0 < ::GetPrivateProfileString(_T("Light1"), _T("LIGHT_CHANNEL"), NULL, szData, sizeof(szData), sPath))
+	//	WorkingInfo.Light.sCh[1] = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("조명1의 Channel이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.Light.sCh[1] = CString(_T(""));
+	//}
 
-	if (0 < ::GetPrivateProfileString(_T("Light1"), _T("LIGHT_VALUE"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.Light.sVal[1] = CString(szData);
-	else
-	{
-		AfxMessageBox(_T("조명1의 통신 밝기값이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.Light.sVal[1] = CString(_T(""));
-	}
+	//if (0 < ::GetPrivateProfileString(_T("Light1"), _T("LIGHT_VALUE"), NULL, szData, sizeof(szData), sPath))
+	//	WorkingInfo.Light.sVal[1] = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("조명1의 통신 밝기값이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.Light.sVal[1] = CString(_T(""));
+	//}
 
 
 
 	// [Vision0]
-	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("PIN_IMG_SIZE"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("PIN_IMG_SIZE"), NULL, szData, sizeof(szData), pDoc->WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Vision[0].sPinImgSz = CString(szData);
 	else
 	{
@@ -2457,7 +2489,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Vision[0].sPinImgSz = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("RESOLUTION_X"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("RESOLUTION_X"), NULL, szData, sizeof(szData), pDoc->WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Vision[0].sResX = CString(szData);
 	else
 	{
@@ -2465,7 +2497,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Vision[0].sResX = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("RESOLUTION_Y"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("RESOLUTION_Y"), NULL, szData, sizeof(szData), pDoc->WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Vision[0].sResY = CString(szData);
 	else
 	{
@@ -2473,7 +2505,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Vision[0].sResY = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("MARKING_OFFSET_X"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("MARKING_OFFSET_X"), NULL, szData, sizeof(szData), pDoc->WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Vision[0].sMkOffsetX = CString(szData);
 	else
 	{
@@ -2481,7 +2513,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Vision[0].sMkOffsetX = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("MARKING_OFFSET_Y"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("MARKING_OFFSET_Y"), NULL, szData, sizeof(szData), pDoc->WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Vision[0].sMkOffsetY = CString(szData);
 	else
 	{
@@ -2489,7 +2521,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Vision[0].sMkOffsetY = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("ALIGN_STD_SCORE"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("ALIGN_STD_SCORE"), NULL, szData, sizeof(szData), pDoc->WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Vision[0].sStdScr = CString(szData);
 	else
 	{
@@ -2497,7 +2529,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Vision[0].sStdScr = CString(_T("40"));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("ALIGN_POS0_X"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("ALIGN_POS0_X"), NULL, szData, sizeof(szData), pDoc->WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Vision[0].sAlgnPosX[0] = CString(szData);
 	else
 	{
@@ -2505,7 +2537,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Vision[0].sAlgnPosX[0] = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("ALIGN_POS0_Y"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("ALIGN_POS0_Y"), NULL, szData, sizeof(szData), pDoc->WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Vision[0].sAlgnPosY[0] = CString(szData);
 	else
 	{
@@ -2513,7 +2545,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Vision[0].sAlgnPosY[0] = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("ALIGN_POS1_X"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("ALIGN_POS1_X"), NULL, szData, sizeof(szData), pDoc->WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Vision[0].sAlgnPosX[1] = CString(szData);
 	else
 	{
@@ -2521,7 +2553,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Vision[0].sAlgnPosX[1] = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("ALIGN_POS1_Y"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("ALIGN_POS1_Y"), NULL, szData, sizeof(szData), pDoc->WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Vision[0].sAlgnPosY[1] = CString(szData);
 	else
 	{
@@ -2529,7 +2561,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Vision[0].sAlgnPosY[1] = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("PtMatchingScore"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Vision0"), _T("PtMatchingScore"), NULL, szData, sizeof(szData), pDoc->WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.Vision[0].sPtMatScr = CString(szData);
 	else
 	{
@@ -2538,93 +2570,93 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	}
 
 	// [Vision1]
-	if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("PIN_IMG_SIZE"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.Vision[1].sPinImgSz = CString(szData);
-	else
-	{
-		AfxMessageBox(_T("Pin 이미지 크기가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.Vision[1].sPinImgSz = CString(_T(""));
-	}
+	//if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("PIN_IMG_SIZE"), NULL, szData, sizeof(szData), sPath))
+	//	WorkingInfo.Vision[1].sPinImgSz = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("Pin 이미지 크기가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.Vision[1].sPinImgSz = CString(_T(""));
+	//}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("RESOLUTION_X"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.Vision[1].sResX = CString(szData);
-	else
-	{
-		AfxMessageBox(_T("Vision 해상도(X)가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.Vision[1].sResX = CString(_T(""));
-	}
+	//if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("RESOLUTION_X"), NULL, szData, sizeof(szData), sPath))
+	//	WorkingInfo.Vision[1].sResX = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("Vision 해상도(X)가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.Vision[1].sResX = CString(_T(""));
+	//}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("RESOLUTION_Y"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.Vision[1].sResY = CString(szData);
-	else
-	{
-		AfxMessageBox(_T("Vision 해상도(Y)가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.Vision[1].sResY = CString(_T(""));
-	}
+	//if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("RESOLUTION_Y"), NULL, szData, sizeof(szData), sPath))
+	//	WorkingInfo.Vision[1].sResY = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("Vision 해상도(Y)가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.Vision[1].sResY = CString(_T(""));
+	//}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("MARKING_OFFSET_X"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.Vision[1].sMkOffsetX = CString(szData);
-	else
-	{
-		AfxMessageBox(_T("마킹 Offset(X)이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.Vision[1].sMkOffsetX = CString(_T(""));
-	}
+	//if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("MARKING_OFFSET_X"), NULL, szData, sizeof(szData), sPath))
+	//	WorkingInfo.Vision[1].sMkOffsetX = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("마킹 Offset(X)이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.Vision[1].sMkOffsetX = CString(_T(""));
+	//}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("MARKING_OFFSET_Y"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.Vision[1].sMkOffsetY = CString(szData);
-	else
-	{
-		AfxMessageBox(_T("마킹 Offset(Y)이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.Vision[1].sMkOffsetY = CString(_T(""));
-	}
+	//if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("MARKING_OFFSET_Y"), NULL, szData, sizeof(szData), sPath))
+	//	WorkingInfo.Vision[1].sMkOffsetY = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("마킹 Offset(Y)이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.Vision[1].sMkOffsetY = CString(_T(""));
+	//}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("ALIGN_STD_SCORE"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.Vision[1].sStdScr = CString(szData);
-	else
-	{
-		//		AfxMessageBox(_T("마킹 ALIGN_STD_SCORE이 설정되어 있지 않습니다."),MB_ICONWARNING|MB_OK);
-		WorkingInfo.Vision[1].sStdScr = CString(_T("40"));
-	}
+	//if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("ALIGN_STD_SCORE"), NULL, szData, sizeof(szData), sPath))
+	//	WorkingInfo.Vision[1].sStdScr = CString(szData);
+	//else
+	//{
+	//	//		AfxMessageBox(_T("마킹 ALIGN_STD_SCORE이 설정되어 있지 않습니다."),MB_ICONWARNING|MB_OK);
+	//	WorkingInfo.Vision[1].sStdScr = CString(_T("40"));
+	//}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("ALIGN_POS0_X"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.Vision[1].sAlgnPosX[0] = CString(szData);
-	else
-	{
-		AfxMessageBox(_T("마킹 첫번째 Align(X)이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.Vision[1].sAlgnPosX[0] = CString(_T(""));
-	}
+	//if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("ALIGN_POS0_X"), NULL, szData, sizeof(szData), sPath))
+	//	WorkingInfo.Vision[1].sAlgnPosX[0] = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("마킹 첫번째 Align(X)이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.Vision[1].sAlgnPosX[0] = CString(_T(""));
+	//}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("ALIGN_POS0_Y"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.Vision[1].sAlgnPosY[0] = CString(szData);
-	else
-	{
-		AfxMessageBox(_T("마킹 첫번째 Align(X)이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.Vision[1].sAlgnPosY[0] = CString(_T(""));
-	}
+	//if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("ALIGN_POS0_Y"), NULL, szData, sizeof(szData), sPath))
+	//	WorkingInfo.Vision[1].sAlgnPosY[0] = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("마킹 첫번째 Align(X)이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.Vision[1].sAlgnPosY[0] = CString(_T(""));
+	//}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("ALIGN_POS1_X"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.Vision[1].sAlgnPosX[1] = CString(szData);
-	else
-	{
-		AfxMessageBox(_T("마킹 첫번째 Align(X)이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.Vision[1].sAlgnPosX[1] = CString(_T(""));
-	}
+	//if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("ALIGN_POS1_X"), NULL, szData, sizeof(szData), sPath))
+	//	WorkingInfo.Vision[1].sAlgnPosX[1] = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("마킹 첫번째 Align(X)이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.Vision[1].sAlgnPosX[1] = CString(_T(""));
+	//}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("ALIGN_POS1_Y"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.Vision[1].sAlgnPosY[1] = CString(szData);
-	else
-	{
-		AfxMessageBox(_T("마킹 첫번째 Align(Y)이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.Vision[1].sAlgnPosY[1] = CString(_T(""));
-	}
+	//if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("ALIGN_POS1_Y"), NULL, szData, sizeof(szData), sPath))
+	//	WorkingInfo.Vision[1].sAlgnPosY[1] = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("마킹 첫번째 Align(Y)이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.Vision[1].sAlgnPosY[1] = CString(_T(""));
+	//}
 
-	if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("PtMatchingScore"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.Vision[1].sPtMatScr = CString(szData);
-	else
-	{
-		AfxMessageBox(_T("패턴 Matching Score가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.Vision[1].sPtMatScr = CString(_T(""));
-	}
+	//if (0 < ::GetPrivateProfileString(_T("Vision1"), _T("PtMatchingScore"), NULL, szData, sizeof(szData), sPath))
+	//	WorkingInfo.Vision[1].sPtMatScr = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("패턴 Matching Score가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.Vision[1].sPtMatScr = CString(_T(""));
+	//}
 
 
 	// [Lot]
@@ -3456,28 +3488,28 @@ void CGvisR2R_LaserDoc::SaveWorkingInfo()
 	::WritePrivateProfileString(_T("Motion"), _T("AOI_PARTIAL_CYCLE_VEL"), sData, sPath);
 
 	sData = WorkingInfo.Motion.sPinPosX[0];
-	::WritePrivateProfileString(_T("Motion"), _T("PIN_POS0_X"), sData, sPath);
+	::WritePrivateProfileString(_T("Motion"), _T("PIN_POS0_X"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Motion.sPinPosY[0];
-	::WritePrivateProfileString(_T("Motion"), _T("PIN_POS0_Y"), sData, sPath);
+	::WritePrivateProfileString(_T("Motion"), _T("PIN_POS0_Y"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Motion.sPinPosX[1];
-	::WritePrivateProfileString(_T("Motion"), _T("PIN_POS1_X"), sData, sPath);
+	::WritePrivateProfileString(_T("Motion"), _T("PIN_POS1_X"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Motion.sPinPosY[1];
-	::WritePrivateProfileString(_T("Motion"), _T("PIN_POS1_Y"), sData, sPath);
+	::WritePrivateProfileString(_T("Motion"), _T("PIN_POS1_Y"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Motion.sStPosX[0];
-	::WritePrivateProfileString(_T("Motion"), _T("START_POS0_X"), sData, sPath);
+	::WritePrivateProfileString(_T("Motion"), _T("START_POS0_X"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Motion.sStPosY[0];
-	::WritePrivateProfileString(_T("Motion"), _T("START_POS0_Y"), sData, sPath);
+	::WritePrivateProfileString(_T("Motion"), _T("START_POS0_Y"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Motion.sStPosX[1];
-	::WritePrivateProfileString(_T("Motion"), _T("START_POS1_X"), sData, sPath);
+	::WritePrivateProfileString(_T("Motion"), _T("START_POS1_X"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Motion.sStPosY[1];
-	::WritePrivateProfileString(_T("Motion"), _T("START_POS1_Y"), sData, sPath);
+	::WritePrivateProfileString(_T("Motion"), _T("START_POS1_Y"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Motion.sStBufPos;
 	::WritePrivateProfileString(_T("Motion"), _T("START_BUFFER_POSITION"), sData, sPath);
@@ -3565,101 +3597,101 @@ void CGvisR2R_LaserDoc::SaveWorkingInfo()
 
 	// [Light]
 	sData = WorkingInfo.Light.sPort;
-	::WritePrivateProfileString(_T("Light"), _T("LIGHT_CONTROL_COM_PORT"), sData, sPath);
+	::WritePrivateProfileString(_T("Light"), _T("LIGHT_CONTROL_COM_PORT"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Light.sBaudRate;
-	::WritePrivateProfileString(_T("Light"), _T("LIGHT_CONTROL_BAUDRATE"), sData, sPath);
+	::WritePrivateProfileString(_T("Light"), _T("LIGHT_CONTROL_BAUDRATE"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData.Format(_T("%d"), WorkingInfo.Light.bCr ? 1 : 0);
-	::WritePrivateProfileString(_T("Light"), _T("LIGHT_CR"), sData, sPath);
+	::WritePrivateProfileString(_T("Light"), _T("LIGHT_CR"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData.Format(_T("%d"), WorkingInfo.Light.bLf ? 1 : 0);
-	::WritePrivateProfileString(_T("Light"), _T("LIGHT_LF"), sData, sPath);
+	::WritePrivateProfileString(_T("Light"), _T("LIGHT_LF"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	// [Light0]
 
 	sData = WorkingInfo.Light.sCh[0];
-	::WritePrivateProfileString(_T("Light0"), _T("LIGHT_CHANNEL"), sData, sPath);
+	::WritePrivateProfileString(_T("Light0"), _T("LIGHT_CHANNEL"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Light.sVal[0];
-	::WritePrivateProfileString(_T("Light0"), _T("LIGHT_VALUE"), sData, sPath);
+	::WritePrivateProfileString(_T("Light0"), _T("LIGHT_VALUE"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	// [Light1]
 
-	sData = WorkingInfo.Light.sCh[1];
-	::WritePrivateProfileString(_T("Light1"), _T("LIGHT_CHANNEL"), sData, sPath);
+	//sData = WorkingInfo.Light.sCh[1];
+	//::WritePrivateProfileString(_T("Light1"), _T("LIGHT_CHANNEL"), sData, sPath);
 
-	sData = WorkingInfo.Light.sVal[1];
-	::WritePrivateProfileString(_T("Light1"), _T("LIGHT_VALUE"), sData, sPath);
+	//sData = WorkingInfo.Light.sVal[1];
+	//::WritePrivateProfileString(_T("Light1"), _T("LIGHT_VALUE"), sData, sPath);
 
 
 	// [Vision0]
 	sData = WorkingInfo.Vision[0].sPinImgSz;
-	::WritePrivateProfileString(_T("Vision0"), _T("PIN_IMG_SIZE"), sData, sPath);
+	::WritePrivateProfileString(_T("Vision0"), _T("PIN_IMG_SIZE"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Vision[0].sResX;
-	::WritePrivateProfileString(_T("Vision0"), _T("RESOLUTION_X"), sData, sPath);
+	::WritePrivateProfileString(_T("Vision0"), _T("RESOLUTION_X"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Vision[0].sResY;
-	::WritePrivateProfileString(_T("Vision0"), _T("RESOLUTION_Y"), sData, sPath);
+	::WritePrivateProfileString(_T("Vision0"), _T("RESOLUTION_Y"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Vision[0].sMkOffsetX;
-	::WritePrivateProfileString(_T("Vision0"), _T("MARKING_OFFSET_X"), sData, sPath);
+	::WritePrivateProfileString(_T("Vision0"), _T("MARKING_OFFSET_X"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Vision[0].sMkOffsetY;
-	::WritePrivateProfileString(_T("Vision0"), _T("MARKING_OFFSET_Y"), sData, sPath);
+	::WritePrivateProfileString(_T("Vision0"), _T("MARKING_OFFSET_Y"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Vision[0].sStdScr;
-	::WritePrivateProfileString(_T("Vision0"), _T("ALIGN_STD_SCORE"), sData, sPath);
+	::WritePrivateProfileString(_T("Vision0"), _T("ALIGN_STD_SCORE"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Vision[0].sAlgnPosX[0];
-	::WritePrivateProfileString(_T("Vision0"), _T("ALIGN_POS0_X"), sData, sPath);
+	::WritePrivateProfileString(_T("Vision0"), _T("ALIGN_POS0_X"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Vision[0].sAlgnPosY[0];
-	::WritePrivateProfileString(_T("Vision0"), _T("ALIGN_POS0_Y"), sData, sPath);
+	::WritePrivateProfileString(_T("Vision0"), _T("ALIGN_POS0_Y"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Vision[0].sAlgnPosX[1];
-	::WritePrivateProfileString(_T("Vision0"), _T("ALIGN_POS1_X"), sData, sPath);
+	::WritePrivateProfileString(_T("Vision0"), _T("ALIGN_POS1_X"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Vision[0].sAlgnPosY[1];
-	::WritePrivateProfileString(_T("Vision0"), _T("ALIGN_POS1_Y"), sData, sPath);
+	::WritePrivateProfileString(_T("Vision0"), _T("ALIGN_POS1_Y"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	sData = WorkingInfo.Vision[0].sPtMatScr;
-	::WritePrivateProfileString(_T("Vision0"), _T("PtMatchingScore"), sData, sPath);
+	::WritePrivateProfileString(_T("Vision0"), _T("PtMatchingScore"), sData, WorkingInfo.System.sPathEngCurrInfo);
 
 	// [Vision1]
-	sData = WorkingInfo.Vision[1].sPinImgSz;
-	::WritePrivateProfileString(_T("Vision1"), _T("PIN_IMG_SIZE"), sData, sPath);
+	//sData = WorkingInfo.Vision[1].sPinImgSz;
+	//::WritePrivateProfileString(_T("Vision1"), _T("PIN_IMG_SIZE"), sData, sPath);
 
-	sData = WorkingInfo.Vision[1].sResX;
-	::WritePrivateProfileString(_T("Vision1"), _T("RESOLUTION_X"), sData, sPath);
+	//sData = WorkingInfo.Vision[1].sResX;
+	//::WritePrivateProfileString(_T("Vision1"), _T("RESOLUTION_X"), sData, sPath);
 
-	sData = WorkingInfo.Vision[1].sResY;
-	::WritePrivateProfileString(_T("Vision1"), _T("RESOLUTION_Y"), sData, sPath);
+	//sData = WorkingInfo.Vision[1].sResY;
+	//::WritePrivateProfileString(_T("Vision1"), _T("RESOLUTION_Y"), sData, sPath);
 
-	sData = WorkingInfo.Vision[1].sMkOffsetX;
-	::WritePrivateProfileString(_T("Vision1"), _T("MARKING_OFFSET_X"), sData, sPath);
+	//sData = WorkingInfo.Vision[1].sMkOffsetX;
+	//::WritePrivateProfileString(_T("Vision1"), _T("MARKING_OFFSET_X"), sData, sPath);
 
-	sData = WorkingInfo.Vision[1].sMkOffsetY;
-	::WritePrivateProfileString(_T("Vision1"), _T("MARKING_OFFSET_Y"), sData, sPath);
+	//sData = WorkingInfo.Vision[1].sMkOffsetY;
+	//::WritePrivateProfileString(_T("Vision1"), _T("MARKING_OFFSET_Y"), sData, sPath);
 
-	sData = WorkingInfo.Vision[1].sStdScr;
-	::WritePrivateProfileString(_T("Vision1"), _T("ALIGN_STD_SCORE"), sData, sPath);
+	//sData = WorkingInfo.Vision[1].sStdScr;
+	//::WritePrivateProfileString(_T("Vision1"), _T("ALIGN_STD_SCORE"), sData, sPath);
 
-	sData = WorkingInfo.Vision[1].sAlgnPosX[0];
-	::WritePrivateProfileString(_T("Vision1"), _T("ALIGN_POS0_X"), sData, sPath);
+	//sData = WorkingInfo.Vision[1].sAlgnPosX[0];
+	//::WritePrivateProfileString(_T("Vision1"), _T("ALIGN_POS0_X"), sData, sPath);
 
-	sData = WorkingInfo.Vision[1].sAlgnPosY[0];
-	::WritePrivateProfileString(_T("Vision1"), _T("ALIGN_POS0_Y"), sData, sPath);
+	//sData = WorkingInfo.Vision[1].sAlgnPosY[0];
+	//::WritePrivateProfileString(_T("Vision1"), _T("ALIGN_POS0_Y"), sData, sPath);
 
-	sData = WorkingInfo.Vision[1].sAlgnPosX[1];
-	::WritePrivateProfileString(_T("Vision1"), _T("ALIGN_POS1_X"), sData, sPath);
+	//sData = WorkingInfo.Vision[1].sAlgnPosX[1];
+	//::WritePrivateProfileString(_T("Vision1"), _T("ALIGN_POS1_X"), sData, sPath);
 
-	sData = WorkingInfo.Vision[1].sAlgnPosY[1];
-	::WritePrivateProfileString(_T("Vision1"), _T("ALIGN_POS1_Y"), sData, sPath);
+	//sData = WorkingInfo.Vision[1].sAlgnPosY[1];
+	//::WritePrivateProfileString(_T("Vision1"), _T("ALIGN_POS1_Y"), sData, sPath);
 
-	sData = WorkingInfo.Vision[1].sPtMatScr;
-	::WritePrivateProfileString(_T("Vision1"), _T("PtMatchingScore"), sData, sPath);
+	//sData = WorkingInfo.Vision[1].sPtMatScr;
+	//::WritePrivateProfileString(_T("Vision1"), _T("PtMatchingScore"), sData, sPath);
 
 	// [Lot]
 	sData.Format(_T("%d"), WorkingInfo.Lot.dwStTick);
@@ -7458,6 +7490,26 @@ void CGvisR2R_LaserDoc::SetModelInfoProcessNum()
 	::WritePrivateProfileString(_T("Last Job"), _T("Process Unit Code"), sData, sPath);
 }
 
+void CGvisR2R_LaserDoc::SetCurrentInfoTestMode(int nMode)
+{
+	CString sData, sPath = WorkingInfo.System.sPathEngCurrInfo;
+
+	pDoc->WorkingInfo.LastJob.nTestMode = nMode;
+	sData.Format(_T("%d"), nMode);
+	::WritePrivateProfileString(_T("Infomation"), _T("Test Mode"), sData, sPath);
+}
+
+int CGvisR2R_LaserDoc::GetCurrentInfoTestMode()
+{
+	TCHAR szData[200];
+	CString sData, sPath = WorkingInfo.System.sPathEngCurrInfo;
+
+	if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Test Mode"), NULL, szData, sizeof(szData), sPath))
+		return (_ttoi(szData));
+
+	return -1;
+}
+
 void CGvisR2R_LaserDoc::SetCurrentInfo()
 {
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
@@ -8806,4 +8858,36 @@ CString CGvisR2R_LaserDoc::GetCurrentInfoBufDn()
 	}
 
 	return str;
+}
+
+
+CString CGvisR2R_LaserDoc::GetMonDispMain()
+{
+	CString sPath = WorkingInfo.System.sPathMonDispMain;
+	TCHAR szData[512];
+
+	if (sPath.IsEmpty())
+		return _T("");
+
+	if (0 < ::GetPrivateProfileString(_T("Info"), _T("Disp"), NULL, szData, sizeof(szData), sPath))
+		return(CString(szData));
+
+	return _T("");
+}
+
+void CGvisR2R_LaserDoc::SetMonDispMain(CString sDisp)
+{
+	CString sPath = WorkingInfo.System.sPathMonDispMain;
+	if (sPath.IsEmpty())
+		return;
+
+	::WritePrivateProfileString(_T("Info"), _T("Disp"), sDisp, sPath);
+}
+
+void CGvisR2R_LaserDoc::GetMkMenu01()
+{
+}
+
+void CGvisR2R_LaserDoc::SetMkMenu01()
+{
 }

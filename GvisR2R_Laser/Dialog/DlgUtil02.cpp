@@ -233,6 +233,16 @@ void CDlgUtil02::DoConfirm()
 		pDoc->WorkingInfo.LastJob.sLayerDn = pDoc->m_sLayerDn;
 		pView->m_bLoadMstInfo = TRUE;
 	}
+	if ((pDoc->WorkingInfo.LastJob.sLotUp != pDoc->m_sLotNum) && !pDoc->m_sLayerUp.IsEmpty())
+	{
+		pDoc->WorkingInfo.LastJob.sLotUp = pDoc->m_sLayerUp;
+		pView->m_bLoadMstInfo = TRUE;
+	}
+	if ((pDoc->WorkingInfo.LastJob.sLotDn != pDoc->m_sLotNum) && !pDoc->m_sLayerDn.IsEmpty())
+	{
+		pDoc->WorkingInfo.LastJob.sLotDn = pDoc->m_sLayerDn;
+		pView->m_bLoadMstInfo = TRUE;
+	}
 
 	pDoc->SetModelInfoUp();
 	pDoc->SetModelInfoDn();

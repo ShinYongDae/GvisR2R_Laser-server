@@ -17,6 +17,7 @@ static char THIS_FILE[] = __FILE__;
 
 extern CGvisR2R_LaserDoc* pDoc;
 extern CGvisR2R_LaserView* pView;
+extern CString PATH_WORKING_INFO;
 
 /////////////////////////////////////////////////////////////////////////////
 // CDlgMenu04 dialog

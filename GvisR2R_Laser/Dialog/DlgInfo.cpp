@@ -18,6 +18,7 @@ static char THIS_FILE[] = __FILE__;
 
 extern CGvisR2R_LaserDoc* pDoc;
 extern CGvisR2R_LaserView* pView;
+extern CString PATH_WORKING_INFO;
 
 /////////////////////////////////////////////////////////////////////////////
 // CDlgInfo dialog
@@ -1426,6 +1427,7 @@ void CDlgInfo::SetTestMode(int nMode)
 	sData.Format(_T("%d"), nMode);
 	::WritePrivateProfileString(_T("Last Job"), _T("Test Mode"), sData, PATH_WORKING_INFO);
 
+	pDoc->SetCurrentInfoTestMode(nMode);
 #ifdef USE_ENGRAVE
 	if (pView && pView->m_pEngrave)
 		pView->m_pEngrave->SetTestMode();	//_ItemInx::_TestMode

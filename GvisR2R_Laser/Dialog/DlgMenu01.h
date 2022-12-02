@@ -14,7 +14,7 @@
 #define MAX_MENU01_STC_DEFINFO		12
 
 #define MAX_MENU01_STC_TITLE		67
-#define MAX_MENU01_STC_DATA			83
+#define MAX_MENU01_STC_DATA			84
 #define MAX_MENU01_BTN				21
 
 #define TIM_DISP_DEF_IMG			100
@@ -189,6 +189,14 @@ public:
 	void SwMyBtnUp(int nCtrlID);
 
 	void ChkTpStop();
+
+	void SetTotOpRto(CString sVal);		// 전체진행율
+	void SetTotVel(CString sVal);		// 전체속도
+	void SetPartVel(CString sVal);		// 구간속도
+	void SetMkDoneLen(CString sVal);	// 마킹부 : Distance (FdDone) [M]
+	void SetAoiDnDoneLen(CString sVal);	// 검사부(하) : Distance (FdDone) [M]
+	void SetAoiUpDoneLen(CString sVal);	// 검사부(상) : Distance (FdDone) [M]
+	void SetEngDoneLen(CString sVal);	// 각인부 : Distance (FdDone) [M]
 
 // Dialog Data
 	//{{AFX_DATA(CDlgMenu01)

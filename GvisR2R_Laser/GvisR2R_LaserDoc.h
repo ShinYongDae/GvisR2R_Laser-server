@@ -299,7 +299,6 @@ public:
 	void SetModelInfoUp();
 	void SetModelInfoDn();
 	void SetModelInfoProcessNum();
-	void SetCurrentInfo();
 	BOOL GetAoiUpOffset(CfPoint &OfSt);
 	BOOL GetAoiDnOffset(CfPoint &OfSt);
 	void ClrPcr();
@@ -390,12 +389,21 @@ public:
 	void SetEngOrderNum(CString sOrderNum);
 	BOOL SetEngOffset(CfPoint &OfSt);
 
-	void SetCurrentInfoSignal(int nIdxSig, BOOL bOn);
 	BOOL GetCurrentInfoSignal(int nIdxSig);
 	CString GetCurrentInfoBufUp();
 	CString GetCurrentInfoBufDn();
 	int GetCurrentInfoEngShotNum();
+	int GetCurrentInfoTestMode();
+
+	void SetCurrentInfo();
+	void SetCurrentInfoTestMode(int nMode);
 	void SetCurrentInfoEngShotNum(int nSerial);
+	void SetCurrentInfoSignal(int nIdxSig, BOOL bOn);
+
+	CString GetMonDispMain();
+	void SetMonDispMain(CString sDisp);
+	void GetMkMenu01();
+	void SetMkMenu01();
 
 // 재정의입니다.
 public:

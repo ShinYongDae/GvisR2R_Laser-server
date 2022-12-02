@@ -295,7 +295,9 @@ BOOL CTcpIpServer::Stop()
 				Sleep(10);
 				pAccept->Close();
 				//m_pAcceptAddr[i]->Close();
-				delete pAccept;
+				//delete pAccept;
+				if (m_pAcceptAddr[i])
+					delete m_pAcceptAddr[i];
 				m_pAcceptAddr[i] = NULL;
 				Sleep(10);
 			}

@@ -574,6 +574,14 @@ public:
 	void SetAlarm(CString sMsg);
 	void IsSetAlarm(CString sMsg);
 
+	// On Running Auto
+	BOOL UpdateWorking();
+	BOOL UpdateRst();
+	BOOL UpdateTotRatio();
+	BOOL UpdateStripRatio();
+	BOOL UpdateDef();
+	void GetUpdateWorking(SOCKET_DATA SockData);
+
 protected:
 	afx_msg LRESULT wmAcceptReceived(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT wmServerClosed(WPARAM wParam, LPARAM lParam);
