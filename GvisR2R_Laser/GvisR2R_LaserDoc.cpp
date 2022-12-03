@@ -988,7 +988,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	else
 	{
 		AfxMessageBox(_T("PunchingCurrentInfoPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.System.sPathMonDispMain = CString(_T("\\\\100.100.101.68\\EngraveWork\\MonDispMain.ini"));
+		WorkingInfo.System.sPathMonDispMain = CString(_T("\\\\100.100.101.68\\PunchWork\\MonDispMain.ini"));
 	}
 
 	if (0 < ::GetPrivateProfileString(_T("System"), _T("MkMenu01Path"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
@@ -996,7 +996,15 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	else
 	{
 		AfxMessageBox(_T("PunchingCurrentInfoPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.System.sPathMkMenu01 = CString(_T("\\\\100.100.101.68\\EngraveWork\\MkMenu01.ini"));
+		WorkingInfo.System.sPathMkMenu01 = CString(_T("\\\\100.100.101.68\\PunchWork\\MkMenu01.ini"));
+	}
+
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("MkMenu03Path"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+		WorkingInfo.System.sPathMkMenu03 = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("PunchingCurrentInfoPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathMkMenu03 = CString(_T("\\\\100.100.101.68\\PunchWork\\MkMenu03.ini"));
 	}
 
 
@@ -8890,4 +8898,300 @@ void CGvisR2R_LaserDoc::GetMkMenu01()
 
 void CGvisR2R_LaserDoc::SetMkMenu01()
 {
+}
+
+void CGvisR2R_LaserDoc::GetMkMenu03Main()
+{
+	CString sPath = WorkingInfo.System.sPathMkMenu03;
+	TCHAR szData[512];
+
+	if (sPath.IsEmpty())
+		return;
+
+	if (0 < ::GetPrivateProfileString(_T("Main"), _T("Ready"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Main.Ready = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Main"), _T("Run"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Main.Run = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Main"), _T("Reset"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Main.Reset = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Main"), _T("Stop"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Main.Stop = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Main"), _T("Auto"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Main.Auto = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Main"), _T("Manual"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Main.Manual = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	pDoc->Status.bAuto = pDoc->BtnStatus.Main.Auto;
+	pDoc->Status.bManual = pDoc->BtnStatus.Main.Manual;
+
+	if (0 < ::GetPrivateProfileString(_T("Main"), _T("Relation"), NULL, szData, sizeof(szData), sPath))
+	{
+		pDoc->BtnStatus.Rc.Relation = (_ttoi(szData) > 0) ? TRUE : FALSE;
+		pDoc->BtnStatus.Mk.Relation = (_ttoi(szData) > 0) ? TRUE : FALSE;
+		pDoc->BtnStatus.AoiDn.Relation = (_ttoi(szData) > 0) ? TRUE : FALSE;
+		pDoc->BtnStatus.AoiUp.Relation = (_ttoi(szData) > 0) ? TRUE : FALSE;
+		pDoc->BtnStatus.Eng.Relation = (_ttoi(szData) > 0) ? TRUE : FALSE;
+		pDoc->BtnStatus.Uc.Relation = (_ttoi(szData) > 0) ? TRUE : FALSE;
+	}
+}
+
+void CGvisR2R_LaserDoc::GetMkMenu03()
+{
+	CString sPath = WorkingInfo.System.sPathMkMenu03;
+	TCHAR szData[512];
+
+	if (sPath.IsEmpty())
+		return;
+
+	// [TqMotor]
+	if (0 < ::GetPrivateProfileString(_T("TqMotor"), _T("MkTq"), NULL, szData, sizeof(szData), sPath))
+		pDoc->WorkingInfo.Motion.bMkTq = pDoc->BtnStatus.Tq.Mk = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("TqMotor"), _T("AoiTq"), NULL, szData, sizeof(szData), sPath))
+		pDoc->WorkingInfo.Motion.bAoiTq = pDoc->BtnStatus.Tq.Aoi = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("TqMotor"), _T("EngTq"), NULL, szData, sizeof(szData), sPath))
+		pDoc->WorkingInfo.Motion.bEngraveTq = pDoc->BtnStatus.Tq.Eng = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	// [Induction]
+	if (0 < ::GetPrivateProfileString(_T("Induction"), _T("RcCcw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Induct.Rc = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Induction"), _T("RcCcw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Induct.Uc = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	// [Core]
+	if (0 < ::GetPrivateProfileString(_T("Core"), _T("Rc150"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Core150.Rc = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Core"), _T("Uc150"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Core150.Uc = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	// [Recoiler]
+	if (0 < ::GetPrivateProfileString(_T("Recoiler"), _T("MvCw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Rc.FdCw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Recoiler"), _T("MvCcw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Rc.FdCcw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Recoiler"), _T("PrdChuck"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Rc.ReelChuck = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Recoiler"), _T("DancerUp"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Rc.DcRlUpDn = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Recoiler"), _T("PasteUpLf"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Rc.ReelJoinL = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Recoiler"), _T("PasteUpRt"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Rc.ReelJoinR = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Recoiler"), _T("PasteVac"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Rc.ReelJoinVac = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Recoiler"), _T("PprChuck"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Rc.PprChuck = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Recoiler"), _T("PprCw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Rc.PprCw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Recoiler"), _T("PprCcw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Rc.PprCcw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Recoiler"), _T("DoRewind"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Rc.Rewine = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Recoiler"), _T("PrdPprRewind"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Rc.RewineReelPpr = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	// [Punching]
+	if (0 < ::GetPrivateProfileString(_T("Punching"), _T("MvCw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Mk.FdCw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Punching"), _T("MvCcw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Mk.FdCcw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Punching"), _T("FdVac"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Mk.FdVac = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Punching"), _T("PushUp"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Mk.PushUp = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Punching"), _T("TblBlw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Mk.TblBlw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Punching"), _T("TblVac"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Mk.TblVac = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Punching"), _T("FdClamp"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Mk.FdClp = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Punching"), _T("TensClamp"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Mk.TqClp = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Punching"), _T("OnePnl"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Mk.MvOne = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Punching"), _T("Lsr"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Mk.LsrPt = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Punching"), _T("DancerUp"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Mk.DcRSol = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	// [AoiDn]
+	if (0 < ::GetPrivateProfileString(_T("AoiDn"), _T("MvCw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiDn.FdCw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiDn"), _T("MvCcw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiDn.FdCcw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiDn"), _T("FdVac"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiDn.FdVac = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiDn"), _T("PushUp"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiDn.PushUp = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiDn"), _T("TblBlw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiDn.TblBlw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiDn"), _T("TblVac"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiDn.TblVac = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiDn"), _T("FdClamp"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiDn.FdClp = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiDn"), _T("TensClamp"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiDn.TqClp = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiDn"), _T("OnePnl"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiDn.MvOne = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiDn"), _T("Lsr"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiDn.LsrPt = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiDn"), _T("VelClrSonic"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiDn.VelSonicBlw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	// [AoiUp]
+	if (0 < ::GetPrivateProfileString(_T("AoiUp"), _T("MvCw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiUp.FdCw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiUp"), _T("MvCcw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiUp.FdCcw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiUp"), _T("FdVac"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiUp.FdVac = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiUp"), _T("PushUp"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiUp.PushUp = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiUp"), _T("TblBlw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiUp.TblBlw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiUp"), _T("TblVac"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiUp.TblVac = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiUp"), _T("FdClamp"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiUp.FdClp = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiUp"), _T("TensClamp"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiUp.TqClp = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiUp"), _T("OnePnl"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiUp.MvOne = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("AoiUp"), _T("Lsr"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.AoiUp.LsrPt = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	// [Engraving]
+	if (0 < ::GetPrivateProfileString(_T("Engraving"), _T("MvCw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Eng.FdCw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Engraving"), _T("MvCcw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Eng.FdCcw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Engraving"), _T("FdVac"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Eng.FdVac = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Engraving"), _T("PushUp"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Eng.PushUp = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Engraving"), _T("TblBlw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Eng.TblBlw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Engraving"), _T("TblVac"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Eng.TblVac = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Engraving"), _T("FdClamp"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Eng.FdClp = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Engraving"), _T("TensClamp"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Eng.TqClp = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Engraving"), _T("OnePnl"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Eng.MvOne = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Engraving"), _T("Lsr"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Eng.LsrPt = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Engraving"), _T("VelClrSonic"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Eng.DcRSol = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Engraving"), _T("DancerUp"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Eng.VelSonicBlw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	// [Uncoiler]
+	if (0 < ::GetPrivateProfileString(_T("Uncoiler"), _T("MvCw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Uc.FdCw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Uncoiler"), _T("MvCcw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Uc.FdCcw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Uncoiler"), _T("PrdChuck"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Uc.ReelChuck = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Uncoiler"), _T("DancerUp"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Uc.DcRlUpDn = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Uncoiler"), _T("PasteUpLf"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Uc.ReelJoinL = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Uncoiler"), _T("PasteUpRt"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Uc.ReelJoinR = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Uncoiler"), _T("PasteVac"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Uc.ReelJoinVac = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Uncoiler"), _T("PprChuck"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Uc.PprChuck = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Uncoiler"), _T("PprCw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Uc.PprCw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Uncoiler"), _T("PprCcw"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Uc.PprCcw = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Uncoiler"), _T("ClrRollUp"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Uc.ClRlUpDn = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Uncoiler"), _T("ClrRollPush"), NULL, szData, sizeof(szData), sPath))
+		pDoc->BtnStatus.Uc.ClRlPshUpDn = (_ttoi(szData) > 0) ? TRUE : FALSE;
+
+}
+
+void CGvisR2R_LaserDoc::SetMkMenu03(CString sMenu, CString sItem, BOOL bOn)
+{
+	CString sPath = WorkingInfo.System.sPathMkMenu03;
+	CString sData = _T("");
+
+	if (sPath.IsEmpty())
+		return;
+
+	sData.Format(_T("%d"), bOn > 0 ? 1 : 0);
+	::WritePrivateProfileString(sMenu, sItem, sData, sPath);
 }

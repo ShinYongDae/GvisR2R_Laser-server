@@ -923,8 +923,8 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 				m_pEngrave->m_bGetInfo = FALSE;
 			}
 
-			if (m_pDlgMenu03)
-				m_pDlgMenu03->UpdateSignal();
+			//if (m_pDlgMenu03)
+			//	m_pDlgMenu03->UpdateSignal();
 
 			m_bSetSig = FALSE;
 		}

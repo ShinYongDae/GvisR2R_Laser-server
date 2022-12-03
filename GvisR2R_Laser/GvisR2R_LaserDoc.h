@@ -404,6 +404,9 @@ public:
 	void SetMonDispMain(CString sDisp);
 	void GetMkMenu01();
 	void SetMkMenu01();
+	void GetMkMenu03();
+	void GetMkMenu03Main();
+	void SetMkMenu03(CString sMenu, CString sItem, BOOL bOn);
 
 // 재정의입니다.
 public:

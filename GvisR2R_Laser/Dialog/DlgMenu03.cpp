@@ -1730,6 +1730,8 @@ void CDlgMenu03::OnTimer(UINT_PTR nIDEvent)//(UINT nIDEvent)
 	if(nIDEvent == TIM_MENU03_DISP)
 	{
 		KillTimer(TIM_MENU03_DISP);
+		pDoc->GetMkMenu03Main();
+		pDoc->GetMkMenu03();
 		Disp();
 		if(m_bTIM_MENU03_DISP)
 			SetTimer(TIM_MENU03_DISP, 300, NULL);
@@ -5028,8 +5030,8 @@ void CDlgMenu03::UpdateData()
 
 void CDlgMenu03::UpdateSignal()
 {
-	if (pView)
-		pView->GetPlcParam();
+	//if (pView)
+	//	pView->GetPlcParam();
 
 	Disp();
 }
