@@ -384,3 +384,33 @@ void CPcsRgn::SetPinPos(int nCam, CfPoint ptPnt)
 	m_ptPinPos[nCam].y = ptPnt.y;
 }
 
+
+void CPcsRgn::GetShotRowCol(int& nR, int& nC)
+{
+	nR = nRow;
+	nC = nCol;
+}
+
+void CPcsRgn::SetShotRowCol(int nR, int nC)
+{
+	nRow = nR;
+	nCol = nC;
+}
+
+void CPcsRgn::SetShotRgn(CRect rect)
+{
+	rtFrm.left = rect.left;
+	rtFrm.top = rect.top;
+	rtFrm.right = rect.right;
+	rtFrm.bottom = rect.bottom;
+}
+
+CRect CPcsRgn::GetShotRgn()
+{
+	return rtFrm;
+}
+
+int CPcsRgn::GetTotPcs()
+{
+	return nTotPcs;
+}

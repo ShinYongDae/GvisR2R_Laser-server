@@ -29,6 +29,7 @@ CDlgUtil02::CDlgUtil02(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 
 	m_pRect = NULL;
+	m_sItsCode = _T("");
 	m_sLotNum = _T("");
 	m_sProcessNum = _T("");
 }
@@ -51,6 +52,7 @@ void CDlgUtil02::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CDlgUtil02)
+	DDX_Text(pDX, IDC_ITS_EDIT, m_sItsCode);
 	DDX_Text(pDX, IDC_LOT_EDIT, m_sLotNum);
 	DDX_Text(pDX, IDC_EDIT_PROCESS_NUM, m_sProcessNum);
 	DDX_Control(pDX, IDC_LAYER_COMBO_DN, m_LayerComboDn);
@@ -107,6 +109,7 @@ void CDlgUtil02::AtDlgShow()
 	ModifyModelComboData(&m_ModelComboUp);
 	ModifyModelComboData(&m_ModelComboDn);
 
+	m_sItsCode = pDoc->m_sItsCode;
 	m_sLotNum = pDoc->m_sLotNum;
 	m_sProcessNum = pDoc->m_sProcessNum;
 
@@ -190,6 +193,7 @@ void CDlgUtil02::OnBnClickedBtnConfirm()
 void CDlgUtil02::DoConfirm()
 {
 	UpdateData(TRUE);
+	pDoc->m_sItsCode = m_sItsCode;
 
 	m_sLotNum.MakeUpper();
 	pDoc->m_sLotNum = m_sLotNum;
@@ -211,7 +215,7 @@ void CDlgUtil02::DoConfirm()
 		pDoc->m_sProcessNum.Delete(4, nLength - 4);
 	}
 
-	pView->m_bLoadMstInfo = TRUE;
+	pView->m_bLoadMstInfo = FALSE;
 
 	if ((pDoc->WorkingInfo.LastJob.sModelUp != pDoc->m_sModelUp) && !pDoc->m_sModelUp.IsEmpty())
 	{
@@ -235,12 +239,12 @@ void CDlgUtil02::DoConfirm()
 	}
 	if ((pDoc->WorkingInfo.LastJob.sLotUp != pDoc->m_sLotNum) && !pDoc->m_sLayerUp.IsEmpty())
 	{
-		pDoc->WorkingInfo.LastJob.sLotUp = pDoc->m_sLayerUp;
+		pDoc->WorkingInfo.LastJob.sLotUp = pDoc->m_sLotNum;
 		pView->m_bLoadMstInfo = TRUE;
 	}
 	if ((pDoc->WorkingInfo.LastJob.sLotDn != pDoc->m_sLotNum) && !pDoc->m_sLayerDn.IsEmpty())
 	{
-		pDoc->WorkingInfo.LastJob.sLotDn = pDoc->m_sLayerDn;
+		pDoc->WorkingInfo.LastJob.sLotDn = pDoc->m_sLotNum;
 		pView->m_bLoadMstInfo = TRUE;
 	}
 

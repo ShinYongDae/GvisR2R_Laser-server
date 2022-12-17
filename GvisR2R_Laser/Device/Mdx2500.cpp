@@ -390,10 +390,10 @@ BOOL CMdx2500::SetMdxOrderShotNum(CString sOrder, CString sShot, int nSet)
 		return FALSE;
 	}
 
-	if ((sOrder.GetLength() != 9) && (nSet & SET_ORDER))
+	if ((sOrder.GetLength() != 9) && (nSet & SET_ITS))
 	{
-		//AfxMessageBox(_T("Error - 오더넘버는 9자여야 합니다."));
-		pView->MsgBox(_T("Error - 오더넘버는 9자여야 합니다."));
+		//AfxMessageBox(_T("Error - ITS CODE는 9자여야 합니다."));
+		pView->MsgBox(_T("Error - ITS CODE는 9자여야 합니다."));
 		return FALSE;
 	}
 	else if ((sShot.GetLength() != 3) && (nSet & SET_SHOT))

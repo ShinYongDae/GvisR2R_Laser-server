@@ -23,7 +23,7 @@ typedef enum _stSigInx {
 	_UltraSonicAoiDn, _UltraSonicEngrave, _FixDef,
 	// Menu01
 	_TempStop, _TempPause, _LotCut, _MkPosMv, _MkVerify, _ReelmapUp, _ReelmapDn, _ReelmapTot,
-	_RemainMode, _EndWork, _ReMk, _2Layer, _1LnMk, _2LnMk, _3LnMk, _4LnMk, _TotLnMk,
+	_RemainMode, _EndWork, _ReMk, _2Layer, _1LnMk, _2LnMk, _3LnMk, _4LnMk, _TotLnMk, _UpdateWork,
 	// Menu02
 	_2DEngLenMvCw, _2DEngLenMvCcw, _2DAoiLenMvCw, _2DAoiLenMvCcw, _2DMkLenMvCw, _2DMkLenMvCcw, _2DOneShotLenCw, _2DOneShotLenCcw,	
 	// Menu03
@@ -61,7 +61,7 @@ typedef enum _stSigInx {
 	_IsUltraSonicAoiDn, _IsUltraSonicEngrave, _IsFixDef,
 	// Is Menu01
 	_IsTempStop, _IsTempPause, _IsLotCut, _IsMkPosMv, _IsMkVerify, _IsReelmapUp, _IsReelmapDn, _IsReelmapTot,
-	_IsRemainMode, _IsEndWork, _IsReMk, _Is2Layer, _Is1LnMk, _Is2LnMk, _Is3LnMk, _Is4LnMk, _IsTotLnMk,
+	_IsRemainMode, _IsEndWork, _IsReMk, _Is2Layer, _Is1LnMk, _Is2LnMk, _Is3LnMk, _Is4LnMk, _IsTotLnMk, _IsUpdateWork,
 	// Is Menu02
 	_Is2DEngLenMvCw, _Is2DEngLenMvCcw, _Is2DAoiLenMvCw, _Is2DAoiLenMvCcw, _Is2DMkLenMvCw, _Is2DMkLenMvCcw, _Is2DOneShotLenCw, _Is2DOneShotLenCcw,
 	// Is Menu03

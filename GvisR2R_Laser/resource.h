@@ -150,6 +150,7 @@
 #define IDC_PIC_DEF_003                 1015
 #define IDC_EDIT_PROCESS_NUM            1015
 #define IDC_PIC_DEF_004                 1016
+#define IDC_ITS_EDIT                    1016
 #define IDC_PIC_DEF_005                 1017
 #define IDC_PIC_DEF_006                 1018
 #define IDC_STATIC_00                   1019
@@ -613,7 +614,6 @@
 #define IDC_CHK_41                      1199
 #define IDC_STC_25                      1199
 #define IDC_STC_218                     1199
-#define IDC_STC_AOI_UP2                 1199
 #define IDC_STC_ENG                     1199
 #define IDC_STC_175                     1200
 #define IDC_CHK_7                       1200

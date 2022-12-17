@@ -224,6 +224,7 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 	m_bTIM_SAFTY_STOP = FALSE;
 	m_bTIM_TCPIP_UPDATE = FALSE;
 	m_bTIM_START_UPDATE = FALSE;
+	m_bTIM_MENU01_UPDATE_WORK = FALSE;
 	m_sMyMsg = _T("");
 	m_nTypeMyMsg = IDOK;
 
@@ -476,6 +477,7 @@ void CGvisR2R_LaserView::OnInitialUpdate()
 	pDoc->LoadDataInfo();
 	if (!LoadMySpec())
 		LoadMySpec();
+	pDoc->GetCurrentInfo();
 
 #ifdef USE_CAM_MASTER
 	CFileFind finder;
@@ -977,6 +979,21 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 			m_pDlgMenu01->UpdateData();
 		m_bLoadMstInfoF = FALSE;
 		m_bLoadMstInfo = FALSE;
+	}
+
+	if (nIDEvent == TIM_MENU01_UPDATE_WORK)
+	{
+		KillTimer(TIM_MENU01_UPDATE_WORK);
+		pDoc->GetMkMenu01();
+		if (m_pDlgMenu01)
+		{
+			m_pDlgMenu01->UpdateData();
+			m_pDlgMenu01->UpdateWorking();
+			m_pDlgMenu01->DispTotRatio();
+			m_pDlgMenu01->DispStripRatio();
+			m_pDlgMenu01->DispDef();
+			m_pDlgMenu01->DispMkCnt();
+		}
 	}
 
 	CFormView::OnTimer(nIDEvent);
@@ -13520,7 +13537,7 @@ BOOL CGvisR2R_LaserView::MoveAlign0(int nPos)
 	if (m_pDlgMenu02)
 		m_pDlgMenu02->SetLight();
 
-	if (m_pMotion->m_dPinPosY[0] > 0.0 && m_pMotion->m_dPinPosX[0] > 0.0)
+	if (m_pMotion->m_dPinPosY[0] > -5.0 && m_pMotion->m_dPinPosX[0] > -5.0)
 	{
 		double dCurrX = m_dEnc[AXIS_X0];
 		double dCurrY = m_dEnc[AXIS_Y0];
@@ -14877,7 +14894,7 @@ LRESULT CGvisR2R_LaserView::wmClientReceivedSr(WPARAM wParam, LPARAM lParam)
 	switch (nCmd)
 	{
 	case SrTriggerInputOn:
-		Get2dCode(m_sGet2dCodeLot, m_nGet2dCodeSerial);
+		//Get2dCode(m_sGet2dCodeLot, m_nGet2dCodeSerial);
 		if (m_pDlgMenu02)
 		{
 			m_pDlgMenu02->Disp2dCode();
@@ -15443,9 +15460,7 @@ void CGvisR2R_LaserView::Eng1PtAlignPt0()
 						m_nEngStAuto++; // DoMk
 					else
 					{
-						if (!IsInitPos0())
-							MoveInitPos0();
-
+						//MovePinPos(); // 2D 코드 위치
 						m_nEngStAuto = ENG_ST + (Mk1PtIdx::DoneMk); // Align변수 초기화 (Skip 65 : Mk())
 					}
 				}
@@ -15460,8 +15475,12 @@ void CGvisR2R_LaserView::Eng1PtAlignPt0()
 
 			break;
 		case ENG_ST + (Mk1PtIdx::Align0_0) + 2:
-			//if (IsRun())
+			if (IsRun())
+			{
+				//MovePinPos(); // 2D 코드 위치
+				//pDoc->m_nShotNum++;							// 각인할 시리얼 증가
 				m_nEngStAuto = ENG_ST + (Mk1PtIdx::DoMk);
+			}
 			break;
 		}
 	}
@@ -15477,23 +15496,37 @@ void CGvisR2R_LaserView::Eng1PtDoMarking()
 		switch (m_nEngStAuto)
 		{
 		case ENG_ST + (Mk1PtIdx::DoMk) :				// Mk 마킹 시작
-			pDoc->m_nShotNum++;							// 각인할 시리얼 증가
-			//if (!pDoc->WorkingInfo.System.bNoMk)
-			//	SetMdxLotAndShotNum(pDoc->m_sLotNum, pDoc->m_nShotNum);
+			if (!pDoc->WorkingInfo.System.bNoMk)
+			{
+				//if (!SetMdxLotAndShotNum(pDoc->m_sLotNum, pDoc->m_nShotNum))
+				//if (!SetMdxLotAndShotNum(pDoc->m_sLotNum, nSerial))
+				if (!SetMdxLotAndShotNum(pDoc->m_sItsCode, nSerial))
+				{
+					EngStop(TRUE);
+					//MsgBox(_T("SetMdxLotAndShotNum - Failed."));
+					//TowerLamp(RGB_RED, TRUE);
+					//Buzzer(TRUE, 0);
+					break;
+				}
+			}
 			Sleep(100);
 			m_nEngStAuto++;
 			break;
 
 		case ENG_ST + (Mk1PtIdx::DoMk) + 1:
-			//if(!pDoc->WorkingInfo.System.bNoMk)
-			//	SetMk(TRUE);							// Mk 마킹 시작
-			SetCurrentInfoEngShotNum(pDoc->m_nShotNum);
-			Sleep(100);
+			if(!pDoc->WorkingInfo.System.bNoMk)
+				SetMk(TRUE);							// Mk 마킹 시작
+			//SetCurrentInfoEngShotNum(pDoc->m_nShotNum);
+			SetCurrentInfoEngShotNum(nSerial);
+			Sleep(300);
 			m_nEngStAuto++;
 			break;
 		case ENG_ST + (Mk1PtIdx::DoMk) + 2:
 			if (IsMkDone())
+			{
+				Sleep(300);
 				m_nEngStAuto = ENG_ST + (Mk1PtIdx::DoneMk);	// Mk 마킹 완료
+			}
 			break;
 		case ENG_ST + (Mk1PtIdx::DoneMk) :
 			//if (IsRun())
@@ -15529,6 +15562,7 @@ void CGvisR2R_LaserView::Eng1PtDoMarking()
 				pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeqMkDone, FALSE);
 				if (m_pDlgMenu02)
 					m_pDlgMenu02->SetLed(2, FALSE);
+				Sleep(300);
 				m_nEngStAuto++;
 			}
 			break;
@@ -15536,7 +15570,8 @@ void CGvisR2R_LaserView::Eng1PtDoMarking()
 			//if (pDoc->m_pMpeSignal[0] & (0x01 << 2))	// MB440102 - 각인부 Feeding완료(PLC가 On시키고 PC가 확인하고 Reset시킴.)
 			if(pDoc->BtnStatus.EngAuto.IsFdDone)
 			{
-				SetLastSerialEng(pDoc->m_nShotNum); // (_ttoi(pDoc->m_sShotNum));
+				//SetLastSerialEng(pDoc->m_nShotNum); // (_ttoi(pDoc->m_sShotNum));
+				SetLastSerialEng(nSerial); // (_ttoi(pDoc->m_sShotNum));
 				pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeqFdDone, TRUE);
 				if (m_pDlgMenu02)
 					m_pDlgMenu02->SetLed(6, TRUE);
@@ -15634,8 +15669,9 @@ void CGvisR2R_LaserView::Eng2dRead()
 		switch (m_nEng2dStAuto)
 		{
 		case ENG_2D_ST:	// PLC MK 신호 확인	
-			//if (IsRun())
+			if (IsRun())
 			{
+				MoveInitPos0();
 				m_nEng2dStAuto++;
 			}
 			break;
@@ -15657,19 +15693,23 @@ void CGvisR2R_LaserView::Eng2dRead()
 			m_nEng2dStAuto = ENG_2D_ST + (Read2dIdx::DoRead);
 			break;
 		case ENG_2D_ST + (Read2dIdx::DoRead) :			// 2D Reading 시작
-			//Set2dRead(TRUE);							// 2D Reading 시작
+			if (!pDoc->WorkingInfo.System.bNoMk)
+				Set2dRead(TRUE);							// 2D Reading 시작
 			m_nEng2dStAuto++;
 			break;
 		case ENG_2D_ST + (Read2dIdx::DoRead) + 1:
-			Sleep(100);
+			Sleep(300);
 			m_nEng2dStAuto++;
 			break;
 		case ENG_2D_ST + (Read2dIdx::DoRead) + 2:
 			if (Is2dReadDone())
+			{
+				Sleep(300);
 				m_nEng2dStAuto = ENG_2D_ST + (Read2dIdx::DoneRead);	// 2D Reading 완료
+			}
 			break;
 		case ENG_2D_ST + (Read2dIdx::DoneRead) :
-			//if (IsRun())
+			if (IsRun())
 			{
 				m_nEng2dStAuto++;
 				pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeqOnReading2d, FALSE);
@@ -15677,6 +15717,7 @@ void CGvisR2R_LaserView::Eng2dRead()
 					m_pDlgMenu02->SetLed(4, FALSE);
 				//m_pEngrave->SwEngAutoOnReading2d(FALSE);
 				//Sleep(100);
+				MovePinPos();
 			}
 			break;
 		case ENG_2D_ST + (Read2dIdx::DoneRead) + 1:
@@ -15699,6 +15740,7 @@ void CGvisR2R_LaserView::Eng2dRead()
 				pDoc->SetCurrentInfoSignal(_SigInx::_EngAutoSeq2dReadDone, FALSE);
 				if (m_pDlgMenu02)
 					m_pDlgMenu02->SetLed(5, FALSE);
+				Sleep(300);
 			}
 			break;
 		}
@@ -15920,3 +15962,14 @@ void CGvisR2R_LaserView::SetEngDoneLen(CString sVal)	// 검사부(상) : Distance (F
 		m_pDlgMenu01->SetEngDoneLen(sVal);
 }
 
+void CGvisR2R_LaserView::DispStatusBar(CString strMsg, int nStatusBarID)
+{
+	if (pFrm)
+		pFrm->DispStatusBar(strMsg, nStatusBarID);
+}
+
+void CGvisR2R_LaserView::GetMkMenu01()
+{
+	m_bTIM_MENU01_UPDATE_WORK = TRUE;
+	SetTimer(TIM_MENU01_UPDATE_WORK, 500, NULL);
+}

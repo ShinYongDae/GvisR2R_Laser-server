@@ -152,8 +152,8 @@ void CDlgMenu03::OnShowWindow(BOOL bShow, UINT nStatus)
 void CDlgMenu03::AtDlgShow()
 {
 	LoadImg();
-	m_bTIM_MENU03_DISP = TRUE;
-	SetTimer(TIM_MENU03_DISP, 300, NULL);	// Disp();
+	//m_bTIM_MENU03_DISP = TRUE;
+	//SetTimer(TIM_MENU03_DISP, 300, NULL);	// Disp();
 	//SetTimer(TIM_CHK_MREG, 300, NULL);
 
 	UpdateSignal();
@@ -161,7 +161,7 @@ void CDlgMenu03::AtDlgShow()
 
 void CDlgMenu03::AtDlgHide()
 {
-	m_bTIM_MENU03_DISP = FALSE;
+	//m_bTIM_MENU03_DISP = FALSE;
 	DelImg();
 }
 
@@ -349,6 +349,8 @@ BOOL CDlgMenu03::OnInitDialog()
 	//pView->SetSynqIO();
 	//SetJogSpd(m_nFdSpd);
 
+	m_bTIM_MENU03_DISP = TRUE;
+	SetTimer(TIM_MENU03_DISP, 300, NULL);	// Disp();
 
 	
 	return TRUE;  // return TRUE unless you set the focus to a control

@@ -273,9 +273,10 @@ BOOL CDlgMenu01::OnInitDialog()
 	SetRgbStcDef();
 	SetTitleStcDef();
 
-	InitGL();
-	SetPnlNum();
-	SetPnlDefNum();
+	//InitGL();
+	//SetPnlNum();
+	//SetPnlDefNum();
+
 	//InitMkInfo();
 	
 	UpdateData();
@@ -1632,10 +1633,15 @@ void CDlgMenu01::ShowDefInfoDn(int nIdx) // nIdx : 0 ~ 11 (12ea)
 
 void CDlgMenu01::InitGL()
 {
+	if (m_pMyGL)
+	{
+		delete m_pMyGL;
+		m_pMyGL = NULL;
+	}
 	if(!m_pMyGL)
 	{
 		m_pMyGL = new CMyGL(this);
-		m_pMyGL->Init(IDC_STC_REELMAP_IMG);
+		m_pMyGL->Init(IDC_STC_REELMAP_IMG, pDoc->m_pReelMap);
 	}
 // 	m_pMyGL->ResetRgn();
 	m_pMyGL->SetRgn();
@@ -2750,11 +2756,13 @@ void CDlgMenu01::UpdateData()
 
 	double dFdTotLen = pView->GetMkFdLen();
 
-	sVal.Format(_T("%d"), (int)(dFdTotLen / dTotLen * 100.0));
+	//sVal.Format(_T("%d"), (int)(dFdTotLen / dTotLen * 100.0));
+	sVal.Format(_T("%d"), (int)(pDoc->Menu01Status.Info.dTotWorkRto));
 	myStcData[5].SetText(sVal);			// 전체진행율
 
-	sVal.Format(_T("%d"), (int)(dFdTotLen / dTotLen * 100.0));
+	//sVal.Format(_T("%d"), (int)(dFdTotLen / dTotLen * 100.0));
 // 	sVal.Format(_T("%d"), (int)(dFdTotLen / dLotLen * 100.0));
+	sVal.Format(_T("%d"), (int)(pDoc->Menu01Status.Info.dLotWorkRto));
 	myStcData[6].SetText(sVal);			// 로트진행율
 
 	myStcData[6].SetText(_T(""));		// 로트진행율
@@ -2763,7 +2771,8 @@ void CDlgMenu01::UpdateData()
 	myStcData[10].SetText(pDoc->WorkingInfo.LastJob.sStripOutRatio);	// 스트립 양폐율[%]
 	myStcData[10].SetBkColor(RGB_WHITE);
 
-	sVal.Format(_T("%d"), pDoc->WorkingInfo.LastJob.nVerifyPeriod);
+	//sVal.Format(_T("%d"), pDoc->WorkingInfo.LastJob.nVerifyPeriod);
+	sVal.Format(_T("%d"), (int)(pDoc->Menu01Status.Info.nVerifyImgNum));
 	myStcData[14].SetText(sVal);
 
 
@@ -2804,12 +2813,14 @@ void CDlgMenu01::UpdateWorking()
 	double dTotLen = _tstof(pDoc->WorkingInfo.LastJob.sReelTotLen) * 1000.0;
 	double dLotLen = _tstof(pDoc->WorkingInfo.LastJob.sLotSepLen) * 1000.0;
 
-	sVal.Format(_T("%d"), (int)(dFdTotLen / dTotLen * 100.0));
+	//sVal.Format(_T("%d"), (int)(dFdTotLen / dTotLen * 100.0));
+	sVal.Format(_T("%d"), (int)(pDoc->Menu01Status.Info.dTotWorkRto));
 	myStcData[5].SetText(sVal);			// 전체진행율
 
 	if(pDoc->m_pReelMap->m_bUseLotSep)
 	{
-		sVal.Format(_T("%d"), (int)(dFdTotLen / dLotLen * 100.0));
+		//sVal.Format(_T("%d"), (int)(dFdTotLen / dLotLen * 100.0));
+		sVal.Format(_T("%d"), (int)(pDoc->Menu01Status.Info.dLotWorkRto));
 		myStcData[6].SetText(sVal);		// 로트진행율
 	}
 	else
@@ -2818,32 +2829,39 @@ void CDlgMenu01::UpdateWorking()
 		//myStcData[14].SetText(_T(""));		// 진행Lot시리얼
 	}
 
-	sVal.Format(_T("%d"), pDoc->WorkingInfo.LastJob.nVerifyPeriod);
+	//sVal.Format(_T("%d"), pDoc->WorkingInfo.LastJob.nVerifyPeriod);
+	sVal.Format(_T("%d"), (int)(pDoc->Menu01Status.Info.nVerifyImgNum));
 	myStcData[14].SetText(sVal);
 
-	sVal.Format(_T("%.1f"), pView->GetTotVel());
+	//sVal.Format(_T("%.1f"), pView->GetTotVel());
+	sVal.Format(_T("%.1f"), (double)(pDoc->Menu01Status.Info.dTotSpd));
 	myStcData[7].SetText(sVal);			// 전체속도
 
 	if(pDoc->GetLastShotMk() > 0)
 		UpdateTotVel(sVal);
 
-	sVal.Format(_T("%.1f"), pView->GetPartVel());
+	//sVal.Format(_T("%.1f"), pView->GetPartVel());
+	sVal.Format(_T("%.1f"), (double)(pDoc->Menu01Status.Info.dPartSpd));
 	myStcData[8].SetText(sVal);			// 구간속도
 
 	// 마킹부/검사부 : Distance (FdDone)
-	sVal.Format(_T("%.2f"), dFdTotLen / 1000.0);	// [M]
+	//sVal.Format(_T("%.2f"), dFdTotLen / 1000.0);	// [M]
+	sVal.Format(_T("%.2f"), (double)(pDoc->Menu01Status.Info.dDoneLenMk));
 	myStcData[12].SetText(sVal);			// 마킹부 : Distance (FdDone)
 
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	if(bDualTest)
 	{
-		sVal.Format(_T("%.2f"), pView->GetAoiDnFdLen() / 1000.0);	// [M]
+		//sVal.Format(_T("%.2f"), pView->GetAoiDnFdLen() / 1000.0);	// [M]
+		sVal.Format(_T("%.2f"), (double)(pDoc->Menu01Status.Info.dDoneLengthAoiDn));
 		myStcData[13].SetText(sVal);			// 검사부(하) : Distance (FdDone)
 	}
-	sVal.Format(_T("%.2f"), pView->GetAoiUpFdLen() / 1000.0);	// [M]
+	//sVal.Format(_T("%.2f"), pView->GetAoiUpFdLen() / 1000.0);	// [M]
+	sVal.Format(_T("%.2f"), (double)(pDoc->Menu01Status.Info.dDoneLenAoiUp));
 	myStcData[74].SetText(sVal);			// 검사부(상) : Distance (FdDone)
 
-	sVal.Format(_T("%.2f"), pView->GetEngraveFdLen() / 1000.0);	// [M]
+	//sVal.Format(_T("%.2f"), pView->GetEngraveFdLen() / 1000.0);	// [M]
+	sVal.Format(_T("%.2f"), (double)(pDoc->Menu01Status.Info.dDoneLengthEng));
 	myStcData[83].SetText(sVal);			// 각인부 : Distance (FdDone)
 
 #ifdef USE_MPE
@@ -2911,28 +2929,33 @@ void CDlgMenu01::DispTotRatio()
 	pDoc->m_pReelMapUp->GetPcsNum(nGood, nBad);
 	nTot = nGood + nBad;
 
-	str.Format(_T("%d"), nBad);
-	myStcData[15].SetText(str); // IDC_STC_DEFECT_NUM
+	//str.Format(_T("%d"), nBad);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Bed.nUp));
+	myStcData[15].SetText(str); // IDC_STC_DEFECT_NUM_UP
 
 	if(nTot > 0)
 		dRatio = ((double)nBad/(double)nTot) * 100.0;
 	else
 		dRatio = 0.0;
-	str.Format(_T("%.1f"), dRatio);
-	myStcData[16].SetText(str); // IDC_STC_DEFECT_RATIO
+	//str.Format(_T("%.1f"), dRatio);
+	str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.BedRto.dUp));
+	myStcData[16].SetText(str); // IDC_STC_DEFECT_RATIO_UP
 
-	str.Format(_T("%d"), nGood);
-	myStcData[17].SetText(str); // IDC_STC_GOOD_NUM
+	//str.Format(_T("%d"), nGood);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Good.nUp));
+	myStcData[17].SetText(str); // IDC_STC_GOOD_NUM_UP
 
 	if(nTot > 0)
 		dRatio = ((double)nGood/(double)nTot) * 100.0;
 	else
 		dRatio = 0.0;
-	str.Format(_T("%.1f"), dRatio);
-	myStcData[18].SetText(str); // IDC_STC_GOOD_RATIO
+	//str.Format(_T("%.1f"), dRatio);
+	str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.GoodRto.dUp));
+	myStcData[18].SetText(str); // IDC_STC_GOOD_RATIO_UP
 
-	str.Format(_T("%d"), nTot);
-	myStcData[19].SetText(str); // IDC_STC_TOTAL_NUM
+	//str.Format(_T("%d"), nTot);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.TotTest.nUp));
+	myStcData[19].SetText(str); // IDC_STC_TOTAL_NUM_UP
 
 	if(bDualTest)
 	{
@@ -2941,54 +2964,64 @@ void CDlgMenu01::DispTotRatio()
 
 		nTot = nGood + nBad;
 
-		str.Format(_T("%d"), nBad);
+		//str.Format(_T("%d"), nBad);
+		str.Format(_T("%d"), (int)(pDoc->Menu01Status.Bed.nDn));
 		myStcData[49].SetText(str); // IDC_STC_DEFECT_NUM_DN
 
 		if(nTot > 0)
 			dRatio = ((double)nBad/(double)nTot) * 100.0;
 		else
 			dRatio = 0.0;
-		str.Format(_T("%.1f"), dRatio);
+		//str.Format(_T("%.1f"), dRatio);
+		str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.BedRto.dDn));
 		myStcData[50].SetText(str); // IDC_STC_DEFECT_RATIO_DN
 
-		str.Format(_T("%d"), nGood);
+		//str.Format(_T("%d"), nGood);
+		str.Format(_T("%d"), (int)(pDoc->Menu01Status.Good.nDn));
 		myStcData[51].SetText(str); // IDC_STC_GOOD_NUM_DN
 
 		if(nTot > 0)
 			dRatio = ((double)nGood/(double)nTot) * 100.0;
 		else
 			dRatio = 0.0;
-		str.Format(_T("%.1f"), dRatio);
+		//str.Format(_T("%.1f"), dRatio);
+		str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.GoodRto.dDn));
 		myStcData[52].SetText(str); // IDC_STC_GOOD_RATIO_DN
 
-		str.Format(_T("%d"), nTot);
+		//str.Format(_T("%d"), nTot);
+		str.Format(_T("%d"), (int)(pDoc->Menu01Status.TotTest.nDn));
 		myStcData[53].SetText(str); // IDC_STC_TOTAL_NUM_DN
 
 		// 전체
 		pDoc->m_pReelMapAllDn->GetPcsNum(nGood, nBad);
 		nTot = nGood + nBad;
 
-		str.Format(_T("%d"), nBad);
+		//str.Format(_T("%d"), nBad);
+		str.Format(_T("%d"), (int)(pDoc->Menu01Status.Bed.nTotal));
 		myStcData[54].SetText(str); // IDC_STC_DEFECT_NUM_ALL
 
 		if(nTot > 0)
 			dRatio = ((double)nBad/(double)nTot) * 100.0;
 		else
 			dRatio = 0.0;
-		str.Format(_T("%.1f"), dRatio);
+		//str.Format(_T("%.1f"), dRatio);
+		str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.BedRto.dTotal));
 		myStcData[55].SetText(str); // IDC_STC_DEFECT_RATIO_ALL
 
-		str.Format(_T("%d"), nGood);
+		//str.Format(_T("%d"), nGood);
+		str.Format(_T("%d"), (int)(pDoc->Menu01Status.Good.nTotal));
 		myStcData[56].SetText(str); // IDC_STC_GOOD_NUM_ALL
 
 		if(nTot > 0)
 			dRatio = ((double)nGood/(double)nTot) * 100.0;
 		else
 			dRatio = 0.0;
-		str.Format(_T("%.1f"), dRatio);
+		//str.Format(_T("%.1f"), dRatio);
+		str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.GoodRto.dTotal));
 		myStcData[57].SetText(str); // IDC_STC_GOOD_RATIO_ALL
 
-		str.Format(_T("%d"), nTot);
+		//str.Format(_T("%d"), nTot);
+		str.Format(_T("%d"), (int)(pDoc->Menu01Status.TotTest.nTotal));
 		myStcData[58].SetText(str); // IDC_STC_TOTAL_NUM_ALL
 	}
 }
@@ -3020,7 +3053,8 @@ void CDlgMenu01::DispStripRatio()
 		dRatio = ((double)(nStTot-nVal[0][0])/(double)nStTot) * 100.0;
 	else
 		dRatio = 0.0;
-	str.Format(_T("%.1f"), dRatio);
+	//str.Format(_T("%.1f"), dRatio);
+	str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.YieldStrip[0].dUp));
 	myStcData[59].SetText(str); // IDC_STC_GD_RA_1_UP
 
 	nVal[0][1] = pDoc->m_pReelMapUp->GetDefStrip(1);
@@ -3029,7 +3063,8 @@ void CDlgMenu01::DispStripRatio()
 		dRatio = ((double)(nStTot-nVal[0][1])/(double)nStTot) * 100.0;
 	else
 		dRatio = 0.0;
-	str.Format(_T("%.1f"), dRatio);
+	//str.Format(_T("%.1f"), dRatio);
+	str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.YieldStrip[1].dUp));
 	myStcData[60].SetText(str); // IDC_STC_GD_RA_2_UP
 
 	nVal[0][2] = pDoc->m_pReelMapUp->GetDefStrip(2);
@@ -3038,7 +3073,8 @@ void CDlgMenu01::DispStripRatio()
 		dRatio = ((double)(nStTot-nVal[0][2])/(double)nStTot) * 100.0;
 	else
 		dRatio = 0.0;
-	str.Format(_T("%.1f"), dRatio);
+	//str.Format(_T("%.1f"), dRatio);
+	str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.YieldStrip[2].dUp));
 	myStcData[61].SetText(str); // IDC_STC_GD_RA_3_UP
 
 	nVal[0][3] = pDoc->m_pReelMapUp->GetDefStrip(3);
@@ -3047,7 +3083,8 @@ void CDlgMenu01::DispStripRatio()
 		dRatio = ((double)(nStTot-nVal[0][3])/(double)nStTot) * 100.0;
 	else
 		dRatio = 0.0;
-	str.Format(_T("%.1f"), dRatio);
+	//str.Format(_T("%.1f"), dRatio);
+	str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.YieldStrip[3].dUp));
 	myStcData[62].SetText(str); // IDC_STC_GD_RA_4_UP
 	
 	if(nTot > 0)
@@ -3055,6 +3092,7 @@ void CDlgMenu01::DispStripRatio()
 	else
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
+	str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.YieldTot.dUp));
 	myStcData[63].SetText(str); // IDC_STC_GD_RA_ALL_UP
 
 	nSum = 0;
@@ -3068,7 +3106,8 @@ void CDlgMenu01::DispStripRatio()
 			dRatio = ((double)(nStTot-nVal[1][0])/(double)nStTot) * 100.0;
 		else
 			dRatio = 0.0;
-		str.Format(_T("%.1f"), dRatio);
+		//str.Format(_T("%.1f"), dRatio);
+		str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.YieldStrip[0].dDn));
 		myStcData[64].SetText(str); // IDC_STC_GD_RA_1_DN
 
 		nVal[1][1] = pDoc->m_pReelMapDn->GetDefStrip(1);
@@ -3077,8 +3116,9 @@ void CDlgMenu01::DispStripRatio()
 			dRatio = ((double)(nStTot-nVal[1][1])/(double)nStTot) * 100.0;
 		else
 			dRatio = 0.0;
-		str.Format(_T("%.1f"), dRatio);
-		myStcData[65].SetText(str); // IDC_STC_GD_RA_1_DN
+		//str.Format(_T("%.1f"), dRatio);
+		str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.YieldStrip[1].dDn));
+		myStcData[65].SetText(str); // IDC_STC_GD_RA_2_DN
 
 		nVal[1][2] = pDoc->m_pReelMapDn->GetDefStrip(2);
 		nSum += nVal[1][2];
@@ -3086,8 +3126,9 @@ void CDlgMenu01::DispStripRatio()
 			dRatio = ((double)(nStTot-nVal[1][2])/(double)nStTot) * 100.0;
 		else
 			dRatio = 0.0;
-		str.Format(_T("%.1f"), dRatio);
-		myStcData[66].SetText(str); // IDC_STC_GD_RA_1_DN
+		//str.Format(_T("%.1f"), dRatio);
+		str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.YieldStrip[2].dDn));
+		myStcData[66].SetText(str); // IDC_STC_GD_RA_3_DN
 
 		nVal[1][3] = pDoc->m_pReelMapDn->GetDefStrip(3);
 		nSum += nVal[1][3];
@@ -3095,14 +3136,16 @@ void CDlgMenu01::DispStripRatio()
 			dRatio = ((double)(nStTot-nVal[1][3])/(double)nStTot) * 100.0;
 		else
 			dRatio = 0.0;
-		str.Format(_T("%.1f"), dRatio);
-		myStcData[67].SetText(str); // IDC_STC_GD_RA_1_DN
+		//str.Format(_T("%.1f"), dRatio);
+		str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.YieldStrip[3].dDn));
+		myStcData[67].SetText(str); // IDC_STC_GD_RA_4_DN
 		
 		if(nTot > 0)
 			dRatio = ((double)(nTot-nSum)/(double)nTot) * 100.0;
 		else
 			dRatio = 0.0;
-		str.Format(_T("%.1f"), dRatio);
+		//str.Format(_T("%.1f"), dRatio);
+		str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.YieldTot.dDn));
 		myStcData[68].SetText(str); // IDC_STC_GD_RA_ALL_DN
 
 		nSum = 0;
@@ -3114,7 +3157,8 @@ void CDlgMenu01::DispStripRatio()
 			dRatio = ((double)(nStTot-nMer[0])/(double)nStTot) * 100.0;
 		else
 			dRatio = 0.0;
-		str.Format(_T("%.1f"), dRatio);
+		//str.Format(_T("%.1f"), dRatio);
+		str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.YieldStrip[0].dTotal));
 		myStcData[69].SetText(str); // IDC_STC_GD_RA_1_ALL
 
 		nMer[1] = pDoc->m_pReelMapAllUp->GetDefStrip(1);
@@ -3123,7 +3167,8 @@ void CDlgMenu01::DispStripRatio()
 			dRatio = ((double)(nStTot-nMer[1])/(double)nStTot) * 100.0;
 		else
 			dRatio = 0.0;
-		str.Format(_T("%.1f"), dRatio);
+		//str.Format(_T("%.1f"), dRatio);
+		str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.YieldStrip[1].dTotal));
 		myStcData[70].SetText(str); // IDC_STC_GD_RA_2_ALL
 
 		nMer[2] = pDoc->m_pReelMapAllUp->GetDefStrip(2);
@@ -3132,7 +3177,8 @@ void CDlgMenu01::DispStripRatio()
 			dRatio = ((double)(nStTot-nMer[2])/(double)nStTot) * 100.0;
 		else
 			dRatio = 0.0;
-		str.Format(_T("%.1f"), dRatio);
+		//str.Format(_T("%.1f"), dRatio);
+		str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.YieldStrip[2].dTotal));
 		myStcData[71].SetText(str); // IDC_STC_GD_RA_3_ALL
 
 		nMer[3] = pDoc->m_pReelMapAllUp->GetDefStrip(3);
@@ -3141,14 +3187,16 @@ void CDlgMenu01::DispStripRatio()
 			dRatio = ((double)(nStTot-nMer[3])/(double)nStTot) * 100.0;
 		else
 			dRatio = 0.0;
-		str.Format(_T("%.1f"), dRatio);
+		//str.Format(_T("%.1f"), dRatio);
+		str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.YieldStrip[3].dTotal));
 		myStcData[72].SetText(str); // IDC_STC_GD_RA_4_ALL
 		
 		if(nTot > 0)
 			dRatio = ((double)(nTot-nSum)/(double)nTot) * 100.0;
 		else
 			dRatio = 0.0;
-		str.Format(_T("%.1f"), dRatio);
+		//str.Format(_T("%.1f"), dRatio);
+		str.Format(_T("%.1f"), (double)(pDoc->Menu01Status.YieldTot.dTotal));
 		myStcData[73].SetText(str); // IDC_STC_GD_RA_ALL_ALL
 	}
 }
@@ -3266,123 +3314,153 @@ void CDlgMenu01::DispDef()
 		pReelMap = pDoc->m_pReelMapUp;
 
 	nNum = pReelMap->GetDefNum(DEF_OPEN);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_OPEN]));
 	myStcData[24].SetText(str); // IDC_STC_DEF_OPEN
 
 	nNum = pReelMap->GetDefNum(DEF_SHORT);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_SHORT]));
 	myStcData[25].SetText(str); // IDC_STC_DEF_SHORT
 
 	nNum = pReelMap->GetDefNum(DEF_USHORT);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_USHORT]));
 	myStcData[26].SetText(str); // IDC_STC_DEF_U_SHORT
 
 	nNum = pReelMap->GetDefNum(DEF_SPACE);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_SPACE]));
 	myStcData[27].SetText(str); // IDC_STC_DEF_SPACE
 
 	nNum = pReelMap->GetDefNum(DEF_EXTRA);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_EXTRA]));
 	myStcData[28].SetText(str); // IDC_STC_DEF_EXTRA
 	
 	nNum = pReelMap->GetDefNum(DEF_PROTRUSION);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_PROTRUSION]));
 	myStcData[29].SetText(str); // IDC_STC_DEF_PROT
 
 	nNum = pReelMap->GetDefNum(DEF_PINHOLE);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_PINHOLE]));
 	myStcData[30].SetText(str); // IDC_STC_DEF_P_HOLE
 
 	nNum = pReelMap->GetDefNum(DEF_PAD);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_PAD]));
 	myStcData[31].SetText(str); // IDC_STC_DEF_PAD
 
 	nNum = pReelMap->GetDefNum(DEF_HOLE_OPEN);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_HOLE_OPEN]));
 	myStcData[32].SetText(str); // IDC_STC_DEF_H_OPEN
 
 	nNum = pReelMap->GetDefNum(DEF_HOLE_MISS);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_HOLE_MISS]));
 	myStcData[33].SetText(str); // IDC_STC_DEF_H_MISS
 
 	nNum = pReelMap->GetDefNum(DEF_HOLE_POSITION);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_HOLE_POSITION]));
 	myStcData[34].SetText(str); // IDC_STC_DEF_H_POS
 
 	nNum = pReelMap->GetDefNum(DEF_HOLE_DEFECT);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_HOLE_DEFECT]));
 	myStcData[35].SetText(str); // IDC_STC_DEF_H_DEF
 
 	nNum = pReelMap->GetDefNum(DEF_NICK);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_NICK]));
 	myStcData[36].SetText(str); // IDC_STC_DEF_NICK
 
 	nNum = pReelMap->GetDefNum(DEF_POI);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_POI]));
 	myStcData[37].SetText(str); // IDC_STC_DEF_POI
 
 	nNum = pReelMap->GetDefNum(DEF_VH_OPEN);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_VH_OPEN]));
 	myStcData[38].SetText(str); // IDC_STC_DEF_VH_OPEN
 
 	nNum = pReelMap->GetDefNum(DEF_VH_MISS);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_VH_MISS]));
 	myStcData[39].SetText(str); // IDC_STC_DEF_VH_MISS
 
 	nNum = pReelMap->GetDefNum(DEF_VH_POSITION);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_VH_POSITION]));
 	myStcData[40].SetText(str); // IDC_STC_DEF_VH_POS
 
 	nNum = pReelMap->GetDefNum(DEF_VH_DEF);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_VH_DEF]));
 	myStcData[41].SetText(str); // IDC_STC_DEF_VH_DEF
 
 	nNum = pReelMap->GetDefNum(DEF_LIGHT);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_LIGHT]));
 	myStcData[42].SetText(str); // IDC_STC_DEF_LIGHT
 
 	nNum = pReelMap->GetDefNum(DEF_EDGE_NICK);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_EDGE_NICK]));
 	myStcData[43].SetText(str);
 
 	nNum = pReelMap->GetDefNum(DEF_EDGE_PROT);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_EDGE_PROT]));
 	myStcData[44].SetText(str);
 
 	nNum = pReelMap->GetDefNum(DEF_EDGE_SPACE);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_EDGE_SPACE]));
 	myStcData[45].SetText(str);
 
 	nNum = pReelMap->GetDefNum(DEF_USER_DEFINE_1);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_USER_DEFINE_1]));
 	myStcData[46].SetText(str);
 
 	nNum = pReelMap->GetDefNum(DEF_NARROW);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_NARROW]));
 	myStcData[47].SetText(str);
 
 	nNum = pReelMap->GetDefNum(DEF_WIDE);
-	str.Format(_T("%d"), nNum);
+	//str.Format(_T("%d"), nNum);
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Defect.nDefNum[DEF_WIDE]));
 	myStcData[48].SetText(str);
 
 
-	nNum = pReelMap->GetDefNum(DEF_SHORT) + pReelMap->GetDefNum(DEF_USHORT);
+	//nNum = pReelMap->GetDefNum(DEF_SHORT) + pReelMap->GetDefNum(DEF_USHORT);
+	nNum = pDoc->Menu01Status.Defect.nDefNum[DEF_SHORT] + pDoc->Menu01Status.Defect.nDefNum[DEF_USHORT];
 	str.Format(_T("%d"), nNum);
 	myStcData[76].SetText(str); // IDC_STC_DEF_SHORT_TOT
 
-	nNum = pReelMap->GetDefNum(DEF_SPACE) + pReelMap->GetDefNum(DEF_EXTRA) + pReelMap->GetDefNum(DEF_PROTRUSION);
+	//nNum = pReelMap->GetDefNum(DEF_SPACE) + pReelMap->GetDefNum(DEF_EXTRA) + pReelMap->GetDefNum(DEF_PROTRUSION);
+	nNum = pDoc->Menu01Status.Defect.nDefNum[DEF_SPACE] + pDoc->Menu01Status.Defect.nDefNum[DEF_EXTRA] + pDoc->Menu01Status.Defect.nDefNum[DEF_PROTRUSION];
 	str.Format(_T("%d"), nNum);
 	myStcData[77].SetText(str); // IDC_STC_DEF_SPACE_TOT
 
-	nNum = pReelMap->GetDefNum(DEF_PINHOLE) + pReelMap->GetDefNum(DEF_PAD);
+	//nNum = pReelMap->GetDefNum(DEF_PINHOLE) + pReelMap->GetDefNum(DEF_PAD);
+	nNum = pDoc->Menu01Status.Defect.nDefNum[DEF_PINHOLE] + pDoc->Menu01Status.Defect.nDefNum[DEF_PAD];
 	str.Format(_T("%d"), nNum);
 	myStcData[78].SetText(str); // IDC_STC_DEF_P_HOLE_TOT
 
-	nNum = pReelMap->GetDefNum(DEF_HOLE_MISS) + pReelMap->GetDefNum(DEF_HOLE_POSITION) + pReelMap->GetDefNum(DEF_HOLE_DEFECT);
+	//nNum = pReelMap->GetDefNum(DEF_HOLE_MISS) + pReelMap->GetDefNum(DEF_HOLE_POSITION) + pReelMap->GetDefNum(DEF_HOLE_DEFECT);
+	nNum = pDoc->Menu01Status.Defect.nDefNum[DEF_HOLE_MISS] + pDoc->Menu01Status.Defect.nDefNum[DEF_HOLE_POSITION] + pDoc->Menu01Status.Defect.nDefNum[DEF_HOLE_DEFECT];
 	str.Format(_T("%d"), nNum);
 	myStcData[79].SetText(str); // IDC_STC_DEF_H_MISS_TOT
 
-	nNum = pReelMap->GetDefNum(DEF_VH_MISS) + pReelMap->GetDefNum(DEF_VH_POSITION) + pReelMap->GetDefNum(DEF_VH_DEF);
+	//nNum = pReelMap->GetDefNum(DEF_VH_MISS) + pReelMap->GetDefNum(DEF_VH_POSITION) + pReelMap->GetDefNum(DEF_VH_DEF);
+	nNum = pDoc->Menu01Status.Defect.nDefNum[DEF_VH_MISS] + pDoc->Menu01Status.Defect.nDefNum[DEF_VH_POSITION] + pDoc->Menu01Status.Defect.nDefNum[DEF_VH_DEF];
 	str.Format(_T("%d"), nNum);
 	myStcData[80].SetText(str); // IDC_STC_DEF_VH_MISS_TOT
 
@@ -3873,9 +3951,11 @@ void CDlgMenu01::DispMkCnt()
 {
 	CString str;
 
-	str.Format(_T("%d"), pDoc->GetMkCntL());
+	//str.Format(_T("%d"), pDoc->GetMkCntL());
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Data.nMkNumLf));
 	myStcData[81].SetText(str);
-	str.Format(_T("%d"), pDoc->GetMkCntR());
+	//str.Format(_T("%d"), pDoc->GetMkCntR());
+	str.Format(_T("%d"), (int)(pDoc->Menu01Status.Data.nMkNumRt));
 	myStcData[82].SetText(str);
 }
 
@@ -4670,6 +4750,11 @@ void CDlgMenu01::ChkTpStop()
 	pDoc->WorkingInfo.LastJob.bTempPause = bUse;
 	if (pDoc->m_pReelMap)
 		pDoc->m_pReelMap->m_bUseTempPause = bUse;
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetTempPause();	//_stSigInx::_TempPause
+#endif
 
 	CString sData = bUse ? _T("1") : _T("0");
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Temporary Pause"), sData, PATH_WORKING_INFO);

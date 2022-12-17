@@ -3,9 +3,9 @@
 
 #include "TcpIpClient.h"
 
-#define SET_ORDER		1
+#define SET_ITS				1
 #define SET_SHOT		2
-#define	SET_ORDER_SHOT	3
+#define	SET_ITS_SHOT		3
 
 class CMdx2500 : public CWnd
 {
@@ -39,7 +39,7 @@ public:
 	BOOL GuideLaserRect(BOOL bOn);
 	BOOL LaserMarking(BOOL bOn = TRUE);
 	BOOL IsLaserReady();
-	BOOL SetMdxOrderShotNum(CString sOrder, CString sShot, int nSet=SET_ORDER_SHOT);
+	BOOL SetMdxOrderShotNum(CString sOrder, CString sShot, int nSet=SET_ITS_SHOT);
 	BOOL GetMdxSettingData(CString& sOrderNum, CString& sShotNum);
 	BOOL SetLaserPosZero();
 	BOOL SetLaserPos(double* pData); // CString pData[5] : A,B,C,D,E

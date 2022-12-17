@@ -32,6 +32,7 @@ public:
 	void ModifyModelComboData(CComboBox *pComboBox);
 	void ModifyLayerComboData(CComboBox *pComboBox, int nAoi);
 
+	CString m_sItsCode;
 	CString m_sLotNum;
 	CString m_sProcessNum;
 	CComboBox m_LayerComboDn;

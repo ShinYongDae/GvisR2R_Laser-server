@@ -397,8 +397,11 @@ BOOL CReelMap::Open(CString sPath)
 
 	BOOL bExist = FALSE;
 	CFileFind findfile;
-	if(findfile.FindFile(sPath))
+	if (findfile.FindFile(sPath))
+	{
 		bExist = TRUE;
+		return TRUE;
+	}
 	else
 		MakeDirUser();
 
@@ -2266,12 +2269,6 @@ BOOL CReelMap::UpdateRst(int nSerial)
 		return FALSE;
 	}
 
-	//if (!UpdateYield(nSerial))
-	//{
-	//	AfxMessageBox(_T("Serial Error.66"));
-	//	return FALSE;
-	//}
-
 	int k, i;
 	CString strMenu, strItem, sCode, sDefNum, strData;
 
@@ -2317,102 +2314,6 @@ BOOL CReelMap::UpdateRst(int nSerial)
 	}
 	strData.Format(_T("%d"), m_stYield.nTotSriptOut);
 	::WritePrivateProfileString(_T("StripOut"), _T("Total"), strData, m_sPathBuf);
-
-/*
-	CString sCode, sDefNum, strData, strMenu, strItem;
-	int nPnl, nRow, nCol, nDefCode , nTot, nGood, nDef, k, i, nStrip;
-	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
-	int nTotPcs = nNodeX * nNodeY;
-	int nStripPcs = nTotPcs / 4;
-
-	int nDefStrip[4];
-	nDefStrip[0] = 0; nDefStrip[1] = 0; nDefStrip[2] = 0; nDefStrip[3] = 0;
-	
-	nPnl = nSerial - 1;
-
-	if(nPnl>=0)
-	{
-		for(nRow=0; nRow<nNodeY; nRow++)
-		{
-			for(nCol=0; nCol<nNodeX; nCol++)
-			{
-				if(m_pPnlBuf)
-				{
-					nDefCode = (int)m_pPnlBuf[nPnl][nRow][nCol] < 0 ? 0 : (int)m_pPnlBuf[nPnl][nRow][nCol];
-					m_nDef[nDefCode]++;
-
-					nStrip = int(nRow / (nNodeY/4));
-					if(nStrip > -1 && nStrip < 4)
-					{
-						if(nDefCode > 0)
-						{
-							nDefStrip[nStrip]++;
-							m_nDefStrip[nStrip]++;
-							m_nDefPerStrip[nStrip][nDefCode]++;
-						}
-					}
-				}
-			}
-		}
-	}
-	else
-		return FALSE;
-
-
-	double dStOutRto = _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0; // atof
-	for(nStrip=0; nStrip<4; nStrip++)
-	{
-		if(nDefStrip[nStrip] >= nStripPcs * dStOutRto)
-			m_nStripOut[nStrip]++;
-	}
-
-
-	nTot = nNodeX * nNodeY * nSerial;
-	nDef = 0;
-	for(i=1; i<MAX_DEF; i++)
-	{
-		nDef += m_nDef[i];
-		sCode.Format(_T("%d"), i);
-		sDefNum.Format(_T("%d"), m_nDef[i]);
-		::WritePrivateProfileString(_T("Info"), sCode, sDefNum, m_sPathBuf);
-	}
-	nGood = nTot - nDef;
-
-	strData.Format(_T("%d"), nTot);
-	::WritePrivateProfileString(_T("Info"), _T("Total Pcs"), strData, m_sPathBuf);
-	strData.Format(_T("%d"), nGood);
-	::WritePrivateProfileString(_T("Info"), _T("Good Pcs"), strData, m_sPathBuf);
-	strData.Format(_T("%d"), nDef);
-	::WritePrivateProfileString(_T("Info"), _T("Bad Pcs"), strData, m_sPathBuf);
-
-	int nTotStOut = 0;
-	for(k=0; k<4; k++)
-	{
-		strMenu.Format(_T("Strip%d"), k);
-		strData.Format(_T("%d"), m_nDefStrip[k]);
-		::WritePrivateProfileString(_T("Info"), strMenu, strData, m_sPathBuf);
-		
-		strMenu.Format(_T("%d"), k);
-		strData.Format(_T("%d"), m_nStripOut[k]);
-		::WritePrivateProfileString(_T("StripOut"), strMenu, strData, m_sPathBuf);
-		nTotStOut += m_nStripOut[k];
-
-		for(i=1; i<MAX_DEF; i++)
-		{
-			strItem.Format(_T("Strip%d"), k);
-			strMenu.Format(_T("%d"), i);
-			strData.Format(_T("%d"), m_nDefPerStrip[k][i]);
-			::WritePrivateProfileString(strItem, strMenu, strData, m_sPathBuf);
-		}			
-	}
-	strData.Format(_T("%d"), nTotStOut);
-	::WritePrivateProfileString(_T("StripOut"), _T("Total"), strData, m_sPathBuf);
-
-	m_nTotPcs = nTot;
-	m_nGoodPcs = nGood;
-	m_nBadPcs = nDef;
-*/
 	return TRUE;
 }
 

@@ -1310,6 +1310,9 @@ void CEngrave::GetSignalEngraveAutoSequence(SOCKET_DATA SockData)
 		case _SigInx::_EngAutoSeq2dReadDone:
 			pDoc->BtnStatus.EngAuto.Read2dDone = (SockData.nData1 > 0) ? TRUE : FALSE;
 			break;
+		case _SigInx::_UpdateWork:
+			pView->GetMkMenu01();
+			break;
 		// Is
 		case _SigInx::_IsEngAutoInit:
 			pDoc->BtnStatus.EngAuto.IsInit = (SockData.nData1 > 0) ? TRUE : FALSE;
@@ -1330,6 +1333,9 @@ void CEngrave::GetSignalEngraveAutoSequence(SOCKET_DATA SockData)
 			pDoc->BtnStatus.EngAuto.IsOnRead2d = (SockData.nData1 > 0) ? TRUE : FALSE;
 			break;
 		case _SigInx::_IsEngAutoSeq2dReadDone:
+			pDoc->BtnStatus.EngAuto.IsRead2dDone = (SockData.nData1 > 0) ? TRUE : FALSE;
+			break;
+		case _SigInx::_IsUpdateWork:
 			pDoc->BtnStatus.EngAuto.IsRead2dDone = (SockData.nData1 > 0) ? TRUE : FALSE;
 			break;
 		}
@@ -1440,7 +1446,7 @@ void CEngrave::GetOpInfo(SOCKET_DATA SockData)
 			if(pDoc->WorkingInfo.LastJob.bTwoMetal != (SockData.nData1 > 0) ? TRUE : FALSE)	// TwoMetal : TRUE -> SetTwoMetal(TRUE);
 			{
 				m_bGetOpInfo = TRUE;
-			pDoc->WorkingInfo.LastJob.bTwoMetal = (SockData.nData1 > 0) ? TRUE : FALSE;	// TwoMetal : TRUE -> SetTwoMetal(TRUE);
+				pDoc->WorkingInfo.LastJob.bTwoMetal = (SockData.nData1 > 0) ? TRUE : FALSE;	// TwoMetal : TRUE -> SetTwoMetal(TRUE);
 			}
 			break;
 		case _SigInx::_AlignMethode:
@@ -8722,5 +8728,26 @@ void CEngrave::IsSetAlarm(CString sMsg)
 	SocketData.nMsgID = _stAlarmInx::_IsAlarm;
 	StringToChar(sMsg, cData);
 	sprintf(SocketData.strData, "%s", cData);
+	SendCommand(SocketData);
+}
+
+
+void CEngrave::SwMenu01UpdateWorking(BOOL bOn)
+{
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_UpdateWork;
+	SocketData.nData1 = bOn ? 1 : 0;
+	SendCommand(SocketData);
+}
+
+void CEngrave::IsSwMenu01UpdateWorking(BOOL bOn)
+{
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_IsUpdateWork;
+	SocketData.nData1 = bOn ? 1 : 0;
 	SendCommand(SocketData);
 }

@@ -132,6 +132,7 @@ void CDlgInfo::OnShowWindow(BOOL bShow, UINT nStatus)
 void CDlgInfo::AtDlgShow()
 {
 	LoadImg();
+	pDoc->GetMkInfo();
 	Disp();
 }
 
@@ -491,7 +492,7 @@ void CDlgInfo::InitStcData()
 
 	myStcData[15].SubclassDlgItem(IDC_STC_36, this); // 불량 확인 Period [Shot]
 
-	myStcData[16].SubclassDlgItem(IDC_STC_17, this); // 오더번호
+	myStcData[16].SubclassDlgItem(IDC_STC_17, this); // 로트번호
 
 
 	for(int i=0; i<MAX_INFO_STC_DATA; i++)
@@ -563,7 +564,8 @@ void CDlgInfo::Disp()
 	myStcData[14].SetText(pDoc->WorkingInfo.LastJob.sCustomNeedRatio);
 	str.Format(_T("%d"), pDoc->WorkingInfo.LastJob.nVerifyPeriod);
 	myStcData[15].SetText(str);
-	myStcData[16].SetText(pDoc->WorkingInfo.LastJob.sEngOrderNum);	// IDC_STC_17	오더번호
+	//myStcData[16].SetText(pDoc->WorkingInfo.LastJob.sEngOrderNum);	// IDC_STC_17	로트번호
+	myStcData[16].SetText(pDoc->m_sLotNum);	// IDC_STC_17	로트번호
 
 	if(pDoc->WorkingInfo.LastJob.bLotSep)
 		myBtn[1].SetCheck(TRUE);
@@ -830,7 +832,7 @@ void CDlgInfo::OnStc0024()
 
 #ifdef USE_ENGRAVE
 	if (pView && pView->m_pEngrave)
-		pView->m_pEngrave->SetLotCutPosLen();	//_ItemInx::_LotCutPosLen
+		pView->m_pEngrave->SetTempStopLen();	//_ItemInx::_LotCutPosLen
 #endif
 }
 
@@ -1902,6 +1904,7 @@ void CDlgInfo::OnBnClickedChk1188()
 
 void CDlgInfo::UpdateData()
 {
+	//pDoc->GetMkInfo();
 	Disp();
 }
 
@@ -1944,10 +1947,10 @@ void CDlgInfo::OnStnClickedStc17()
 
 	CString sData;
 	GetDlgItem(IDC_STC_17)->GetWindowText(sData);
-	pDoc->SetEngOrderNum(sData);
+	//pDoc->SetEngOrderNum(sData);
 
-#ifdef USE_ENGRAVE
-	if (pView && pView->m_pEngrave)
-		pView->m_pEngrave->SetEngOrderNum();	//_ItemInx::_EngOrderNum
-#endif
+//#ifdef USE_ENGRAVE
+//	if (pView && pView->m_pEngrave)
+//		pView->m_pEngrave->SetEngOrderNum();	//_ItemInx::_EngOrderNum
+//#endif
 }

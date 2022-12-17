@@ -42,6 +42,12 @@ public:
 
 	void GetPcsRgn(int nC, int nR, int &nPcsId, CRect &ptRect);
 
+	void GetShotRowCol(int& nR, int& nC);
+	void SetShotRowCol(int nR, int nC);
+	void SetShotRgn(CRect rect);
+	CRect GetShotRgn();
+	int GetTotPcs();
+
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CPcsRgn)

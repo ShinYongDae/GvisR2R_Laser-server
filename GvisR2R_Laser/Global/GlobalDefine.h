@@ -15,6 +15,10 @@
 	#define MAX_STRIP				4
 #endif
 
+#define MAX_STRIP_NUM				4
+#define MAX_PCE_COL					100
+#define MAX_PCE_ROW					100
+
 
 #ifdef TEST_MODE
 	#define TEST_SHOT				2
@@ -57,8 +61,7 @@
 	#define	USE_MIL
 	#define	USE_VISION
 	#define	USE_IRAYPLE
-/*
-*/
+
 	#define	USE_TCPIP
 	#define	USE_SR1000W
 	#define	USE_MDX2500
@@ -75,6 +78,8 @@
 	#define PATH_PIN_IMG			_T("C:\\R2RSet\\Pin\\Pin.TIF")
 	#define PATH_ALIGN0_IMG			_T("C:\\R2RSet\\Align\\Align0.TIF")
 	#define PATH_ALIGN1_IMG			_T("C:\\R2RSet\\Align\\Align1.TIF")
+	#define PATH_ALIGN2_IMG			_T("C:\\R2RSet\\Align\\Align2.TIF")
+	#define PATH_ALIGN3_IMG			_T("C:\\R2RSet\\Align\\Align3.TIF")
 	#define PATH_PCS_IMG			_T("C:\\R2RSet\\Pcs\\Piece.tif")
 #endif
 
@@ -622,7 +627,7 @@ struct stSystem
 	CString sPathVsShareDn;
 
 	CString sPathEng, sPathEngCurrInfo, sPathEngOffset, sPathMkCurrInfo, sPathMkCurrInfoBuf;
-	CString sPathMkMenu01, sPathMkMenu03, sPathMonDispMain;
+	CString sPathMkMenu01, sPathMkMenu03, sPathMkInfo, sPathMonDispMain;
 
 	CString sPathOldFile;
 	CString sPathSapp3;
@@ -655,7 +660,7 @@ struct stSystem
 		sPathVsShareDn = _T("");
 
 		sPathEng = _T(""); sPathEngCurrInfo = _T(""); sPathEngOffset = _T(""); sPathMkCurrInfo = _T("");
-		sPathMkCurrInfoBuf = _T(""); sPathMkMenu01 = _T(""); sPathMkMenu03 = _T(""); sPathMonDispMain = _T("");
+		sPathMkCurrInfoBuf = _T(""); sPathMkMenu01 = _T(""); sPathMkMenu03 = _T("");  sPathMkInfo = _T(""); sPathMonDispMain = _T("");
 
 		sPathOldFile = _T("");
 		bSaveLog = FALSE;
@@ -1603,6 +1608,184 @@ struct stBtnStatus
 	stBtnEngrave Eng;
 	stBtnUncoiler Uc;
 	stBtnEngAuto EngAuto;
+};
+
+struct stMenu01Info
+{
+	int nTotShot, nVerifyImgNum;
+	double dTotWorkRto, dLotWorkRto, dTotSpd, dPartSpd, dDoneLenMk, dDoneLenAoiUp, dDoneLengthAoiDn, dDoneLengthEng;
+
+	stMenu01Info()
+	{
+		_Init();
+	}
+
+	void _Init()
+	{
+		nTotShot = 0; dTotWorkRto = 0.0; dLotWorkRto = 0.0; dTotSpd = 0.0; dPartSpd = 0.0; dDoneLenMk = 0.0;
+		dDoneLenAoiUp = 0.0; dDoneLengthAoiDn = 0.0; dDoneLengthEng = 0.0; nVerifyImgNum = 0;
+	}
+
+};
+
+struct stMenu01TotalTest
+{
+	double nUp, nDn, nTotal;
+
+	stMenu01TotalTest()
+	{
+		_Init();
+	}
+
+	void _Init()
+	{
+		nUp = 0; nDn = 0; nTotal = 0;
+	}
+
+};
+
+struct stMenu01GoodRatio
+{
+	double dUp, dDn, dTotal;
+
+	stMenu01GoodRatio()
+	{
+		_Init();
+	}
+
+	void _Init()
+	{
+		dUp = 0.0; dDn = 0.0; dTotal = 0.0;
+	}
+
+};
+
+struct stMenu01Good
+{
+	int nUp, nDn, nTotal;
+
+	stMenu01Good()
+	{
+		_Init();
+	}
+
+	void _Init()
+	{
+		nUp = 0; nDn = 0; nTotal = 0;
+	}
+
+};
+
+struct stMenu01BedRatio
+{
+	double dUp, dDn, dTotal;
+
+	stMenu01BedRatio()
+	{
+		_Init();
+	}
+
+	void _Init()
+	{
+		dUp = 0.0; dDn = 0.0; dTotal = 0.0;
+	}
+
+};
+
+struct stMenu01Bed
+{
+	int nUp, nDn, nTotal;
+
+	stMenu01Bed()
+	{
+		_Init();
+	}
+
+	void _Init()
+	{
+		nUp = 0; nDn = 0; nTotal = 0;
+	}
+
+};
+
+struct stMenu01YieldTotal
+{
+	double dUp, dDn, dTotal;
+
+	stMenu01YieldTotal()
+	{
+		_Init();
+	}
+
+	void _Init()
+	{
+		dUp = 0.0; dDn = 0.0; dTotal = 0.0;
+	}
+
+};
+
+struct stMenu01YieldStrip
+{
+	double dUp, dDn, dTotal;
+
+	stMenu01YieldStrip()
+	{
+		_Init();
+	}
+
+	void _Init()
+	{
+		dUp = 0.0; dDn = 0.0; dTotal = 0.0;
+	}
+
+};
+
+struct stMenu01Defect
+{
+	int nDefNum[MAX_DEF];
+
+	stMenu01Defect()
+	{
+		_Init();
+	}
+
+	void _Init()
+	{
+		for (int i = 0; i < MAX_DEF; i++)
+			nDefNum[i] = 0;
+	}
+
+};
+
+struct stMenu01Data
+{
+	int nMkNumLf, nMkNumRt;
+	double dVerifyLen;
+
+	stMenu01Data()
+	{
+		_Init();
+	}
+
+	void _Init()
+	{
+		nMkNumLf = 0; nMkNumRt = 0; dVerifyLen = 0.0;
+	}
+
+};
+
+struct stMenu01Status
+{
+	stMenu01Info Info;
+	stMenu01TotalTest TotTest;
+	stMenu01GoodRatio GoodRto;
+	stMenu01Good Good;
+	stMenu01BedRatio BedRto;
+	stMenu01Bed Bed;
+	stMenu01YieldTotal YieldTot;
+	stMenu01YieldStrip YieldStrip[MAX_STRIP];
+	stMenu01Defect Defect;
+	stMenu01Data Data;
 };
 
 typedef enum {

@@ -76,6 +76,7 @@
 #define TIM_SAFTY_STOP			21
 #define TIM_TCPIP_UPDATE		22
 #define TIM_START_UPDATE		100
+#define TIM_MENU01_UPDATE_WORK	101
 
 namespace Read2dIdx
 {
@@ -359,6 +360,7 @@ public:
 
 	int m_nLotEndSerial;
 
+	BOOL m_bTIM_MENU01_UPDATE_WORK;
 	BOOL m_bTIM_INIT_VIEW;
 	BOOL m_bCam, m_bReview;
 
@@ -986,6 +988,9 @@ public:
 	void SetAoiDnDoneLen(CString sVal);	// 검사부(하) : Distance (FdDone) [M]
 	void SetAoiUpDoneLen(CString sVal);	// 검사부(상) : Distance (FdDone) [M]
 	void SetEngDoneLen(CString sVal);	// 각인부 : Distance (FdDone) [M]
+
+	void DispStatusBar(CString strMsg, int nStatusBarID);
+	void GetMkMenu01();
 
 // 재정의입니다.
 public:

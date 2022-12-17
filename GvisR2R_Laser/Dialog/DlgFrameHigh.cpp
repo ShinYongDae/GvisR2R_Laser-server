@@ -553,6 +553,10 @@ void CDlgFrameHigh::DispSigAoi()
 		myLabel[2].SetImageBk(LBL_IMG_DN);
 	else if (!bOn && myLabel[2].GetImageBk() != LBL_IMG_UP)
 		myLabel[2].SetImageBk(LBL_IMG_UP);
+
+	CString sMsg;
+	sMsg.Format(_T("%d"), pDoc->m_nShotNum);
+	pView->DispStatusBar(sMsg, 5);
 }
 
 BOOL CDlgFrameHigh::PreTranslateMessage(MSG* pMsg) 

@@ -582,6 +582,9 @@ public:
 	BOOL UpdateDef();
 	void GetUpdateWorking(SOCKET_DATA SockData);
 
+	void SwMenu01UpdateWorking(BOOL bOn);
+	void IsSwMenu01UpdateWorking(BOOL bOn);
+
 protected:
 	afx_msg LRESULT wmAcceptReceived(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT wmServerClosed(WPARAM wParam, LPARAM lParam);

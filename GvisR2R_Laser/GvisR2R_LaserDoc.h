@@ -29,6 +29,7 @@ protected: // serialization에서만 만들어집니다.
 
 // 특성입니다.
 public:
+	CString m_sItsCode;
 	CString m_sLotNum, m_sProcessNum;
 	CString m_sModelUp, m_sLayerUp;
 	CString m_sModelDn, m_sLayerDn;
@@ -50,6 +51,7 @@ public:
 	stWorkingInfo WorkingInfo;
 	stStatus Status;								// Status 입력신호
 	stBtnStatus BtnStatus;
+	stMenu01Status Menu01Status;
 
 	CReelMap* m_pReelMap;
 	CReelMap *m_pReelMapUp, *m_pReelMapDn, *m_pReelMapAllUp, *m_pReelMapAllDn;
@@ -389,24 +391,28 @@ public:
 	void SetEngOrderNum(CString sOrderNum);
 	BOOL SetEngOffset(CfPoint &OfSt);
 
-	BOOL GetCurrentInfoSignal(int nIdxSig);
 	CString GetCurrentInfoBufUp();
 	CString GetCurrentInfoBufDn();
-	int GetCurrentInfoEngShotNum();
-	int GetCurrentInfoTestMode();
 
+	void GetCurrentInfo();
 	void SetCurrentInfo();
+	int GetCurrentInfoTestMode();
 	void SetCurrentInfoTestMode(int nMode);
+	int GetCurrentInfoEngShotNum();
 	void SetCurrentInfoEngShotNum(int nSerial);
+	BOOL GetCurrentInfoSignal(int nIdxSig);
 	void SetCurrentInfoSignal(int nIdxSig, BOOL bOn);
 
 	CString GetMonDispMain();
 	void SetMonDispMain(CString sDisp);
 	void GetMkMenu01();
-	void SetMkMenu01();
+	void SetMkMenu01(CString sMenu, CString sItem, CString sData);
 	void GetMkMenu03();
 	void GetMkMenu03Main();
 	void SetMkMenu03(CString sMenu, CString sItem, BOOL bOn);
+	void GetMkInfo();
+	void SetMkInfo(CString sMenu, CString sItem, BOOL bOn);
+	void SetMkInfo(CString sMenu, CString sItem, CString sData);
 
 // 재정의입니다.
 public:

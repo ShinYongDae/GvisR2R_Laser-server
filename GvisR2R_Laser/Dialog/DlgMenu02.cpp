@@ -408,8 +408,8 @@ BOOL CDlgMenu02::OnInitDialog()
 	GetDlgItem(IDC_STC_MK_POS2)->ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_CHK_MK_OFFSET_ST)->ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_CHK_MK_OFFSET_ED)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_BTN_HOME_MOVE)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_BTN_START_SAVE)->ShowWindow(SW_HIDE);
+	//GetDlgItem(IDC_BTN_HOME_MOVE)->ShowWindow(SW_HIDE);
+	//GetDlgItem(IDC_BTN_START_SAVE)->ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_BTN_ALIGN)->ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_BTN_ALIGN_MOVE)->ShowWindow(SW_HIDE);
 
@@ -1421,7 +1421,7 @@ BOOL CDlgMenu02::MovePos(int nPos)
 	//	pView->Move1(ptPnt, pView->m_bCam);
 	//}
 
-	if(_tstof(pDoc->WorkingInfo.Marking[0].sMeasurePosX[nPos]) > 0.0 && _tstof(pDoc->WorkingInfo.Marking[0].sMeasurePosY[nPos]) > 0.0)
+	if(_tstof(pDoc->WorkingInfo.Marking[0].sMeasurePosX[nPos]) > -5.0 && _tstof(pDoc->WorkingInfo.Marking[0].sMeasurePosY[nPos]) > -5.0)
 	{
 		double dCurrX = pView->m_dEnc[AXIS_X0];
 		double dCurrY = pView->m_dEnc[AXIS_X0];
@@ -1496,7 +1496,7 @@ BOOL CDlgMenu02::MovePinPos()
 
 	SetLight();
 
-	if(pView->m_pMotion->m_dPinPosY[0] > 0.0 && pView->m_pMotion->m_dPinPosX[0] > 0.0)
+	if(pView->m_pMotion->m_dPinPosY[0] > -5.0 && pView->m_pMotion->m_dPinPosX[0] > -5.0)
 	{
 		double dCurrX = pView->m_dEnc[AXIS_X0];
 		double dCurrY = pView->m_dEnc[AXIS_Y0];
@@ -1665,7 +1665,8 @@ void CDlgMenu02::OnBtnPinSave()
 void CDlgMenu02::OnBtnHomeMove() 
 {
 	// TODO: Add your control notification handler code here
-	ResetLight();
+	//ResetLight();
+	SetLight();
 
 	double pTgtPos[2];
 	pTgtPos[1] = _tstof(pDoc->WorkingInfo.Motion.sStPosY[0]);
@@ -1703,7 +1704,7 @@ void CDlgMenu02::OnBtnHomeSave()
 	// TODO: Add your control notification handler code here
 //	pView->ShiftMsgPos(0, -430);
 //	if(IDNO == pView->DoMyMsgBox(_T("Do you want to save Marking Start Position?"), MB_YESNO))
-	if(IDNO == pView->MsgBox(_T("Do you want to save Marking Start Position?"), 0, MB_YESNO))
+	if(IDNO == pView->MsgBox(_T("Do you want to save 2D Code Position?"), 0, MB_YESNO))
 	{
 //		pView->ShiftMsgPos(0, 0);
 		return;
@@ -1714,13 +1715,13 @@ void CDlgMenu02::OnBtnHomeSave()
 	dX = pView->m_dEnc[AXIS_X0];
 	dY = pView->m_dEnc[AXIS_Y0];
 
-	if(dX > 50.0)
-	{
-		pView->DispMsg(_T("설정범위 초과"),_T("저장 실패 : X축 50.0 이하만 설장됨 ..."),RGB_GREEN,2000,TRUE);
-		return;
-	}
+	//if(dX > 50.0)
+	//{
+	//	pView->DispMsg(_T("설정범위 초과"),_T("저장 실패 : X축 50.0 이하만 설장됨 ..."),RGB_GREEN,2000,TRUE);
+	//	return;
+	//}
 
-	CString sData, sPath=PATH_WORKING_INFO;
+	CString sData, sPath = pDoc->WorkingInfo.System.sPathEngCurrInfo;// PATH_WORKING_INFO;
 	sData.Format(_T("%.3f"), dX);
 	pDoc->WorkingInfo.Motion.sStPosX[0] = sData;
 	::WritePrivateProfileString(_T("Motion"), _T("START_POSITION_X0"), sData, sPath);
@@ -2701,7 +2702,8 @@ void CDlgMenu02::Disp()
 	myStcData[12].SetText(str);					// IDC_STC_010	가속도
 
 	
-	myStcData[17].SetText(pDoc->m_sOrderNum);	// IDC_STC_32	리더기 오더번호
+	//myStcData[17].SetText(pDoc->m_sOrderNum);	// IDC_STC_32	리더기 오더번호
+	myStcData[17].SetText(pDoc->m_sItsCode);	// IDC_STC_32	리더기 ITS Code
 	myStcData[18].SetText(pDoc->m_sShotNum);	// IDC_STC_34	리더기 Shot번호
 	DispOneShotRemainLen();						// IDC_STC_36	1Shot - 리더기Offset
 
@@ -2711,7 +2713,8 @@ void CDlgMenu02::Disp()
 	str.Format(_T("%.1f"), _tstof(pDoc->WorkingInfo.Motion.sEngraveLaserAdjOffSetManual));
 	myStcData[14].SetText(str);					// IDC_STC_40	수동보정
 
-	myStcData[15].SetText(pDoc->m_sOrderNum);	// IDC_STC_17	각인기 오더번호
+	//myStcData[15].SetText(pDoc->m_sOrderNum);	// IDC_STC_17	각인기 오더번호
+	myStcData[15].SetText(pDoc->m_sItsCode);	// IDC_STC_17	각인기 ITS Code
 	myStcData[16].SetText(pDoc->m_sShotNum);	// IDC_STC_19	리더기 Shot번호
 
 	str.Format(_T("%.1f"), _tstof(pDoc->WorkingInfo.Motion.sEngraveFdLead));
@@ -3018,11 +3021,11 @@ void CDlgMenu02::OnStnClickedStc17()
 
 	// Order Number 설정
 
-	CString sOrder, sShot, sData;
-	GetDlgItem(IDC_STC_17)->GetWindowText(sOrder);
+	CString sItsCode, sShot, sData;
+	GetDlgItem(IDC_STC_17)->GetWindowText(sItsCode);
 	GetDlgItem(IDC_STC_19)->GetWindowText(sShot);
 
-	if (pView->m_pMdx2500->SetMdxOrderShotNum(sOrder, sShot, SET_ORDER))
+	if (pView->m_pMdx2500->SetMdxOrderShotNum(sItsCode, sShot, SET_ITS))
 	{
 		//m_bTIM_MDX_RESPONSE = TRUE;
 		//SetTimer(TIM_MDX_RESPONSE, 100, NULL);

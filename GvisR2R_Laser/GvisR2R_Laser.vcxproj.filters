@@ -318,6 +318,9 @@
     <ClInclude Include="Dialog\DlgUtil02.h">
       <Filter>Dialog</Filter>
     </ClInclude>
+    <ClInclude Include="Process\CamMasterDefine.h">
+      <Filter>Process</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GvisR2R_Laser.cpp">
