@@ -50,7 +50,7 @@ CGvisR2R_LaserDoc::CGvisR2R_LaserDoc()
 	m_sItsCode = _T("");
 	m_sLotNum = _T(""); m_sProcessNum = _T("");
 	m_sModelUp = _T(""); m_sLayerUp = _T("");
-	m_sModelDn = _T(""); m_sLayerDn = _T("");
+	m_sLayerDn = _T(""); // m_sModelDn = _T(""); 
 
 	m_bBufEmpty[0] = FALSE; // Exist
 	m_bBufEmpty[1] = FALSE; // Exist
@@ -1024,6 +1024,22 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.System.sPathAoiUp = CString(_T(""));
 	}
 
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("UseDTS"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.System.bUseDTS = _ttoi(szData);
+	else
+	{
+		AfxMessageBox(_T("UseDTS가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.bUseDTS = FALSE;
+	}
+
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("AOIUpDtsPath"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.System.sPathAoiUpDts = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("AOIUpDtsPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathAoiUpDts = CString(_T(""));
+	}
+
 	if (0 < ::GetPrivateProfileString(_T("System"), _T("AoiUpCurrentInfoPath"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.System.sPathAoiUpCurrInfo = CString(szData);
 	else
@@ -1054,6 +1070,14 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	{
 		AfxMessageBox(_T("AOIDnPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
 		WorkingInfo.System.sPathAoiDn = CString(_T(""));
+	}
+
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("AOIDnDtsPath"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.System.sPathAoiDnDts = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("AOIDnDtsPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathAoiDnDts = CString(_T(""));
 	}
 
 	if (0 < ::GetPrivateProfileString(_T("System"), _T("AoiDnCurrentInfoPath"), NULL, szData, sizeof(szData), sPath))
@@ -1258,71 +1282,79 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		m_nDelayShow = 500;
 
 	// [Last Job]
-	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Process Code"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Process Unit Code"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.LastJob.sProcessNum = CString(szData);
 	else
 	{
 		WorkingInfo.LastJob.sProcessNum = CString(_T("VS90"));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("ModelUp Name"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Current Model Up"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.LastJob.sModelUp = CString(szData);
 	else
 	{
-		AfxMessageBox(_T("ModelUp이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		AfxMessageBox(_T("Current Model Up이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
 		WorkingInfo.LastJob.sModelUp = CString(_T(""));
 	}
-	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("ModelDn Name"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Current Model Dn"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.LastJob.sModelDn = CString(szData);
 	else
 	{
-		AfxMessageBox(_T("ModelDn이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		AfxMessageBox(_T("Current Model Dn이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
 		WorkingInfo.LastJob.sModelDn = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("LayerUp Name"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Current Lot"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+		WorkingInfo.LastJob.sLotUp = WorkingInfo.LastJob.sLotDn = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("Current Lot가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.LastJob.sLotUp = WorkingInfo.LastJob.sLotDn = CString(_T(""));
+	}
+
+	if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Current Layer Up"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.LastJob.sLayerUp = CString(szData);
 	else
 	{
-		AfxMessageBox(_T("LayerUp가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		AfxMessageBox(_T("Current Layer Up이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
 		WorkingInfo.LastJob.sLayerUp = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Test Mode"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Test Mode"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.LastJob.nTestMode = _ttoi(szData);
 	else
 		WorkingInfo.LastJob.nTestMode = 0;
 
-	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use Dual AOI"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Use Dual AOI"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.LastJob.bDualTest = _ttoi(szData) ? TRUE : FALSE;
 	else
 		WorkingInfo.LastJob.bDualTest = TRUE;
 
 	if (WorkingInfo.LastJob.bDualTest)
 	{
-		if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("LayerDn Name"), NULL, szData, sizeof(szData), sPath))
+		if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Current Layer Dn"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 			WorkingInfo.LastJob.sLayerDn = CString(szData);
 		else
 		{
-			AfxMessageBox(_T("LayerDn가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+			AfxMessageBox(_T("Current Layer Dn이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
 			WorkingInfo.LastJob.sLayerDn = CString(_T(""));
 		}
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("LotUp No"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.LastJob.sLotUp = CString(szData);
-	else
-	{
-		AfxMessageBox(_T("LotUp가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.LastJob.sLotUp = CString(_T(""));
-	}
-	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("LotDn No"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.LastJob.sLotDn = CString(szData);
-	else
-	{
-		AfxMessageBox(_T("LotDn가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.LastJob.sLotDn = CString(_T(""));
-	}
+	//if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("LotUp No"), NULL, szData, sizeof(szData), sPath))
+	//	WorkingInfo.LastJob.sLotUp = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("LotUp가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.LastJob.sLotUp = CString(_T(""));
+	//}
+	//if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("LotDn No"), NULL, szData, sizeof(szData), sPath))
+	//	WorkingInfo.LastJob.sLotDn = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("LotDn가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.LastJob.sLotDn = CString(_T(""));
+	//}
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Process Unit Code"), NULL, szData, sizeof(szData), sPath))
 		m_sProcessNum = CString(szData);
 	else
@@ -1552,10 +1584,10 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	else
 		WorkingInfo.LastJob.bUseAoiDnCleanRoler = TRUE;
 
-	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Engrave Order Num"), NULL, szData, sizeof(szData), sPath))
-		m_sOrderNum = WorkingInfo.LastJob.sEngOrderNum = CString(szData);
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Engrave Its Code"), NULL, szData, sizeof(szData), sPath))
+		m_sOrderNum = WorkingInfo.LastJob.sEngItsCode = CString(szData);
 	else
-		m_sOrderNum = WorkingInfo.LastJob.sEngOrderNum = _T("");
+		m_sOrderNum = WorkingInfo.LastJob.sEngItsCode = _T("");
 
 
 	// 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Light Value"), NULL, szData, sizeof(szData), sPath))
@@ -3237,6 +3269,8 @@ void CGvisR2R_LaserDoc::SetMkLimitR(int nNum) // 1[year] = 31536000[sec]
 
 void CGvisR2R_LaserDoc::SaveWorkingInfo()
 {
+	return;
+
 	CString sData, sPath = PATH_WORKING_INFO;
 
 	// [System]
@@ -5713,70 +5747,84 @@ BOOL CGvisR2R_LaserDoc::CopyDefImgDn(int nSerial, CString sNewLot)
 	else
 		sLot = sNewLot;
 
-	strAOIImgDataPath.Format(_T("%s\\VRSImage"), WorkingInfo.System.sPathAoiDn);
+	//strAOIImgDataPath.Format(_T("%s\\VRSImage"), WorkingInfo.System.sPathAoiDn);
+	if (WorkingInfo.System.bUseDTS)
+		strAOIImgDataPath.Format(_T("%s\\VRSImage"), WorkingInfo.System.sPathAoiDnDts);
+	else
+		strAOIImgDataPath.Format(_T("%s\\VRSImage"), WorkingInfo.System.sPathAoiDn);
 
 	if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
 		strMakeFolderPath.Format(_T("%s\\%s"), WorkingInfo.System.sPathOldFile,
-			WorkingInfo.LastJob.sModelDn);
+			WorkingInfo.LastJob.sModelUp);
+			//WorkingInfo.LastJob.sModelDn);
 	else
-	strMakeFolderPath.Format(_T("%s%s"), WorkingInfo.System.sPathOldFile,
-		WorkingInfo.LastJob.sModelDn);
+		strMakeFolderPath.Format(_T("%s%s"), WorkingInfo.System.sPathOldFile,
+			WorkingInfo.LastJob.sModelUp);
+			//WorkingInfo.LastJob.sModelDn);
 	//if (!finder.FindFile(strMakeFolderPath))
 	if (!pDoc->DirectoryExists(strMakeFolderPath))
 		CreateDirectory(strMakeFolderPath, NULL);
 
 	if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
 		strMakeFolderPath.Format(_T("%s\\%s\\%s"), WorkingInfo.System.sPathOldFile,
-			WorkingInfo.LastJob.sModelDn,
+			WorkingInfo.LastJob.sModelUp,
+			//WorkingInfo.LastJob.sModelDn,
 			sLot);
 	else
-	strMakeFolderPath.Format(_T("%s%s\\%s"), WorkingInfo.System.sPathOldFile,
-		WorkingInfo.LastJob.sModelDn,
-		sLot);
+		strMakeFolderPath.Format(_T("%s%s\\%s"), WorkingInfo.System.sPathOldFile,
+			WorkingInfo.LastJob.sModelUp,
+			//WorkingInfo.LastJob.sModelDn,
+			sLot);
 	//if (!finder.FindFile(strMakeFolderPath))
 	if (!pDoc->DirectoryExists(strMakeFolderPath))
 		CreateDirectory(strMakeFolderPath, NULL);
 
 	if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
 		strMakeFolderPath.Format(_T("%s\\%s\\%s\\%s"), WorkingInfo.System.sPathOldFile,
-			WorkingInfo.LastJob.sModelDn,
+			WorkingInfo.LastJob.sModelUp,
+			//WorkingInfo.LastJob.sModelDn,
 			sLot,
 			WorkingInfo.LastJob.sLayerDn);
 	else
-	strMakeFolderPath.Format(_T("%s%s\\%s\\%s"), WorkingInfo.System.sPathOldFile,
-		WorkingInfo.LastJob.sModelDn,
-		sLot,
-		WorkingInfo.LastJob.sLayerDn);
+		strMakeFolderPath.Format(_T("%s%s\\%s\\%s"), WorkingInfo.System.sPathOldFile,
+			WorkingInfo.LastJob.sModelUp,
+			//WorkingInfo.LastJob.sModelDn,
+			sLot,
+			WorkingInfo.LastJob.sLayerDn);
 	//if (!finder.FindFile(strMakeFolderPath))
 	if (!pDoc->DirectoryExists(strMakeFolderPath))
 		CreateDirectory(strMakeFolderPath, NULL);
 
 	if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
 		strMakeFolderPath.Format(_T("%s\\%s\\%s\\%s\\DefImage"), WorkingInfo.System.sPathOldFile,
-			WorkingInfo.LastJob.sModelDn,
+			WorkingInfo.LastJob.sModelUp,
+			//WorkingInfo.LastJob.sModelDn,
 			sLot,
 			WorkingInfo.LastJob.sLayerDn);
 	else
-	strMakeFolderPath.Format(_T("%s%s\\%s\\%s\\DefImage"), WorkingInfo.System.sPathOldFile,
-		WorkingInfo.LastJob.sModelDn,
-		sLot,
-		WorkingInfo.LastJob.sLayerDn);
+		strMakeFolderPath.Format(_T("%s%s\\%s\\%s\\DefImage"), WorkingInfo.System.sPathOldFile,
+			WorkingInfo.LastJob.sModelUp,
+			//WorkingInfo.LastJob.sModelDn,
+			sLot,
+			WorkingInfo.LastJob.sLayerDn);
 	//if (!finder.FindFile(strMakeFolderPath))
 	if (!pDoc->DirectoryExists(strMakeFolderPath))
 		CreateDirectory(strMakeFolderPath, NULL);
 
 	if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
 		strMakeFolderPath.Format(_T("%s\\%s\\%s\\%s\\DefImage\\%d"), WorkingInfo.System.sPathOldFile,
-			WorkingInfo.LastJob.sModelDn,
+			WorkingInfo.LastJob.sModelUp,
+			//WorkingInfo.LastJob.sModelDn,
 			sLot,
 			WorkingInfo.LastJob.sLayerDn,
 			nSerial);
 	else
-	strMakeFolderPath.Format(_T("%s%s\\%s\\%s\\DefImage\\%d"), WorkingInfo.System.sPathOldFile,
-		WorkingInfo.LastJob.sModelDn,
-		sLot,
-		WorkingInfo.LastJob.sLayerDn,
-		nSerial);
+		strMakeFolderPath.Format(_T("%s%s\\%s\\%s\\DefImage\\%d"), WorkingInfo.System.sPathOldFile,
+			WorkingInfo.LastJob.sModelUp,
+			//WorkingInfo.LastJob.sModelDn,
+			sLot,
+			WorkingInfo.LastJob.sLayerDn,
+			nSerial);
 	//if (!finder.FindFile(strMakeFolderPath))
 	if (!pDoc->DirectoryExists(strMakeFolderPath))
 		CreateDirectory(strMakeFolderPath, NULL);
@@ -5802,15 +5850,17 @@ BOOL CGvisR2R_LaserDoc::CopyDefImgDn(int nSerial, CString sNewLot)
 			int nDefImg = pDoc->m_pPcr[1][nIdx]->m_pImg[i];
 
 			if (strAOIImgDataPath.Right(1) != "\\")
-			strDefImgPathS.Format(_T("%s\\%s\\%s\\%s\\%d\\%05d.tif"), strAOIImgDataPath,
-				WorkingInfo.LastJob.sModelDn,
-				WorkingInfo.LastJob.sLayerDn,
-				sLot,
-				nSerial,
-				nDefImg);
+				strDefImgPathS.Format(_T("%s\\%s\\%s\\%s\\%d\\%05d.tif"), strAOIImgDataPath,
+					WorkingInfo.LastJob.sModelUp,
+					//WorkingInfo.LastJob.sModelDn,
+					WorkingInfo.LastJob.sLayerDn,
+					sLot,
+					nSerial,
+					nDefImg);
 			else
 				strDefImgPathS.Format(_T("%s%s\\%s\\%s\\%d\\%05d.tif"), strAOIImgDataPath,
-					WorkingInfo.LastJob.sModelDn,
+					WorkingInfo.LastJob.sModelUp,
+					//WorkingInfo.LastJob.sModelDn,
 					WorkingInfo.LastJob.sLayerDn,
 					sLot,
 					nSerial,
@@ -5818,18 +5868,20 @@ BOOL CGvisR2R_LaserDoc::CopyDefImgDn(int nSerial, CString sNewLot)
 
 			if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
 				strDefImgPathD.Format(_T("%s\\%s\\%s\\%s\\DefImage\\%d\\%05d.tif"), WorkingInfo.System.sPathOldFile,
-					WorkingInfo.LastJob.sModelDn,
+					WorkingInfo.LastJob.sModelUp,
+					//WorkingInfo.LastJob.sModelDn,
 					sLot,
 					WorkingInfo.LastJob.sLayerDn,
 					nSerial,
 					nDefImg);
 			else
-			strDefImgPathD.Format(_T("%s%s\\%s\\%s\\DefImage\\%d\\%05d.tif"), WorkingInfo.System.sPathOldFile,
-				WorkingInfo.LastJob.sModelDn,
-				sLot,
-				WorkingInfo.LastJob.sLayerDn,
-				nSerial,
-				nDefImg);
+				strDefImgPathD.Format(_T("%s%s\\%s\\%s\\DefImage\\%d\\%05d.tif"), WorkingInfo.System.sPathOldFile,
+					WorkingInfo.LastJob.sModelUp,
+					//WorkingInfo.LastJob.sModelDn,
+					sLot,
+					WorkingInfo.LastJob.sLayerDn,
+					nSerial,
+					nDefImg);
 
 			if (finder.FindFile(strDefImgPathS))
 			{
@@ -6020,13 +6072,17 @@ int CGvisR2R_LaserDoc::GetLastShotMk()	// m_pDlgFrameHigh에서 얻거나 없으면, sPa
 			CString sPath, sRmapPath, sMsg;
 			if (WorkingInfo.System.sPathOldFile.Right(1) != "\\")
 				sPath.Format(_T("%s\\%s\\%s\\%s"), WorkingInfo.System.sPathOldFile,
-					WorkingInfo.LastJob.sModelDn,
-					WorkingInfo.LastJob.sLotDn,
+					WorkingInfo.LastJob.sModelUp,
+					WorkingInfo.LastJob.sLotUp,
+					//WorkingInfo.LastJob.sModelDn,
+					//WorkingInfo.LastJob.sLotDn,
 					WorkingInfo.LastJob.sLayerDn);
 			else
 			sPath.Format(_T("%s%s\\%s\\%s"), WorkingInfo.System.sPathOldFile,
-				WorkingInfo.LastJob.sModelDn,
-				WorkingInfo.LastJob.sLotDn,
+				//WorkingInfo.LastJob.sModelDn,
+				//WorkingInfo.LastJob.sLotDn,
+				WorkingInfo.LastJob.sModelUp,
+				WorkingInfo.LastJob.sLotUp,
 				WorkingInfo.LastJob.sLayerDn);
 
 			sRmapPath.Format(_T("%s\\ReelMapDataDn.txt"), sPath);
@@ -7467,6 +7523,8 @@ void CGvisR2R_LaserDoc::SetCompletedSerial(int nSerial)
 
 void CGvisR2R_LaserDoc::SetModelInfoUp()
 {
+	return;
+
 	CString sData, sPath = PATH_WORKING_INFO;
 	sData = WorkingInfo.LastJob.sModelUp;
 	::WritePrivateProfileString(_T("Last Job"), _T("ModelUp Name"), sData, sPath);
@@ -7480,6 +7538,8 @@ void CGvisR2R_LaserDoc::SetModelInfoUp()
 
 void CGvisR2R_LaserDoc::SetModelInfoDn()
 {
+	return;
+
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	if (!bDualTest)
 		return;
@@ -7529,6 +7589,8 @@ void CGvisR2R_LaserDoc::SetCurrentInfo()
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
 	CString sData, sPath = WorkingInfo.System.sPathEngCurrInfo;
+	sData.Format(_T("%d"), bDualTest ? 1 : 0);
+	::WritePrivateProfileString(_T("Infomation"), _T("Use Dual AOI"), sData, sPath);
 	sData = m_sItsCode;
 	::WritePrivateProfileString(_T("Infomation"), _T("Its Code"), sData, sPath);
 	sData = m_sLotNum;
@@ -7739,21 +7801,26 @@ BOOL CGvisR2R_LaserDoc::MakeMkDirDn()
 	}
 
 	sPath.Format(_T("%s%s"), pDoc->WorkingInfo.System.sPathOldFile,
-		WorkingInfo.LastJob.sModelDn);
+		WorkingInfo.LastJob.sModelUp);
+		//WorkingInfo.LastJob.sModelDn);
 	//if (!finder.FindFile(sPath))
 	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
-		WorkingInfo.LastJob.sModelDn,
-		WorkingInfo.LastJob.sLotDn);
+		WorkingInfo.LastJob.sModelUp,
+		WorkingInfo.LastJob.sLotUp);
+		//WorkingInfo.LastJob.sModelDn,
+		//WorkingInfo.LastJob.sLotDn);
 	//if (!finder.FindFile(sPath))
 	if (!pDoc->DirectoryExists(sPath))
 		CreateDirectory(sPath, NULL);
 
 	sPath.Format(_T("%s%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
-		WorkingInfo.LastJob.sModelDn,
-		WorkingInfo.LastJob.sLotDn,
+		WorkingInfo.LastJob.sModelUp,
+		WorkingInfo.LastJob.sLotUp,
+		//WorkingInfo.LastJob.sModelDn,
+		//WorkingInfo.LastJob.sLotDn,
 		WorkingInfo.LastJob.sLayerDn);
 	//if (!finder.FindFile(sPath))
 	if (!pDoc->DirectoryExists(sPath))
@@ -8759,10 +8826,10 @@ void CGvisR2R_LaserDoc::WriteFdOffset(double dOffsetX, double dOffsetY)
 }
 
 
-void CGvisR2R_LaserDoc::SetEngOrderNum(CString sOrderNum)
+void CGvisR2R_LaserDoc::SetEngItsCode(CString sItsCode)
 {
-	pDoc->m_sOrderNum = pDoc->WorkingInfo.LastJob.sEngOrderNum = sOrderNum;
-	::WritePrivateProfileString(_T("Last Job"), _T("Engrave Order Num"), pDoc->WorkingInfo.LastJob.sEngOrderNum, PATH_WORKING_INFO);
+	pDoc->m_sItsCode = pDoc->WorkingInfo.LastJob.sEngItsCode = sItsCode;
+	::WritePrivateProfileString(_T("Last Job"), _T("Engrave Its Code"), pDoc->WorkingInfo.LastJob.sEngItsCode, PATH_WORKING_INFO);
 
 	//#ifdef USE_ENGRAVE
 	//	if (pView && pView->m_pEngrave)

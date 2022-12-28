@@ -32,7 +32,7 @@ public:
 	CString m_sItsCode;
 	CString m_sLotNum, m_sProcessNum;
 	CString m_sModelUp, m_sLayerUp;
-	CString m_sModelDn, m_sLayerDn;
+	CString m_sLayerDn; //m_sModelDn, 
 
 	int m_nDelayShow;
 	BOOL m_bBufEmpty[2]; // [0]: Up, [1]: Dn
@@ -388,7 +388,7 @@ public:
 	CString m_strSharedDir;
 	void CheckCurrentInfo();
 	void WriteFdOffset(double dOffsetX, double dOffsetY);
-	void SetEngOrderNum(CString sOrderNum);
+	void SetEngItsCode(CString sItsCode);
 	BOOL SetEngOffset(CfPoint &OfSt);
 
 	CString GetCurrentInfoBufUp();

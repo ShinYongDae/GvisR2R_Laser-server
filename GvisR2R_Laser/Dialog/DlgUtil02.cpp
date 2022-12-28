@@ -57,7 +57,7 @@ void CDlgUtil02::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_PROCESS_NUM, m_sProcessNum);
 	DDX_Control(pDX, IDC_LAYER_COMBO_DN, m_LayerComboDn);
 	DDX_Control(pDX, IDC_LAYER_COMBO_UP, m_LayerComboUp);
-	DDX_Control(pDX, IDC_MODEL_COMBO_DN, m_ModelComboDn);
+	//DDX_Control(pDX, IDC_MODEL_COMBO_DN, m_ModelComboDn);
 	DDX_Control(pDX, IDC_MODEL_COMBO_UP, m_ModelComboUp);
 	//}}AFX_DATA_MAP
 }
@@ -69,7 +69,7 @@ BEGIN_MESSAGE_MAP(CDlgUtil02, CDialog)
 	ON_WM_SHOWWINDOW()
 	ON_CBN_SELCHANGE(IDC_MODEL_COMBO_UP, OnSelchangeModelComboUp)
 	ON_CBN_SELCHANGE(IDC_LAYER_COMBO_UP, OnSelchangeLayerComboUp)
-	ON_CBN_SELCHANGE(IDC_MODEL_COMBO_DN, OnSelchangeModelComboDn)
+	//ON_CBN_SELCHANGE(IDC_MODEL_COMBO_DN, OnSelchangeModelComboDn)
 	ON_CBN_SELCHANGE(IDC_LAYER_COMBO_DN, OnSelchangeLayerComboDn)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -107,14 +107,14 @@ void CDlgUtil02::OnShowWindow(BOOL bShow, UINT nStatus)
 void CDlgUtil02::AtDlgShow()
 {
 	ModifyModelComboData(&m_ModelComboUp);
-	ModifyModelComboData(&m_ModelComboDn);
+	//ModifyModelComboData(&m_ModelComboDn);
 
 	m_sItsCode = pDoc->m_sItsCode;
 	m_sLotNum = pDoc->m_sLotNum;
 	m_sProcessNum = pDoc->m_sProcessNum;
 
 	pDoc->m_sModelUp = pDoc->WorkingInfo.LastJob.sModelUp;
-	pDoc->m_sModelDn = pDoc->WorkingInfo.LastJob.sModelDn;
+	//pDoc->m_sModelDn = pDoc->WorkingInfo.LastJob.sModelDn;
 	pDoc->m_sLayerUp = pDoc->WorkingInfo.LastJob.sLayerUp;
 	pDoc->m_sLayerDn = pDoc->WorkingInfo.LastJob.sLayerDn;
 
@@ -124,12 +124,12 @@ void CDlgUtil02::AtDlgShow()
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	if (bDualTest)
 	{
-		m_ModelComboDn.SetWindowText(pDoc->WorkingInfo.LastJob.sModelDn);
+		//m_ModelComboDn.SetWindowText(pDoc->WorkingInfo.LastJob.sModelDn);
 		m_LayerComboDn.SetWindowText(pDoc->WorkingInfo.LastJob.sLayerDn);
 	}
 	else
 	{
-		m_ModelComboDn.SetWindowText(_T(""));
+		//m_ModelComboDn.SetWindowText(_T(""));
 		m_LayerComboDn.SetWindowText(_T(""));
 	}
 
@@ -147,6 +147,8 @@ BOOL CDlgUtil02::OnInitDialog()
 	
 	// TODO: Add extra initialization here
 
+	GetDlgItem(IDC_STATIC_MODEL)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_MODEL_COMBO_DN)->ShowWindow(SW_HIDE);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -222,11 +224,11 @@ void CDlgUtil02::DoConfirm()
 		pDoc->WorkingInfo.LastJob.sModelUp = pDoc->m_sModelUp;
 		pView->m_bLoadMstInfo = TRUE;
 	}
-	if ((pDoc->WorkingInfo.LastJob.sModelDn != pDoc->m_sModelDn) && !pDoc->m_sModelDn.IsEmpty())
-	{
-		pDoc->WorkingInfo.LastJob.sModelDn = pDoc->m_sModelDn;
-		pView->m_bLoadMstInfo = TRUE;
-	}
+	//if ((pDoc->WorkingInfo.LastJob.sModelDn != pDoc->m_sModelDn) && !pDoc->m_sModelDn.IsEmpty())
+	//{
+	//	pDoc->WorkingInfo.LastJob.sModelDn = pDoc->m_sModelDn;
+	//	pView->m_bLoadMstInfo = TRUE;
+	//}
 	if ((pDoc->WorkingInfo.LastJob.sLayerUp != pDoc->m_sLayerUp) && !pDoc->m_sLayerUp.IsEmpty())
 	{
 		pDoc->WorkingInfo.LastJob.sLayerUp = pDoc->m_sLayerUp;
@@ -248,9 +250,9 @@ void CDlgUtil02::DoConfirm()
 		pView->m_bLoadMstInfo = TRUE;
 	}
 
-	pDoc->SetModelInfoUp();
-	pDoc->SetModelInfoDn();
-	pDoc->SetModelInfoProcessNum();
+	//pDoc->SetModelInfoUp();
+	//pDoc->SetModelInfoDn();
+	//pDoc->SetModelInfoProcessNum();
 	pDoc->SetCurrentInfo();
 }
 
@@ -311,14 +313,14 @@ void CDlgUtil02::ModifyLayerComboData(CComboBox *pComboBox, int nAoi)
 
 	pComboBox->ResetContent();
 
-	if (nAoi == 0)
+	//if (nAoi == 0)
 	{
 		Dir = pDoc->WorkingInfo.System.sPathCamSpecDir + pDoc->m_sModelUp + _T("\\*.ini");
 	}
-	else
-	{
-		Dir = pDoc->WorkingInfo.System.sPathCamSpecDir + pDoc->m_sModelDn + _T("\\*.ini");
-	}
+	//else
+	//{
+	//	Dir = pDoc->WorkingInfo.System.sPathCamSpecDir + pDoc->m_sModelDn + _T("\\*.ini");
+	//}
 
 	if (!(bContinue = filefind.FindFile(Dir)))
 		return;
@@ -366,7 +368,7 @@ void CDlgUtil02::OnSelchangeModelComboUp()
 
 	m_ModelComboUp.GetLBText(nIndex, pDoc->m_sModelUp);
 	ModifyLayerComboData(&m_LayerComboUp, 0); // [0]:AOI-Up , [1]:AOI-Dn
-
+	ModifyLayerComboData(&m_LayerComboDn, 1); // [0]:AOI-Up , [1]:AOI-Dn
 }
 
 void CDlgUtil02::OnSelchangeLayerComboUp()
@@ -390,21 +392,21 @@ void CDlgUtil02::OnSelchangeLayerComboUp()
 	//UpdateData(FALSE);
 }
 
-void CDlgUtil02::OnSelchangeModelComboDn()
-{
-	int nIndex;
-	CString strMsg, strTitleMsg;
-
-	UpdateData(TRUE);
-
-	nIndex = m_ModelComboDn.GetCurSel();
-	if (nIndex == LB_ERR)
-		return;
-
-	m_ModelComboDn.GetLBText(nIndex, pDoc->m_sModelDn);
-
-	ModifyLayerComboData(&m_LayerComboDn, 1); // [0]:AOI-Up , [1]:AOI-Dn
-}
+//void CDlgUtil02::OnSelchangeModelComboDn()
+//{
+//	int nIndex;
+//	CString strMsg, strTitleMsg;
+//
+//	UpdateData(TRUE);
+//
+//	nIndex = m_ModelComboDn.GetCurSel();
+//	if (nIndex == LB_ERR)
+//		return;
+//
+//	m_ModelComboDn.GetLBText(nIndex, pDoc->m_sModelDn);
+//
+//	ModifyLayerComboData(&m_LayerComboDn, 1); // [0]:AOI-Up , [1]:AOI-Dn
+//}
 
 void CDlgUtil02::OnSelchangeLayerComboDn()
 {

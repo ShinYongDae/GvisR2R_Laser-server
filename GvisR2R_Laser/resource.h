@@ -152,6 +152,7 @@
 #define IDC_PIC_DEF_004                 1016
 #define IDC_ITS_EDIT                    1016
 #define IDC_PIC_DEF_005                 1017
+#define IDC_STATIC_MODEL                1017
 #define IDC_PIC_DEF_006                 1018
 #define IDC_STATIC_00                   1019
 #define IDC_PIC_DEF_007                 1019
@@ -1096,7 +1097,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        335
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1016
+#define _APS_NEXT_CONTROL_VALUE         1018
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

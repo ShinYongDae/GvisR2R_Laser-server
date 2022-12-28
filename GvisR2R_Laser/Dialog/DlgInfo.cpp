@@ -492,7 +492,7 @@ void CDlgInfo::InitStcData()
 
 	myStcData[15].SubclassDlgItem(IDC_STC_36, this); // 불량 확인 Period [Shot]
 
-	myStcData[16].SubclassDlgItem(IDC_STC_17, this); // 로트번호
+	myStcData[16].SubclassDlgItem(IDC_STC_17, this); // ITS코드
 
 
 	for(int i=0; i<MAX_INFO_STC_DATA; i++)
@@ -565,7 +565,7 @@ void CDlgInfo::Disp()
 	str.Format(_T("%d"), pDoc->WorkingInfo.LastJob.nVerifyPeriod);
 	myStcData[15].SetText(str);
 	//myStcData[16].SetText(pDoc->WorkingInfo.LastJob.sEngOrderNum);	// IDC_STC_17	로트번호
-	myStcData[16].SetText(pDoc->m_sLotNum);	// IDC_STC_17	로트번호
+	myStcData[16].SetText(pDoc->m_sItsCode);	// IDC_STC_17	ITS코드
 
 	if(pDoc->WorkingInfo.LastJob.bLotSep)
 		myBtn[1].SetCheck(TRUE);
@@ -1544,20 +1544,20 @@ void CDlgInfo::SetTwoMetal(BOOL bOn)
 
 void CDlgInfo::ShowDlg(int nID)
 {
-	CString sLot;
+	CString sItsCode;
 
 	switch (nID)
 	{
 	case IDD_DLG_UTIL_02:
-		GetDlgItem(IDC_STC_17)->GetWindowText(sLot);
+		GetDlgItem(IDC_STC_17)->GetWindowText(sItsCode);
 
 		CDlgUtil02 dlg;
 		dlg.DoModal();
-		pDoc->m_sOrderNum = pDoc->m_sLotNum;
-
-		if (sLot != pDoc->m_sLotNum)
+		//pDoc->m_sOrderNum = pDoc->m_sLotNum;
+		       
+		if (sItsCode != pDoc->m_sItsCode)
 		{
-			GetDlgItem(IDC_STC_17)->SetWindowText(pDoc->m_sLotNum); // IDC_LOT_EDIT
+			GetDlgItem(IDC_STC_17)->SetWindowText(pDoc->m_sItsCode); // IDC_ITS_EDIT
 		}
 
 		//if (!m_pDlgUtil02)
@@ -1947,10 +1947,10 @@ void CDlgInfo::OnStnClickedStc17()
 
 	CString sData;
 	GetDlgItem(IDC_STC_17)->GetWindowText(sData);
-	//pDoc->SetEngOrderNum(sData);
+	pDoc->SetEngItsCode(sData);
 
-//#ifdef USE_ENGRAVE
-//	if (pView && pView->m_pEngrave)
-//		pView->m_pEngrave->SetEngOrderNum();	//_ItemInx::_EngOrderNum
-//#endif
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetEngItsCode();	//_ItemInx::_EngItsCode
+#endif
 }

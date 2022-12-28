@@ -1723,12 +1723,12 @@ void CEngrave::GetOpInfo(SOCKET_DATA SockData)
 #endif
 			}
 			break;
-		case _ItemInx::_EngOrderNum:
-			if (pDoc->WorkingInfo.LastJob.sEngOrderNum != CharToString(SockData.strData))
+		case _ItemInx::_EngItsCode:
+			if (pDoc->WorkingInfo.LastJob.sEngItsCode != CharToString(SockData.strData))
 			{
 				m_bGetOpInfo = TRUE;
-				pDoc->m_sOrderNum = pDoc->WorkingInfo.LastJob.sEngOrderNum = CharToString(SockData.strData);
-				pDoc->SetEngOrderNum(pDoc->WorkingInfo.LastJob.sEngOrderNum);
+				pDoc->m_sOrderNum = pDoc->WorkingInfo.LastJob.sEngItsCode = CharToString(SockData.strData);
+				pDoc->SetEngItsCode(pDoc->WorkingInfo.LastJob.sEngItsCode);
 				//::WritePrivateProfileString(_T("Last Job"), _T("Engrave Order Num"), pDoc->WorkingInfo.LastJob.sEngOrderNum, PATH_WORKING_INFO);
 			}
 			break;
@@ -1780,14 +1780,14 @@ void CEngrave::GetInfo(SOCKET_DATA SockData)
 				//pView->m_bLoadMstInfo = TRUE;
 			}
 			break;
-		case _ItemInx::_ModelDnName:
-			if (pDoc->WorkingInfo.LastJob.sModelDn != CharToString(SockData.strData))
-			{
-				m_bGetInfo = TRUE;
-				pDoc->WorkingInfo.LastJob.sModelDn = CharToString(SockData.strData);
-				//pView->m_bLoadMstInfo = TRUE;
-			}
-			break;
+		//case _ItemInx::_ModelDnName:
+		//	if (pDoc->WorkingInfo.LastJob.sModelDn != CharToString(SockData.strData))
+		//	{
+		//		m_bGetInfo = TRUE;
+		//		pDoc->WorkingInfo.LastJob.sModelDn = CharToString(SockData.strData);
+		//		//pView->m_bLoadMstInfo = TRUE;
+		//	}
+		//	break;
 		case _ItemInx::_LotUpName:
 			if (pDoc->WorkingInfo.LastJob.sLotUp != CharToString(SockData.strData))
 			{
@@ -3611,13 +3611,13 @@ void CEngrave::SetOpInfo()
 	SetFixDef();
 	SetNumContFixDef();
 	SetUltraSonicStTim();
-	SetEngOrderNum();
+	SetEngItsCode();
 }
 
 void CEngrave::SetInfo()
 {
 	SetModelUpName();
-	SetModelDnName();
+	//SetModelDnName();
 	SetLotUpName();
 	SetLotDnName();
 	SetLayerUpName();
@@ -4633,7 +4633,7 @@ void CEngrave::SetUltraSonicStTim()
 	SendCommand(SocketData);
 }
 
-void CEngrave::SetEngOrderNum()
+void CEngrave::SetEngItsCode()
 {
 	if (!pDoc)
 		return;
@@ -4642,8 +4642,8 @@ void CEngrave::SetEngOrderNum()
 	SocketData.nCmdCode = _SetData;
 	char cData[BUFFER_DATA_SIZE];
 
-	SocketData.nMsgID = _stItemInx::_EngOrderNum;
-	StringToChar(pDoc->WorkingInfo.LastJob.sEngOrderNum, cData);
+	SocketData.nMsgID = _stItemInx::_EngItsCode;
+	StringToChar(pDoc->WorkingInfo.LastJob.sEngItsCode, cData);
 	sprintf(SocketData.strData, "%s", cData);
 	SendCommand(SocketData);
 }
@@ -4664,20 +4664,20 @@ void CEngrave::SetModelUpName()
 	SendCommand(SocketData);
 }
 
-void CEngrave::SetModelDnName()
-{
-	if (!pDoc)
-		return;
-
-	SOCKET_DATA SocketData;
-	SocketData.nCmdCode = _SetData;
-	char cData[BUFFER_DATA_SIZE];
-
-	SocketData.nMsgID = _stItemInx::_ModelDnName;
-	StringToChar(pDoc->WorkingInfo.LastJob.sModelDn, cData);
-	sprintf(SocketData.strData, "%s", cData);
-	SendCommand(SocketData);
-}
+// void CEngrave::SetModelDnName()
+// {
+// 	if (!pDoc)
+// 		return;
+// 
+// 	SOCKET_DATA SocketData;
+// 	SocketData.nCmdCode = _SetData;
+// 	char cData[BUFFER_DATA_SIZE];
+// 
+// 	SocketData.nMsgID = _stItemInx::_ModelDnName;
+// 	StringToChar(pDoc->WorkingInfo.LastJob.sModelDn, cData);
+// 	sprintf(SocketData.strData, "%s", cData);
+// 	SendCommand(SocketData);
+// }
 
 void CEngrave::SetLotUpName()
 {

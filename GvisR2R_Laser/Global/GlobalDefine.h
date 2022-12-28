@@ -619,10 +619,10 @@ struct stSystem
 	CString sMcName;
 	CString sPathCamSpecDir;
 
-	CString sPathAoiUp, sPathAoiUpCurrInfo, sPathAoiUpVrsData, sPathAoiUpOffset;
+	CString sPathAoiUp, sPathAoiUpDts, sPathAoiUpCurrInfo, sPathAoiUpVrsData, sPathAoiUpOffset;
 	CString sPathVrsShareUp, sPathVrsBufUp;
 	CString sPathVsShareUp;
-	CString sPathAoiDn, sPathAoiDnCurrInfo, sPathAoiDnVrsData, sPathAoiDnOffset;
+	CString sPathAoiDn, sPathAoiDnDts, sPathAoiDnCurrInfo, sPathAoiDnVrsData, sPathAoiDnOffset;
 	CString sPathVrsShareDn, sPathVrsBufDn;
 	CString sPathVsShareDn;
 
@@ -644,17 +644,18 @@ struct stSystem
 	CString sPort[3];		// ID_SR1000W, ID_MDX2500, ID_ENGRAVE(ID_PUNCH)
 	BOOL bSaveMkImg;
 	BOOL bStripPcsRgnBin;
+	BOOL bUseDTS;
 
 	stSystem()
 	{
 		sMcName = _T("");
 		sPathCamSpecDir = _T("");
 
-		sPathAoiUp = _T(""); sPathAoiUpCurrInfo = _T("");
+		sPathAoiUp = _T(""); sPathAoiUpDts = _T(""); sPathAoiUpCurrInfo = _T("");
 		sPathAoiUpOffset = _T(""); sPathAoiUpVrsData = _T("");
 		sPathVrsShareUp = _T(""); sPathVrsBufUp = _T("");
 		sPathVsShareUp = _T("");
-		sPathAoiDn = _T(""); sPathAoiDnCurrInfo = _T("");
+		sPathAoiDn = _T(""); sPathAoiDnDts = _T(""); sPathAoiDnCurrInfo = _T("");
 		sPathAoiDnOffset = _T(""); sPathAoiDnVrsData = _T("");
 		sPathVrsShareDn = _T(""); sPathVrsBufDn = _T("");
 		sPathVsShareDn = _T("");
@@ -678,6 +679,7 @@ struct stSystem
 
 		bSaveMkImg = FALSE;
 		bStripPcsRgnBin = FALSE;
+		bUseDTS = FALSE;
 	}
 };
 
@@ -695,7 +697,7 @@ struct stLastJob
 	CString sTempPauseLen, sLmtTotYld, sLmtPatlYld;
 	CString sStripOutRatio, sCustomNeedRatio;
 	BOOL bContFixDef;
-	CString sNumRangeFixDef, sNumContFixDef, sUltraSonicCleannerStTim, sEngOrderNum;
+	CString sNumRangeFixDef, sNumContFixDef, sUltraSonicCleannerStTim, sEngItsCode;
 	BOOL bRclDrSen, bMkDrSen, bBufDrSen, bAoiUpDrSen, bAoiDnDrSen, bEngvDrSen, bUclDrSen;
 	BOOL bDispMkPcs, bStopFixDef, bMkSftySen, bAoiSftySen;
 	CString sJogSpd, sLotSerial; //sLightVal, 
@@ -766,7 +768,7 @@ struct stLastJob
 		nAlignMethode = TWO_POINT;
 
 		bUseAoiUpCleanRoler = FALSE; bUseAoiDnCleanRoler = FALSE;
-		sEngOrderNum = _T("");
+		sEngItsCode = _T("");
 	}
 };
 

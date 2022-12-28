@@ -37,7 +37,7 @@ public:
 	CString m_sProcessNum;
 	CComboBox m_LayerComboDn;
 	CComboBox m_LayerComboUp;
-	CComboBox m_ModelComboDn;
+	//CComboBox m_ModelComboDn;
 	CComboBox m_ModelComboUp;
 
 

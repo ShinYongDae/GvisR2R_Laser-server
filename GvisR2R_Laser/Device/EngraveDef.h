@@ -113,7 +113,7 @@ typedef enum _stItemInx {
 	_DefNumPoi, _DefNumVhOpen, _DefNumVhMiss, _DefNumVhPos, _DefNumVhd, _DefNumEspace, _DefNumWide,
 	// Menu02
 	_2DEngLen, _2DAoiLen, _2DMkLen, _2DMoveVel, _2DMoveAcc, _2DOneShotLen, _EngLeadPitch, _EngPushOffLen, _EngTqVal, _EngAoiLen,
-	_EngFdDiffMax, _EngFdDiffRng, _EngFdDiffNum, _EngBuffInitPos, _EngBuffCurrPos, _EngOrderNum, 
+	_EngFdDiffMax, _EngFdDiffRng, _EngFdDiffNum, _EngBuffInitPos, _EngBuffCurrPos, _EngItsCode,
 	// Menu04
 	_FdVel, _FdAcc, _OnePnlLen, _OnePnlVel, _OnePnlAcc, _AoiLeadPitch, _MkLeadPitch, _FdDiffMax, _FdDiffRng, _FdDiffNum, 
 	_AoiPushOffLen, _MkPushOffLen, _AoiTqVal, _MkTqVal, _AoiBuffShotNum, _AoiMkLen, _MkBuffInitPos, _MkBuffCurrPos,
@@ -138,7 +138,7 @@ typedef enum _stItemInx {
 	_IsDefNumPoi, _IsDefNumVhOpen, _IsDefNumVhMiss, _IsDefNumVhPos, _IsDefNumVhd, _IsDefNumEspace, _IsDefNumWide,
 	// Is Menu02
 	_Is2DEngLen, _Is2DAoiLen, _Is2DMkLen, _Is2DMoveVel, _Is2DMoveAcc, _Is2DOneShotLen, _IsEngLeadPitch, _IsEngPushOffLen, _IsEngTqVal, _IsEngAoiLen,
-	_IsEngFdDiffMax, _IsEngFdDiffRng, _IsEngFdDiffNum, _IsEngBuffInitPos, _IsEngBuffCurrPos, _IsEngOrderNum,
+	_IsEngFdDiffMax, _IsEngFdDiffRng, _IsEngFdDiffNum, _IsEngBuffInitPos, _IsEngBuffCurrPos, _IsEngItsCode,
 	// Is Menu04
 	_IsFdVel, _IsFdAcc, _IsOnePnlLen, _IsOnePnlVel, _IsOnePnlAcc, _IsAoiLeadPitch, _IsMkLeadPitch, _IsFdDiffMax, _IsFdDiffRng, _IsFdDiffNum,
 	_IsAoiPushOffLen, _IsMkPushOffLen, _IsAoiTqVal, _IsMkTqVal, _IsAoiBuffShotNum, _IsAoiMkLen, _IsMkBuffInitPos, _IsMkBuffCurrPos,

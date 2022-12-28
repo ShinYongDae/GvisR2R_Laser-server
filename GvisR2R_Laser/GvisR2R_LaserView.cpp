@@ -9518,7 +9518,8 @@ void CGvisR2R_LaserView::ResetMkInfo(int nAoi) // 0 : AOI-Up , 1 : AOI-Dn , 2 : 
 			if (IsLastJob(1)) // Dn
 			{
 				pDoc->m_Master[1].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
-					pDoc->WorkingInfo.LastJob.sModelDn,
+					pDoc->WorkingInfo.LastJob.sModelUp,
+					//pDoc->WorkingInfo.LastJob.sModelDn,
 					pDoc->WorkingInfo.LastJob.sLayerDn,
 					pDoc->WorkingInfo.LastJob.sLayerUp);
 				pDoc->m_Master[1].LoadMstInfo();
@@ -10698,16 +10699,20 @@ CString CGvisR2R_LaserView::GetRmapPath(int nRmap)
 			if (pDoc->m_bDoneChgLot || !pDoc->m_bNewLotShare[1])
 			{
 				sPath.Format(_T("%s%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
-					pDoc->WorkingInfo.LastJob.sModelDn,
-					pDoc->WorkingInfo.LastJob.sLotDn,
+					pDoc->WorkingInfo.LastJob.sModelUp,
+					pDoc->WorkingInfo.LastJob.sLotUp,
+					//pDoc->WorkingInfo.LastJob.sModelDn,
+					//pDoc->WorkingInfo.LastJob.sLotDn,
 					pDoc->WorkingInfo.LastJob.sLayerDn,
 					str);
 			}
 			else if (!pDoc->m_bDoneChgLot && pDoc->m_bNewLotShare[1])
 			{
 				sPath.Format(_T("%s%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
-					pDoc->WorkingInfo.LastJob.sModelDn,
-					pDoc->Status.PcrShare[1].sLot,
+					pDoc->WorkingInfo.LastJob.sModelUp,
+					pDoc->Status.PcrShare[0].sLot,
+					//pDoc->WorkingInfo.LastJob.sModelDn,
+					//pDoc->Status.PcrShare[1].sLot,
 					pDoc->WorkingInfo.LastJob.sLayerDn,
 					str);
 			}
@@ -10721,16 +10726,20 @@ CString CGvisR2R_LaserView::GetRmapPath(int nRmap)
 			if (pDoc->m_bDoneChgLot || !pDoc->m_bNewLotShare[1])
 			{
 				sPath.Format(_T("%s%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
-					pDoc->WorkingInfo.LastJob.sModelDn,
-					pDoc->WorkingInfo.LastJob.sLotDn,
+					pDoc->WorkingInfo.LastJob.sModelUp,
+					pDoc->WorkingInfo.LastJob.sLotUp,
+					//pDoc->WorkingInfo.LastJob.sModelDn,
+					//pDoc->WorkingInfo.LastJob.sLotDn,
 					pDoc->WorkingInfo.LastJob.sLayerDn,
 					str);
 			}
 			else if (!pDoc->m_bDoneChgLot && pDoc->m_bNewLotShare[1])
 			{
 				sPath.Format(_T("%s%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
-					pDoc->WorkingInfo.LastJob.sModelDn,
-					pDoc->Status.PcrShare[1].sLot,
+					pDoc->WorkingInfo.LastJob.sModelUp,
+					pDoc->Status.PcrShare[0].sLot,
+					//pDoc->WorkingInfo.LastJob.sModelDn,
+					//pDoc->Status.PcrShare[1].sLot,
 					pDoc->WorkingInfo.LastJob.sLayerDn,
 					str);
 			}
@@ -11009,7 +11018,8 @@ void CGvisR2R_LaserView::InitReelmapDn()
 	 if (IsLastJob(1)) // Dn
 	 {
 		 pDoc->m_Master[1].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
-			 pDoc->WorkingInfo.LastJob.sModelDn,
+			 pDoc->WorkingInfo.LastJob.sModelUp,
+			 //pDoc->WorkingInfo.LastJob.sModelDn,
 			 pDoc->WorkingInfo.LastJob.sLayerDn,
 			 pDoc->WorkingInfo.LastJob.sLayerUp);
 		 pDoc->m_Master[1].LoadMstInfo();
@@ -12029,9 +12039,11 @@ BOOL CGvisR2R_LaserView::MakeDummyDn(int nErr) // AOI 상면 기준.
 
 	CString sMsg, strRstPath, strRstPath2, sDummyRst;
 	strRstPath.Format(_T("%s%s\\%s\\\\%s\\%04d.RST"), pDoc->WorkingInfo.System.sPathAoiDnVrsData,
-		pDoc->WorkingInfo.LastJob.sModelDn,
+		pDoc->WorkingInfo.LastJob.sModelUp,
+		//pDoc->WorkingInfo.LastJob.sModelDn,
 		pDoc->WorkingInfo.LastJob.sLayerDn,
-		pDoc->WorkingInfo.LastJob.sLotDn,
+		pDoc->WorkingInfo.LastJob.sLotUp,
+		//pDoc->WorkingInfo.LastJob.sLotDn,
 		m_nAoiLastSerial[1]);
 
 	CDataFile *pDataFile = new CDataFile;
@@ -12051,9 +12063,11 @@ BOOL CGvisR2R_LaserView::MakeDummyDn(int nErr) // AOI 상면 기준.
 	pDataFile->ReplaceLine(1, sNewLine);
 
 	strRstPath2.Format(_T("%s%s\\%s\\\\%s\\%04d.RST"), pDoc->WorkingInfo.System.sPathAoiDnVrsData,
-		pDoc->WorkingInfo.LastJob.sModelDn,
+		pDoc->WorkingInfo.LastJob.sModelUp,
+		//pDoc->WorkingInfo.LastJob.sModelDn,
 		pDoc->WorkingInfo.LastJob.sLayerDn,
-		pDoc->WorkingInfo.LastJob.sLotDn,
+		pDoc->WorkingInfo.LastJob.sLotUp,
+		//pDoc->WorkingInfo.LastJob.sLotDn,
 		nSerial);
 	fpPCR = fopen(pRtn = StringToChar(strRstPath2), "w+"); if (pRtn) delete pRtn; pRtn = NULL;
 	if (fpPCR == NULL)
@@ -12069,9 +12083,11 @@ BOOL CGvisR2R_LaserView::MakeDummyDn(int nErr) // AOI 상면 기준.
 
 	CString sDummyPath;
 	sDummyPath.Format(_T("%s%s\\%s\\\\%s\\%04d.PCR"), pDoc->WorkingInfo.System.sPathAoiDnVrsData,
-		pDoc->WorkingInfo.LastJob.sModelDn,
+		pDoc->WorkingInfo.LastJob.sModelUp,
+		//pDoc->WorkingInfo.LastJob.sModelDn,
 		pDoc->WorkingInfo.LastJob.sLayerDn,
-		pDoc->WorkingInfo.LastJob.sLotDn,
+		pDoc->WorkingInfo.LastJob.sLotUp,
+		//pDoc->WorkingInfo.LastJob.sLotDn,
 		nSerial);
 
 	fpPCR = fopen(pRtn = StringToChar(sDummyPath), "w+"); if (pRtn) delete pRtn; pRtn = NULL;
@@ -12080,9 +12096,12 @@ BOOL CGvisR2R_LaserView::MakeDummyDn(int nErr) // AOI 상면 기준.
 		AfxMessageBox(_T("TROUBLE_SAVE_PIECEOUT_VRS"), MB_ICONWARNING | MB_OK);
 	}
 
-	fprintf(fpPCR, "%04d,%s,%s,%s\n", nErr, pDoc->WorkingInfo.LastJob.sModelDn,
+	fprintf(fpPCR, "%04d,%s,%s,%s\n", nErr, pDoc->WorkingInfo.LastJob.sModelUp,
 		pDoc->WorkingInfo.LastJob.sLayerDn,
-		pDoc->WorkingInfo.LastJob.sLotDn);
+		pDoc->WorkingInfo.LastJob.sLotUp);
+	//fprintf(fpPCR, "%04d,%s,%s,%s\n", nErr, pDoc->WorkingInfo.LastJob.sModelDn,
+	//	pDoc->WorkingInfo.LastJob.sLayerDn,
+	//	pDoc->WorkingInfo.LastJob.sLotDn);
 
 	fprintf(fpPCR, "%04d\n", 0);
 
@@ -12102,9 +12121,12 @@ BOOL CGvisR2R_LaserView::MakeDummyDn(int nErr) // AOI 상면 기준.
 		AfxMessageBox(_T("TROUBLE_SAVE_PIECEOUT_VRS"), MB_ICONWARNING | MB_OK);
 	}
 
-	fprintf(fpPCR, "%04d,%s,%s,%s\n", nErr, pDoc->WorkingInfo.LastJob.sModelDn,
+	fprintf(fpPCR, "%04d,%s,%s,%s\n", nErr, pDoc->WorkingInfo.LastJob.sModelUp,
 		pDoc->WorkingInfo.LastJob.sLayerDn,
-		pDoc->WorkingInfo.LastJob.sLotDn);
+		pDoc->WorkingInfo.LastJob.sLotUp);
+	//fprintf(fpPCR, "%04d,%s,%s,%s\n", nErr, pDoc->WorkingInfo.LastJob.sModelDn,
+	//	pDoc->WorkingInfo.LastJob.sLayerDn,
+	//	pDoc->WorkingInfo.LastJob.sLotDn);
 
 	fprintf(fpPCR, "%04d\n", 0);
 
@@ -13608,7 +13630,8 @@ BOOL CGvisR2R_LaserView::IsLastJob(int nAoi) // 0 : AOI-Up , 1 : AOI-Dn , 2 : AO
 		break;
 	case 1: // AOI-Dn
 		if (pDoc->WorkingInfo.System.sPathCamSpecDir.IsEmpty() ||
-			pDoc->WorkingInfo.LastJob.sModelDn.IsEmpty() ||
+			pDoc->WorkingInfo.LastJob.sModelUp.IsEmpty() ||
+			//pDoc->WorkingInfo.LastJob.sModelDn.IsEmpty() ||
 			pDoc->WorkingInfo.LastJob.sLayerDn.IsEmpty())
 			return FALSE;
 		break;
@@ -13618,7 +13641,8 @@ BOOL CGvisR2R_LaserView::IsLastJob(int nAoi) // 0 : AOI-Up , 1 : AOI-Dn , 2 : AO
 			pDoc->WorkingInfo.LastJob.sLayerUp.IsEmpty())
 			return FALSE;
 		if (pDoc->WorkingInfo.System.sPathCamSpecDir.IsEmpty() ||
-			pDoc->WorkingInfo.LastJob.sModelDn.IsEmpty() ||
+			pDoc->WorkingInfo.LastJob.sModelUp.IsEmpty() ||
+			//pDoc->WorkingInfo.LastJob.sModelDn.IsEmpty() ||
 			pDoc->WorkingInfo.LastJob.sLayerDn.IsEmpty())
 			return FALSE;
 		break;
@@ -14223,8 +14247,10 @@ BOOL CGvisR2R_LaserView::RemakeReelmap()
 	{
 		str = _T("ReelMapDataDn.txt");
 		sReelmapSrc.Format(_T("%s%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
-			pDoc->WorkingInfo.LastJob.sModelDn,
-			pDoc->WorkingInfo.LastJob.sLotDn,
+			pDoc->WorkingInfo.LastJob.sModelUp,
+			pDoc->WorkingInfo.LastJob.sLotUp,
+			//pDoc->WorkingInfo.LastJob.sModelDn,
+			//pDoc->WorkingInfo.LastJob.sLotDn,
 			pDoc->WorkingInfo.LastJob.sLayerDn,
 			str);
 		if (pDoc->m_pReelMapDn)
