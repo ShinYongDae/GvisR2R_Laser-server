@@ -703,6 +703,41 @@ void CVision::SelDispCad(HWND hDispCtrl, CRect rtDispCtrl, int nIdx, int nDispla
 
 }
 
+void CVision::FreeDispCad(HWND hDispCtrl, CRect rtDispCtrl, int nIdx, int nDisplayFitMode)
+{
+	if (!m_pMil)
+		return;
+
+	// for CAD..........
+
+	// Live Image Buffer set
+	if (m_pMilBufCad[nIdx])
+	{
+		delete m_pMilBufCad[nIdx];
+		m_pMilBufCad[nIdx] = NULL;
+	}
+
+	// Mil Display set
+	if (m_pMilDispCad[nIdx])
+	{
+		delete m_pMilDispCad[nIdx];
+		m_pMilDispCad[nIdx] = NULL;
+	}
+
+	// Draw
+	if (m_pMilOvrCad[nIdx])
+	{
+		delete m_pMilOvrCad[nIdx];
+		m_pMilOvrCad[nIdx] = NULL;
+	}
+
+	if (m_pMilDelOvrCad[nIdx])
+	{
+		delete m_pMilDelOvrCad[nIdx];
+		m_pMilDelOvrCad[nIdx] = NULL;
+	}
+}
+
 void CVision::SetOvrCadFontSz(int nIdxMkInfo)
 {
 	int nDisplayMargin = 3;
@@ -777,6 +812,43 @@ void CVision::SelDispDef(HWND hDispCtrl, CRect rtDispCtrl, int nIdx, int nDispla
 		m_pMilDelOvrDef[nIdx] = m_pMil->AllocDraw(m_pMilDispDef[nIdx]);
  		m_pMilDelOvrDef[nIdx]->SetDrawColor(m_pMilDispDef[nIdx]->m_lOverlayColor);
  		m_pMilDelOvrDef[nIdx]->SetDrawBackColor(m_pMilDispDef[nIdx]->m_lOverlayColor);
+	}
+}
+
+void CVision::FreeDispDef(HWND hDispCtrl, CRect rtDispCtrl, int nIdx, int nDisplayFitMode)
+{
+	if (!m_pMil)
+		return;
+
+	// 	// Mil System set
+
+	// for Def.............
+
+	// Live Image Buffer set
+	if (m_pMilBufDef[nIdx])
+	{
+		delete m_pMilBufDef[nIdx];
+		m_pMilBufDef[nIdx] = NULL;
+	}
+
+	// Mil Display set
+	if (m_pMilDispDef[nIdx])
+	{
+		delete m_pMilDispDef[nIdx];
+		m_pMilDispDef[nIdx] = NULL;
+	}
+
+	// Draw
+	if (m_pMilOvrDef[nIdx])
+	{
+		delete m_pMilOvrDef[nIdx];
+		m_pMilOvrDef[nIdx] = NULL;
+	}
+
+	if (m_pMilDelOvrDef[nIdx])
+	{
+		delete m_pMilDelOvrDef[nIdx];
+		m_pMilDelOvrDef[nIdx] = NULL;
 	}
 }
 
@@ -951,18 +1023,22 @@ void CVision::ShowDispCad(int nIdxMkInfo, int nSerial, int nLayer, int nIdxDef) 
 
 void CVision::CropCadImg(int nIdxMkInfo, int nSerial, int nLayer, int nIdxDef)
 {
-	if(!pDoc->m_pPcr[nLayer])
-		return;
 	short cell, cx, cy;
-#ifndef USE_MIL
-	cell = pDoc->m_pPcr[nLayer][TEST_SHOT-1]->m_pCell[0];			// for Test - BufIdx[0], DefIdx[0]
-	cx = pDoc->m_pPcr[nLayer][TEST_SHOT-1]->m_pDefPos[0].x;		// for Test - BufIdx[0], DefIdx[0]
-	cy = pDoc->m_pPcr[nLayer][TEST_SHOT-1]->m_pDefPos[0].y;		// for Test - BufIdx[0], DefIdx[0]
-#else
-	int nIdx = pDoc->GetPcrIdx1(nSerial);
-	if(!pDoc->m_pPcr[nLayer][nIdx])
+	int nIdx;
+
+	if (m_nIdx == 0 || m_nIdx == 1)
+	{
+		if (!pDoc->m_pPcr[nLayer])
 		return;
-	if(!pDoc->m_pPcr[nLayer][nIdx]->m_pCell || !pDoc->m_pPcr[nLayer][nIdx]->m_pDefPos || 
+#ifndef USE_MIL
+		cell = pDoc->m_pPcr[nLayer][TEST_SHOT - 1]->m_pCell[0];			// for Test - BufIdx[0], DefIdx[0]
+		cx = pDoc->m_pPcr[nLayer][TEST_SHOT - 1]->m_pDefPos[0].x;		// for Test - BufIdx[0], DefIdx[0]
+		cy = pDoc->m_pPcr[nLayer][TEST_SHOT - 1]->m_pDefPos[0].y;		// for Test - BufIdx[0], DefIdx[0]
+#else
+		nIdx = pDoc->GetPcrIdx1(nSerial);
+		if (!pDoc->m_pPcr[nLayer][nIdx])
+		return;
+		if (!pDoc->m_pPcr[nLayer][nIdx]->m_pCell || !pDoc->m_pPcr[nLayer][nIdx]->m_pDefPos ||
 		!pDoc->m_Master[nLayer].m_pCellRgn)
 		return;
 
@@ -970,6 +1046,29 @@ void CVision::CropCadImg(int nIdxMkInfo, int nSerial, int nLayer, int nIdxDef)
 	cx = pDoc->m_pPcr[nLayer][nIdx]->m_pDefPos[nIdxDef].x - pDoc->m_Master[nLayer].m_pCellRgn->StPosX[cell];		// BufIdx[], DefIdx[]
 	cy = pDoc->m_pPcr[nLayer][nIdx]->m_pDefPos[nIdxDef].y - pDoc->m_Master[nLayer].m_pCellRgn->StPosY[cell];		// BufIdx[], DefIdx[]
 #endif
+	}
+	else
+	{
+		if (!pDoc->m_pPcrInner[nLayer])
+			return;
+#ifndef USE_MIL
+		cell = pDoc->m_pPcrInner[nLayer][TEST_SHOT - 1]->m_pCell[0];			// for Test - BufIdx[0], DefIdx[0]
+		cx = pDoc->m_pPcrInner[nLayer][TEST_SHOT - 1]->m_pDefPos[0].x;		// for Test - BufIdx[0], DefIdx[0]
+		cy = pDoc->m_pPcrInner[nLayer][TEST_SHOT - 1]->m_pDefPos[0].y;		// for Test - BufIdx[0], DefIdx[0]
+#else
+		nIdx = pDoc->GetPcrIdx1(nSerial);
+		if (!pDoc->m_pPcrInner[nLayer][nIdx])
+			return;
+		if (!pDoc->m_pPcrInner[nLayer][nIdx]->m_pCell || !pDoc->m_pPcrInner[nLayer][nIdx]->m_pDefPos ||
+			!pDoc->m_MasterInner[nLayer].m_pCellRgn)
+			return;
+
+		cell = pDoc->m_pPcrInner[nLayer][nIdx]->m_pCell[nIdxDef];										// BufIdx[], DefIdx[]
+		cx = pDoc->m_pPcrInner[nLayer][nIdx]->m_pDefPos[nIdxDef].x - pDoc->m_MasterInner[nLayer].m_pCellRgn->StPosX[cell];		// BufIdx[], DefIdx[]
+		cy = pDoc->m_pPcrInner[nLayer][nIdx]->m_pDefPos[nIdxDef].y - pDoc->m_MasterInner[nLayer].m_pCellRgn->StPosY[cell];		// BufIdx[], DefIdx[]
+#endif
+	}
+
 	CropCadImg(cell, cx, cy, nIdxMkInfo, nLayer);
 }
 
@@ -985,10 +1084,21 @@ void CVision::CropCadImg(short cell, short cx, short cy, int BufID, int nLayer)
 	int CelNum;
 
 	REGION_STRIP *pCellRgn[2];
-	pCellRgn[nLayer] = pDoc->m_Master[nLayer].m_pCellRgn;
 
+
+	if (m_nIdx == 0 || m_nIdx == 1)
+	{
+	pCellRgn[nLayer] = pDoc->m_Master[nLayer].m_pCellRgn;
 	CellX = cell / pDoc->m_Master[nLayer].m_pCellRgn->NodeNumY;
 	CellY = cell % pDoc->m_Master[nLayer].m_pCellRgn->NodeNumY;
+	}
+	else
+	{
+		pCellRgn[nLayer] = pDoc->m_MasterInner[nLayer].m_pCellRgn;
+		CellX = cell / pDoc->m_MasterInner[nLayer].m_pCellRgn->NodeNumY;
+		CellY = cell % pDoc->m_MasterInner[nLayer].m_pCellRgn->NodeNumY;
+	}
+
 
 	dx = DEF_IMG_DISP_SIZEX;
 	dy = DEF_IMG_DISP_SIZEY;
@@ -1427,7 +1537,10 @@ BOOL CVision::SetCADCoord(int CellNum, int StX, int StY, int Coord, int nLayer)
 	long EmpStripThick;
 
 	REGION_STRIP *pCellRgn[2];
+	if (m_nIdx == 0 || m_nIdx == 1)
 	pCellRgn[nLayer] = pDoc->m_Master[nLayer].m_pCellRgn;
+	else
+		pCellRgn[nLayer] = pDoc->m_MasterInner[nLayer].m_pCellRgn;
 
 	switch(Coord) 
 	{
@@ -2167,12 +2280,24 @@ void CVision::LoadCADBuf(int CurrCell, long OrgStX, long OrgStY, long DesStX, lo
 
 #ifdef USE_CAM_MASTER
 	REGION_STRIP *pCellRgn[2];
+	UCHAR *pCADCellImg;
+
+	if (m_nIdx == 0 || m_nIdx == 1)
+	{
 	pCellRgn[nLayer] = pDoc->m_Master[nLayer].m_pCellRgn;
+		pCADCellImg = pDoc->m_Master[nLayer].m_pCADCellImg[pDoc->m_Master[nLayer].CellInspID[CurrCell]];
+	}
+	else
+	{
+		pCellRgn[nLayer] = pDoc->m_MasterInner[nLayer].m_pCellRgn;
+		pCADCellImg = pDoc->m_MasterInner[nLayer].m_pCADCellImg[pDoc->m_MasterInner[nLayer].CellInspID[CurrCell]];
+	}
 
 	if (!MilCADImgBuf)
 		return;
 
-	if(VicFileLoadFromMem(MilCADImgBuf, pDoc->m_Master[nLayer].m_pCADCellImg[pDoc->m_Master[nLayer].CellInspID[CurrCell]], tdat))
+	//if(VicFileLoadFromMem(MilCADImgBuf, pDoc->m_Master[nLayer].m_pCADCellImg[pDoc->m_Master[nLayer].CellInspID[CurrCell]], tdat))
+	if(VicFileLoadFromMem(MilCADImgBuf, pCADCellImg, tdat))
 	{
 		if((OrgStX + SizeX) <= pCellRgn[nLayer]->ProcSizeX && (OrgStY + SizeY) <= pCellRgn[nLayer]->ProcSizeY)
 		{
@@ -2321,23 +2446,51 @@ void CVision::ShowDispDef(int nIdxMkInfo, int nSerial, int nLayer, int nDefPcs) 
 		m_nTest++;
 		sPath.Format(_T("%s%05d.tif"),PATH_DEF_IMG, m_nTest);
 #else
-		if(nLayer==0) // Up
+		if (m_nIdx == 0 || m_nIdx == 1)
 		{
-		sPath.Format(_T("%s%s\\%s\\%s\\DefImage\\%d\\%05d.tif"), pDoc->WorkingInfo.System.sPathOldFile, 
-																 pDoc->WorkingInfo.LastJob.sModelUp, 
-																 pDoc->WorkingInfo.LastJob.sLotUp, 
-																 pDoc->WorkingInfo.LastJob.sLayerUp, 
-															 nSerial, 
+			if (nLayer == 0) // Up
+			{
+				sPath.Format(_T("%s%s\\%s\\%s\\DefImage\\%d\\%05d.tif"), pDoc->WorkingInfo.System.sPathOldFile,
+					pDoc->WorkingInfo.LastJob.sModelUp,
+					pDoc->WorkingInfo.LastJob.sLotUp,
+					pDoc->WorkingInfo.LastJob.sLayerUp,
+					nSerial,
+					nDefPcs);
+			}
+			else if (nLayer == 1) // Dn
+			{
+				sPath.Format(_T("%s%s\\%s\\%s\\DefImage\\%d\\%05d.tif"), pDoc->WorkingInfo.System.sPathOldFile,
+					pDoc->WorkingInfo.LastJob.sModelDn,
+					pDoc->WorkingInfo.LastJob.sLotDn,
+					pDoc->WorkingInfo.LastJob.sLayerDn,
+					nSerial,
+					nDefPcs);
+			}
+		}
+		else
+		{
+			CString sMsg, sUpPath, sDnPath;
+			if (!pDoc->GetInnerFolderPath(nSerial, sUpPath, sDnPath))
+			{
+				sMsg.Format(_T("GetInnerFolderPath가 설정되지 않았습니다."));
+				pView->MsgBox(sMsg);
+				return;
+			}
+
+			if (nLayer == 0) // Up
+			{
+				sPath.Format(_T("%sDefImage\\%d\\%05d.tif"), 
+					sUpPath,
+					nSerial,
 															 nDefPcs);
 		}
-		else if(nLayer==1) // Dn
+			else if (nLayer == 1) // Dn
 		{
-			sPath.Format(_T("%s%s\\%s\\%s\\DefImage\\%d\\%05d.tif"), pDoc->WorkingInfo.System.sPathOldFile, 
-																 pDoc->WorkingInfo.LastJob.sModelDn, 
-																 pDoc->WorkingInfo.LastJob.sLotDn, 
-																 pDoc->WorkingInfo.LastJob.sLayerDn, 
-																 nSerial, 
+				sPath.Format(_T("%sDefImage\\%d\\%05d.tif"), 
+					sDnPath,
+					nSerial,
 																 nDefPcs);
+		}
 		}
 #endif
 		CFileFind findfile;
@@ -2445,7 +2598,14 @@ void CVision::LoadPinBuf(int nLayer)
 		return;
 
 	TiffData tdat;
-	if(VicFileLoadFromMem(MilPinImgBuf, pDoc->m_Master[nLayer].m_pPinImg, tdat))
+	UCHAR *pPinImg;
+	if (m_nIdx == 0 || m_nIdx == 1)
+		pPinImg = pDoc->m_Master[nLayer].m_pPinImg;
+	else
+		pPinImg = pDoc->m_MasterInner[nLayer].m_pPinImg;
+
+	//if(VicFileLoadFromMem(MilPinImgBuf, pDoc->m_Master[nLayer].m_pPinImg, tdat))
+	if (VicFileLoadFromMem(MilPinImgBuf, pPinImg, tdat))
 	{
 		MIL_ID MilBufPinCld = M_NULL, MilBufPinTempCld = M_NULL;
 // 		MIL_ID  MilOriginDisp = M_NULL;
@@ -2517,7 +2677,7 @@ void CVision::LoadPinBuf(int nLayer)
 //	if(MilBufAlignTemp[0])
 //		MbufCopy(MilBufAlignTemp[0], m_pMilBufAlign->m_MilImage);
 //}
-
+//
 //void CVision::LoadAlignBuf()
 //{
 //	InitAlignBuf();
@@ -2528,15 +2688,33 @@ void CVision::LoadPinBuf(int nLayer)
 //	if (!MilAlignImgBuf[0])
 //		return;
 //
-//	if (pDoc->m_Master[0].m_pAlignImg[0])
+//	UCHAR *pAlignImg[4];
+//	if (m_nIdx == 0 || m_nIdx == 1)
 //	{
-//		if (VicFileLoadFromMem(MilAlignImgBuf[0], pDoc->m_Master[0].m_pAlignImg[0], tdat))
+//		pAlignImg[0] = pDoc->m_Master[0].m_pAlignImg[0];
+//		pAlignImg[1] = pDoc->m_Master[0].m_pAlignImg[1];
+//		pAlignImg[2] = pDoc->m_Master[0].m_pAlignImg[2];
+//		pAlignImg[3] = pDoc->m_Master[0].m_pAlignImg[3];
+//	}
+//	else
+//	{
+//		pAlignImg[0] = pDoc->m_MasterInner[0].m_pAlignImg[0];
+//		pAlignImg[1] = pDoc->m_MasterInner[0].m_pAlignImg[1];
+//		pAlignImg[2] = pDoc->m_MasterInner[0].m_pAlignImg[2];
+//		pAlignImg[3] = pDoc->m_MasterInner[0].m_pAlignImg[3];
+//	}
+//
+//	//if (pDoc->m_Master[0].m_pAlignImg[0])
+//	if (pAlignImg[0])
+//	{
+//		//if (VicFileLoadFromMem(MilAlignImgBuf[0], pDoc->m_Master[0].m_pAlignImg[0], tdat))
+//		if (VicFileLoadFromMem(MilAlignImgBuf[0], pAlignImg[0], tdat))
 //		{
 //
-//			MbufChild2d(MilAlignImgBuf[0], (1024-ALIGN_IMG_DISP_SIZEX)/2, (1024-ALIGN_IMG_DISP_SIZEY)/2, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignCld);
+//			MbufChild2d(MilAlignImgBuf[0], (1024 - ALIGN_IMG_DISP_SIZEX) / 2, (1024 - ALIGN_IMG_DISP_SIZEY) / 2, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignCld);
 //			MbufChild2d(MilBufAlignTemp[0], 0, 0, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignTempCld);
 //
-//			if(MilBufAlignCld != M_NULL && MilBufAlignTempCld != M_NULL)
+//			if (MilBufAlignCld != M_NULL && MilBufAlignTempCld != M_NULL)
 //				MbufCopy(MilBufAlignCld, MilBufAlignTempCld);
 //
 //			if (MilBufAlignTempCld)
@@ -2544,7 +2722,7 @@ void CVision::LoadPinBuf(int nLayer)
 //				MbufFree(MilBufAlignTempCld);
 //				MilBufAlignTempCld = M_NULL;
 //			}
-//		
+//
 //			if (MilBufAlignCld)
 //			{
 //				MbufFree(MilBufAlignCld);
@@ -2556,85 +2734,91 @@ void CVision::LoadPinBuf(int nLayer)
 //	if (!MilAlignImgBuf[1])
 //		return;
 //
-//	if (pDoc->m_Master[0].m_pAlignImg[1])
+//	//if (pDoc->m_Master[0].m_pAlignImg[1])
+//	if (pAlignImg[1])
 //	{
-//		if (VicFileLoadFromMem(MilAlignImgBuf[1], pDoc->m_Master[0].m_pAlignImg[1], tdat))
+//		//if (VicFileLoadFromMem(MilAlignImgBuf[1], pDoc->m_Master[0].m_pAlignImg[1], tdat))
+//		if (VicFileLoadFromMem(MilAlignImgBuf[1], pAlignImg[1], tdat))
 //		{
 //
-//		MbufChild2d(MilAlignImgBuf[1], (1024-ALIGN_IMG_DISP_SIZEX)/2, (1024-ALIGN_IMG_DISP_SIZEY)/2, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignCld);
-//		MbufChild2d(MilBufAlignTemp[1], 0, 0, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignTempCld);
+//			MbufChild2d(MilAlignImgBuf[1], (1024 - ALIGN_IMG_DISP_SIZEX) / 2, (1024 - ALIGN_IMG_DISP_SIZEY) / 2, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignCld);
+//			MbufChild2d(MilBufAlignTemp[1], 0, 0, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignTempCld);
 //
-//		if(MilBufAlignCld != M_NULL && MilBufAlignTempCld != M_NULL)
-//			MbufCopy(MilBufAlignCld, MilBufAlignTempCld);
+//			if (MilBufAlignCld != M_NULL && MilBufAlignTempCld != M_NULL)
+//				MbufCopy(MilBufAlignCld, MilBufAlignTempCld);
 //
-//		if (MilBufAlignTempCld)
-//		{
-//			MbufFree(MilBufAlignTempCld);
-//			MilBufAlignTempCld = M_NULL;
-//		}
-//		
-//		if (MilBufAlignCld)
-//		{
-//			MbufFree(MilBufAlignCld);
-//			MilBufAlignCld = M_NULL;
-//		}
+//			if (MilBufAlignTempCld)
+//			{
+//				MbufFree(MilBufAlignTempCld);
+//				MilBufAlignTempCld = M_NULL;
+//			}
+//
+//			if (MilBufAlignCld)
+//			{
+//				MbufFree(MilBufAlignCld);
+//				MilBufAlignCld = M_NULL;
+//			}
 //		}
 //	}
 //
 //	if (!MilAlignImgBuf[2])
 //		return;
 //
-//	if (pDoc->m_Master[0].m_pAlignImg[2])
+//	//if (pDoc->m_Master[0].m_pAlignImg[2])
+//	if (pAlignImg[2])
 //	{
-//		if (VicFileLoadFromMem(MilAlignImgBuf[2], pDoc->m_Master[0].m_pAlignImg[2], tdat))
+//		//if (VicFileLoadFromMem(MilAlignImgBuf[2], pDoc->m_Master[0].m_pAlignImg[2], tdat))
+//		if (VicFileLoadFromMem(MilAlignImgBuf[2], pAlignImg[2], tdat))
 //		{
 //
-//		MbufChild2d(MilAlignImgBuf[2], (1024 - ALIGN_IMG_DISP_SIZEX) / 2, (1024 - ALIGN_IMG_DISP_SIZEY) / 2, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignCld);
-//		MbufChild2d(MilBufAlignTemp[2], 0, 0, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignTempCld);
+//			MbufChild2d(MilAlignImgBuf[2], (1024 - ALIGN_IMG_DISP_SIZEX) / 2, (1024 - ALIGN_IMG_DISP_SIZEY) / 2, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignCld);
+//			MbufChild2d(MilBufAlignTemp[2], 0, 0, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignTempCld);
 //
-//		if (MilBufAlignCld != M_NULL && MilBufAlignTempCld != M_NULL)
-//			MbufCopy(MilBufAlignCld, MilBufAlignTempCld);
+//			if (MilBufAlignCld != M_NULL && MilBufAlignTempCld != M_NULL)
+//				MbufCopy(MilBufAlignCld, MilBufAlignTempCld);
 //
-//		if (MilBufAlignTempCld)
-//		{
-//			MbufFree(MilBufAlignTempCld);
-//			MilBufAlignTempCld = M_NULL;
-//		}
+//			if (MilBufAlignTempCld)
+//			{
+//				MbufFree(MilBufAlignTempCld);
+//				MilBufAlignTempCld = M_NULL;
+//			}
 //
-//		if (MilBufAlignCld)
-//		{
-//			MbufFree(MilBufAlignCld);
-//			MilBufAlignCld = M_NULL;
-//		}
+//			if (MilBufAlignCld)
+//			{
+//				MbufFree(MilBufAlignCld);
+//				MilBufAlignCld = M_NULL;
+//			}
 //		}
 //	}
 //
 //	if (!MilAlignImgBuf[3])
 //		return;
 //
-//	if (pDoc->m_Master[0].m_pAlignImg[3])
+//	//if (pDoc->m_Master[0].m_pAlignImg[3])
+//	if (pAlignImg[3])
 //	{
-//	if (VicFileLoadFromMem(MilAlignImgBuf[3], pDoc->m_Master[0].m_pAlignImg[3], tdat))
-//	{
-//
-//		MbufChild2d(MilAlignImgBuf[3], (1024 - ALIGN_IMG_DISP_SIZEX) / 2, (1024 - ALIGN_IMG_DISP_SIZEY) / 2, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignCld);
-//		MbufChild2d(MilBufAlignTemp[3], 0, 0, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignTempCld);
-//
-//		if (MilBufAlignCld != M_NULL && MilBufAlignTempCld != M_NULL)
-//			MbufCopy(MilBufAlignCld, MilBufAlignTempCld);
-//
-//		if (MilBufAlignTempCld)
+//		//if (VicFileLoadFromMem(MilAlignImgBuf[3], pDoc->m_Master[0].m_pAlignImg[3], tdat))
+//		if (VicFileLoadFromMem(MilAlignImgBuf[3], pAlignImg[3], tdat))
 //		{
-//			MbufFree(MilBufAlignTempCld);
-//			MilBufAlignTempCld = M_NULL;
-//		}
 //
-//		if (MilBufAlignCld)
-//		{
-//			MbufFree(MilBufAlignCld);
-//			MilBufAlignCld = M_NULL;
+//			MbufChild2d(MilAlignImgBuf[3], (1024 - ALIGN_IMG_DISP_SIZEX) / 2, (1024 - ALIGN_IMG_DISP_SIZEY) / 2, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignCld);
+//			MbufChild2d(MilBufAlignTemp[3], 0, 0, ALIGN_IMG_DISP_SIZEX, ALIGN_IMG_DISP_SIZEY, &MilBufAlignTempCld);
+//
+//			if (MilBufAlignCld != M_NULL && MilBufAlignTempCld != M_NULL)
+//				MbufCopy(MilBufAlignCld, MilBufAlignTempCld);
+//
+//			if (MilBufAlignTempCld)
+//			{
+//				MbufFree(MilBufAlignTempCld);
+//				MilBufAlignTempCld = M_NULL;
+//			}
+//
+//			if (MilBufAlignCld)
+//			{
+//				MbufFree(MilBufAlignCld);
+//				MilBufAlignCld = M_NULL;
+//			}
 //		}
-//	}
 //	}
 //}
 
@@ -2846,54 +3030,67 @@ void CVision::DispAxisPos(BOOL bForceWrite)
 			//m_pMilDrawOverlay->DrawText(m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+m_nDisplayAxisPosLineHeight*1, szText);
 			m_pMil->DrawText(szText, m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+m_nDisplayAxisPosLineHeight*1, M_COLOR_GREEN);
 		}
-		//dFdEnc = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
-		//if(fabs(m_dFdEnc-dFdEnc)>0.05 || bForceWrite)
-		//{
-		//	m_dFdEnc = dFdEnc;
-		//	//sprintf(szText, "R:%3.2f", dFdEnc/1000.0); // [M]
-		//	_stprintf(szText, TEXT("Rp:%3.2f"), dFdEnc/1000.0); // [M]
-		//	//m_pMilDrawOverlay->DrawText(m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+(m_nDisplayAxisPosLineHeight*2), szText);
-		//	m_pMil->DrawText(szText, m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+m_nDisplayAxisPosLineHeight*2, M_COLOR_GREEN);
-		//}
-		//dFdEnc = (double)pDoc->m_pMpeData[1][0];	// 각인부 Feeding 엔코더 값(단위 mm)
-		//if (fabs(m_dFdEnc - dFdEnc) > 0.05 || bForceWrite)
-		//{
-		//	m_dFdEnc = dFdEnc;
-		//	//sprintf(szText, "R:%3.2f", dFdEnc/1000.0); // [M]
-		//	_stprintf(szText, TEXT("Re:%3.2f"), dFdEnc / 1000.0); // [M]
-		//	//m_pMilDrawOverlay->DrawText(m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+(m_nDisplayAxisPosLineHeight*2), szText);
-		//	m_pMil->DrawText(szText, m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y + m_nDisplayAxisPosLineHeight * 3, M_COLOR_GREEN);
-		//}
+#ifdef USE_MPE
+		dFdEnc = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
+		if(fabs(m_dFdEnc-dFdEnc)>0.05 || bForceWrite)
+		{
+			m_dFdEnc = dFdEnc;
+			//sprintf(szText, "R:%3.2f", dFdEnc/1000.0); // [M]
+			_stprintf(szText, TEXT("Rp:%3.2f"), dFdEnc/1000.0); // [M]
+			//m_pMilDrawOverlay->DrawText(m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+(m_nDisplayAxisPosLineHeight*2), szText);
+			m_pMil->DrawText(szText, m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+m_nDisplayAxisPosLineHeight*2, M_COLOR_GREEN);
 	}
-	//else if(m_nIdx==1)
-	//{
-	//	if(fabs(m_dEnc[AXIS_X1]-pView->m_dEnc[AXIS_X1])>0.005 || bForceWrite)
-	//	{
-	//		m_dEnc[AXIS_X1] = pView->m_dEnc[AXIS_X1];
-	//		//sprintf(szText, "X1:%3.3f", m_dEnc[AXIS_X1]);
-	//		_stprintf(szText, TEXT("X1:%3.3f"), m_dEnc[AXIS_X1]);
- //			//m_pMilDrawOverlay->DrawClear();
-	//		//m_pMilDrawOverlay->DrawText(m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+m_nDisplayAxisPosLineHeight*0, szText);
-	//		m_pMil->DrawText(szText, m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+m_nDisplayAxisPosLineHeight*0, M_COLOR_GREEN);
-	//	}
-	//	if(fabs(m_dEnc[AXIS_Y1]-pView->m_dEnc[AXIS_Y1])>0.005 || bForceWrite)
-	//	{
-	//		m_dEnc[AXIS_Y1] = pView->m_dEnc[AXIS_Y1];
-	//		//sprintf(szText, "Y1:%3.3f", m_dEnc[AXIS_Y1]);
-	//		_stprintf(szText, TEXT("Y1:%3.3f"), m_dEnc[AXIS_Y1]);
-	//		//m_pMilDrawOverlay->DrawText(m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+m_nDisplayAxisPosLineHeight*1, szText);
-	//		m_pMil->DrawText(szText, m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+m_nDisplayAxisPosLineHeight*1, M_COLOR_GREEN);
-	//	}
-	//	double dBufEnc = (double)pDoc->m_pMpeData[0][1]	/ 1000.0;	// 마킹부 버퍼 엔코더 값(단위 mm * 1000)
-	//	if(fabs(m_dBufEnc-dBufEnc)>0.05 || bForceWrite)
-	//	{
-	//		m_dBufEnc = dBufEnc;
-	//		//sprintf(szText, "B:%3.1f", dBufEnc);
-	//		_stprintf(szText, TEXT("B:%3.1f"), dBufEnc);
-	//		//m_pMilDrawOverlay->DrawText(m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+(m_nDisplayAxisPosLineHeight*2), szText);
-	//		m_pMil->DrawText(szText, m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+m_nDisplayAxisPosLineHeight*2, M_COLOR_GREEN);
-	//	}
-	//}
+		dFdEnc = (double)pDoc->m_pMpeData[1][0];	// 각인부 Feeding 엔코더 값(단위 mm)
+		if (fabs(m_dFdEnc - dFdEnc) > 0.05 || bForceWrite)
+	{
+			m_dFdEnc = dFdEnc;
+			//sprintf(szText, "R:%3.2f", dFdEnc/1000.0); // [M]
+			_stprintf(szText, TEXT("Re:%3.2f"), dFdEnc / 1000.0); // [M]
+			//m_pMilDrawOverlay->DrawText(m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+(m_nDisplayAxisPosLineHeight*2), szText);
+			m_pMil->DrawText(szText, m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y + m_nDisplayAxisPosLineHeight * 3, M_COLOR_GREEN);
+	}
+#endif
+	}
+//	else if(m_nIdx==1)
+//	{
+//		if(fabs(m_dEnc[AXIS_X1]-pView->m_dEnc[AXIS_X1])>0.005 || bForceWrite)
+//		{
+//			m_dEnc[AXIS_X1] = pView->m_dEnc[AXIS_X1];
+//			//sprintf(szText, "X1:%3.3f", m_dEnc[AXIS_X1]);
+//			_stprintf(szText, TEXT("X1:%3.3f"), m_dEnc[AXIS_X1]);
+// 			//m_pMilDrawOverlay->DrawClear();
+//			//m_pMilDrawOverlay->DrawText(m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+m_nDisplayAxisPosLineHeight*0, szText);
+//			m_pMil->DrawText(szText, m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+m_nDisplayAxisPosLineHeight*0, M_COLOR_GREEN);
+//		}
+//		if(fabs(m_dEnc[AXIS_Y1]-pView->m_dEnc[AXIS_Y1])>0.005 || bForceWrite)
+//		{
+//			m_dEnc[AXIS_Y1] = pView->m_dEnc[AXIS_Y1];
+//			//sprintf(szText, "Y1:%3.3f", m_dEnc[AXIS_Y1]);
+//			_stprintf(szText, TEXT("Y1:%3.3f"), m_dEnc[AXIS_Y1]);
+//			//m_pMilDrawOverlay->DrawText(m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+m_nDisplayAxisPosLineHeight*1, szText);
+//			m_pMil->DrawText(szText, m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+m_nDisplayAxisPosLineHeight*1, M_COLOR_GREEN);
+//		}
+//#ifdef USE_MPE
+//		double dBufEnc = (double)pDoc->m_pMpeData[0][1]	/ 1000.0;	// 마킹부 버퍼 엔코더 값(단위 mm * 1000)
+//		if(fabs(m_dBufEnc-dBufEnc)>0.05 || bForceWrite)
+//		{
+//			m_dBufEnc = dBufEnc;
+//			//sprintf(szText, "B:%3.1f", dBufEnc);
+//			_stprintf(szText, TEXT("B:%3.1f"), dBufEnc);
+//			//m_pMilDrawOverlay->DrawText(m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+(m_nDisplayAxisPosLineHeight*2), szText);
+//			m_pMil->DrawText(szText, m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+m_nDisplayAxisPosLineHeight*2, M_COLOR_GREEN);
+//		}
+//		dFdEnc = (double)pDoc->m_pMpeData[1][1];	// 각인부 Feeding 엔코더 값(단위 mm)
+//		if (fabs(m_dFdEnc - dFdEnc) > 0.05 || bForceWrite)
+//		{
+//			m_dFdEnc = dFdEnc;
+//			//sprintf(szText, "R:%3.2f", dFdEnc/1000.0); // [M]
+//			_stprintf(szText, TEXT("Re:%3.2f"), dFdEnc / 1000.0); // [M]
+//			//m_pMilDrawOverlay->DrawText(m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y+(m_nDisplayAxisPosLineHeight*2), szText);
+//			m_pMil->DrawText(szText, m_ptDisplayAxisPosOffset.x, m_ptDisplayAxisPosOffset.y + m_nDisplayAxisPosLineHeight * 3, M_COLOR_GREEN);
+//		}
+//#endif
+//	}
 }
 
 BOOL CVision::UploadPinImg()
@@ -2902,14 +3099,14 @@ BOOL CVision::UploadPinImg()
 		MbufFree(MilCapPinImgBuf);
 	if (m_pMil)
 		MbufAlloc2d(m_pMil->GetSystemID(), (long)640, (long)480, 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC, &MilCapPinImgBuf);
-		//MbufAlloc2d(m_pMil->GetSystemID(), (long)m_pIRayple->GetImgWidth(), (long)m_pIRayple->GetImgHeight(), 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC, &MilCapPinImgBuf);
+	//MbufAlloc2d(m_pMil->GetSystemID(), (long)m_pIRayple->GetImgWidth(), (long)m_pIRayple->GetImgHeight(), 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC, &MilCapPinImgBuf);
 
 	// MilCapPinImgBuf
 	CLibMilBuf *MilGrabImg = NULL;
 
-//#ifdef USE_IRAYPLE
-//	MilGrabImg = m_pMil->AllocBuf((long)m_pIRayple->GetImgWidth(), (long)m_pIRayple->GetImgHeight(), 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
-//#endif
+	//#ifdef USE_IRAYPLE
+	//	MilGrabImg = m_pMil->AllocBuf((long)m_pIRayple->GetImgWidth(), (long)m_pIRayple->GetImgHeight(), 8L + M_UNSIGNED, M_IMAGE + M_DISP + M_PROC);
+	//#endif
 
 
 #ifdef USE_IRAYPLE
@@ -2996,8 +3193,11 @@ double CVision::CalcCameraPixelSize()
 		if(dCurrX < -1000.0 || dCurrY < -1000.0)
 		{
 			//if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, 0.3, ABS, WAIT))
-			if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, 0.3, ABS, WAIT))
+			if (!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, 0.3, ABS, WAIT))
+			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Move XY Error..."));
+		}
 		}
 		else
 		{
@@ -3007,8 +3207,11 @@ double CVision::CalcCameraPixelSize()
 			{
 				pView->m_pMotion->GetSpeedProfile(TRAPEZOIDAL, AXIS_X0, fLen, fVel, fAcc, fJerk);
 				//if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, fVel, fAcc, fAcc))
-				if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, fVel, fAcc, fAcc))
+				if (!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, fVel, fAcc, fAcc))
+				{
+					pView->ClrDispMsg();
 					AfxMessageBox(_T("Move XY Error..."));
+				}
 			}
 		}
 	}
@@ -3216,8 +3419,11 @@ double CVision::CalcCameraPixelSize()
 		if(dCurrX < -1000.0 || dCurrY < -1000.0)
 		{
 			//if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, 0.3, ABS, WAIT))
-			if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, 0.3, ABS, WAIT))
+			if (!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, 0.3, ABS, WAIT))
+			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Move XY Error..."));
+		}
 		}
 		else
 		{
@@ -3228,7 +3434,9 @@ double CVision::CalcCameraPixelSize()
 				pView->m_pMotion->GetSpeedProfile(TRAPEZOIDAL, AXIS_X0, fLen, fVel, fAcc, fJerk);
 				//if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, fVel/10.0, fAcc/10.0, fAcc/10.0))
 				if(!pView->m_pMotion->Move(MS_X0Y0, pTgtPos, fVel/10.0, fAcc/10.0, fAcc/10.0))
-					AfxMessageBox(_T("Move XY Error..."));
+				{
+					pView->ClrDispMsg();AfxMessageBox(_T("Move XY Error..."));
+				}
 			}
 		}
 	}
@@ -4375,6 +4583,7 @@ BOOL CVision::SaveMkImg(CString sPath)
 	if (m_pIRayple->OneshotGrab() == FALSE)
 	{
 		//pView->MsgBox(_T("Image Grab Fail !!"));
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("m_pIRayple->OneshotGrab() Fail !!"));
 		if (MilGrabImg)
 			delete MilGrabImg;
@@ -4384,6 +4593,7 @@ BOOL CVision::SaveMkImg(CString sPath)
 	else if(m_pMil->OneshotGrab(MilGrabImg->m_MilImage, GRAB_COLOR_COLOR) == FALSE)
 	{
 		//pView->MsgBox(_T("Image Grab Fail !!"));
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("m_pMil->OneshotGrab Fail !!"));
 		if (MilGrabImg)
 			delete MilGrabImg;
@@ -4399,6 +4609,7 @@ BOOL CVision::SaveMkImg(CString sPath)
 		MbufSave(sPath, MilGrabImg->m_MilImage);
 	else
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("MbufSave() Fail !!"));
 		if (MilGrabImg)
 			delete MilGrabImg;

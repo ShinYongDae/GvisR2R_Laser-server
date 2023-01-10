@@ -29,10 +29,6 @@ protected: // serialization에서만 만들어집니다.
 
 // 특성입니다.
 public:
-	CString m_sItsCode;
-	CString m_sLotNum, m_sProcessNum;
-	CString m_sModelUp, m_sLayerUp;
-	CString m_sLayerDn; //m_sModelDn, 
 
 	int m_nDelayShow;
 	BOOL m_bBufEmpty[2]; // [0]: Up, [1]: Dn
@@ -43,8 +39,6 @@ public:
 	double m_dRTRShiftVal;
 	double m_dShiftAdjustRatio;
 
-	BOOL m_bCamChged;
-	CCamMaster m_Master[2];
 	CMyFile *m_pFile;
 	CMySpec *m_pSpecLocal;
 	stMkIo MkIo;
@@ -53,10 +47,27 @@ public:
 	stBtnStatus BtnStatus;
 	stMenu01Status Menu01Status;
 
+	// 현재 작업인 데이터구조 ===================================================================
+	BOOL m_bCamChged;
+	CCamMaster m_Master[2];
+
 	CReelMap* m_pReelMap;
 	CReelMap *m_pReelMapUp, *m_pReelMapDn, *m_pReelMapAllUp, *m_pReelMapAllDn;
-	CDataMarking* m_pPcr[MAX_PCR][MAX_PCR_PNL];					// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
+	CDataMarking* m_pPcr[MAX_PCR][MAX_PCR_PNL];//릴맵화면표시를 위한 데이터		// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
 	CString *pMkInfo;
+
+
+	// 내층 작업한 데이터구조  ====================================================================
+	CCamMaster m_MasterInner[2];
+
+	CReelMap* m_pReelMapInner;
+	CReelMap *m_pReelMapInnerUp, *m_pReelMapInnerDn, *m_pReelMapInnerAllUp, *m_pReelMapInnerAllDn;
+	CDataMarking* m_pPcrInner[MAX_PCR][MAX_PCR_PNL];	//릴맵화면표시를 위한 데이터	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
+
+	CReelMap* m_pReelMapIts;
+	CDataMarking* m_pPcrIts[MAX_PCR_PNL];				//릴맵화면표시를 위한 데이터	// 내외층 merging
+
+	//=============================================================================================
 
 	stMpeIoWrite m_pIo[TOT_M_IO];
 
@@ -132,8 +143,8 @@ public:
 	int LoadPCRAllDn(int nSerial, BOOL bFromShare = FALSE);	// return : 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
 
 	int GetPcrIdx(int nSerial, BOOL bNewLot = FALSE);
-	int GetPcrIdx0(int nSerial, BOOL bNewLot = FALSE); // Up
-	int GetPcrIdx1(int nSerial, BOOL bNewLot = FALSE); // Dn
+	int GetPcrIdx0(int nSerial, BOOL bNewLot = FALSE); // Up - 릴맵화면 표시를 위한 Display buffer의 Shot 인덱스
+	int GetPcrIdx1(int nSerial, BOOL bNewLot = FALSE); // Dn - 릴맵화면 표시를 위한 Display buffer의 Shot 인덱스
 
 	BOOL LoadIoInfo();
 	BOOL LoadSignalInfo();
@@ -285,7 +296,7 @@ public:
 	BOOL MakeMkDirUp();
 	BOOL MakeMkDirDn();
 	BOOL Shift2Mk(int nSerial);
-	void SetLastSerial(int nSerial);
+	void SetLastSerial(int nSerial);								// 릴맵 텍스트 파일의 수율정보를 업데이트함.
 	void UpdateYield(int nSerial);
 	void SetCompletedSerial(int nSerial);
 	BOOL ChkLotEnd(CString sPath);
@@ -308,9 +319,9 @@ public:
 	CString GetMin(int nDlgId, int nCtrlId);
 	CString GetMax(int nDlgId, int nCtrlId);
 
-	int GetLastShotMk();
-	int GetLastShotUp();
-	int GetLastShotDn();
+	int GetLastShotMk();	// m_pDlgFrameHigh에서 얻거나 없으면, sPathOldFile폴더의 ReelMapDataDn.txt에서 _T("Info"), _T("Marked Shot") 찾음.
+	int GetLastShotUp();	// pView->m_pDlgFrameHigh->m_nAoiLastShot[0]
+	int GetLastShotDn();	// pView->m_pDlgFrameHigh->m_nAoiLastShot[1]
 
 	int Mirroring(int nPcsId);
 
@@ -384,6 +395,9 @@ public:
 	double GetEngraveBuffInitPos();
 
 	BOOL DirectoryExists(LPCTSTR szPath);
+	void UpdateRstOnRmap();
+	void SetTestMode(int nMode);
+	BOOL GetEngOffset(CfPoint &OfSt);
 
 	CString m_strSharedDir;
 	void CheckCurrentInfo();
@@ -413,6 +427,59 @@ public:
 	void GetMkInfo();
 	void SetMkInfo(CString sMenu, CString sItem, BOOL bOn);
 	void SetMkInfo(CString sMenu, CString sItem, CString sData);
+
+	int GetLastSerialEng();
+	int GetTestMode();
+
+
+	// PCS 인덱스를 예전방식의 인덱스로 변환함.
+	int MirrorLR(int nPcsId); // 좌우 미러링
+	int Rotate180(int nPcsId);// 180도 회전 = 좌우 미러링 & 상하 미러링
+	int MirrorUD(int nPcsId); // 상하 미러링
+
+	// For ITS
+	BOOL m_bEngDualTest;
+	CString m_sItsCode;
+	CString m_sLotNum, m_sProcessNum;
+	CString m_sModelUp, m_sLayerUp;
+	CString m_sLayerDn; //m_sModelDn, 
+	int m_nWritedItsSerial;
+
+	BOOL MakeLayerMappingHeader();
+	BOOL MakeLayerMappingSerial(int nIdx, int nItsSerial);
+
+	BOOL GetItsSerialInfo(int nItsSerial, BOOL &bDualTest, CString &sLot, CString &sLayerUp, CString &sLayerDn, int nOption = 0);		// 내층에서의 ITS 시리얼의 정보
+	BOOL SetItsSerialInfo(int nItsSerial);																							// 내층에서의 ITS 시리얼의 정보
+																																	//BOOL WriteReelmapIts(int nItsSerial);																							// 내외층 머징된 릴맵 데이타
+	int GetLastItsSerial();																											// 내외층 머징된 릴맵 데이타의 Last 시리얼
+	CString GetItsFolderPath();
+	CString GetItsReelmapPath();
+	BOOL GetInnerFolderPath(int nItsSerial, CString  &sUp, CString &sDn);
+
+	char* StrToChar(CString str);
+	void StrToChar(CString str, char* pCh);
+
+
+	// For MODE_OUTER ============================================
+	int LoadPCRAllUpInner(int nSerial, BOOL bFromShare = FALSE);	// return : 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
+	int LoadPCRAllDnInner(int nSerial, BOOL bFromShare = FALSE);	// return : 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
+	int LoadPCRUpInner(int nSerial, BOOL bFromShare = FALSE);	// return : 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
+	int LoadPCRDnInner(int nSerial, BOOL bFromShare = FALSE);	// return : 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
+
+																// ITS
+	int LoadPCRIts(int nSerial, BOOL bFromShare = FALSE);	// return : 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
+	void LoadPCRIts11(int nSerial); // 11 -> 외층 : 양면, 내층 : 양면
+	void LoadPCRIts10(int nSerial); // 10 -> 외층 : 양면, 내층 : 단면
+	void LoadPCRIts01(int nSerial); // 11 -> 외층 : 단면, 내층 : 양면
+	void LoadPCRIts00(int nSerial); // 10 -> 외층 : 단면, 내층 : 단면
+
+	BOOL InitReelmapInner();
+	BOOL InitReelmapInnerUp();
+	BOOL InitReelmapInnerDn();
+	void SetReelmapInner(int nDir = ROT_NONE);
+	CString GetItsPath(int nSerial, int nLayer);	// RMAP_UP, RMAP_DN, RMAP_INNER_UP, RMAP_INNER_DN
+	int GetItsDefCode(int nDefCode);				// return to [Sapp3Code]
+
 
 // 재정의입니다.
 public:

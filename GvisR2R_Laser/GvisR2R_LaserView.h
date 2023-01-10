@@ -77,6 +77,7 @@
 #define TIM_TCPIP_UPDATE		22
 #define TIM_START_UPDATE		100
 #define TIM_MENU01_UPDATE_WORK	101
+#define MAX_THREAD				3
 
 namespace Read2dIdx
 {
@@ -101,8 +102,8 @@ namespace Mk2PtIdx
 	typedef enum Index {
 		Start = 2, ChkSn = 4, InitMk = 10, Move0Cam1 = 12, Move0Cam0 = 14, Align1_0 = 17, Align0_0 = 18,
 		Move1Cam1 = 21, Move1Cam0 = 23, Align1_1 = 26, Align0_1 = 27, MoveInitPt = 29, ChkElec = 32, DoMk = 35,
-		Verify = 37, DoneMk = 38, LotDiff = 50
-	};
+		Verify = 37, DoneMk = 38, LotDiff = 50, Shift2Mk = 60
+	}; 
 }
 
 namespace Mk4PtIdx
@@ -112,7 +113,7 @@ namespace Mk4PtIdx
 		Move1Cam1 = 21, Move1Cam0 = 23, Align1_1 = 26, Align0_1 = 27, Move2Cam1 = 29, Move2Cam0 = 31,
 		Align1_2 = 34, Align0_2 = 35, Move3Cam1 = 37, Move3Cam0 = 39, Align1_3 = 42, Align0_3 = 43,
 		MoveInitPt = 45, ChkElec = 48, DoMk = 51,
-		Verify = 53, DoneMk = 54, LotDiff = 60
+		Verify = 53, DoneMk = 54, LotDiff = 60, Shift2Mk = 70
 	};
 }
 
@@ -339,6 +340,7 @@ public:
 	CPtAlign m_Align[2];	// [0] : LeftCam , [1] : RightCam
 #ifdef USE_VISION
 	CVision* m_pVision[2];	// [0] : LeftCam , [1] : RightCam
+	CVision* m_pVisionInner[2];	// [0] : LeftCam , [1] : RightCam
 #endif
 	//CPtAlign m_Align;
 	//CVision* m_pVision;
@@ -364,13 +366,13 @@ public:
 	BOOL m_bTIM_INIT_VIEW;
 	BOOL m_bCam, m_bReview;
 
-	DWORD m_dwThreadTick[3];
-	BOOL m_bThread[3];
-	CThreadTask m_Thread[3];
+	DWORD m_dwThreadTick[MAX_THREAD];
+	BOOL m_bThread[MAX_THREAD];
+	CThreadTask m_Thread[MAX_THREAD];
 
 	double m_dEnc[MAX_AXIS], m_dTarget[MAX_AXIS];
 	double m_dNextTarget[MAX_AXIS];
-	int m_nSelRmap;
+	int m_nSelRmap, m_nSelRmapInner;
 	int m_nStepAuto;
 
 	int m_nStop;
@@ -385,6 +387,28 @@ public:
 	BOOL m_bTHREAD_MK[4];	// [0] Auto-Left, [1] Auto-Right, [2] Manual-Left, [3] Manual-Right
 	BOOL m_bTHREAD_DISP_DEF;
 	int	m_nStepTHREAD_DISP_DEF;
+
+	BOOL m_bTHREAD_UPDATAE_YIELD[2];		// [0] : Cam0, [1] : Cam1
+	int	m_nSerialTHREAD_UPDATAE_YIELD[2];	// [0] : Cam0, [1] : Cam1
+	BOOL m_bTHREAD_SHIFT2MK;// [2];		// [0] : Cam0, [1] : Cam1
+	BOOL m_bTHREAD_UPDATE_REELMAP_UP, m_bTHREAD_UPDATE_REELMAP_ALLUP;
+	BOOL m_bTHREAD_UPDATE_REELMAP_DN, m_bTHREAD_UPDATE_REELMAP_ALLDN;
+	BOOL m_bTHREAD_UPDATE_RST_UP, m_bTHREAD_UPDATE_RST_ALLUP;
+	BOOL m_bTHREAD_UPDATE_RST_DN, m_bTHREAD_UPDATE_RST_ALLDN;
+	BOOL m_bTHREAD_RELOAD_RST_UP, m_bTHREAD_RELOAD_RST_ALLUP;
+	BOOL m_bTHREAD_RELOAD_RST_DN, m_bTHREAD_RELOAD_RST_ALLDN;
+	BOOL m_bTHREAD_RELOAD_RST_UP_INNER, m_bTHREAD_RELOAD_RST_ALLUP_INNER;
+	BOOL m_bTHREAD_RELOAD_RST_DN_INNER, m_bTHREAD_RELOAD_RST_ALLDN_INNER;
+	BOOL m_bTHREAD_RELOAD_RST_ITS, m_bTHREAD_UPDATE_RST_ITS;
+	// 	BOOL m_bTIM_MK_START;
+
+	void UpdateRstUp();
+	void UpdateRstAllUp();
+	void UpdateRstDn();
+	void UpdateRstAllDn();
+	void UpdateRstIts();
+
+
 
 	BOOL m_bSwRun, m_bSwRunF;
 	BOOL m_bSwStop, m_bSwStopF;
@@ -411,9 +435,9 @@ public:
 	unsigned long m_AoiLdRun;
 	BOOL m_bDoneDispMkInfo[2][2]; // [nCam][Up/Dn]
 
-	int m_nShareUpS;
+	int m_nShareUpS, m_nShareUpSprev;
 	int m_nShareUpSerial[2]; // [nCam]
-	int m_nShareDnS;
+	int m_nShareDnS, m_nShareDnSprev;
 	int m_nShareDnSerial[2]; // [nCam]
 	int m_nShareUpCnt;
 	int m_nShareDnCnt;
@@ -430,8 +454,9 @@ public:
 	BOOL m_bReAlign[2][4]; // [nCam][nPos] 
 	BOOL m_bSkipAlign[2][4]; // [nCam][nPos] 
 
-	BOOL m_bDoMk[2], m_bDoneMk[2]; // [nCam]
-	BOOL m_bReMark[2]; // [nCam]
+	BOOL m_bDoMk[2];			// [nCam] : TRUE(Punching), FALSE(Stop Punching)
+	BOOL m_bDoneMk[2];			// [nCam] : TRUE(Punching 완료), FALSE(Punching 미완료)
+	BOOL m_bReMark[2];			// [nCam] : TRUE(Punching 다시시작), FALSE(pass)
 
 	int m_nMonAlmF, m_nClrAlmF;
 	BOOL m_bLotEnd, m_bLastProc, m_bLastProcFromUp;
@@ -453,7 +478,7 @@ public:
 	BOOL m_bShowMyMsg;
 	CWnd *m_pMyMsgForeground;
 
-	BOOL m_bRejectDone[2][4]; // Shot[2], Strip[4]
+	BOOL m_bRejectDone[2][MAX_STRIP_NUM]; // Shot[2], Strip[4] - [좌/우][] : 스트립에 펀칭한 피스 수 count가 스트립 폐기 설정수 완료 여부 
 
 	CString m_sDispSts[2];
 
@@ -471,8 +496,13 @@ public:
 	int m_nNewLot;
 	CString m_sMonDisp;
 
+	CString m_sPathRmapUpdate[4];
+	int m_nSerialRmapUpdate;
+
 // 작업입니다.
 public:
+	BOOL m_bShift2Mk;
+
 	afx_msg LRESULT OnDlgInfo(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnMyMsgExit(WPARAM wPara, LPARAM lPara);
 
@@ -566,6 +596,14 @@ public:
 	//BOOL IsMkDone();
 	//void Marking();
 	//void DoReject0();
+
+
+
+	void UpdateRMapUp();
+	void UpdateRMapAllUp();
+	void UpdateRMapDn();
+	void UpdateRMapAllDn();
+
 
 	BOOL IsReady();				// not used
 	void Shift2Buf();
@@ -958,6 +996,21 @@ public:
 
 	BOOL Set2dRead(BOOL bRun = TRUE);
 	BOOL Is2dReadDone();
+
+
+	int m_nReloadRstSerial;
+	void ReloadRstUp();
+	void ReloadRstAllUp();
+	void ReloadRstDn();
+	void ReloadRstAllDn();
+
+	void ReloadRstUpInner();
+	void ReloadRstAllUpInner();
+	void ReloadRstDnInner();
+	void ReloadRstAllDnInner();
+	void ReloadRstIts();
+
+
 	BOOL m_bSetSig, m_bSetSigF, m_bSetData, m_bSetDataF;
 	BOOL m_bLoadMstInfo, m_bLoadMstInfoF;
 	void LoadMstInfo();
@@ -972,13 +1025,14 @@ public:
 	void EngStop(BOOL bOn);
 	BOOL IsEngStop();
 	BOOL GetCurrentInfoSignal();
+	int GetLastSerialEng();
 	void SetLastSerialEng(int nSerial);
 	CString GetCurrentInfoBufUp();
 	CString GetCurrentInfoBufDn();
 	void SetCurrentInfoEngShotNum(int nSerial);
 
-	CString m_sGet2dCodeLot;
-	int m_nGet2dCodeSerial;
+	CString m_sGetItsCode;
+	int m_nGetItsCodeSerial;
 	BOOL Get2dCode(CString &sLot, int &nSerial);
 
 	void SetTotOpRto(CString sVal);		// 전체진행율
@@ -991,6 +1045,28 @@ public:
 
 	void DispStatusBar(CString strMsg, int nStatusBarID);
 	void GetMkMenu01();
+
+
+	BOOL m_bTHREAD_DISP_DEF_INNER;
+	int	m_nStepTHREAD_DISP_DEF_INNER;
+
+	void InitReelmapInner();
+	void InitReelmapInnerUp();
+	void InitReelmapInnerDn();
+	BOOL ReloadRstInner();
+	BOOL ReloadRstInner(int nSerial);
+	void UpdateRstInner();
+	void OpenReelmapInner();
+	void OpenReelmapInnerUp();
+	void OpenReelmapInnerDn();
+	void DispDefImgInner();
+	BOOL IsDoneDispMkInfoInner();
+	BOOL SetSerialReelmapInner(int nSerial, BOOL bDumy = FALSE);
+	BOOL SetSerialMkInfoInner(int nSerial, BOOL bDumy = FALSE);
+
+
+
+	CString GetTimeIts();
 
 // 재정의입니다.
 public:

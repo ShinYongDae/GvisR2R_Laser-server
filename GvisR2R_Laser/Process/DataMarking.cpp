@@ -26,6 +26,13 @@ CDataMarking::CDataMarking(CWnd* pParent /*=NULL*/)
 	m_pMk = NULL;
 
 	m_nTotRealDef = 0;
+
+	// ITS
+	m_sLayerInUp = _T("");
+	m_sLayerInDn = _T("");
+	m_sLayerOutUp = _T("");
+	m_sLayerOutDn = _T("");
+	m_sItsCode = _T("");
 }
 
 CDataMarking::~CDataMarking()

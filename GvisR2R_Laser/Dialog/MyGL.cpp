@@ -496,7 +496,11 @@ void CMyGL::DrawRgn()
 	if(!m_pReelMap || !m_pFrmRgn || !m_pPcsPnt)//pDoc->
 		return;
 
-	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	BOOL bDualTest;
+	//if (m_nCtrlId == IDC_STC_REELMAP_INNER)
+	//	bDualTest = pDoc->m_bEngDualTest;
+	//else
+		bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
 // 	for(k=0; k<m_nTotPnl; k++)
 	for(k=m_nTotPnl-1; k>=0; k--)

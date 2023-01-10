@@ -160,7 +160,9 @@ public:
 	MIL_ID GetSystemID();
 
 	void SelDispCad(HWND hDispCtrl, CRect rtDispCtrl, int nIdx, int nDisplayFitMode=DISPLAY_FIT_MODE_CENTERVIEW);
+	void FreeDispCad(HWND hDispCtrl, CRect rtDispCtrl, int nIdx, int nDisplayFitMode = DISPLAY_FIT_MODE_CENTERVIEW);
 	void SelDispDef(HWND hDispCtrl, CRect rtDispCtrl, int nIdx, int nDisplayFitMode=DISPLAY_FIT_MODE_CENTERVIEW);
+	void FreeDispDef(HWND hDispCtrl, CRect rtDispCtrl, int nIdx, int nDisplayFitMode = DISPLAY_FIT_MODE_CENTERVIEW);
 	void SelDispPin(HWND hDispCtrl, CRect rtDispCtrl, int nDisplayFitMode);
 	void SelDispAlign(HWND hDispCtrl, CRect rtDispCtrl, int nDisplayFitMode);
 

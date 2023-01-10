@@ -52,6 +52,7 @@ class CDlgMenu01 : public CDialog
 	BOOL m_bTIM_WINK_MK_L, m_bTIM_WINK_MK_R;
 	BOOL m_bLowPartialSpd;
 	int m_nSerialDispMkInfo;
+	int m_nSelRmapPrev;
 
 	void LoadImg();
 	void DelImg();
@@ -63,7 +64,9 @@ class CDlgMenu01 : public CDialog
 	void InitBtn();
 	void InitMkInfo();
 	void InitMkInfoUp();
+	void FreeMkInfoUp();
 	void InitMkInfoDn();
+	void FreeMkInfoDn();
 	void SelDisp();
 
 	void ShowDefInfoUp(int nIdx); // nIdx : 0 ~ 11 (12ea)
@@ -93,7 +96,7 @@ public:
 	~CDlgMenu01();
 
 	CRect* m_pRect;
-	BOOL m_bLastProc, m_bLastProcFromUp;
+	BOOL m_bLastProc, m_bLastProcFromUp, m_bLastProcFromEng;
 	BOOL m_bLotEnd, m_bEnableMkStrip;
 
 	BOOL Create();
@@ -108,9 +111,9 @@ public:
 	void SetTitleStcDef();
 
 	void SelMap(int nSel);
-	BOOL OpenReelmap(CString sPath); // for Test
+	//BOOL OpenReelmap(CString sPath); // for Test
 	void OpenReelmap(int nSelRmap);
-	void DispReelmap(int nSerial, BOOL bDumy=FALSE);
+	BOOL DispReelmap(int nSerial, BOOL bDumy=FALSE);
 	void DispMain(CString sMsg, COLORREF rgb=RGB_GREEN);
 	CString GetDispMain();
 	void RefreshRmap();
@@ -189,6 +192,7 @@ public:
 	void SwMyBtnUp(int nCtrlID);
 
 	void ChkTpStop();
+	void EnableItsMode(BOOL bEnable = TRUE);
 
 	void SetTotOpRto(CString sVal);		// 전체진행율
 	void SetTotVel(CString sVal);		// 전체속도
@@ -197,6 +201,9 @@ public:
 	void SetAoiDnDoneLen(CString sVal);	// 검사부(하) : Distance (FdDone) [M]
 	void SetAoiUpDoneLen(CString sVal);	// 검사부(상) : Distance (FdDone) [M]
 	void SetEngDoneLen(CString sVal);	// 각인부 : Distance (FdDone) [M]
+
+	void DispTotRatioIts();
+	void DispStripRatioIts();
 
 // Dialog Data
 	//{{AFX_DATA(CDlgMenu01)

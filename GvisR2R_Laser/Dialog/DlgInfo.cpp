@@ -685,19 +685,25 @@ void CDlgInfo::Disp()
 	else
 		myBtn[22].SetCheck(FALSE);
 
-	switch (pDoc->WorkingInfo.LastJob.nTestMode)
+	switch (pDoc->WorkingInfo.LastJob.nTestMode) // GetTestMode()
 	{
-	case MODE_NONE:		// 0
+	case MODE_NONE:		// 0 
 		myBtn[23].SetCheck(FALSE); // IDC_CHK_USE_AOI_INNER
 		myBtn[24].SetCheck(FALSE); // IDC_CHK_USE_AOI_OUTER
+		if (pView->m_pDlgMenu01)
+			pView->m_pDlgMenu01->EnableItsMode(FALSE);
 		break;
-	case MODE_INNER:	// 1
+	case MODE_INNER:	// 1 
 		myBtn[23].SetCheck(TRUE); // IDC_CHK_USE_AOI_INNER
 		myBtn[24].SetCheck(FALSE); // IDC_CHK_USE_AOI_OUTER
+		if (pView->m_pDlgMenu01)
+			pView->m_pDlgMenu01->EnableItsMode(FALSE);
 		break;
-	case MODE_OUTER:	// 2
+	case MODE_OUTER:	// 2 
 		myBtn[23].SetCheck(FALSE); // IDC_CHK_USE_AOI_INNER
 		myBtn[24].SetCheck(TRUE); // IDC_CHK_USE_AOI_OUTER
+		if (pView->m_pDlgMenu01)
+			pView->m_pDlgMenu01->EnableItsMode();
 		break;
 	}
 
@@ -1438,12 +1444,20 @@ void CDlgInfo::SetTestMode(int nMode)
 	switch (nMode)
 	{
 	case MODE_NONE:
+		if (pView->m_pDlgMenu01)
+			pView->m_pDlgMenu01->EnableItsMode(FALSE);
 		break;
 	case MODE_INNER:
+		if (pView->m_pDlgMenu01)
+			pView->m_pDlgMenu01->EnableItsMode(FALSE);
 		break;
 	case MODE_OUTER:
+		if (pView->m_pDlgMenu01)
+			pView->m_pDlgMenu01->EnableItsMode();
 		break;
 	default:
+		if (pView->m_pDlgMenu01)
+			pView->m_pDlgMenu01->EnableItsMode(FALSE);
 		break;
 	}
 

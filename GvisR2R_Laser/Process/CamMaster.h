@@ -12,8 +12,8 @@
 #include "../Global/GlobalDefine.h"
 
 #define RGN_STRIP_VARIABLE_NUM	23		// REGION_STRIP 구조체에서 배열을 제외한 변수의 갯수
-#define MAX_NodeNumX			200
-#define MAX_NodeNumY			200
+//#define MAX_NodeNumX			200
+//#define MAX_NodeNumY			200
 #define MAX_NMSWATH				100
 
 #define MAX_PCS					10000
@@ -21,10 +21,10 @@
 	#define MAX_STRIP				4
 #endif
 
-#define MAX_PIECE_NODE_X_NUM	600		// 130319 jsy edit
-#define MAX_PIECE_NODE_Y_NUM	600
+//#define MAX_PIECE_NODE_X_NUM	600		// 130319 jsy edit
+//#define MAX_PIECE_NODE_Y_NUM	600
 
-#define MAX_FRAME_RGN_NUM		1000		// Maximum number of Strip regions
+//#define MAX_FRAME_RGN_NUM		1000		// Maximum number of Strip regions
 #define MAX_STRIP_X_NUM			10			//2012.08.07 hyk
 #define MAX_STRIP_Y_NUM			10			//2012.08.07 hyk
 #define MAX_PIECE_RGN_NUM		(MAX_PIECE_NODE_X_NUM * MAX_PIECE_NODE_Y_NUM)		// Maximum number of Cell regions
@@ -118,6 +118,9 @@ public:
 	BOOL LoadCad4PntAlignMkPos(CString sPath);
 	void SetCad2PntAlignMkPos();
 	void SetCad4PntAlignMkPos();
+
+	BOOL IsMstSpec();
+	BOOL IsMstSpec(CString sSpecFolderPath, CString  sModel, CString sLayer);
 
 // Overrides
 	// ClassWizard generated virtual function overrides

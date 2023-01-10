@@ -2133,3 +2133,33 @@ void CCamMaster::SetCad4PntAlignMkPos()
 	}
 }
 
+BOOL CCamMaster::IsMstSpec()
+{
+	CString sPath, sPathDir;
+	CFileFind findfile;
+	sPathDir = m_sPathCamSpecDir;
+
+	sPath.Format(_T("%s%s\\%s.ini"), sPathDir,
+		m_sModel,
+		m_sLayer);
+
+	if (!findfile.FindFile(sPath))
+		return FALSE;
+
+	return TRUE;
+}
+
+BOOL CCamMaster::IsMstSpec(CString sSpecFolderPath, CString  sModel, CString sLayer)
+{
+	CString sPath;
+	CFileFind findfile;
+
+	sPath.Format(_T("%s%s\\%s.ini"), sSpecFolderPath,
+		sModel,
+		sLayer);
+
+	if (!findfile.FindFile(sPath))
+		return FALSE;
+
+	return TRUE;
+}

@@ -29,14 +29,14 @@ class CReelMap : public CWnd
 	BOOL m_FixPcs[FIX_PCS_SHOT_MAX][FIX_PCS_COL_MAX][FIX_PCS_ROW_MAX]; // [Col][Row]
 	int m_FixPcsPrev[FIX_PCS_COL_MAX][FIX_PCS_ROW_MAX]; // [Col][Row]
 	int m_nPrevSerial[2]; // [0] : -- , [1] : ++
-	int m_nPnlBuf;
-	short ***m_pPnlBuf;	// DefCode 3D Array : [nSerial][nRow][nCol]
+	int m_nPnlBuf;															// 메모리에 할당된 총 Shot수
+	short ***m_pPnlBuf;	// DefCode 3D Array : [nSerial-1][nRow][nCol] on File -> [nSerial-1][NodeX][NodeY] : Rotated Cw 90 
 	int m_nTotPcs, m_nGoodPcs, m_nBadPcs, m_nDef[MAX_DEF];	// [DefCode] : Total Num.
-	int m_nDefStrip[4], m_nDefPerStrip[4][MAX_DEF];
-	int m_nStripOut[4], m_nTotStOut;
+	int m_nDefStrip[MAX_STRIP_NUM], m_nDefPerStrip[MAX_STRIP_NUM][MAX_DEF];
+	int m_nStripOut[MAX_STRIP_NUM], m_nTotStOut;
 	CString m_sPathShare, m_sPathBuf;
 	CString m_sPathYield;
-	double m_dAdjRatio; // Master Image의 Pixel 해상도에 따른 Reelmap에서의 식별용 간격 비율.
+	//double m_dAdjRatio; // Master Image의 Pixel 해상도에 따른 Reelmap에서의 식별용 간격 비율.
 	int m_nIdxDefInfo;	// MAX_DEFINFO에 들어가는 정보의 Index.
 	int m_nWritedSerial; // In Share folder Serial.
 	BOOL m_bContFixDef;
@@ -44,14 +44,13 @@ class CReelMap : public CWnd
 	//int m_nCntFixPcs;
 
 	void LoadConfig();
-	BOOL UpdateRst(int nSerial);
 	BOOL MakeDir();
 	BOOL MakeDir(CString sModel, CString sLayer, CString sLot);
-	BOOL MakeDirUser();
-	BOOL MakeDirUser(CString sModel, CString sLayer, CString sLot);
-	CString MakeDirUserRestore();
-	CString MakeDirUserRestore(CString sModel, CString sLayer, CString sLot);
-	int GetLastUserRestoreDir(CString strPath);
+	BOOL MakeDirRmap();
+	BOOL MakeDirRmap(CString sModel, CString sLayer, CString sLot);
+	CString MakeDirRmapRestore();
+	CString MakeDirRmapRestore(CString sModel, CString sLayer, CString sLot);
+	int GetLastRmapRestoreDir(CString strPath);
 
 	char* StrToChar(CString str);
 	void StrToChar(CString str, char* pCh);
@@ -60,6 +59,11 @@ class CReelMap : public CWnd
 	BOOL WriteYield(int nSerial, CString sPath);
 	void ResetYield();
 	
+	BOOL LoadDefectTableIni();
+	//BOOL LoadDefectTableDB();
+
+	BOOL MakeDirYield(CString sPath);
+
 // Construction
 public:
 	CReelMap(int nLayer, int nPnl=0, int nPcs=0, int nDir=0);
@@ -68,6 +72,7 @@ public:
 public:
 	CCriticalSection m_cs;
 
+	double m_dAdjRatio; // Master Image의 Pixel 해상도에 따른 Reelmap에서의 식별용 간격 비율.
 	int m_nLayer;
 	CString m_sMc, m_sUser;
 // 	CString m_sModel, m_sLayer, m_sLot;
@@ -81,7 +86,7 @@ public:
 	CRect *pFrmRgn;
 	CRect **pPcsRgn;
 
-	int **pPcsDef;
+	int **pPcsDef; // [DispPnlIdx][PcsID] : 불량코드.
 	CString m_sKorDef[MAX_DEF], m_sEngDef[MAX_DEF];
 	char m_cBigDef[MAX_DEF], m_cSmallDef[MAX_DEF];
 	COLORREF m_rgbDef[MAX_DEF];
@@ -97,6 +102,7 @@ public:
 	double m_dProgressRatio;
 
 	stYield m_stYield;
+	int m_nStartSerial;
 
 // Operations
 public:
@@ -113,7 +119,7 @@ public:
 
 	BOOL Open(CString sPath);
 	BOOL OpenUser(CString sPath);
-	BOOL Open(CString sPath, CString sModel, CString sLayer, CString sLot);
+	BOOL Open();
 	BOOL OpenUser(CString sPath, CString sModel, CString sLayer, CString sLot);
 	int Read(CString &sRead);
 	BOOL Write(int nSerial, int nLayer);
@@ -146,7 +152,7 @@ public:
 	BOOL IsFixPcs(int nSerial, int* pCol, int* pRow, int &nTot);
 
 	BOOL Write(int nSerial, int nLayer, CString sPath);
-	void SetPathAtBuf(CString sPath);
+	void SetPathAtBuf();
 	CString GetRmapPath(int nRmap);
 	CString GetYieldPath(int nRmap);
 
@@ -170,17 +176,28 @@ public:
 	void RestoreReelmap();
 
 	BOOL m_bThreadAliveReloadRst, m_bRtnThreadReloadRst, m_bDoneReloadRst;
-	int m_nLastOnThread, m_nPregressReloadRst, m_nTotalPregressReloadRst;
+	int m_nLastOnThread, m_nProgressReloadRst, m_nTotalProgressReloadRst;
 	CThreadTask m_ThreadTaskReloadRst; // CThreadTask class, handles the threading code
 	BOOL ReloadRst();
 	BOOL ReloadRst(int nTo);
 	BOOL IsDoneReloadRst();
-	int GetPregressReloadRst();
+	int GetProgressReloadRst();
 	void StartThreadReloadRst();
 	static BOOL ThreadProcReloadRst(LPVOID lpContext);
 	void StopThreadReloadRst();
 
 	BOOL UpdateYield(int nSerial);
+	BOOL UpdateRst();
+	BOOL MakeHeader(CString sPath);
+
+	// ITS
+	CString GetPathReelmapIts();
+	BOOL MakeItsReelmapHeader();	// 내외층 머징된 릴맵 헤드
+	BOOL WriteIts(int nItsSerial);
+	BOOL MakeItsFile(int nSerial, int nLayer);		// RMAP_UP, RMAP_DN, RMAP_INNER_UP, RMAP_INNER_DN
+	CString GetItsFileData(int nSerial, int nLayer);	// RMAP_UP, RMAP_DN, RMAP_INNER_UP, RMAP_INNER_DN
+	BOOL MakeDirIts();
+	void ResetReelmapPath();
 
 // Overrides
 	// ClassWizard generated virtual function overrides

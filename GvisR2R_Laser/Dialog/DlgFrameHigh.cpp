@@ -243,6 +243,8 @@ BOOL CDlgFrameHigh::OnInitDialog()
 	m_bTIM_SIG_AOI = TRUE;
 	SetTimer(TIM_SIG_AOI, 100, NULL);
 
+	GetDlgItem(IDC_CHK_MENU_05)->ShowWindow(SW_HIDE);
+	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }

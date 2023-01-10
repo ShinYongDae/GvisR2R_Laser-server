@@ -37,6 +37,10 @@ public:
 	int m_nCol, m_nRow;
 	CPoint m_MkOffset; // From PCS Center.
 
+	// ITS
+	CString m_sLayerInUp, m_sLayerInDn, m_sLayerOutUp, m_sLayerOutDn;
+	CString m_sItsCode;
+
 // Operations
 public:
 	void Init(int nSerial=-1, int nTot=0);

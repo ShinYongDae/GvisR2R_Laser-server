@@ -603,7 +603,13 @@ typedef struct {
 #define PNLBUF_Y					50
 #define PNLBUF_X					50
 
-enum SEL_RMAP { RMAP_NONE = -1, RMAP_UP = 0, RMAP_DN = 1, RMAP_ALLUP = 2, RMAP_ALLDN = 3 };
+
+enum SEL_RMAP {
+	RMAP_NONE = -1, RMAP_UP = 0, RMAP_DN = 1, RMAP_ALLUP = 2, RMAP_ALLDN = 3,
+	RMAP_INNER_UP = 4, RMAP_INNER_DN = 5, RMAP_INNER_ALLUP = 6, RMAP_INNER_ALLDN = 7,
+	RMAP_INOUTER_UP = 8, RMAP_INOUTER_DN = 9, RMAP_INNER = 10, RMAP_ITS = 11
+};
+
 enum SEL_CAM { CAM_LF=0, CAM_RT=1, CAM_BOTH=2 };
 enum MAIN_BTN { MN_RST=0, MN_RDY=1, MN_STOP=2, MN_RUN=3 };
 
@@ -629,7 +635,7 @@ struct stSystem
 	CString sPathEng, sPathEngCurrInfo, sPathEngOffset, sPathMkCurrInfo, sPathMkCurrInfoBuf;
 	CString sPathMkMenu01, sPathMkMenu03, sPathMkInfo, sPathMonDispMain;
 
-	CString sPathOldFile;
+	CString sPathOldFile, sPathItsFile;
 	CString sPathSapp3;
 	BOOL bSaveLog;
 	BOOL bNoMk;	// 0 : 마킹모드, 1 : 비젼모드
@@ -664,6 +670,7 @@ struct stSystem
 		sPathMkCurrInfoBuf = _T(""); sPathMkMenu01 = _T(""); sPathMkMenu03 = _T("");  sPathMkInfo = _T(""); sPathMonDispMain = _T("");
 
 		sPathOldFile = _T("");
+		sPathItsFile = _T("");
 		bSaveLog = FALSE;
 		bNoMk = FALSE;	// 0 : 마킹모드, 1 : 비젼모드
 		sReViewMkLen = _T("");
@@ -688,6 +695,9 @@ struct stLastJob
 	CString sProcessNum;
 	CString sModelUp, sLayerUp, sLotUp, sSerialUp, sCompletedSerialUp;
 	CString sModelDn, sLayerDn, sLotDn, sSerialDn, sCompletedSerialDn;
+	CString sSerialEng;
+	CString sInnerModelUp, sInnerLayerUp, sInnerLotUp;
+	CString sInnerModelDn, sInnerLayerDn, sInnerLotDn;
 
 	CString sSelUserName, sReelTotLen, sOnePnlLen;
 	BOOL bLotSep;
@@ -711,7 +721,7 @@ struct stLastJob
 	CString sAoiLastShot[2]; // [Up/Dn]
 	CString sPartialSpd;
 	BOOL bOneMetal, bTwoMetal;
-	BOOL bDualTest, bSampleTest, nTestMode;
+	BOOL bDualTest, bDualTestInner, bSampleTest, nTestMode;
 	BOOL bCore150Recoiler, bCore150Uncoiler;
 	CString sSampleTestShotNum;
 	BOOL bUse2Layer;
@@ -727,6 +737,9 @@ struct stLastJob
 		sProcessNum = _T("");
 		sModelUp = _T(""); sLayerUp = _T(""); sLotUp = _T(""); sSerialUp = _T(""); sCompletedSerialUp = _T("");
 		sModelDn = _T(""); sLayerDn = _T(""); sLotDn = _T(""); sSerialDn = _T(""); sCompletedSerialDn = _T("");
+		sSerialEng = _T("");
+		sInnerModelUp = _T(""); sInnerLayerUp = _T(""); sInnerLotUp = _T("");
+		sInnerModelDn = _T(""); sInnerLayerDn = _T(""); sInnerLotDn = _T("");
 
 		sSelUserName = _T(""); sReelTotLen = _T(""); sOnePnlLen = _T("");
 		bLotSep = FALSE;
@@ -755,7 +768,7 @@ struct stLastJob
 		sPartialSpd = _T("10");
 
 		bOneMetal = FALSE; bTwoMetal = FALSE;
-		bDualTest = TRUE; bSampleTest = FALSE; nTestMode = 0;
+		bDualTest = TRUE; bDualTestInner = TRUE; bSampleTest = FALSE; nTestMode = 0;
 		bCore150Recoiler = FALSE; bCore150Uncoiler = FALSE;
 		sSampleTestShotNum = _T("");
 		bUseEngraveUltrasonic = FALSE; bUseAoiDnUltrasonic = FALSE;
@@ -1614,6 +1627,7 @@ struct stBtnStatus
 
 struct stMenu01Info
 {
+	CString sOperator, sModel, sLot, sLayerUp, sLayerDn;
 	int nTotShot, nVerifyImgNum;
 	double dTotWorkRto, dLotWorkRto, dTotSpd, dPartSpd, dDoneLenMk, dDoneLenAoiUp, dDoneLengthAoiDn, dDoneLengthEng;
 
@@ -1624,6 +1638,7 @@ struct stMenu01Info
 
 	void _Init()
 	{
+		sOperator = _T(""); sModel = _T(""); sLot = _T(""); sLayerUp = _T(""); sLayerDn = _T("");
 		nTotShot = 0; dTotWorkRto = 0.0; dLotWorkRto = 0.0; dTotSpd = 0.0; dPartSpd = 0.0; dDoneLenMk = 0.0;
 		dDoneLenAoiUp = 0.0; dDoneLengthAoiDn = 0.0; dDoneLengthEng = 0.0; nVerifyImgNum = 0;
 	}
@@ -1826,13 +1841,13 @@ struct stPcrShare
 {
 	BOOL bExist;
 	int nSerial;
-	CString sModel, sLayer, sLot, sPrcsCode;
+	CString sModel, sLayer, sLot, sItsCode, sPrcsCode;
 
 	stPcrShare()
 	{
 		bExist = FALSE;
 		nSerial = 0;
-		sModel = _T(""); sLayer = _T(""); sLot = _T(""); sPrcsCode = _T("");
+		sModel = _T(""); sLayer = _T(""); sLot = _T(""); sItsCode = _T(""); sPrcsCode = _T("");
 	}
 };
 
@@ -1942,13 +1957,14 @@ struct stPcrMerge
 
 struct stModelInfo
 {
-	CString sModel, sLayer, sLot;
+	CString sModel, sLayer, sLot, sItsCode;
 
 	stModelInfo()
 	{
 		sModel = _T("");
 		sLayer = _T("");
 		sLot = _T("");
+		sItsCode = _T("");
 	}
 };
 

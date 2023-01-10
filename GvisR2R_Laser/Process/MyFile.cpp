@@ -595,7 +595,7 @@ void CMyFile::DelPcrAll(CString strPath)
 BOOL CMyFile::ChkLotEnd(CString sPath)
 {
 	// 파일을 읽는다.
-	char FileD[200];
+	char FileD[MAX_PATH];
 	char *FileData;
 	CString strFileData;
 	size_t nFileSize, nRSize;
@@ -607,7 +607,7 @@ BOOL CMyFile::ChkLotEnd(CString sPath)
 	//_tcscpy(FileD, sPath);
 	StringToChar(sPath, FileD);
 
-	if((fp = fopen(FileD, "r")) != NULL)
+	if ((fp = fopen(FileD, "r")) != NULL)
 	{
 		fseek(fp, 0, SEEK_END);
 		nFileSize = ftell(fp);
@@ -615,52 +615,58 @@ BOOL CMyFile::ChkLotEnd(CString sPath)
 
 		/* Allocate space for a path name */
 		//FileData = (char*)malloc( nFileSize );
-		FileData = (char*)calloc(nFileSize+1, sizeof(char));
+		FileData = (char*)calloc(nFileSize + 1, sizeof(char));
 
 		nRSize = fread(FileData, sizeof(char), nFileSize, fp);
 		strFileData.Format(_T("%s"), CharToString(FileData));
 		fclose(fp);
-		free( FileData );
+		free(FileData);
 	}
 	else
 		return FALSE;
 
-	CString strHeaderErrorInfo, strModel, strLayer, strLot, strTotalBadPieceNum;
-	
+	CString strHeaderErrorInfo, strModel, strLayer, strLot, sItsCode, strTotalBadPieceNum;
+
 	//strHeaderErrorInfo
 	nTemp = strFileData.Find(',', 0);
 	strHeaderErrorInfo = strFileData.Left(nTemp);		// 1(정상), -1(Align Error, 노광불량), -2(Lot End)
-	strFileData.Delete(0, nTemp+1);
+	strFileData.Delete(0, nTemp + 1);
 	nFileSize = nFileSize - nTemp - 1;
 
 	// Model
 	nTemp = strFileData.Find(',', 0);
 	strModel = strFileData.Left(nTemp);
-	strFileData.Delete(0, nTemp+1);
+	strFileData.Delete(0, nTemp + 1);
 	nFileSize = nFileSize - nTemp - 1;
 
 	// Layer
 	nTemp = strFileData.Find(',', 0);
 	strLayer = strFileData.Left(nTemp);
-	strFileData.Delete(0, nTemp+1);
+	strFileData.Delete(0, nTemp + 1);
 	nFileSize = nFileSize - nTemp - 1;
 
 	// Lot
-	nTemp = strFileData.Find('\n', 0);
+	nTemp = strFileData.Find(',', 0);
 	strLot = strFileData.Left(nTemp);
-	strFileData.Delete(0, nTemp+1);
+	strFileData.Delete(0, nTemp + 1);
+	nFileSize = nFileSize - nTemp - 1;
+
+	// Its Code
+	nTemp = strFileData.Find('\n', 0);
+	sItsCode = strFileData.Left(nTemp);
+	strFileData.Delete(0, nTemp + 1);
 	nFileSize = nFileSize - nTemp - 1;
 
 	//strTotalBadPieceNum = strFileData;
 	nTemp = strFileData.Find('\n', 0);
 	strTotalBadPieceNum = strFileData.Left(nTemp);;
-	strFileData.Delete(0, nTemp+1);
+	strFileData.Delete(0, nTemp + 1);
 	nFileSize = nFileSize - nTemp - 1;
 
-	
-	if(_tstoi(strHeaderErrorInfo) == -2)
+
+	if (_tstoi(strHeaderErrorInfo) == -2)
 		return TRUE;
-	
+
 	return FALSE;
 }
 
