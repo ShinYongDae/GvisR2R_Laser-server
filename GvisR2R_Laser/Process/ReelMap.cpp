@@ -2386,7 +2386,7 @@ CString CReelMap::GetYieldPath(int nRmap)
 			break;
 		case RMAP_INNER_ALLDN:
 			str = _T("YieldAll.txt");
-			sPath.Format(_T("%s%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathItsFile,
+			sPath.Format(_T("%s%s\\%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathItsFile,
 				pDoc->WorkingInfo.LastJob.sModelUp, pDoc->WorkingInfo.LastJob.sEngItsCode,
 				pDoc->WorkingInfo.LastJob.sInnerLotUp, pDoc->WorkingInfo.LastJob.sInnerLayerDn,
 				str);
@@ -4308,16 +4308,14 @@ CString CReelMap::GetRmapPath(int nRmap)
 		str = _T("ReelMapDataIO.txt");
 		sPath.Format(_T("%s%s\\%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathItsFile,
 			pDoc->WorkingInfo.LastJob.sModelUp, pDoc->WorkingInfo.LastJob.sEngItsCode,
-			pDoc->WorkingInfo.LastJob.sLotUp,
-			pDoc->WorkingInfo.LastJob.sLayerUp,
+			pDoc->WorkingInfo.LastJob.sLotUp, pDoc->WorkingInfo.LastJob.sLayerUp,
 			str);
 		break;
 	case RMAP_INOUTER_DN:
 		str = _T("ReelMapDataIO.txt");
 		sPath.Format(_T("%s%s\\%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathItsFile,
 			pDoc->WorkingInfo.LastJob.sModelUp, pDoc->WorkingInfo.LastJob.sEngItsCode,
-			pDoc->WorkingInfo.LastJob.sLotUp,
-			pDoc->WorkingInfo.LastJob.sLayerDn,
+			pDoc->WorkingInfo.LastJob.sLotUp, pDoc->WorkingInfo.LastJob.sLayerDn,
 			str);
 		break;
 	case RMAP_ITS:
@@ -4825,24 +4823,21 @@ void CReelMap::RestoreReelmap()
 		str = _T("ReelMapDataIO.txt");
 		sPath.Format(_T("%s%s\\%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathItsFile,
 			pDoc->WorkingInfo.LastJob.sModelUp, pDoc->WorkingInfo.LastJob.sEngItsCode,
-			pDoc->WorkingInfo.LastJob.sLotUp,
-			pDoc->WorkingInfo.LastJob.sLayerUp,
+			pDoc->WorkingInfo.LastJob.sLotUp, pDoc->WorkingInfo.LastJob.sLayerUp,
 			str);
 		break;
 	case RMAP_INOUTER_DN:
 		str = _T("ReelMapDataIO.txt");
 		sPath.Format(_T("%s%s\\%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathItsFile,
 			pDoc->WorkingInfo.LastJob.sModelUp, pDoc->WorkingInfo.LastJob.sEngItsCode,
-			pDoc->WorkingInfo.LastJob.sLotUp,
-			pDoc->WorkingInfo.LastJob.sLayerDn,
+			pDoc->WorkingInfo.LastJob.sLotUp, pDoc->WorkingInfo.LastJob.sLayerDn,
 			str);
 		break;
 	case RMAP_ITS:
 		pDoc->GetCurrentInfo();
 		str = _T("ReelMapDataIts.txt");
 		sPath.Format(_T("%s%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathItsFile,
-			pDoc->WorkingInfo.LastJob.sModelUp,
-			pDoc->WorkingInfo.LastJob.sEngItsCode,	//pDoc->m_sItsCode,
+			pDoc->WorkingInfo.LastJob.sModelUp, pDoc->WorkingInfo.LastJob.sEngItsCode,	//pDoc->m_sItsCode,
 			str);
 		break;
 	}
@@ -5268,6 +5263,8 @@ BOOL CReelMap::MakeDirYield(CString sPath)
 		}
 	}
 
+	return TRUE;
+
 
 //	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 //	CFileFind finder;
@@ -5402,8 +5399,6 @@ BOOL CReelMap::MakeDirYield(CString sPath)
 //	//if(!finder.FindFile(sPath))
 //	if (!pDoc->DirectoryExists(sPath))
 //		CreateDirectory(sPath, NULL);
-
-	return TRUE;
 }
 
 
@@ -5645,7 +5640,7 @@ BOOL CReelMap::MakeHeader(CString sPath)
 	MakeDirRmap();
 	StrToChar(sPath, FileName);
 
-	fp = fopen(FileName, "a+");
+	fp = fopen(FileName, "w+");
 	if (fp == NULL)
 	{
 		pView->MsgBox(_T("It is trouble to open ReelMap.txt"));
@@ -6415,19 +6410,29 @@ CString CReelMap::GetItsFileData(int nSerial, int nLayer) // RMAP_UP, RMAP_DN, R
 		break;
 	case RMAP_INNER_UP:
 		sSide = _T("T");
-		if (pDoc->m_pPcr[nLayer])
+		if (pDoc->m_pPcrInner[0])
 		{
-			if (pDoc->m_pPcr[nLayer][nIdx])
-				nTotDefPcs = pDoc->m_pPcr[nLayer][nIdx]->m_nTotDef;
+			if (pDoc->m_pPcrInner[0][nIdx])
+				nTotDefPcs = pDoc->m_pPcrInner[0][nIdx]->m_nTotDef;
 		}
+		//if (pDoc->m_pPcr[nLayer])
+		//{
+		//	if (pDoc->m_pPcr[nLayer][nIdx])
+		//		nTotDefPcs = pDoc->m_pPcr[nLayer][nIdx]->m_nTotDef;
+		//}
 		break;
 	case RMAP_INNER_DN:
 		sSide = _T("B");
-		if (pDoc->m_pPcr[nLayer])
+		if (pDoc->m_pPcrInner[1])
 		{
-			if (pDoc->m_pPcr[nLayer][nIdx])
-				nTotDefPcs = pDoc->m_pPcr[nLayer][nIdx]->m_nTotDef;
+			if (pDoc->m_pPcrInner[1][nIdx])
+				nTotDefPcs = pDoc->m_pPcrInner[1][nIdx]->m_nTotDef;
 		}
+		//if (pDoc->m_pPcr[nLayer])
+		//{
+		//	if (pDoc->m_pPcr[nLayer][nIdx])
+		//		nTotDefPcs = pDoc->m_pPcr[nLayer][nIdx]->m_nTotDef;
+		//}
 		break;
 	}
 

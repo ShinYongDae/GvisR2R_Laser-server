@@ -768,8 +768,11 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 			SetLotLastShot();
 			StartLive();
 
-			if (m_pDlgMenu01)
-				m_pDlgMenu01->UpdateData();
+			if (pDoc->GetTestMode() == MODE_OUTER)
+			{
+				if (m_pDlgMenu01)
+					m_pDlgMenu01->EnableItsMode();
+			}
 
 			m_bTIM_MPE_IO = TRUE;
 			SetTimer(TIM_MPE_IO, 50, NULL);
