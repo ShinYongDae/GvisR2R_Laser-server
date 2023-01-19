@@ -470,22 +470,29 @@ BOOL CDlgMenu01::DispReelmap(int nSerial, BOOL bDumy)
 		SaveLog(strData);
 	}
 
-	if (pDoc->GetTestMode() == MODE_OUTER)
+	//if (pDoc->GetTestMode() == MODE_OUTER)
+	//{
+	//	if (pDoc->m_pReelMapIts)
+	//	{
+	//		if (!pDoc->m_pReelMapIts->Disp(nSerial, bDumy))
+	//			return FALSE;
+	//	}
+	//}
+	//else
+	//{
+	//	if (pDoc->m_pReelMap)
+	//	{
+	//		if (!pDoc->m_pReelMap->Disp(nSerial, bDumy))
+	//			return FALSE;
+	//	}
+	//}
+
+	if (pDoc->m_pReelMap)
 	{
-		if (pDoc->m_pReelMapIts)
-		{
-			if (!pDoc->m_pReelMapIts->Disp(nSerial, bDumy))
-				return FALSE;
-		}
+		if (!pDoc->m_pReelMap->Disp(nSerial, bDumy))
+			return FALSE;
 	}
-	else
-	{
-		if (pDoc->m_pReelMap)
-		{
-			if (!pDoc->m_pReelMap->Disp(nSerial, bDumy))
-				return FALSE;
-		}
-	}
+
  	SetPnlNum();
  	SetPnlDefNum();
 	myStcReelmap.Refresh();
@@ -561,21 +568,27 @@ void CDlgMenu01::DispMkInfo()	// m_bTIM_DISP_DEF_IMG == FALSE 일때까지 계속 호출
 
 void CDlgMenu01::DispMkInfoUp()
 {
+	m_nDef[0] = _ttoi(pView->GetMkDispInfoUp(_T("Info"), _T("TotalDef"), m_nSerial));
+	int nMaxMaxDispDefImg = _ttoi(pView->GetMkDispInfoUp(_T("Info"), _T("MaxDisp"), m_nSerial)); //_tstoi(pDoc->WorkingInfo.System.sMaxDispDefImg);
+	m_nIdxDef[0] = m_nDef[0] - nMaxMaxDispDefImg; // 불량이미지 인덱스.
+
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	//int nSerialL = m_nBufUpSerial[0]; // 좌측 Camera
+	//int nSerialR = m_nBufUpSerial[1]; // 우측 Camera
 
-	int nIdx = pDoc->GetPcrIdx0(m_nSerial);
-	m_nDef[0] = 0;	
+	//int nIdx = pDoc->GetPcrIdx0(m_nSerial);
+	//m_nDef[0] = 0;	
 
-	int nMaxMaxDispDefImg = _tstoi(pDoc->WorkingInfo.System.sMaxDispDefImg);
-	if(pDoc->WorkingInfo.System.sMaxDispDefImg.IsEmpty())
-		nMaxMaxDispDefImg = 0;
-	else
-		nMaxMaxDispDefImg = _tstoi(pDoc->WorkingInfo.System.sMaxDispDefImg);
+	//int nMaxMaxDispDefImg = _tstoi(pDoc->WorkingInfo.System.sMaxDispDefImg);
+	//if(pDoc->WorkingInfo.System.sMaxDispDefImg.IsEmpty())
+	//	nMaxMaxDispDefImg = 0;
+	//else
+	//	nMaxMaxDispDefImg = _tstoi(pDoc->WorkingInfo.System.sMaxDispDefImg);
 
-	if(nMaxMaxDispDefImg > 0 && pDoc->m_pPcr[0][nIdx]->m_nTotDef - nMaxMaxDispDefImg > 0)
-		m_nIdxDef[0] = pDoc->m_pPcr[0][nIdx]->m_nTotDef - nMaxMaxDispDefImg; // 불량이미지 인덱스.
-	else
-		m_nIdxDef[0] = 0; // 불량이미지 인덱스.
+	//if(nMaxMaxDispDefImg > 0 && pDoc->m_pPcr[0][nIdx]->m_nTotDef - nMaxMaxDispDefImg > 0)
+	//	m_nIdxDef[0] = pDoc->m_pPcr[0][nIdx]->m_nTotDef - nMaxMaxDispDefImg; // 불량이미지 인덱스.
+	//else
+	//	m_nIdxDef[0] = 0; // 불량이미지 인덱스.
 
 	if(bDualTest)
 	{
@@ -588,54 +601,59 @@ void CDlgMenu01::DispMkInfoUp()
 			m_nIdxMkInfo[0] = MENU01_STC_DEFINFO_HARF*2;
 	}
 
-#ifdef TEST_MODE
-	m_nDef[0] = m_nIdxMkInfo[0] + 15; // DefNum : 15
-#else
-	if(pDoc->m_pPcr[0])
-	{
-		if(pDoc->m_pPcr[0][nIdx])
-		{
-			m_nDef[0] = pDoc->m_pPcr[0][nIdx]->m_nTotDef; // m_nDef : m_nIdxMkInfo + Display Def Num.
-			pDoc->m_pPcr[0][nIdx]->m_nTotRealDef = 0;
-		}
-	}
-#endif
+//#ifdef TEST_MODE
+//	m_nDef[0] = m_nIdxMkInfo[0] + 15; // DefNum : 15
+//#else
+//	if(pDoc->m_pPcr[0])
+//	{
+//		if(pDoc->m_pPcr[0][nIdx])
+//		{
+//			m_nDef[0] = pDoc->m_pPcr[0][nIdx]->m_nTotDef; // m_nDef : m_nIdxMkInfo + Display Def Num.
+//			pDoc->m_pPcr[0][nIdx]->m_nTotRealDef = 0;
+//		}
+//	}
+//#endif
 }
 
 void CDlgMenu01::DispMkInfoDn()
 {
-	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	if(!bDualTest)
-		return;
+	m_nDef[1] = _ttoi(pView->GetMkDispInfoDn(_T("Info"), _T("TotalDef"), pView->m_nBufUpSerial[0]));
+	int nMaxMaxDispDefImg = _ttoi(pView->GetMkDispInfoDn(_T("Info"), _T("MaxDisp"), m_nSerial)); //_tstoi(pDoc->WorkingInfo.System.sMaxDispDefImg);
+	m_nIdxDef[1] = m_nDef[1] - nMaxMaxDispDefImg; // 불량이미지 인덱스.
 
-	int nIdx = pDoc->GetPcrIdx1(m_nSerial);
-	m_nDef[1] = 0;
-
-	int nMaxMaxDispDefImg = _tstoi(pDoc->WorkingInfo.System.sMaxDispDefImg);
-	if(pDoc->WorkingInfo.System.sMaxDispDefImg.IsEmpty())
-		nMaxMaxDispDefImg = 0;
-	else
-		nMaxMaxDispDefImg = _tstoi(pDoc->WorkingInfo.System.sMaxDispDefImg);
-
-	if(nMaxMaxDispDefImg > 0 && pDoc->m_pPcr[1][nIdx]->m_nTotDef - nMaxMaxDispDefImg > 0)
-		m_nIdxDef[1] = pDoc->m_pPcr[1][nIdx]->m_nTotDef - nMaxMaxDispDefImg; // 불량이미지 인덱스.
-	else
-		m_nIdxDef[1] = 0; // 불량이미지 인덱스.
+//	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+//	if(!bDualTest)
+//		return;
+//
+//	int nIdx = pDoc->GetPcrIdx1(m_nSerial);
+//	m_nDef[1] = 0;
+//
+//	int nMaxMaxDispDefImg = _tstoi(pDoc->WorkingInfo.System.sMaxDispDefImg);
+//	if(pDoc->WorkingInfo.System.sMaxDispDefImg.IsEmpty())
+//		nMaxMaxDispDefImg = 0;
+//	else
+//		nMaxMaxDispDefImg = _tstoi(pDoc->WorkingInfo.System.sMaxDispDefImg);
+//
+//	if(nMaxMaxDispDefImg > 0 && pDoc->m_pPcr[1][nIdx]->m_nTotDef - nMaxMaxDispDefImg > 0)
+//		m_nIdxDef[1] = pDoc->m_pPcr[1][nIdx]->m_nTotDef - nMaxMaxDispDefImg; // 불량이미지 인덱스.
+//	else
+//		m_nIdxDef[1] = 0; // 불량이미지 인덱스.
 
 	if(m_nIdxMkInfo[1] > MENU01_STC_DEFINFO_HARF)
 		m_nIdxMkInfo[1] = MENU01_STC_DEFINFO_HARF;
-#ifdef TEST_MODE
-	m_nDef[1] = m_nIdxMkInfo[1] + 15; // DefNum : 15
-#else
-	if(pDoc->m_pPcr[1])
-	{
-		if(pDoc->m_pPcr[1][nIdx])
-		{
-			m_nDef[1] = pDoc->m_pPcr[1][nIdx]->m_nTotDef; // m_nDef : m_nIdxMkInfo + Display Def Num.
-			pDoc->m_pPcr[1][nIdx]->m_nTotRealDef = 0;
-		}
-	}
-#endif
+
+//#ifdef TEST_MODE
+//	m_nDef[1] = m_nIdxMkInfo[1] + 15; // DefNum : 15
+//#else
+//	if(pDoc->m_pPcr[1])
+//	{
+//		if(pDoc->m_pPcr[1][nIdx])
+//		{
+//			m_nDef[1] = pDoc->m_pPcr[1][nIdx]->m_nTotDef; // m_nDef : m_nIdxMkInfo + Display Def Num.
+//			pDoc->m_pPcr[1][nIdx]->m_nTotRealDef = 0;
+//		}
+//	}
+//#endif
 }
 
 void CDlgMenu01::InitMkInfo()
@@ -1462,6 +1480,16 @@ void CDlgMenu01::DispMkInfoUp(int nSerial)
 		return;
 	}
 
+	//CString sPathCadImg;
+	//sPathCadImg.Format(_T("%s%s\\%s\\%s\\CadImage\\%d\\%05d.tif"), pDoc->WorkingInfo.System.sPathOldFile,
+	//	pDoc->WorkingInfo.LastJob.sModelUp,
+	//	pDoc->WorkingInfo.LastJob.sLotUp,
+	//	pDoc->WorkingInfo.LastJob.sLayerUp,
+	//	nSerial,
+	//	nIdxImg);
+	CString sItem;
+	int nTotDef;
+
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	
 #ifdef USE_VISION
@@ -1472,34 +1500,39 @@ void CDlgMenu01::DispMkInfoUp(int nSerial)
  			int nIdxMkInfo = (m_nIdxMkInfo[0] < MENU01_STC_DEFINFO_HARF) ? m_nIdxMkInfo[0] : (MENU01_STC_DEFINFO_HARF-1);	
 			//int nIdxMkInfo = (MENU01_STC_DEFINFO_HARF-1);	
 
-			int nIdx = pDoc->GetPcrIdx0(nSerial);
+			//int nIdx = pDoc->GetPcrIdx0(nSerial);
 			int nDefImg;
-			if(pDoc->m_pPcr[0])
+			//if(pDoc->m_pPcr[0])
 			{
-				if(pDoc->m_pPcr[0][nIdx])
+				//if(pDoc->m_pPcr[0][nIdx])
 				{
-					if(pDoc->m_pPcr[0][nIdx]->m_pImg)
+					//if(pDoc->m_pPcr[0][nIdx]->m_pImg)
 					{
-						if(pDoc->m_pPcr[0][nIdx]->m_pMk[m_nIdxDef[0]] != -2) // -2 (NoMarking)
+						//if(pDoc->m_pPcr[0][nIdx]->m_pMk[m_nIdxDef[0]] != -2) // -2 (NoMarking)
 						{	
-							if(m_nIdxDef[0] < pDoc->m_pPcr[0][nIdx]->m_nTotDef)
+							nTotDef = _ttoi(pView->GetMkDispInfoUp(_T("Info"), _T("TotalDef"), nSerial));
+							//if(m_nIdxDef[0] < pDoc->m_pPcr[0][nIdx]->m_nTotDef)
+							if(m_nIdxDef[0] < nTotDef)
 							{
 								if(m_nIdxMkInfo[0] >= MENU01_STC_DEFINFO_HARF)
 									ShiftDefInfoUp();
- 								pView->m_pVision[0]->ShowDispCad(nIdxMkInfo, nSerial, 0, m_nIdxDef[0]);
+
+								sItem.Format(_T("%d"), m_nIdxDef[0]);
+								nDefImg = _ttoi(pView->GetMkDispInfoUp(sItem, _T("nImg"), nSerial));
+ 								pView->m_pVision[0]->ShowDispCad(nIdxMkInfo, nSerial, 0, nDefImg); // m_nIdxDef[0]
 								pView->m_pVision[0]->ShowOvrCad(nIdxMkInfo, nSerial);
-								nDefImg = pDoc->m_pPcr[0][nIdx]->m_pImg[m_nIdxDef[0]];
+								//nDefImg = pDoc->m_pPcr[0][nIdx]->m_pImg[m_nIdxDef[0]];
 								pView->m_pVision[0]->ShowDispDef(nIdxMkInfo, nSerial, 0, nDefImg);
-								ShowDefInfoUp(nIdxMkInfo);
+								ShowDefInfoUp(nIdxMkInfo, nSerial, m_nIdxDef[0]);
 								m_nIdxMkInfo[0]++;
 								m_nIdxDef[0]++;
-								(pDoc->m_pPcr[0][nIdx]->m_nTotRealDef)++;
+								//(pDoc->m_pPcr[0][nIdx]->m_nTotRealDef)++;
 							}
 							else
 								m_nIdxMkInfo[0]++;
 						}
-						else
-							m_nIdxDef[0]++;
+						//else
+						//	m_nIdxDef[0]++;
 					}
 				}
 			}
@@ -1512,34 +1545,39 @@ void CDlgMenu01::DispMkInfoUp(int nSerial)
  			int nIdxMkInfo = (m_nIdxMkInfo[0] < MENU01_STC_DEFINFO_HARF*2) ? m_nIdxMkInfo[0] : (MENU01_STC_DEFINFO_HARF*2-1);	
 	//		int nIdxMkInfo = (MENU01_STC_DEFINFO_HARF-1);	
 
-			int nIdx = pDoc->GetPcrIdx0(nSerial);
+			//int nIdx = pDoc->GetPcrIdx0(nSerial);
 			int nDefImg;
-			if(pDoc->m_pPcr[0])
+			//if(pDoc->m_pPcr[0])
 			{
-				if(pDoc->m_pPcr[0][nIdx])
+				//if(pDoc->m_pPcr[0][nIdx])
 				{
-					if(pDoc->m_pPcr[0][nIdx]->m_pImg)
+					//if(pDoc->m_pPcr[0][nIdx]->m_pImg)
 					{
-						if(pDoc->m_pPcr[0][nIdx]->m_pMk[m_nIdxDef[0]] != -2) // -2 (NoMarking)
+						//if(pDoc->m_pPcr[0][nIdx]->m_pMk[m_nIdxDef[0]] != -2) // -2 (NoMarking)
 						{	
-							if(m_nIdxDef[0] < pDoc->m_pPcr[0][nIdx]->m_nTotDef)
+							nTotDef = _ttoi(pView->GetMkDispInfoUp(_T("Info"), _T("TotalDef"), nSerial));
+							//if(m_nIdxDef[0] < pDoc->m_pPcr[0][nIdx]->m_nTotDef)
+							if (m_nIdxDef[0] < nTotDef)
 							{
 								if(m_nIdxMkInfo[0] >= MENU01_STC_DEFINFO_HARF*2)
 									ShiftDefInfoUp();
- 								pView->m_pVision[0]->ShowDispCad(nIdxMkInfo, nSerial, 0, m_nIdxDef[0]);
+
+								sItem.Format(_T("%d"), m_nIdxDef[0]);
+								nDefImg = _ttoi(pView->GetMkDispInfoUp(sItem, _T("nImg"), nSerial));
+								pView->m_pVision[0]->ShowDispCad(nIdxMkInfo, nSerial, 0, nDefImg); // m_nIdxDef[0]
 								pView->m_pVision[0]->ShowOvrCad(nIdxMkInfo, nSerial);
-								nDefImg = pDoc->m_pPcr[0][nIdx]->m_pImg[m_nIdxDef[0]];
+								//nDefImg = pDoc->m_pPcr[0][nIdx]->m_pImg[m_nIdxDef[0]];
 								pView->m_pVision[0]->ShowDispDef(nIdxMkInfo, nSerial, 0, nDefImg);
-								ShowDefInfoUp(nIdxMkInfo);
+								ShowDefInfoUp(nIdxMkInfo, nSerial, m_nIdxDef[0]);
 								m_nIdxMkInfo[0]++;
 								m_nIdxDef[0]++;
-								(pDoc->m_pPcr[0][nIdx]->m_nTotRealDef)++;
+								//(pDoc->m_pPcr[0][nIdx]->m_nTotRealDef)++;
 							}
 							else
 								m_nIdxMkInfo[0]++;
 						}
-						else
-							m_nIdxDef[0]++;
+						//else
+						//	m_nIdxDef[0]++;
 					}
 				}
 			}
@@ -1561,40 +1599,48 @@ void CDlgMenu01::DispMkInfoDn(int nSerial)
 		return;
 	}
 
+	CString sItem;
+	int nTotDef;
+
 #ifdef USE_VISION
 	if(pView->m_pVision[1])
 	{
  		int nIdxMkInfo = (m_nIdxMkInfo[1] < MENU01_STC_DEFINFO_HARF) ? m_nIdxMkInfo[1] : (MENU01_STC_DEFINFO_HARF-1);	
 //		int nIdxMkInfo = (MENU01_STC_DEFINFO_HARF-1);	
 
-		int nIdx = pDoc->GetPcrIdx1(nSerial);
+		//int nIdx = pDoc->GetPcrIdx1(nSerial);
 		int nDefImg;
-		if(pDoc->m_pPcr[1])
+		//if(pDoc->m_pPcr[1])
 		{
-			if(pDoc->m_pPcr[1][nIdx])
+			//if(pDoc->m_pPcr[1][nIdx])
 			{
-				if(pDoc->m_pPcr[1][nIdx]->m_pImg)
+				//if(pDoc->m_pPcr[1][nIdx]->m_pImg)
 				{
-					if(pDoc->m_pPcr[1][nIdx]->m_pMk[m_nIdxDef[1]] != -2) // -2 (NoMarking)
+					//if(pDoc->m_pPcr[1][nIdx]->m_pMk[m_nIdxDef[1]] != -2) // -2 (NoMarking)
 					{	
-						if(m_nIdxDef[1] < pDoc->m_pPcr[1][nIdx]->m_nTotDef)
+						nTotDef = _ttoi(pView->GetMkDispInfoDn(_T("Info"), _T("TotalDef"), nSerial));
+						//if(m_nIdxDef[1] < pDoc->m_pPcr[1][nIdx]->m_nTotDef)
+						if (m_nIdxDef[1] < nTotDef)
 						{
  							if(m_nIdxMkInfo[1] >= MENU01_STC_DEFINFO_HARF)
 								ShiftDefInfoDn();
- 							pView->m_pVision[1]->ShowDispCad(nIdxMkInfo, nSerial, 1, m_nIdxDef[1]);
+
+							sItem.Format(_T("%d"), m_nIdxDef[1]);
+							nDefImg = _ttoi(pView->GetMkDispInfoDn(sItem, _T("nImg"), nSerial));
+							pView->m_pVision[1]->ShowDispCad(nIdxMkInfo, nSerial, 1, nDefImg); // m_nIdxDef[0]
 							pView->m_pVision[1]->ShowOvrCad(nIdxMkInfo, nSerial);
-							nDefImg = pDoc->m_pPcr[1][nIdx]->m_pImg[m_nIdxDef[1]];
+							//nDefImg = pDoc->m_pPcr[1][nIdx]->m_pImg[m_nIdxDef[1]];
 							pView->m_pVision[1]->ShowDispDef(nIdxMkInfo, nSerial, 1, nDefImg);
-							ShowDefInfoDn(nIdxMkInfo);
+							ShowDefInfoDn(nIdxMkInfo, nSerial, m_nIdxDef[1]);
 							m_nIdxMkInfo[1]++;
 							m_nIdxDef[1]++;
-							(pDoc->m_pPcr[1][nIdx]->m_nTotRealDef)++;
+							//(pDoc->m_pPcr[1][nIdx]->m_nTotRealDef)++;
 						}
 						else
 							m_nIdxMkInfo[1]++;
 					}
-					else
-						m_nIdxDef[1]++;
+					//else
+					//	m_nIdxDef[1]++;
 				}
 			}
 		}
@@ -1662,105 +1708,123 @@ void CDlgMenu01::ShiftDefInfoDn()
 #endif
 }
 
-void CDlgMenu01::ShowDefInfoUp(int nIdx) // nIdx : 0 ~ 11 (12ea)
+void CDlgMenu01::ShowDefInfoUp(int nIdx, int nSerial, int nIdxDef) // nIdx : 0 ~ 11 (12ea)
 {
-	if(!pView->m_bDrawGL)
-		return;
-	if(!pDoc->m_pReelMap)
-	{
-		pView->MsgBox(_T("Not created Reelmap."));
-		//AfxMessageBox(_T("Not created Reelmap."));
-		return;
-	}
+	CString sItem;
+	sItem.Format(_T("%d"), nIdxDef);
 
-	CString str;
-	int nDefCode, nStrip, nCol, nRow;
-	COLORREF rgbDef;
+	CString str = pView->GetMkDispInfoUp(sItem, _T("Text"), nSerial);
+	COLORREF rgbDef = (COLORREF)_ttoi(pView->GetMkDispInfoUp(sItem, _T("RGB"), nSerial));
 
-#ifdef TEST_MODE 
-// 	nDefCode = pDoc->m_pReelMap->pPcsDef[2][28];
- 	int nPcrIdx = pDoc->GetPcrIdx0(m_nSerial);
-	if(pDoc->m_pPcr[0][nPcrIdx]->m_pMk[m_nIdxDef[0]] == -2) // -2 (NoMarking)
-		return;
-	int nPcsIdx = pDoc->m_pPcr[0][nPcrIdx]->m_pDefPcs[m_nIdxDef[0]]; //m_pImg[m_nIdxDef];
-	nDefCode = pDoc->m_pPcr[0][nPcrIdx]->m_pDefType[m_nIdxDef[0]];
-	rgbDef = pDoc->m_pReelMap->m_rgbDef[nDefCode];
-	if(pDoc->m_Master[0].m_pPcsRgn)
-		pDoc->m_Master[0].m_pPcsRgn->GetMkMatrix(nPcsIdx, nStrip, nCol, nRow);
-	str.Format(_T("%s\r\n%c - %d, %d"), pDoc->m_pReelMap->m_sKorDef[nDefCode], nStrip+'A', nCol+1, nRow+1);
-// 	str.Format(_T("%s\r\n%d열 %d, %d"), pDoc->m_pReelMap->m_sKorDef[nDefCode], nStrip+1, nCol+1, nRow+1);
-// 	str.Format(_T("%s"), pDoc->m_pReelMap->pMkInfo[nPcsIdx]);
-// 	str.Format(_T("%s"), pDoc->m_pReelMap->pMkInfo[28]);
-
-#else
- 	int nPcrIdx = pDoc->GetPcrIdx0(m_nSerial);
-// 	int nSelMkPnl = pDoc->m_pReelMap->m_nSelMarkingPnl;
-	if(pDoc->m_pPcr[0][nPcrIdx]->m_pMk[m_nIdxDef[0]] == -2) // -2 (NoMarking)
-		return;
-	int nPcsIdx = pDoc->m_pPcr[0][nPcrIdx]->m_pDefPcs[m_nIdxDef[0]]; //m_pImg[m_nIdxDef];
-	nDefCode = pDoc->m_pPcr[0][nPcrIdx]->m_pDefType[m_nIdxDef[0]];
-// 	nDefCode = pDoc->m_pReelMap->pPcsDef[nSelMkPnl][nPcsIdx];
- 	rgbDef = pDoc->m_pReelMap->m_rgbDef[nDefCode];	
-// 	str.Format(_T("%s"), pDoc->m_pReelMap->pMkInfo[nPcsIdx]);
-	if(pDoc->m_Master[0].m_pPcsRgn)
-		pDoc->m_Master[0].m_pPcsRgn->GetMkMatrix(nPcsIdx, nStrip, nCol, nRow);	
-	str.Format(_T("%s\r\n%c - %d, %d"), pDoc->m_pReelMap->m_sKorDef[nDefCode], nStrip+'A', nCol+1, nRow+1);
-// 	str.Format(_T("%s\r\n%d열 %d, %d"), pDoc->m_pReelMap->m_sKorDef[nDefCode], nStrip+1, nCol+1, nRow+1);
-#endif
 	myStcDefInfo[nIdx].SetText(str);
 	myStcDefInfo[nIdx].SetBkColor(rgbDef);
+
+//	if(!pView->m_bDrawGL)
+//		return;
+//	if(!pDoc->m_pReelMap)
+//	{
+//		pView->MsgBox(_T("Not created Reelmap."));
+//		//AfxMessageBox(_T("Not created Reelmap."));
+//		return;
+//	}
+//
+//	CString str;
+//	int nDefCode, nStrip, nCol, nRow;
+//	COLORREF rgbDef;
+//
+//#ifdef TEST_MODE 
+//// 	nDefCode = pDoc->m_pReelMap->pPcsDef[2][28];
+// 	int nPcrIdx = pDoc->GetPcrIdx0(m_nSerial);
+//	if(pDoc->m_pPcr[0][nPcrIdx]->m_pMk[m_nIdxDef[0]] == -2) // -2 (NoMarking)
+//		return;
+//	int nPcsIdx = pDoc->m_pPcr[0][nPcrIdx]->m_pDefPcs[m_nIdxDef[0]]; //m_pImg[m_nIdxDef];
+//	nDefCode = pDoc->m_pPcr[0][nPcrIdx]->m_pDefType[m_nIdxDef[0]];
+//	rgbDef = pDoc->m_pReelMap->m_rgbDef[nDefCode];
+//	if(pDoc->m_Master[0].m_pPcsRgn)
+//		pDoc->m_Master[0].m_pPcsRgn->GetMkMatrix(nPcsIdx, nStrip, nCol, nRow);
+//	str.Format(_T("%s\r\n%c - %d, %d"), pDoc->m_pReelMap->m_sKorDef[nDefCode], nStrip+'A', nCol+1, nRow+1);
+//// 	str.Format(_T("%s\r\n%d열 %d, %d"), pDoc->m_pReelMap->m_sKorDef[nDefCode], nStrip+1, nCol+1, nRow+1);
+//// 	str.Format(_T("%s"), pDoc->m_pReelMap->pMkInfo[nPcsIdx]);
+//// 	str.Format(_T("%s"), pDoc->m_pReelMap->pMkInfo[28]);
+//
+//#else
+// 	int nPcrIdx = pDoc->GetPcrIdx0(m_nSerial);
+//// 	int nSelMkPnl = pDoc->m_pReelMap->m_nSelMarkingPnl;
+//	if(pDoc->m_pPcr[0][nPcrIdx]->m_pMk[m_nIdxDef[0]] == -2) // -2 (NoMarking)
+//		return;
+//	int nPcsIdx = pDoc->m_pPcr[0][nPcrIdx]->m_pDefPcs[m_nIdxDef[0]]; //m_pImg[m_nIdxDef];
+//	nDefCode = pDoc->m_pPcr[0][nPcrIdx]->m_pDefType[m_nIdxDef[0]];
+//// 	nDefCode = pDoc->m_pReelMap->pPcsDef[nSelMkPnl][nPcsIdx];
+// 	rgbDef = pDoc->m_pReelMap->m_rgbDef[nDefCode];	
+//// 	str.Format(_T("%s"), pDoc->m_pReelMap->pMkInfo[nPcsIdx]);
+//	if(pDoc->m_Master[0].m_pPcsRgn)
+//		pDoc->m_Master[0].m_pPcsRgn->GetMkMatrix(nPcsIdx, nStrip, nCol, nRow);	
+//	str.Format(_T("%s\r\n%c - %d, %d"), pDoc->m_pReelMap->m_sKorDef[nDefCode], nStrip+'A', nCol+1, nRow+1);
+//// 	str.Format(_T("%s\r\n%d열 %d, %d"), pDoc->m_pReelMap->m_sKorDef[nDefCode], nStrip+1, nCol+1, nRow+1);
+//#endif
+	//myStcDefInfo[nIdx].SetText(str);
+	//myStcDefInfo[nIdx].SetBkColor(rgbDef);
 }
 
-void CDlgMenu01::ShowDefInfoDn(int nIdx) // nIdx : 0 ~ 11 (12ea)
+void CDlgMenu01::ShowDefInfoDn(int nIdx, int nSerial, int nIdxDef) // nIdx : 0 ~ 11 (12ea)
 {
-	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	if(!bDualTest)
-		return;
+	CString sItem;
+	sItem.Format(_T("%d"), nIdxDef);
 
-	if(!pView->m_bDrawGL)
-		return;
-	if(!pDoc->m_pReelMap)
-	{
-		pView->MsgBox(_T("Not created Reelmap."));
-		//AfxMessageBox(_T("Not created Reelmap."));
-		return;
-	}
+	CString str = pView->GetMkDispInfoDn(sItem, _T("Text"), nSerial);
+	COLORREF rgbDef = (COLORREF)_ttoi(pView->GetMkDispInfoDn(sItem, _T("RGB"), nSerial));
 
-	CString str;
-	int nDefCode, nStrip, nCol, nRow;
-	COLORREF rgbDef;
+	myStcDefInfo[MENU01_STC_DEFINFO_HARF + nIdx].SetText(str);
+	myStcDefInfo[MENU01_STC_DEFINFO_HARF + nIdx].SetBkColor(rgbDef);
 
-#ifdef TEST_MODE 
- 	int nPcrIdx = pDoc->GetPcrIdx1(m_nSerial);
-	if(pDoc->m_pPcr[1][nPcrIdx]->m_pMk[m_nIdxDef[1]] == -2) // -2 (NoMarking)
-		return;
-	int nPcsIdx = pDoc->m_pPcr[1][nPcrIdx]->m_pDefPcs[m_nIdxDef[1]]; //m_pImg[m_nIdxDef];
-	nDefCode = pDoc->m_pPcr[1][nPcrIdx]->m_pDefType[m_nIdxDef[1]];
-// 	nDefCode = pDoc->m_pReelMap->pPcsDef[2][28];
-	rgbDef = pDoc->m_pReelMap->m_rgbDef[nDefCode];
-	if(pDoc->m_Master[0].m_pPcsRgn)
-		pDoc->m_Master[0].m_pPcsRgn->GetMkMatrix(nPcsIdx, nStrip, nCol, nRow);	
-	str.Format(_T("%s\r\n%c - %d, %d"), pDoc->m_pReelMap->m_sKorDef[nDefCode], nStrip+'A', nCol+1, nRow+1);
-// 	str.Format(_T("%s\r\n%d열 %d, %d"), pDoc->m_pReelMap->m_sKorDef[nDefCode], nStrip+1, nCol+1, nRow+1);
-// 	str.Format(_T("%s"), pDoc->m_pReelMap->pMkInfo[nPcsIdx]);
-// 	str.Format(_T("%s"), pDoc->m_pReelMap->pMkInfo[28]);
-#else
- 	int nPcrIdx = pDoc->GetPcrIdx1(m_nSerial);
-// 	int nSelMkPnl = pDoc->m_pReelMap->m_nSelMarkingPnl;
-	if(pDoc->m_pPcr[1][nPcrIdx]->m_pMk[m_nIdxDef[1]] == -2) // -2 (NoMarking)
-		return;
-	int nPcsIdx = pDoc->m_pPcr[1][nPcrIdx]->m_pDefPcs[m_nIdxDef[1]]; //m_pImg[m_nIdxDef];
-	nDefCode = pDoc->m_pPcr[1][nPcrIdx]->m_pDefType[m_nIdxDef[1]];
-// 	nDefCode = pDoc->m_pReelMap->pPcsDef[nSelMkPnl][nPcsIdx];
-	rgbDef = pDoc->m_pReelMap->m_rgbDef[nDefCode];	
-	if(pDoc->m_Master[0].m_pPcsRgn)
-		pDoc->m_Master[0].m_pPcsRgn->GetMkMatrix(nPcsIdx, nStrip, nCol, nRow);	
-	str.Format(_T("%s\r\n%c - %d, %d"), pDoc->m_pReelMap->m_sKorDef[nDefCode], nStrip+'A', nCol+1, nRow+1);
-// 	str.Format(_T("%s\r\n%d열 %d, %d"), pDoc->m_pReelMap->m_sKorDef[nDefCode], nStrip+1, nCol+1, nRow+1);
-// 	str.Format(_T("%s"), pDoc->m_pReelMap->pMkInfo[nPcsIdx]);
-#endif
-	myStcDefInfo[MENU01_STC_DEFINFO_HARF+nIdx].SetText(str);
-	myStcDefInfo[MENU01_STC_DEFINFO_HARF+nIdx].SetBkColor(rgbDef);
+//	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+//	if(!bDualTest)
+//		return;
+//
+//	if(!pView->m_bDrawGL)
+//		return;
+//	if(!pDoc->m_pReelMap)
+//	{
+//		pView->MsgBox(_T("Not created Reelmap."));
+//		//AfxMessageBox(_T("Not created Reelmap."));
+//		return;
+//	}
+//
+//	CString str;
+//	int nDefCode, nStrip, nCol, nRow;
+//	COLORREF rgbDef;
+//
+//#ifdef TEST_MODE 
+// 	int nPcrIdx = pDoc->GetPcrIdx1(m_nSerial);
+//	if(pDoc->m_pPcr[1][nPcrIdx]->m_pMk[m_nIdxDef[1]] == -2) // -2 (NoMarking)
+//		return;
+//	int nPcsIdx = pDoc->m_pPcr[1][nPcrIdx]->m_pDefPcs[m_nIdxDef[1]]; //m_pImg[m_nIdxDef];
+//	nDefCode = pDoc->m_pPcr[1][nPcrIdx]->m_pDefType[m_nIdxDef[1]];
+//// 	nDefCode = pDoc->m_pReelMap->pPcsDef[2][28];
+//	rgbDef = pDoc->m_pReelMap->m_rgbDef[nDefCode];
+//	if(pDoc->m_Master[0].m_pPcsRgn)
+//		pDoc->m_Master[0].m_pPcsRgn->GetMkMatrix(nPcsIdx, nStrip, nCol, nRow);	
+//	str.Format(_T("%s\r\n%c - %d, %d"), pDoc->m_pReelMap->m_sKorDef[nDefCode], nStrip+'A', nCol+1, nRow+1);
+//// 	str.Format(_T("%s\r\n%d열 %d, %d"), pDoc->m_pReelMap->m_sKorDef[nDefCode], nStrip+1, nCol+1, nRow+1);
+//// 	str.Format(_T("%s"), pDoc->m_pReelMap->pMkInfo[nPcsIdx]);
+//// 	str.Format(_T("%s"), pDoc->m_pReelMap->pMkInfo[28]);
+//#else
+// 	int nPcrIdx = pDoc->GetPcrIdx1(m_nSerial);
+//// 	int nSelMkPnl = pDoc->m_pReelMap->m_nSelMarkingPnl;
+//	if(pDoc->m_pPcr[1][nPcrIdx]->m_pMk[m_nIdxDef[1]] == -2) // -2 (NoMarking)
+//		return;
+//	int nPcsIdx = pDoc->m_pPcr[1][nPcrIdx]->m_pDefPcs[m_nIdxDef[1]]; //m_pImg[m_nIdxDef];
+//	nDefCode = pDoc->m_pPcr[1][nPcrIdx]->m_pDefType[m_nIdxDef[1]];
+//// 	nDefCode = pDoc->m_pReelMap->pPcsDef[nSelMkPnl][nPcsIdx];
+//	rgbDef = pDoc->m_pReelMap->m_rgbDef[nDefCode];	
+//	if(pDoc->m_Master[0].m_pPcsRgn)
+//		pDoc->m_Master[0].m_pPcsRgn->GetMkMatrix(nPcsIdx, nStrip, nCol, nRow);	
+//	str.Format(_T("%s\r\n%c - %d, %d"), pDoc->m_pReelMap->m_sKorDef[nDefCode], nStrip+'A', nCol+1, nRow+1);
+//// 	str.Format(_T("%s\r\n%d열 %d, %d"), pDoc->m_pReelMap->m_sKorDef[nDefCode], nStrip+1, nCol+1, nRow+1);
+//// 	str.Format(_T("%s"), pDoc->m_pReelMap->pMkInfo[nPcsIdx]);
+//#endif
+//	myStcDefInfo[MENU01_STC_DEFINFO_HARF+nIdx].SetText(str);
+//	myStcDefInfo[MENU01_STC_DEFINFO_HARF+nIdx].SetBkColor(rgbDef);
 }
 
 void CDlgMenu01::InitGL()
@@ -2782,14 +2846,17 @@ BOOL CDlgMenu01::SetSerialReelmap(int nSerial, BOOL bDumy)
 		return 0;
 	}
 
-	CString sPath;
-	if(pDoc->MakeMkDir())
-	{
-		DispReelmap(nSerial, bDumy);
-		return TRUE;
-	}
+	DispReelmap(nSerial, bDumy);
+	return TRUE;
 
-	return FALSE;
+	//CString sPath;
+	//if(pDoc->MakeMkDir())
+	//{
+	//	DispReelmap(nSerial, bDumy);
+	//	return TRUE;
+	//}
+
+	//return FALSE;
 }
 
 BOOL CDlgMenu01::SetSerialMkInfo(int nSerial, BOOL bDumy)
@@ -2801,24 +2868,31 @@ BOOL CDlgMenu01::SetSerialMkInfo(int nSerial, BOOL bDumy)
 		return 0;
 	}
 
-	CString sPath;
-	if(pDoc->MakeMkDir())
+	if (m_nSerial != nSerial)
 	{
-		if(m_nSerial != nSerial)
-		{
-			m_nSerial = nSerial;
-
-			if(nSerial == pView->m_nLotEndSerial)
-				int nBreak = 1;
-
-			//if(nSerial < pView->GetLotEndSerial() || !pView->GetLotEndSerial())
-			if(nSerial <= pView->m_nLotEndSerial || !pView->m_nLotEndSerial)
-				DispMkInfo();
-		}
-		return TRUE;
+		m_nSerial = nSerial;
+		DispMkInfo();
 	}
+	return TRUE;
 
-	return FALSE;
+//	CString sPath;
+//	if(pDoc->MakeMkDir())
+	//{
+	//	if(m_nSerial != nSerial)
+	//	{
+	//		m_nSerial = nSerial;
+
+	//		if(nSerial == pView->m_nLotEndSerial)
+	//			int nBreak = 1;
+
+	//		//if(nSerial < pView->GetLotEndSerial() || !pView->GetLotEndSerial())
+	//		if(nSerial <= pView->m_nLotEndSerial || !pView->m_nLotEndSerial)
+	//			DispMkInfo();
+	//	}
+	//	return TRUE;
+	//}
+
+	//return FALSE;
 }
 
 
@@ -5041,7 +5115,7 @@ void CDlgMenu01::DispTotRatioIts()
 
 	str.Format(_T("%d"), nBad);
 	myStcData[15].SetText(str); // IDC_STC_DEFECT_NUM_UP
-	pDoc->SetMkMenu01(_T("Bed"), _T("Up"), str);
+	//pDoc->SetMkMenu01(_T("Bed"), _T("Up"), str);
 
 	if (nTot > 0)
 		dRatio = ((double)nBad / (double)nTot) * 100.0;
@@ -5049,11 +5123,11 @@ void CDlgMenu01::DispTotRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[16].SetText(str); // IDC_STC_DEFECT_RATIO_UP
-	pDoc->SetMkMenu01(_T("Bed Ratio"), _T("Up"), str);
+	//pDoc->SetMkMenu01(_T("Bed Ratio"), _T("Up"), str);
 
 	str.Format(_T("%d"), nGood);
 	myStcData[17].SetText(str); // IDC_STC_GOOD_NUM_UP
-	pDoc->SetMkMenu01(_T("Good"), _T("Up"), str);
+	//pDoc->SetMkMenu01(_T("Good"), _T("Up"), str);
 
 	if (nTot > 0)
 		dRatio = ((double)nGood / (double)nTot) * 100.0;
@@ -5061,11 +5135,11 @@ void CDlgMenu01::DispTotRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[18].SetText(str); // IDC_STC_GOOD_RATIO
-	pDoc->SetMkMenu01(_T("Good Ratio"), _T("Up"), str);
+	//pDoc->SetMkMenu01(_T("Good Ratio"), _T("Up"), str);
 
 	str.Format(_T("%d"), nTot);
 	myStcData[19].SetText(str); // IDC_STC_TOTAL_NUM_UP
-	pDoc->SetMkMenu01(_T("Total Test"), _T("Up"), str);
+	//pDoc->SetMkMenu01(_T("Total Test"), _T("Up"), str);
 
 	// 내층
 	if (pDoc->WorkingInfo.LastJob.bDualTestInner)
@@ -5077,7 +5151,7 @@ void CDlgMenu01::DispTotRatioIts()
 
 	str.Format(_T("%d"), nBad);
 	myStcData[49].SetText(str); // IDC_STC_DEFECT_NUM_DN
-	pDoc->SetMkMenu01(_T("Bed"), _T("Dn"), str);
+	//pDoc->SetMkMenu01(_T("Bed"), _T("Dn"), str);
 
 	if (nTot > 0)
 		dRatio = ((double)nBad / (double)nTot) * 100.0;
@@ -5085,11 +5159,11 @@ void CDlgMenu01::DispTotRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[50].SetText(str); // IDC_STC_DEFECT_RATIO_DN
-	pDoc->SetMkMenu01(_T("Bed Ratio"), _T("Dn"), str);
+	//pDoc->SetMkMenu01(_T("Bed Ratio"), _T("Dn"), str);
 
 	str.Format(_T("%d"), nGood);
 	myStcData[51].SetText(str); // IDC_STC_GOOD_NUM_DN
-	pDoc->SetMkMenu01(_T("Good"), _T("Dn"), str);
+	//pDoc->SetMkMenu01(_T("Good"), _T("Dn"), str);
 
 	if (nTot > 0)
 		dRatio = ((double)nGood / (double)nTot) * 100.0;
@@ -5097,11 +5171,11 @@ void CDlgMenu01::DispTotRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[52].SetText(str); // IDC_STC_GOOD_RATIO_DN
-	pDoc->SetMkMenu01(_T("Good Ratio"), _T("Dn"), str);
+	//pDoc->SetMkMenu01(_T("Good Ratio"), _T("Dn"), str);
 
 	str.Format(_T("%d"), nTot);
 	myStcData[53].SetText(str); // IDC_STC_TOTAL_NUM_DN
-	pDoc->SetMkMenu01(_T("Total Test"), _T("Dn"), str);
+	//pDoc->SetMkMenu01(_T("Total Test"), _T("Dn"), str);
 
 	// 전체
 	pDoc->m_pReelMapIts->GetPcsNum(nGood, nBad);
@@ -5109,7 +5183,7 @@ void CDlgMenu01::DispTotRatioIts()
 
 	str.Format(_T("%d"), nBad);
 	myStcData[54].SetText(str); // IDC_STC_DEFECT_NUM_ALL
-	pDoc->SetMkMenu01(_T("Bed"), _T("Total"), str);
+	//pDoc->SetMkMenu01(_T("Bed"), _T("Total"), str);
 
 	if (nTot > 0)
 		dRatio = ((double)nBad / (double)nTot) * 100.0;
@@ -5117,11 +5191,11 @@ void CDlgMenu01::DispTotRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[55].SetText(str); // IDC_STC_DEFECT_RATIO_ALL
-	pDoc->SetMkMenu01(_T("Bed Ratio"), _T("Total"), str);
+	//pDoc->SetMkMenu01(_T("Bed Ratio"), _T("Total"), str);
 
 	str.Format(_T("%d"), nGood);
 	myStcData[56].SetText(str); // IDC_STC_GOOD_NUM_ALL
-	pDoc->SetMkMenu01(_T("Good"), _T("Total"), str);
+	//pDoc->SetMkMenu01(_T("Good"), _T("Total"), str);
 
 	if (nTot > 0)
 		dRatio = ((double)nGood / (double)nTot) * 100.0;
@@ -5129,11 +5203,11 @@ void CDlgMenu01::DispTotRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[57].SetText(str); // IDC_STC_GOOD_RATIO_ALL
-	pDoc->SetMkMenu01(_T("Good Ratio"), _T("Total"), str);
+	//pDoc->SetMkMenu01(_T("Good Ratio"), _T("Total"), str);
 
 	str.Format(_T("%d"), nTot);
 	myStcData[58].SetText(str); // IDC_STC_TOTAL_NUM_ALL
-	pDoc->SetMkMenu01(_T("Total Test"), _T("Total"), str);
+	//pDoc->SetMkMenu01(_T("Total Test"), _T("Total"), str);
 }
 
 void CDlgMenu01::DispStripRatioIts()
@@ -5180,7 +5254,7 @@ void CDlgMenu01::DispStripRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[59].SetText(str); // IDC_STC_GD_RA_1_UP
-	pDoc->SetMkMenu01(_T("Yield Strip0"), _T("Up"), str);
+	//pDoc->SetMkMenu01(_T("Yield Strip0"), _T("Up"), str);
 
 	nSum += nVal[0][1];
 	if (nTot > 0)
@@ -5189,7 +5263,7 @@ void CDlgMenu01::DispStripRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[60].SetText(str); // IDC_STC_GD_RA_2_UP
-	pDoc->SetMkMenu01(_T("Yield Strip1"), _T("Up"), str);
+	//pDoc->SetMkMenu01(_T("Yield Strip1"), _T("Up"), str);
 
 	nSum += nVal[0][2];
 	if (nTot > 0)
@@ -5198,7 +5272,7 @@ void CDlgMenu01::DispStripRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[61].SetText(str); // IDC_STC_GD_RA_3_UP
-	pDoc->SetMkMenu01(_T("Yield Strip2"), _T("Up"), str);
+	//pDoc->SetMkMenu01(_T("Yield Strip2"), _T("Up"), str);
 
 	nSum += nVal[0][3];
 	if (nTot > 0)
@@ -5207,7 +5281,7 @@ void CDlgMenu01::DispStripRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[62].SetText(str); // IDC_STC_GD_RA_4_UP
-	pDoc->SetMkMenu01(_T("Yield Strip3"), _T("Up"), str);
+	//pDoc->SetMkMenu01(_T("Yield Strip3"), _T("Up"), str);
 
 	if (nTot > 0)
 		dRatio = ((double)(nTot - nSum) / (double)nTot) * 100.0;
@@ -5215,7 +5289,7 @@ void CDlgMenu01::DispStripRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[63].SetText(str); // IDC_STC_GD_RA_ALL_UP
-	pDoc->SetMkMenu01(_T("Yield Total"), _T("Up"), str);
+	//pDoc->SetMkMenu01(_T("Yield Total"), _T("Up"), str);
 
 	nSum = 0;
 
@@ -5242,7 +5316,7 @@ void CDlgMenu01::DispStripRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[64].SetText(str); // IDC_STC_GD_RA_1_DN
-	pDoc->SetMkMenu01(_T("Yield Strip0"), _T("Dn"), str);
+	//pDoc->SetMkMenu01(_T("Yield Strip0"), _T("Dn"), str);
 
 	nSum += nVal[1][1];
 	if (nTot > 0)
@@ -5251,7 +5325,7 @@ void CDlgMenu01::DispStripRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[65].SetText(str); // IDC_STC_GD_RA_2_DN
-	pDoc->SetMkMenu01(_T("Yield Strip1"), _T("Dn"), str);
+	//pDoc->SetMkMenu01(_T("Yield Strip1"), _T("Dn"), str);
 
 	nSum += nVal[1][2];
 	if (nTot > 0)
@@ -5260,7 +5334,7 @@ void CDlgMenu01::DispStripRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[66].SetText(str); // IDC_STC_GD_RA_3_DN
-	pDoc->SetMkMenu01(_T("Yield Strip2"), _T("Dn"), str);
+	//pDoc->SetMkMenu01(_T("Yield Strip2"), _T("Dn"), str);
 
 	nSum += nVal[1][3];
 	if (nTot > 0)
@@ -5269,7 +5343,7 @@ void CDlgMenu01::DispStripRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[67].SetText(str); // IDC_STC_GD_RA_4_DN
-	pDoc->SetMkMenu01(_T("Yield Strip3"), _T("Dn"), str);
+	//pDoc->SetMkMenu01(_T("Yield Strip3"), _T("Dn"), str);
 
 	if (nTot > 0)
 		dRatio = ((double)(nTot - nSum) / (double)nTot) * 100.0;
@@ -5277,7 +5351,7 @@ void CDlgMenu01::DispStripRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[68].SetText(str); // IDC_STC_GD_RA_ALL_DN
-	pDoc->SetMkMenu01(_T("Yield Total"), _T("Dn"), str);
+	//pDoc->SetMkMenu01(_T("Yield Total"), _T("Dn"), str);
 
 	nSum = 0;
 
@@ -5294,7 +5368,7 @@ void CDlgMenu01::DispStripRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[69].SetText(str); // IDC_STC_GD_RA_1_ALL
-	pDoc->SetMkMenu01(_T("Yield Strip0"), _T("Total"), str);
+	//pDoc->SetMkMenu01(_T("Yield Strip0"), _T("Total"), str);
 
 	nSum += nMer[1];
 	if (nTot > 0)
@@ -5303,7 +5377,7 @@ void CDlgMenu01::DispStripRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[70].SetText(str); // IDC_STC_GD_RA_2_ALL
-	pDoc->SetMkMenu01(_T("Yield Strip1"), _T("Total"), str);
+	//pDoc->SetMkMenu01(_T("Yield Strip1"), _T("Total"), str);
 
 	nSum += nMer[2];
 	if (nTot > 0)
@@ -5312,7 +5386,7 @@ void CDlgMenu01::DispStripRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[71].SetText(str); // IDC_STC_GD_RA_3_ALL
-	pDoc->SetMkMenu01(_T("Yield Strip2"), _T("Total"), str);
+	//pDoc->SetMkMenu01(_T("Yield Strip2"), _T("Total"), str);
 
 	nSum += nMer[3];
 	if (nTot > 0)
@@ -5321,7 +5395,7 @@ void CDlgMenu01::DispStripRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[72].SetText(str); // IDC_STC_GD_RA_4_ALL
-	pDoc->SetMkMenu01(_T("Yield Strip3"), _T("Total"), str);
+	//pDoc->SetMkMenu01(_T("Yield Strip3"), _T("Total"), str);
 
 	if (nTot > 0)
 		dRatio = ((double)(nTot - nSum) / (double)nTot) * 100.0;
@@ -5329,5 +5403,5 @@ void CDlgMenu01::DispStripRatioIts()
 		dRatio = 0.0;
 	str.Format(_T("%.1f"), dRatio);
 	myStcData[73].SetText(str); // IDC_STC_GD_RA_ALL_ALL
-	pDoc->SetMkMenu01(_T("Yield Total"), _T("Total"), str);
+	//pDoc->SetMkMenu01(_T("Yield Total"), _T("Total"), str);
 }

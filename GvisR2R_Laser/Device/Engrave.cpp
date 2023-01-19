@@ -1313,6 +1313,13 @@ void CEngrave::GetSignalEngraveAutoSequence(SOCKET_DATA SockData)
 		case _SigInx::_UpdateWork:
 			pView->GetMkMenu01();
 			break;
+		case _SigInx::_DispDefImg:
+			if (!pView->m_bTHREAD_DISP_DEF)
+			{
+				pView->m_nStepTHREAD_DISP_DEF = 0;
+				pView->m_bTHREAD_DISP_DEF = TRUE;
+			}
+			break;
 		// Is
 		case _SigInx::_IsEngAutoInit:
 			pDoc->BtnStatus.EngAuto.IsInit = (SockData.nData1 > 0) ? TRUE : FALSE;

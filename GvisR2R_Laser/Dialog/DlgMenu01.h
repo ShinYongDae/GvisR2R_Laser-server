@@ -69,8 +69,8 @@ class CDlgMenu01 : public CDialog
 	void FreeMkInfoDn();
 	void SelDisp();
 
-	void ShowDefInfoUp(int nIdx); // nIdx : 0 ~ 11 (12ea)
-	void ShowDefInfoDn(int nIdx); // nIdx : 0 ~ 11 (12ea)
+	void ShowDefInfoUp(int nIdx, int nSerial, int nIdxDef); // nIdx : 0 ~ 11 (12ea)
+	void ShowDefInfoDn(int nIdx, int nSerial, int nIdxDef); // nIdx : 0 ~ 11 (12ea)
 	void DispMkInfo();
 	void DispMkInfoUp();
 	void DispMkInfoDn();

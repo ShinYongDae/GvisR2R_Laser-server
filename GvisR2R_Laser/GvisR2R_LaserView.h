@@ -243,33 +243,33 @@ class CGvisR2R_LaserView : public CFormView
 	int GetVsUpBufLastSerial();
 	int GetVsDnBufLastSerial();
 
-	void MarkingWith2PointAlign();
-	void Mk2PtReady();
-	void Mk2PtChkSerial();
-	void Mk2PtInit();
-	void Mk2PtAlignPt0();
-	void Mk2PtAlignPt1();
-	void Mk2PtMoveInitPos();
-	void Mk2PtElecChk();
-	void Mk2PtDoMarking();
-	void Mk2PtLotDiff();
-	void Mk2PtReject();
-	void Mk2PtErrStop();
+	//void MarkingWith2PointAlign();
+	//void Mk2PtReady();
+	//void Mk2PtChkSerial();
+	//void Mk2PtInit();
+	//void Mk2PtAlignPt0();
+	//void Mk2PtAlignPt1();
+	//void Mk2PtMoveInitPos();
+	//void Mk2PtElecChk();
+	//void Mk2PtDoMarking();
+	//void Mk2PtLotDiff();
+	//void Mk2PtReject();
+	//void Mk2PtErrStop();
 
-	void MarkingWith4PointAlign();
-	void Mk4PtReady();
-	void Mk4PtChkSerial();
-	void Mk4PtInit();
-	void Mk4PtAlignPt0();
-	void Mk4PtAlignPt1();
-	void Mk4PtAlignPt2();
-	void Mk4PtAlignPt3();
-	void Mk4PtMoveInitPos();
-	void Mk4PtElecChk();
-	void Mk4PtDoMarking();
-	void Mk4PtLotDiff();
-	void Mk4PtReject();
-	void Mk4PtErrStop();
+	//void MarkingWith4PointAlign();
+	//void Mk4PtReady();
+	//void Mk4PtChkSerial();
+	//void Mk4PtInit();
+	//void Mk4PtAlignPt0();
+	//void Mk4PtAlignPt1();
+	//void Mk4PtAlignPt2();
+	//void Mk4PtAlignPt3();
+	//void Mk4PtMoveInitPos();
+	//void Mk4PtElecChk();
+	//void Mk4PtDoMarking();
+	//void Mk4PtLotDiff();
+	//void Mk4PtReject();
+	//void Mk4PtErrStop();
 
 	void DoBoxSw();
 	void DoEmgSw();
@@ -292,7 +292,7 @@ class CGvisR2R_LaserView : public CFormView
 	void DoUcSens3();		// MpeIo[3]
 	void DoRcBoxSw();		// MpeIo[4]
 	void DoRcSens1();		// MpeIo[5]
-	void DoRcSens2();		// MpeIo[6]
+	//void DoRcSens2();		// MpeIo[6]
 	void DoRcSens3();		// MpeIo[7]
 
 	BOOL SetCollision(double dCollisionMargin);
@@ -1045,7 +1045,9 @@ public:
 
 	void DispStatusBar(CString strMsg, int nStatusBarID);
 	void GetMkMenu01();
-
+	CString GetMkMenu01(CString sMenu, CString sItem);
+	CString GetMkDispInfoUp(CString sMenu, CString sItem, int nSerial);
+	CString GetMkDispInfoDn(CString sMenu, CString sItem, int nSerial);
 
 	BOOL m_bTHREAD_DISP_DEF_INNER;
 	int	m_nStepTHREAD_DISP_DEF_INNER;

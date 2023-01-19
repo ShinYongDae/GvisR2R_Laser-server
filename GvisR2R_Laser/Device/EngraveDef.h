@@ -23,7 +23,7 @@ typedef enum _stSigInx {
 	_UltraSonicAoiDn, _UltraSonicEngrave, _FixDef,
 	// Menu01
 	_TempStop, _TempPause, _LotCut, _MkPosMv, _MkVerify, _ReelmapUp, _ReelmapDn, _ReelmapTot,
-	_RemainMode, _EndWork, _ReMk, _2Layer, _1LnMk, _2LnMk, _3LnMk, _4LnMk, _TotLnMk, _UpdateWork,
+	_RemainMode, _EndWork, _ReMk, _2Layer, _1LnMk, _2LnMk, _3LnMk, _4LnMk, _TotLnMk, _UpdateWork, _DispDefImg,
 	// Menu02
 	_2DEngLenMvCw, _2DEngLenMvCcw, _2DAoiLenMvCw, _2DAoiLenMvCcw, _2DMkLenMvCw, _2DMkLenMvCcw, _2DOneShotLenCw, _2DOneShotLenCcw,	
 	// Menu03

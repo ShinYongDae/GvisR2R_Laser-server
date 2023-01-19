@@ -1015,10 +1015,39 @@ void CVision::ShiftDisp()
 
 void CVision::ShowDispCad(int nIdxMkInfo, int nSerial, int nLayer, int nIdxDef) // From 0 To 12...for Screen display.
 {
-	if(m_pMilBufCad[nIdxMkInfo])
+	CString sPath;
+	if (nLayer == 0) // Up
 	{
-		CropCadImg(nIdxMkInfo, nSerial, nLayer, nIdxDef);
+		sPath.Format(_T("%s%s\\%s\\%s\\CadImage\\%d\\%05d.tif"), pDoc->WorkingInfo.System.sPathOldFile,
+			pDoc->WorkingInfo.LastJob.sModelUp,
+			pDoc->WorkingInfo.LastJob.sLotUp,
+			pDoc->WorkingInfo.LastJob.sLayerUp,
+			nSerial,
+			nIdxDef);
 	}
+	else
+	{
+		sPath.Format(_T("%s%s\\%s\\%s\\CadImage\\%d\\%05d.tif"), pDoc->WorkingInfo.System.sPathOldFile,
+			pDoc->WorkingInfo.LastJob.sModelUp,
+			pDoc->WorkingInfo.LastJob.sLotUp,
+			pDoc->WorkingInfo.LastJob.sLayerDn,
+			nSerial,
+			nIdxDef);
+	}
+
+	TCHAR cPath[MAX_PATH];
+	CFileFind findfile;
+	if (findfile.FindFile(sPath))
+	{
+		_stprintf(cPath, _T("%s"), sPath);
+		if(m_pMilBufCad[nIdxMkInfo])
+			m_pMilBufCad[nIdxMkInfo]->BufferLoad(cPath);
+	}
+
+	//if(m_pMilBufCad[nIdxMkInfo])
+	//{
+	//	CropCadImg(nIdxMkInfo, nSerial, nLayer, nIdxDef);
+	//}
 }
 
 void CVision::CropCadImg(int nIdxMkInfo, int nSerial, int nLayer, int nIdxDef)
@@ -2482,21 +2511,20 @@ void CVision::ShowDispDef(int nIdxMkInfo, int nSerial, int nLayer, int nDefPcs) 
 				sPath.Format(_T("%sDefImage\\%d\\%05d.tif"), 
 					sUpPath,
 					nSerial,
-															 nDefPcs);
-		}
+					nDefPcs);
+			}
 			else if (nLayer == 1) // Dn
-		{
+			{
 				sPath.Format(_T("%sDefImage\\%d\\%05d.tif"), 
 					sDnPath,
 					nSerial,
-																 nDefPcs);
-		}
+					nDefPcs);
+			}
 		}
 #endif
 		CFileFind findfile;
 		if(findfile.FindFile(sPath))
 		{
-			//strcpy(cPath, sPath);
 			_stprintf(cPath, _T("%s"), sPath);
 			m_pMilBufDef[nIdxMkInfo]->BufferLoad(cPath);
 		}

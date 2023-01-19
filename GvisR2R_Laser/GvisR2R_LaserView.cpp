@@ -753,13 +753,13 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 				}
 			}
 
-			//// Check Encoder
+			// Check Encoder
 			if (!m_bThread[1])
 				m_Thread[1].Start(GetSafeHwnd(), this, ThreadProc1);
 
-			//// DispDefImg
-			//if (!m_bThread[2])
-			//	m_Thread[2].Start(GetSafeHwnd(), this, ThreadProc2);
+			// DispDefImg
+			if (!m_bThread[2])
+				m_Thread[2].Start(GetSafeHwnd(), this, ThreadProc2);
 
 			//MoveInitPos1();
 			//Sleep(30);
@@ -11245,6 +11245,9 @@ void CGvisR2R_LaserView::InitReelmapDn()
 		 m_pDlgMenu01->InitGL();
 		 m_bDrawGL = TRUE;
 		 m_pDlgMenu01->RefreshRmap();
+		 m_pDlgMenu01->InitCadImg();
+		 m_pDlgMenu01->SetPnlNum();
+		 m_pDlgMenu01->SetPnlDefNum();
 	 }
 
 	 if (m_pDlgMenu02)
@@ -12503,6 +12506,10 @@ void CGvisR2R_LaserView::DispDefImg()
 		// CopyDefImg Start ============================================
 	case 0:
 		m_nStepTHREAD_DISP_DEF++;
+		m_nBufUpSerial[0] = m_nBufDnSerial[0] = _ttoi(pView->GetMkMenu01(_T("DispDefImg"), _T("SerialL")));
+		m_nBufUpSerial[1] = m_nBufDnSerial[1] = _ttoi(pView->GetMkMenu01(_T("DispDefImg"), _T("SerialR")));
+
+		//m_nDef[0] = _ttoi(pView->GetMkDispInfoUp(_T("Info"), _T("TotalDef"), pView->m_nBufUpSerial[0]));
 
 		if (bDualTest)
 		{
@@ -12515,47 +12522,47 @@ void CGvisR2R_LaserView::DispDefImg()
 			sNewLot = m_sNewLotUp;
 		}
 
-		if (nSerial == pView->m_nLotEndSerial)
-			nBreak = 1;
+		//if (nSerial == pView->m_nLotEndSerial)
+		//	nBreak = 1;
 
-		if (nSerial > 0)
-		{
-			if (!CopyDefImg(nSerial, sNewLot))
-			{
-				sNewLot.Empty();
-				m_bDispMsgDoAuto[7] = TRUE;
-				m_nStepDispMsg[7] = FROM_DISPDEFIMG + 7;
-				break;
-			}
+		//if (nSerial > 0)
+		//{
+		//	if (!CopyDefImg(nSerial, sNewLot))
+		//	{
+		//		sNewLot.Empty();
+		//		m_bDispMsgDoAuto[7] = TRUE;
+		//		m_nStepDispMsg[7] = FROM_DISPDEFIMG + 7;
+		//		break;
+		//	}
 
-			if (m_bLastProc && nSerial + 1 > m_nLotEndSerial)
-			{
-				if (bDualTest)
-					nSerial = m_nBufDnSerial[0]; // Test
-				else
-					nSerial = m_nBufUpSerial[0]; // Test
-			}
-			else
-			{
-				if (!CopyDefImg(nSerial + 1, sNewLot))
-				{
-					sNewLot.Empty();
-					m_bDispMsgDoAuto[6] = TRUE;
-					m_nStepDispMsg[6] = FROM_DISPDEFIMG + 6;
-					break;
-				}
-			}
+		//	if (m_bLastProc && nSerial + 1 > m_nLotEndSerial)
+		//	{
+		//		if (bDualTest)
+		//			nSerial = m_nBufDnSerial[0]; // Test
+		//		else
+		//			nSerial = m_nBufUpSerial[0]; // Test
+		//	}
+		//	else
+		//	{
+		//		if (!CopyDefImg(nSerial + 1, sNewLot))
+		//		{
+		//			sNewLot.Empty();
+		//			m_bDispMsgDoAuto[6] = TRUE;
+		//			m_nStepDispMsg[6] = FROM_DISPDEFIMG + 6;
+		//			break;
+		//		}
+		//	}
 
-		}
-		else
-		{
-			if (!m_bLastProc)
-			{
-				m_bDispMsgDoAuto[5] = TRUE;
-				m_nStepDispMsg[5] = FROM_DISPDEFIMG + 5;
-			}
-		}
-		sNewLot.Empty();
+		//}
+		//else
+		//{
+		//	if (!m_bLastProc)
+		//	{
+		//		m_bDispMsgDoAuto[5] = TRUE;
+		//		m_nStepDispMsg[5] = FROM_DISPDEFIMG + 5;
+		//	}
+		//}
+		//sNewLot.Empty();
 		break;
 	case 1:
 		Sleep(300);
@@ -16347,6 +16354,59 @@ void CGvisR2R_LaserView::GetMkMenu01()
 {
 	m_bTIM_MENU01_UPDATE_WORK = TRUE;
 	SetTimer(TIM_MENU01_UPDATE_WORK, 500, NULL);
+}
+
+CString CGvisR2R_LaserView::GetMkMenu01(CString sMenu, CString sItem)
+{
+	CString sPath = pDoc->WorkingInfo.System.sPathMkMenu01;
+	TCHAR szData[512];
+
+	if (sPath.IsEmpty())
+		return _T("");
+
+	if (0 < ::GetPrivateProfileString(sMenu, sItem, NULL, szData, sizeof(szData), sPath))
+		return CString(szData);
+
+	return _T("");
+}
+
+
+CString CGvisR2R_LaserView::GetMkDispInfoUp(CString sMenu, CString sItem, int nSerial)
+{
+	TCHAR szData[512];
+	CString sPath;
+	sPath.Format(_T("%s%s\\%s\\%s\\DefImage\\%d\\Disp.txt"), pDoc->WorkingInfo.System.sPathOldFile,
+		pDoc->WorkingInfo.LastJob.sModelUp,
+		pDoc->WorkingInfo.LastJob.sLotUp,
+		pDoc->WorkingInfo.LastJob.sLayerUp,
+		nSerial);
+
+	if (sPath.IsEmpty())
+		return _T("");
+
+	if (0 < ::GetPrivateProfileString(sMenu, sItem, NULL, szData, sizeof(szData), sPath))
+		return CString(szData);
+
+	return _T("");
+}
+
+CString CGvisR2R_LaserView::GetMkDispInfoDn(CString sMenu, CString sItem, int nSerial)
+{
+	TCHAR szData[512];
+	CString sPath;
+	sPath.Format(_T("%s%s\\%s\\%s\\DefImage\\%d\\Disp.txt"), pDoc->WorkingInfo.System.sPathOldFile,
+		pDoc->WorkingInfo.LastJob.sModelUp,
+		pDoc->WorkingInfo.LastJob.sLotUp,
+		pDoc->WorkingInfo.LastJob.sLayerDn,
+		nSerial);
+
+	if (sPath.IsEmpty())
+		return _T("");
+
+	if (0 < ::GetPrivateProfileString(sMenu, sItem, NULL, szData, sizeof(szData), sPath))
+		return CString(szData);
+
+	return _T("");
 }
 
 CString CGvisR2R_LaserView::GetTimeIts()
