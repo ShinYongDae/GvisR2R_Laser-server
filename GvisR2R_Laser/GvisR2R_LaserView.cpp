@@ -12521,48 +12521,6 @@ void CGvisR2R_LaserView::DispDefImg()
 			nSerial = m_nBufUpSerial[0];
 			sNewLot = m_sNewLotUp;
 		}
-
-		//if (nSerial == pView->m_nLotEndSerial)
-		//	nBreak = 1;
-
-		//if (nSerial > 0)
-		//{
-		//	if (!CopyDefImg(nSerial, sNewLot))
-		//	{
-		//		sNewLot.Empty();
-		//		m_bDispMsgDoAuto[7] = TRUE;
-		//		m_nStepDispMsg[7] = FROM_DISPDEFIMG + 7;
-		//		break;
-		//	}
-
-		//	if (m_bLastProc && nSerial + 1 > m_nLotEndSerial)
-		//	{
-		//		if (bDualTest)
-		//			nSerial = m_nBufDnSerial[0]; // Test
-		//		else
-		//			nSerial = m_nBufUpSerial[0]; // Test
-		//	}
-		//	else
-		//	{
-		//		if (!CopyDefImg(nSerial + 1, sNewLot))
-		//		{
-		//			sNewLot.Empty();
-		//			m_bDispMsgDoAuto[6] = TRUE;
-		//			m_nStepDispMsg[6] = FROM_DISPDEFIMG + 6;
-		//			break;
-		//		}
-		//	}
-
-		//}
-		//else
-		//{
-		//	if (!m_bLastProc)
-		//	{
-		//		m_bDispMsgDoAuto[5] = TRUE;
-		//		m_nStepDispMsg[5] = FROM_DISPDEFIMG + 5;
-		//	}
-		//}
-		//sNewLot.Empty();
 		break;
 	case 1:
 		Sleep(300);
@@ -12595,18 +12553,18 @@ void CGvisR2R_LaserView::DispDefImg()
 
 
 			//if(!m_bLastProc)
-			{
-				if (IsFixPcsUp(nSerial))
-				{
-					m_bDispMsgDoAuto[2] = TRUE;
-					m_nStepDispMsg[2] = FROM_DISPDEFIMG + 2;
-				}
-				if (IsFixPcsDn(nSerial))
-				{
-					m_bDispMsgDoAuto[3] = TRUE;
-					m_nStepDispMsg[3] = FROM_DISPDEFIMG + 3;
-				}
-			}
+			//{
+			//	if (IsFixPcsUp(nSerial))
+			//	{
+			//		m_bDispMsgDoAuto[2] = TRUE;
+			//		m_nStepDispMsg[2] = FROM_DISPDEFIMG + 2;
+			//	}
+			//	if (IsFixPcsDn(nSerial))
+			//	{
+			//		m_bDispMsgDoAuto[3] = TRUE;
+			//		m_nStepDispMsg[3] = FROM_DISPDEFIMG + 3;
+			//	}
+			//}
 
 			m_nStepTHREAD_DISP_DEF++;
 		}
@@ -12656,33 +12614,33 @@ void CGvisR2R_LaserView::DispDefImg()
 				SetSerialReelmap(nSerial);			// Reelmap(¿ì) Display Start
 			}
 
-			if (bDualTest)
-			{
-				//if(!m_bLastProc)
-				{
-					if (IsFixPcsUp(nSerial))
-					{
-						m_bDispMsgDoAuto[2] = TRUE;
-						m_nStepDispMsg[2] = FROM_DISPDEFIMG + 2;
-					}
-					if (IsFixPcsDn(nSerial))
-					{
-						m_bDispMsgDoAuto[3] = TRUE;
-						m_nStepDispMsg[3] = FROM_DISPDEFIMG + 3;
-					}
-				}
-			}
-			else
-			{
-				//if(!m_bLastProc)
-				{
-					if (IsFixPcsUp(nSerial))
-					{
-						m_bDispMsgDoAuto[2] = TRUE;
-						m_nStepDispMsg[2] = FROM_DISPDEFIMG + 2;
-					}
-				}
-			}
+			//if (bDualTest)
+			//{
+			//	if(!m_bLastProc)
+			//	{
+			//		if (IsFixPcsUp(nSerial))
+			//		{
+			//			m_bDispMsgDoAuto[2] = TRUE;
+			//			m_nStepDispMsg[2] = FROM_DISPDEFIMG + 2;
+			//		}
+			//		if (IsFixPcsDn(nSerial))
+			//		{
+			//			m_bDispMsgDoAuto[3] = TRUE;
+			//			m_nStepDispMsg[3] = FROM_DISPDEFIMG + 3;
+			//		}
+			//	}
+			//}
+			//else
+			//{
+			//	//if(!m_bLastProc)
+			//	{
+			//		if (IsFixPcsUp(nSerial))
+			//		{
+			//			m_bDispMsgDoAuto[2] = TRUE;
+			//			m_nStepDispMsg[2] = FROM_DISPDEFIMG + 2;
+			//		}
+			//	}
+			//}
 		}
 		else
 		{
@@ -12693,34 +12651,36 @@ void CGvisR2R_LaserView::DispDefImg()
 			}
 			else
 			{
-				if (bDualTest)
-				{
-					if (m_bLastProc && m_nBufDnSerial[0] == m_nLotEndSerial)
-						m_nStepTHREAD_DISP_DEF++;
-					else
-					{
-						m_nStepTHREAD_DISP_DEF++;
-						//if (!m_bLastProc)
-						//{
-						//	m_bDispMsgDoAuto[0] = TRUE;
-						//	m_nStepDispMsg[0] = FROM_DISPDEFIMG;
-						//}
-					}
-				}
-				else
-				{
-					if (m_bLastProc && m_nBufUpSerial[0] == m_nLotEndSerial)
-						m_nStepTHREAD_DISP_DEF++;
-					else
-					{
-						m_nStepTHREAD_DISP_DEF++;
-						//if (!m_bLastProc)
-						//{
-						//	m_bDispMsgDoAuto[1] = TRUE;
-						//	m_nStepDispMsg[1] = FROM_DISPDEFIMG + 1;
-						//}
-					}
-				}
+				m_nStepTHREAD_DISP_DEF++;
+
+				//if (bDualTest)
+				//{
+				//	if (m_bLastProc && m_nBufDnSerial[0] == m_nLotEndSerial)
+				//		m_nStepTHREAD_DISP_DEF++;
+				//	else
+				//	{
+				//		m_nStepTHREAD_DISP_DEF++;
+				//		//if (!m_bLastProc)
+				//		//{
+				//		//	m_bDispMsgDoAuto[0] = TRUE;
+				//		//	m_nStepDispMsg[0] = FROM_DISPDEFIMG;
+				//		//}
+				//	}
+				//}
+				//else
+				//{
+				//	if (m_bLastProc && m_nBufUpSerial[0] == m_nLotEndSerial)
+				//		m_nStepTHREAD_DISP_DEF++;
+				//	else
+				//	{
+				//		m_nStepTHREAD_DISP_DEF++;
+				//		//if (!m_bLastProc)
+				//		//{
+				//		//	m_bDispMsgDoAuto[1] = TRUE;
+				//		//	m_nStepDispMsg[1] = FROM_DISPDEFIMG + 1;
+				//		//}
+				//	}
+				//}
 			}
 		}
 		break;
@@ -13134,17 +13094,17 @@ void CGvisR2R_LaserView::OpenReelmap()
 			pDoc->m_pReelMapAllDn->Open();
 	}
 
-	if (pDoc->m_pReelMap)
-	{
-		if (pDoc->m_pReelMap->m_nLayer < 0)
-			pDoc->m_pReelMap->m_nLayer = pView->m_nSelRmap;
-		pDoc->m_pReelMap->Open();
-	}
+	//if (pDoc->m_pReelMap)
+	//{
+	//	if (pDoc->m_pReelMap->m_nLayer < 0)
+	//		pDoc->m_pReelMap->m_nLayer = pView->m_nSelRmap;
+	//	pDoc->m_pReelMap->Open();
+	//}
 }
 
 void CGvisR2R_LaserView::OpenReelmapUp()
 {
-	return;
+	//return;
 
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
@@ -13159,8 +13119,8 @@ void CGvisR2R_LaserView::OpenReelmapUp()
 
 	if (pDoc->m_pReelMap)
 	{
-		if (pDoc->m_pReelMap->m_nLayer < 0)
-			pDoc->m_pReelMap->m_nLayer = pView->m_nSelRmap;
+		//if (pDoc->m_pReelMap->m_nLayer < 0)
+		//	pDoc->m_pReelMap->m_nLayer = pView->m_nSelRmap;
 
 		if (bDualTest)
 		{
@@ -13188,14 +13148,14 @@ void CGvisR2R_LaserView::OpenReelmapDn()
 	if (pDoc->m_pReelMapAllDn)
 		pDoc->m_pReelMapAllDn->Open();
 
-	if (pDoc->m_pReelMap)
-	{
-		if (pDoc->m_pReelMap->m_nLayer < 0)
-			pDoc->m_pReelMap->m_nLayer = pView->m_nSelRmap;
+	//if (pDoc->m_pReelMap)
+	//{
+	//	if (pDoc->m_pReelMap->m_nLayer < 0)
+	//		pDoc->m_pReelMap->m_nLayer = pView->m_nSelRmap;
 
-		if (pDoc->m_pReelMap->m_nLayer == RMAP_DN || pDoc->m_pReelMap->m_nLayer == RMAP_ALLDN)
-			pDoc->m_pReelMap->Open();
-	}
+	//	if (pDoc->m_pReelMap->m_nLayer == RMAP_DN || pDoc->m_pReelMap->m_nLayer == RMAP_ALLDN)
+	//		pDoc->m_pReelMap->Open();
+	//}
 }
 
 void CGvisR2R_LaserView::EStop()
@@ -14241,13 +14201,13 @@ void CGvisR2R_LaserView::SetPathAtBuf()
 			pDoc->m_pReelMapAllDn->SetPathAtBuf();
 	}
 
-	if (pDoc->m_pReelMap)
-	{
-		if (pDoc->m_pReelMap->m_nLayer < 0)
-			pDoc->m_pReelMap->m_nLayer = pView->m_nSelRmap;
+	//if (pDoc->m_pReelMap)
+	//{
+	//	if (pDoc->m_pReelMap->m_nLayer < 0)
+	//		pDoc->m_pReelMap->m_nLayer = pView->m_nSelRmap;
 
-		pDoc->m_pReelMap->SetPathAtBuf();
-	}
+	//	pDoc->m_pReelMap->SetPathAtBuf();
+	//}
 
 	if (pDoc->GetTestMode() == MODE_OUTER)
 	{
@@ -14270,14 +14230,14 @@ void CGvisR2R_LaserView::SetPathAtBufUp()
 			pDoc->m_pReelMapAllUp->SetPathAtBuf();
 	}
 
-	if (pDoc->m_pReelMap)
-	{
-		if (pDoc->m_pReelMap->m_nLayer < 0)
-			pDoc->m_pReelMap->m_nLayer = pView->m_nSelRmap;
+	//if (pDoc->m_pReelMap)
+	//{
+	//	if (pDoc->m_pReelMap->m_nLayer < 0)
+	//		pDoc->m_pReelMap->m_nLayer = pView->m_nSelRmap;
 
-		if (pDoc->m_pReelMap->m_nLayer == RMAP_UP || pDoc->m_pReelMap->m_nLayer == RMAP_ALLUP)
-			pDoc->m_pReelMap->SetPathAtBuf();
-	}
+	//	if (pDoc->m_pReelMap->m_nLayer == RMAP_UP || pDoc->m_pReelMap->m_nLayer == RMAP_ALLUP)
+	//		pDoc->m_pReelMap->SetPathAtBuf();
+	//}
 
 	//if (pDoc->GetTestMode() == MODE_OUTER)
 	//{
@@ -14296,14 +14256,14 @@ void CGvisR2R_LaserView::SetPathAtBufDn()
 	if (pDoc->m_pReelMapAllDn)
 		pDoc->m_pReelMapAllDn->SetPathAtBuf();
 
-	if (pDoc->m_pReelMap)
-	{
-		if (pDoc->m_pReelMap->m_nLayer < 0)
-			pDoc->m_pReelMap->m_nLayer = pView->m_nSelRmap;
+	//if (pDoc->m_pReelMap)
+	//{
+	//	if (pDoc->m_pReelMap->m_nLayer < 0)
+	//		pDoc->m_pReelMap->m_nLayer = pView->m_nSelRmap;
 
-		if (pDoc->m_pReelMap->m_nLayer == RMAP_DN || pDoc->m_pReelMap->m_nLayer == RMAP_ALLDN)
-			pDoc->m_pReelMap->SetPathAtBuf();
-	}
+	//	if (pDoc->m_pReelMap->m_nLayer == RMAP_DN || pDoc->m_pReelMap->m_nLayer == RMAP_ALLDN)
+	//		pDoc->m_pReelMap->SetPathAtBuf();
+	//}
 
 	//if (pDoc->GetTestMode() == MODE_OUTER)
 	//{
@@ -14314,7 +14274,7 @@ void CGvisR2R_LaserView::SetPathAtBufDn()
 
 void  CGvisR2R_LaserView::SetLotLastShot()
 {
-	pDoc->m_nLotLastShot = int(_tstof(pDoc->WorkingInfo.LastJob.sLotSepLen)*1000.0 / _tstof(pDoc->WorkingInfo.LastJob.sOnePnlLen));
+	pDoc->m_nLotLastShot = pDoc->m_nBufLastShot = int(_tstof(pDoc->WorkingInfo.LastJob.sLotSepLen)*1000.0 / _tstof(pDoc->WorkingInfo.LastJob.sOnePnlLen));
 }
 
 BOOL CGvisR2R_LaserView::IsMkStrip(int nStripIdx)
@@ -14415,6 +14375,7 @@ BOOL CGvisR2R_LaserView::ChkContShotNum()
 
 void CGvisR2R_LaserView::SetFixPcs(int nSerial)
 {
+	return;
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
 	if (pDoc->m_pReelMapUp)

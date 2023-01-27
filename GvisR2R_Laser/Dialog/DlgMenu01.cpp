@@ -437,10 +437,10 @@ void CDlgMenu01::OpenReelmap(int nSelRmap)
 	CString sPath;
 	if(pDoc->m_pReelMap)
 	{
-		if(nSelRmap < 0)
-			pDoc->m_pReelMap->m_nLayer = pView->m_nSelRmap;
-		else
-			pDoc->m_pReelMap->m_nLayer = nSelRmap;
+		//if(nSelRmap < 0)
+		//	pDoc->m_pReelMap->m_nLayer = pView->m_nSelRmap;
+		//else
+		//	pDoc->m_pReelMap->m_nLayer = nSelRmap;
 
 		if (pDoc->GetTestMode() == MODE_OUTER)
 		{
@@ -568,9 +568,18 @@ void CDlgMenu01::DispMkInfo()	// m_bTIM_DISP_DEF_IMG == FALSE 일때까지 계속 호출
 
 void CDlgMenu01::DispMkInfoUp()
 {
-	m_nDef[0] = _ttoi(pView->GetMkDispInfoUp(_T("Info"), _T("TotalDef"), m_nSerial));
+	CString sTot = pView->GetMkDispInfoUp(_T("Info"), _T("TotalDef"), m_nSerial);
+	if (sTot.IsEmpty() || sTot == _T("0"))
+	{
+		m_nDef[0] = 0;
+		return;
+	}
+
+	m_nDef[0] = _ttoi(sTot);
 	int nMaxMaxDispDefImg = _ttoi(pView->GetMkDispInfoUp(_T("Info"), _T("MaxDisp"), m_nSerial)); //_tstoi(pDoc->WorkingInfo.System.sMaxDispDefImg);
 	m_nIdxDef[0] = m_nDef[0] - nMaxMaxDispDefImg; // 불량이미지 인덱스.
+	if (m_nIdxDef[0] < 0)
+		m_nIdxDef[0] = 0;
 
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	//int nSerialL = m_nBufUpSerial[0]; // 좌측 Camera
@@ -617,9 +626,18 @@ void CDlgMenu01::DispMkInfoUp()
 
 void CDlgMenu01::DispMkInfoDn()
 {
-	m_nDef[1] = _ttoi(pView->GetMkDispInfoDn(_T("Info"), _T("TotalDef"), pView->m_nBufUpSerial[0]));
+	CString sTot = pView->GetMkDispInfoDn(_T("Info"), _T("TotalDef"), m_nSerial);
+	if (sTot.IsEmpty() || sTot == _T("0"))
+	{
+		m_nDef[1] = 0;
+		return;
+	}
+
+	m_nDef[1] = _ttoi(sTot);
 	int nMaxMaxDispDefImg = _ttoi(pView->GetMkDispInfoDn(_T("Info"), _T("MaxDisp"), m_nSerial)); //_tstoi(pDoc->WorkingInfo.System.sMaxDispDefImg);
 	m_nIdxDef[1] = m_nDef[1] - nMaxMaxDispDefImg; // 불량이미지 인덱스.
+	if (m_nIdxDef[1] < 0)
+		m_nIdxDef[1] = 0;
 
 //	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 //	if(!bDualTest)
@@ -1510,7 +1528,11 @@ void CDlgMenu01::DispMkInfoUp(int nSerial)
 					{
 						//if(pDoc->m_pPcr[0][nIdx]->m_pMk[m_nIdxDef[0]] != -2) // -2 (NoMarking)
 						{	
-							nTotDef = _ttoi(pView->GetMkDispInfoUp(_T("Info"), _T("TotalDef"), nSerial));
+							CString sTot = pView->GetMkDispInfoUp(_T("Info"), _T("TotalDef"), nSerial);
+							if (sTot.IsEmpty() || sTot == _T("0"))
+								return;
+
+							nTotDef = _ttoi(sTot);
 							//if(m_nIdxDef[0] < pDoc->m_pPcr[0][nIdx]->m_nTotDef)
 							if(m_nIdxDef[0] < nTotDef)
 							{
@@ -1529,7 +1551,10 @@ void CDlgMenu01::DispMkInfoUp(int nSerial)
 								//(pDoc->m_pPcr[0][nIdx]->m_nTotRealDef)++;
 							}
 							else
+							{
 								m_nIdxMkInfo[0]++;
+								//m_nIdxDef[0]++;
+							}
 						}
 						//else
 						//	m_nIdxDef[0]++;
@@ -1555,7 +1580,11 @@ void CDlgMenu01::DispMkInfoUp(int nSerial)
 					{
 						//if(pDoc->m_pPcr[0][nIdx]->m_pMk[m_nIdxDef[0]] != -2) // -2 (NoMarking)
 						{	
-							nTotDef = _ttoi(pView->GetMkDispInfoUp(_T("Info"), _T("TotalDef"), nSerial));
+							CString sTot = pView->GetMkDispInfoUp(_T("Info"), _T("TotalDef"), nSerial);
+							if (sTot.IsEmpty() || sTot == _T("0"))
+								return;
+
+							nTotDef = _ttoi(sTot);
 							//if(m_nIdxDef[0] < pDoc->m_pPcr[0][nIdx]->m_nTotDef)
 							if (m_nIdxDef[0] < nTotDef)
 							{
@@ -1574,7 +1603,10 @@ void CDlgMenu01::DispMkInfoUp(int nSerial)
 								//(pDoc->m_pPcr[0][nIdx]->m_nTotRealDef)++;
 							}
 							else
+							{
 								m_nIdxMkInfo[0]++;
+								//m_nIdxDef[0]++;
+							}
 						}
 						//else
 						//	m_nIdxDef[0]++;
@@ -1618,7 +1650,11 @@ void CDlgMenu01::DispMkInfoDn(int nSerial)
 				{
 					//if(pDoc->m_pPcr[1][nIdx]->m_pMk[m_nIdxDef[1]] != -2) // -2 (NoMarking)
 					{	
-						nTotDef = _ttoi(pView->GetMkDispInfoDn(_T("Info"), _T("TotalDef"), nSerial));
+						CString sTot = pView->GetMkDispInfoDn(_T("Info"), _T("TotalDef"), nSerial);
+						if (sTot.IsEmpty() || sTot == _T("0"))
+							return;
+
+						nTotDef = _ttoi(sTot);
 						//if(m_nIdxDef[1] < pDoc->m_pPcr[1][nIdx]->m_nTotDef)
 						if (m_nIdxDef[1] < nTotDef)
 						{
@@ -1637,7 +1673,10 @@ void CDlgMenu01::DispMkInfoDn(int nSerial)
 							//(pDoc->m_pPcr[1][nIdx]->m_nTotRealDef)++;
 						}
 						else
+						{
 							m_nIdxMkInfo[1]++;
+							//m_nIdxDef[1]++;
+						}
 					}
 					//else
 					//	m_nIdxDef[1]++;
@@ -1710,12 +1749,18 @@ void CDlgMenu01::ShiftDefInfoDn()
 
 void CDlgMenu01::ShowDefInfoUp(int nIdx, int nSerial, int nIdxDef) // nIdx : 0 ~ 11 (12ea)
 {
-	CString sItem;
+	CString sItem, str;
 	sItem.Format(_T("%d"), nIdxDef);
 
-	CString str = pView->GetMkDispInfoUp(sItem, _T("Text"), nSerial);
-	COLORREF rgbDef = (COLORREF)_ttoi(pView->GetMkDispInfoUp(sItem, _T("RGB"), nSerial));
+	CString sDef = pView->GetMkDispInfoUp(sItem, _T("TextDef"), nSerial);
+	if (sDef.IsEmpty())
+		return;
 
+	CString sPos = pView->GetMkDispInfoUp(sItem, _T("TextPos"), nSerial);
+	CString sRGB = pView->GetMkDispInfoUp(sItem, _T("TextRGB"), nSerial);
+	COLORREF rgbDef = (COLORREF)_ttoi(sRGB);
+
+	str.Format(_T("%s\r\n%s"), sDef, sPos);
 	myStcDefInfo[nIdx].SetText(str);
 	myStcDefInfo[nIdx].SetBkColor(rgbDef);
 
@@ -1768,12 +1813,18 @@ void CDlgMenu01::ShowDefInfoUp(int nIdx, int nSerial, int nIdxDef) // nIdx : 0 ~
 
 void CDlgMenu01::ShowDefInfoDn(int nIdx, int nSerial, int nIdxDef) // nIdx : 0 ~ 11 (12ea)
 {
-	CString sItem;
+	CString sItem, str;
 	sItem.Format(_T("%d"), nIdxDef);
 
-	CString str = pView->GetMkDispInfoDn(sItem, _T("Text"), nSerial);
-	COLORREF rgbDef = (COLORREF)_ttoi(pView->GetMkDispInfoDn(sItem, _T("RGB"), nSerial));
+	CString sDef = pView->GetMkDispInfoDn(sItem, _T("TextDef"), nSerial);
+	if (sDef.IsEmpty())
+		return;
 
+	CString sPos = pView->GetMkDispInfoDn(sItem, _T("TextPos"), nSerial);
+	CString sRGB = pView->GetMkDispInfoDn(sItem, _T("TextRGB"), nSerial);
+	COLORREF rgbDef = (COLORREF)_ttoi(sRGB);
+
+	str.Format(_T("%s\r\n%s"), sDef, sPos);
 	myStcDefInfo[MENU01_STC_DEFINFO_HARF + nIdx].SetText(str);
 	myStcDefInfo[MENU01_STC_DEFINFO_HARF + nIdx].SetBkColor(rgbDef);
 
@@ -2845,7 +2896,7 @@ BOOL CDlgMenu01::SetSerialReelmap(int nSerial, BOOL bDumy)
 		//AfxMessageBox(_T("Serial Error.6"));
 		return 0;
 	}
-
+	m_nSerial = nSerial;
 	DispReelmap(nSerial, bDumy);
 	return TRUE;
 

@@ -97,7 +97,7 @@ public:
 
 	BOOL m_bNewLotShare[2]; // [0]:AOI-Up , [1]:AOI-Dn
 	BOOL m_bNewLotBuf[2]; // [0]:AOI-Up , [1]:AOI-Dn
-	int m_nLotLastShot;
+	int m_nLotLastShot, m_nBufLastShot;
 	BOOL m_bDoneChgLot;
 
 	char m_cBigDefCode[MAX_DEF];

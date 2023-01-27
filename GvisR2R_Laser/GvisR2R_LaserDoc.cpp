@@ -1397,21 +1397,53 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		m_nDelayShow = 500;
 
 	// [Last Job]
-	if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Process Unit Code"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
-		WorkingInfo.LastJob.sProcessNum = CString(szData);
+
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Engrave Its Code"), NULL, szData, sizeof(szData), sPath))//WorkingInfo.System.sPathEngCurrInfo))
+		m_sItsCode = WorkingInfo.LastJob.sEngItsCode = CString(szData);
 	else
 	{
-		WorkingInfo.LastJob.sProcessNum = CString(_T("VS90"));
+		m_sItsCode = WorkingInfo.LastJob.sEngItsCode = CString(_T("VS90"));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Current Model Up"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+	//if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Current Model Up"), NULL, szData, sizeof(szData), sPath))//WorkingInfo.System.sPathEngCurrInfo))
+	//	WorkingInfo.LastJob.sModelUp = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("Current Model Up이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.LastJob.sModelUp = CString(_T(""));
+	//}
+	//if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Current Model Dn"), NULL, szData, sizeof(szData), sPath))//WorkingInfo.System.sPathEngCurrInfo))
+	//	WorkingInfo.LastJob.sModelDn = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("Current Model Dn이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.LastJob.sModelDn = CString(_T(""));
+	//}
+
+	//if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Current Lot"), NULL, szData, sizeof(szData), sPath))//WorkingInfo.System.sPathEngCurrInfo))
+	//	WorkingInfo.LastJob.sLotUp = WorkingInfo.LastJob.sLotDn = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("Current Lot가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.LastJob.sLotUp = WorkingInfo.LastJob.sLotDn = CString(_T(""));
+	//}
+
+	//if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Current Layer Up"), NULL, szData, sizeof(szData), sPath))//WorkingInfo.System.sPathEngCurrInfo))
+	//	WorkingInfo.LastJob.sLayerUp = CString(szData);
+	//else
+	//{
+	//	AfxMessageBox(_T("Current Layer Up이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+	//	WorkingInfo.LastJob.sLayerUp = CString(_T(""));
+	//}
+
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("ModelUp Name"), NULL, szData, sizeof(szData), sPath))//WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.LastJob.sModelUp = CString(szData);
 	else
 	{
 		AfxMessageBox(_T("Current Model Up이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
 		WorkingInfo.LastJob.sModelUp = CString(_T(""));
 	}
-	if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Current Model Dn"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("ModelDn Name"), NULL, szData, sizeof(szData), sPath))//WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.LastJob.sModelDn = CString(szData);
 	else
 	{
@@ -1419,15 +1451,15 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.LastJob.sModelDn = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Current Lot"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
-		WorkingInfo.LastJob.sLotUp = WorkingInfo.LastJob.sLotDn = CString(szData);
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("LotUp No"), NULL, szData, sizeof(szData), sPath))//WorkingInfo.System.sPathEngCurrInfo))
+		m_sLotNum = WorkingInfo.LastJob.sLotUp = WorkingInfo.LastJob.sLotDn = CString(szData);
 	else
 	{
 		AfxMessageBox(_T("Current Lot가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.LastJob.sLotUp = WorkingInfo.LastJob.sLotDn = CString(_T(""));
+		m_sLotNum = WorkingInfo.LastJob.sLotUp = WorkingInfo.LastJob.sLotDn = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Current Layer Up"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("LayerUp Name"), NULL, szData, sizeof(szData), sPath))//WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.LastJob.sLayerUp = CString(szData);
 	else
 	{
@@ -1435,19 +1467,30 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.LastJob.sLayerUp = CString(_T(""));
 	}
 
-	if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Test Mode"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+
+
+
+
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Test Mode"), NULL, szData, sizeof(szData), sPath))//, WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.LastJob.nTestMode = _ttoi(szData);
 	else
 		WorkingInfo.LastJob.nTestMode = 0;
 
-	if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Use Dual AOI"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use Dual AOI"), NULL, szData, sizeof(szData), sPath))//, WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.LastJob.bDualTest = _ttoi(szData) ? TRUE : FALSE;
 	else
 		WorkingInfo.LastJob.bDualTest = TRUE;
 
 	if (WorkingInfo.LastJob.bDualTest)
 	{
-		if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Current Layer Dn"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+		//if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Current Layer Dn"), NULL, szData, sizeof(szData), sPath))//WorkingInfo.System.sPathEngCurrInfo))
+		//	WorkingInfo.LastJob.sLayerDn = CString(szData);
+		//else
+		//{
+		//	AfxMessageBox(_T("Current Layer Dn이 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		//	WorkingInfo.LastJob.sLayerDn = CString(_T(""));
+		//}
+		if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("LayerDn Name"), NULL, szData, sizeof(szData), sPath))//WorkingInfo.System.sPathEngCurrInfo))
 			WorkingInfo.LastJob.sLayerDn = CString(szData);
 		else
 		{
@@ -1477,6 +1520,9 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		AfxMessageBox(_T("Process Code가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
 		m_sProcessNum = CString(_T("VS90"));
 	}
+
+
+	SetCurrentInfo();
 
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Last SerialUp"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.LastJob.sSerialUp = CString(szData);
@@ -9447,7 +9493,10 @@ CString CGvisR2R_LaserDoc::GetCurrentInfoBufUp()
 			nIdx = _ttoi(szData);
 
 		if (i == nUpTot - 1)
+		{
 			sTemp.Format(_T("%d"), nIdx);
+			m_nBufLastShot = nIdx;
+		}
 		else
 			sTemp.Format(_T("%d,"), nIdx);
 		str += sTemp;

@@ -636,6 +636,7 @@ struct stSystem
 	CString sPathMkMenu01, sPathMkMenu03, sPathMkInfo, sPathMonDispMain;
 
 	CString sPathOldFile, sPathItsFile;
+	CString sIpPathOldFile, sIpPathItsFile;
 	CString sPathSapp3;
 	BOOL bSaveLog;
 	BOOL bNoMk;	// 0 : 마킹모드, 1 : 비젼모드
@@ -671,6 +672,8 @@ struct stSystem
 
 		sPathOldFile = _T("");
 		sPathItsFile = _T("");
+		sIpPathOldFile = _T("");
+		sIpPathItsFile = _T("");
 		bSaveLog = FALSE;
 		bNoMk = FALSE;	// 0 : 마킹모드, 1 : 비젼모드
 		sReViewMkLen = _T("");

@@ -1773,7 +1773,7 @@ BOOL CReelMap::Disp(int nMkPnl, BOOL bDumy)
 				m_pPnlDefNum[k] = -1;
 				break;
 			}
-			else if (nLoadPnl > pDoc->m_ListBuf[0].GetLast())
+			else if (nLoadPnl > pDoc->m_nBufLastShot)			//else if (nLoadPnl > pDoc->m_ListBuf[0].GetLast())
 			{
 				m_pPnlNum[k] = 0;
 				m_pPnlDefNum[k] = -1;

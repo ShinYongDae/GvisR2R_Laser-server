@@ -2489,8 +2489,8 @@ void CVision::ShowDispDef(int nIdxMkInfo, int nSerial, int nLayer, int nDefPcs) 
 			else if (nLayer == 1) // Dn
 			{
 				sPath.Format(_T("%s%s\\%s\\%s\\DefImage\\%d\\%05d.tif"), pDoc->WorkingInfo.System.sPathOldFile,
-					pDoc->WorkingInfo.LastJob.sModelDn,
-					pDoc->WorkingInfo.LastJob.sLotDn,
+					pDoc->WorkingInfo.LastJob.sModelUp,
+					pDoc->WorkingInfo.LastJob.sLotUp,
 					pDoc->WorkingInfo.LastJob.sLayerDn,
 					nSerial,
 					nDefPcs);
