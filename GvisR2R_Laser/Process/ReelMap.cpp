@@ -1665,27 +1665,27 @@ BOOL CReelMap::Disp(int nMkPnl, BOOL bDumy)
 	{
 		Sleep(500);
 		if (!pDataFile->Open(m_sPathBuf))
-	{
+		{
 			Sleep(500);
 			if (!pDataFile->Open(m_sPathBuf))
-		{
+			{
 				Sleep(500);
 				if (!pDataFile->Open(m_sPathBuf))
-			{
-					if (nRepeat > 20)
 				{
+					if (nRepeat > 20)
+					{
 						sMsg.Format(_T("릴맵파일을 읽지 못했습니다.\r\n%s\r\n릴맵파일을 다시 읽으시겠습니까?"), m_sPathBuf);
 						if (IDNO == pView->MsgBox(sMsg, 0, MB_YESNO))
-					{
+						{
 							;
+						}
 					}
-				}
 					else
 					{
 						nRepeat++;
 						Sleep(500);
-			}
-		}
+					}
+				}
 				else
 					break;
 			}

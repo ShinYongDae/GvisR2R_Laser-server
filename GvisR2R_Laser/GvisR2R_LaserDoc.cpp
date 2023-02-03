@@ -1329,24 +1329,24 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	else
 		WorkingInfo.System.sCamSn[0] = CString(_T(""));
 
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("Cam2Sn"), NULL, szData, sizeof(szData), sPath))
-		WorkingInfo.System.sCamSn[1] = CString(szData);
-	else
-		WorkingInfo.System.sCamSn[1] = CString(_T(""));
+	//if (0 < ::GetPrivateProfileString(_T("System"), _T("Cam2Sn"), NULL, szData, sizeof(szData), sPath))
+	//	WorkingInfo.System.sCamSn[1] = CString(szData);
+	//else
+	//	WorkingInfo.System.sCamSn[1] = CString(_T(""));
 
 
 	// LASER 2D BARCODE
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("IP_CLIENT_MD-X2500"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("IP_CLIENT_MD-X2500"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sIpClient[ID_MDX2500] = CString(szData);
 	else
 		WorkingInfo.System.sIpClient[ID_MDX2500] = CString(_T("192.168.100.199"));
 
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("IP_SERVER_MD-X2500"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("IP_SERVER_MD-X2500"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sIpServer[ID_MDX2500] = CString(szData);
 	else
 		WorkingInfo.System.sIpServer[ID_MDX2500] = CString(_T("192.168.100.200"));
 
-	if (0 < ::GetPrivateProfileString(_T("System"), _T("Port_MD-X2500"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("Port_MD-X2500"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sPort[ID_MDX2500] = CString(szData);
 	else
 		WorkingInfo.System.sPort[ID_MDX2500] = CString(_T("50002"));
@@ -4461,28 +4461,30 @@ int CGvisR2R_LaserDoc::GetPcrIdx0(int nSerial, BOOL bNewLot)
 	}
 
 	int nIdx;
+	nIdx = (nSerial - 1) % MAX_PCR_PNL;
 
-	if (!bNewLot)
-	{
-		if (WorkingInfo.LastJob.bLotSep || m_bDoneChgLot)
-		{
-			if (!m_bDoneChgLot && nSerial <= m_nLotLastShot)
-				nIdx = (nSerial - 1) % MAX_PCR_PNL;
-			else // New Lot...
-				nIdx = (m_nLotLastShot + nSerial - 1) % MAX_PCR_PNL;
-		}
-		else
-		{
-			nIdx = (nSerial - 1) % MAX_PCR_PNL;
-		}
-	}
-	else
-	{
-		if (WorkingInfo.LastJob.bLotSep || m_bDoneChgLot)
-			nIdx = (m_nLotLastShot + nSerial - 1) % MAX_PCR_PNL;
-		else
-			nIdx = (nSerial - 1) % MAX_PCR_PNL;
-	}
+	//if (!bNewLot)
+	//{
+	//	if (WorkingInfo.LastJob.bLotSep || m_bDoneChgLot)
+	//	{
+	//		if (!m_bDoneChgLot && nSerial <= m_nLotLastShot)
+	//			nIdx = (nSerial - 1) % MAX_PCR_PNL;
+	//		else // New Lot...
+	//			nIdx = (m_nLotLastShot + nSerial - 1) % MAX_PCR_PNL;
+	//	}
+	//	else
+	//	{
+	//		nIdx = (nSerial - 1) % MAX_PCR_PNL;
+	//	}
+	//}
+	//else
+	//{
+	//	if (WorkingInfo.LastJob.bLotSep || m_bDoneChgLot)
+	//		nIdx = (m_nLotLastShot + nSerial - 1) % MAX_PCR_PNL;
+	//	else
+	//		nIdx = (nSerial - 1) % MAX_PCR_PNL;
+	//}
+
 	return nIdx;
 }
 
@@ -4496,28 +4498,30 @@ int CGvisR2R_LaserDoc::GetPcrIdx1(int nSerial, BOOL bNewLot)
 	}
 
 	int nIdx;
+	nIdx = (nSerial - 1) % MAX_PCR_PNL;
 
-	if (!bNewLot)
-	{
-		if (WorkingInfo.LastJob.bLotSep || m_bDoneChgLot)
-		{
-			if (!m_bDoneChgLot && nSerial <= m_nLotLastShot)
-				nIdx = (nSerial - 1) % MAX_PCR_PNL;
-			else // New Lot...
-				nIdx = (m_nLotLastShot + nSerial - 1) % MAX_PCR_PNL;
-		}
-		else
-		{
-			nIdx = (nSerial - 1) % MAX_PCR_PNL;
-		}
-	}
-	else
-	{
-		if (WorkingInfo.LastJob.bLotSep || m_bDoneChgLot)
-			nIdx = (m_nLotLastShot + nSerial - 1) % MAX_PCR_PNL;
-		else
-			nIdx = (nSerial - 1) % MAX_PCR_PNL;
-	}
+	//if (!bNewLot)
+	//{
+	//	if (WorkingInfo.LastJob.bLotSep || m_bDoneChgLot)
+	//	{
+	//		if (!m_bDoneChgLot && nSerial <= m_nLotLastShot)
+	//			nIdx = (nSerial - 1) % MAX_PCR_PNL;
+	//		else // New Lot...
+	//			nIdx = (m_nLotLastShot + nSerial - 1) % MAX_PCR_PNL;
+	//	}
+	//	else
+	//	{
+	//		nIdx = (nSerial - 1) % MAX_PCR_PNL;
+	//	}
+	//}
+	//else
+	//{
+	//	if (WorkingInfo.LastJob.bLotSep || m_bDoneChgLot)
+	//		nIdx = (m_nLotLastShot + nSerial - 1) % MAX_PCR_PNL;
+	//	else
+	//		nIdx = (nSerial - 1) % MAX_PCR_PNL;
+	//}
+
 	return nIdx;
 }
 

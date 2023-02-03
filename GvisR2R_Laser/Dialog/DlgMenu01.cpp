@@ -575,7 +575,8 @@ void CDlgMenu01::DispMkInfoUp()
 		return;
 	}
 
-	m_nDef[0] = _ttoi(sTot);
+	int nIdx = pDoc->GetPcrIdx0(m_nSerial);
+	pDoc->m_pPcr[0][nIdx]->m_nTotDef = m_nDef[0] = _ttoi(sTot);
 	int nMaxMaxDispDefImg = _ttoi(pView->GetMkDispInfoUp(_T("Info"), _T("MaxDisp"), m_nSerial)); //_tstoi(pDoc->WorkingInfo.System.sMaxDispDefImg);
 	m_nIdxDef[0] = m_nDef[0] - nMaxMaxDispDefImg; // 불량이미지 인덱스.
 	if (m_nIdxDef[0] < 0)
@@ -601,6 +602,7 @@ void CDlgMenu01::DispMkInfoUp()
 
 	if(bDualTest)
 	{
+		pDoc->m_pPcr[2][nIdx]->m_nTotDef = pDoc->m_pPcr[0][nIdx]->m_nTotDef;
 		if(m_nIdxMkInfo[0] > MENU01_STC_DEFINFO_HARF)
 			m_nIdxMkInfo[0] = MENU01_STC_DEFINFO_HARF;
 	}
@@ -633,7 +635,11 @@ void CDlgMenu01::DispMkInfoDn()
 		return;
 	}
 
-	m_nDef[1] = _ttoi(sTot);
+	int nIdx = pDoc->GetPcrIdx1(m_nSerial);
+	CString sMergedTot = pView->GetMkDispInfoUp(_T("Info"), _T("MergedTotalDef"), m_nSerial);
+	pDoc->m_pPcr[2][nIdx]->m_nTotDef = pDoc->m_pPcr[3][nIdx]->m_nTotDef = _ttoi(sMergedTot);
+
+	pDoc->m_pPcr[1][nIdx]->m_nTotDef = m_nDef[1] = _ttoi(sTot);
 	int nMaxMaxDispDefImg = _ttoi(pView->GetMkDispInfoDn(_T("Info"), _T("MaxDisp"), m_nSerial)); //_tstoi(pDoc->WorkingInfo.System.sMaxDispDefImg);
 	m_nIdxDef[1] = m_nDef[1] - nMaxMaxDispDefImg; // 불량이미지 인덱스.
 	if (m_nIdxDef[1] < 0)
