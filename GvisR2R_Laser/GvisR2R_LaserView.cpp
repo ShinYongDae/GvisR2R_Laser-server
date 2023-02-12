@@ -15812,18 +15812,13 @@ void CGvisR2R_LaserView::Eng1PtDoMarking()
 		case ENG_ST + (Mk1PtIdx::DoMk) :				// Mk 마킹 시작
 			if (!pDoc->WorkingInfo.System.bNoMk)
 			{
-				//if (!SetMdxLotAndShotNum(pDoc->m_sLotNum, pDoc->m_nShotNum))
-				//if (!SetMdxLotAndShotNum(pDoc->m_sLotNum, nSerial))
-				//if (m_nGetItsCodeSerial == 0 || (m_nGetItsCodeSerial + 1) == nSerial)
+				if (!SetMdxLotAndShotNum(pDoc->m_sItsCode, nSerial))
 				{
-					if (!SetMdxLotAndShotNum(pDoc->m_sItsCode, nSerial))
-					{
-						EngStop(TRUE);
-						//MsgBox(_T("SetMdxLotAndShotNum - Failed."));
-						//TowerLamp(RGB_RED, TRUE);
-						//Buzzer(TRUE, 0);
-						break;
-					}
+					EngStop(TRUE);
+					//MsgBox(_T("SetMdxLotAndShotNum - Failed."));
+					//TowerLamp(RGB_RED, TRUE);
+					//Buzzer(TRUE, 0);
+					break;
 				}
 			}
 			Sleep(100);

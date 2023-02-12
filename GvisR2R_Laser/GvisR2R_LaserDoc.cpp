@@ -9575,6 +9575,7 @@ void CGvisR2R_LaserDoc::GetMkMenu01()
 {
 	CString sPath = WorkingInfo.System.sPathMkMenu01;
 	TCHAR szData[512];
+	BOOL bUpdate = FALSE;
 
 	if (sPath.IsEmpty())
 		return;
@@ -9582,13 +9583,21 @@ void CGvisR2R_LaserDoc::GetMkMenu01()
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("Operator"), NULL, szData, sizeof(szData), sPath))
 		pDoc->WorkingInfo.LastJob.sSelUserName = pDoc->Menu01Status.Info.sOperator = CString(szData);
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("Model"), NULL, szData, sizeof(szData), sPath))
-		pDoc->WorkingInfo.LastJob.sModelUp = pDoc->Menu01Status.Info.sModel = CString(szData);
+		pDoc->Menu01Status.Info.sModel = CString(szData);
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("Lot"), NULL, szData, sizeof(szData), sPath))
 		pDoc->WorkingInfo.LastJob.sLotUp = pDoc->Menu01Status.Info.sLot = CString(szData);
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("LayerUp"), NULL, szData, sizeof(szData), sPath))
-		pDoc->WorkingInfo.LastJob.sLayerUp = pDoc->Menu01Status.Info.sLayerUp = CString(szData);
+		pDoc->Menu01Status.Info.sLayerUp = CString(szData);
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("LayerDn"), NULL, szData, sizeof(szData), sPath))
 		pDoc->WorkingInfo.LastJob.sLayerDn = pDoc->Menu01Status.Info.sLayerDn = CString(szData);
+
+	if(pDoc->WorkingInfo.LastJob.sModelUp != pDoc->Menu01Status.Info.sModel)
+		bUpdate = TRUE;
+	if(pDoc->WorkingInfo.LastJob.sLayerUp != pDoc->Menu01Status.Info.sLayerUp)
+		bUpdate = TRUE;
+
+	pDoc->WorkingInfo.LastJob.sModelUp = pDoc->Menu01Status.Info.sModel;
+	pDoc->WorkingInfo.LastJob.sLayerUp = pDoc->Menu01Status.Info.sLayerUp;
 
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("Total Shot"), NULL, szData, sizeof(szData), sPath))
 		pDoc->Menu01Status.Info.nTotShot = _ttoi(szData);
@@ -9684,7 +9693,14 @@ void CGvisR2R_LaserDoc::GetMkMenu01()
 		pDoc->Menu01Status.Data.dVerifyLen = _ttof(szData);
 		pDoc->WorkingInfo.LastJob.sVerifyLen.Format(_T("%.3f"), pDoc->Menu01Status.Data.dVerifyLen);
 	}
+	
+	if (bUpdate)
+	{
+		pView->m_bLoadMstInfo = TRUE;
 
+		if (pView->m_pDlgMenu01)
+			pView->m_pDlgMenu01->DispChangedModel();
+	}
 }
 
 void CGvisR2R_LaserDoc::SetMkMenu01(CString sMenu, CString sItem, CString sData)
