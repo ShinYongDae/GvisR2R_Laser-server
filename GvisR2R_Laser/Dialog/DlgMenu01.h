@@ -204,6 +204,7 @@ public:
 
 	void DispTotRatioIts();
 	void DispStripRatioIts();
+	void DispChangedModel();
 
 // Dialog Data
 	//{{AFX_DATA(CDlgMenu01)

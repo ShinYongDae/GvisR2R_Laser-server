@@ -5462,3 +5462,14 @@ void CDlgMenu01::DispStripRatioIts()
 	myStcData[73].SetText(str); // IDC_STC_GD_RA_ALL_ALL
 	//pDoc->SetMkMenu01(_T("Yield Total"), _T("Total"), str);
 }
+
+void CDlgMenu01::DispChangedModel()
+{
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+
+	myStcData[1].SetText(pDoc->WorkingInfo.LastJob.sModelUp);		// 모델
+	myStcData[3].SetText(pDoc->WorkingInfo.LastJob.sLotUp);			// 로트
+	myStcData[2].SetText(pDoc->WorkingInfo.LastJob.sLayerUp);		// 상면레이어
+	if (bDualTest)
+		myStcData[75].SetText(pDoc->WorkingInfo.LastJob.sLayerDn);	// 하면레이어
+}

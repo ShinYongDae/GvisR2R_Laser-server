@@ -1067,12 +1067,28 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.System.sPathEngCurrInfo = CString(_T("C:\\EngraveWork\\CurrentInfo.ini"));
 	}
 
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("EngraveSignalInfoPath"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+		WorkingInfo.System.sPathEngSignalInfo = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("EngraveSignalInfoPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathEngSignalInfo = CString(_T("C:\\EngraveWork\\CurrentInfo.ini"));
+	}
+
 	if (0 < ::GetPrivateProfileString(_T("System"), _T("PunchingCurrentInfoPath"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sPathMkCurrInfo = CString(szData);
 	else
 	{
 		AfxMessageBox(_T("PunchingCurrentInfoPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
 		WorkingInfo.System.sPathMkCurrInfo = CString(_T(""));
+	}
+
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("PunchingSignalInfoPath"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+		WorkingInfo.System.sPathMkSignalInfo = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("PunchingSignalInfoPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathMkSignalInfo = CString(_T(""));
 	}
 
 	if (0 < ::GetPrivateProfileString(_T("System"), _T("PunchingCurrentInfoBufPath"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
@@ -1398,12 +1414,12 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 
 	// [Last Job]
 
-	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Engrave Its Code"), NULL, szData, sizeof(szData), sPath))//WorkingInfo.System.sPathEngCurrInfo))
-		m_sItsCode = WorkingInfo.LastJob.sEngItsCode = CString(szData);
-	else
-	{
-		m_sItsCode = WorkingInfo.LastJob.sEngItsCode = CString(_T("VS90"));
-	}
+	//if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Engrave Its Code"), NULL, szData, sizeof(szData), sPath))//WorkingInfo.System.sPathEngCurrInfo))
+	//	m_sItsCode = WorkingInfo.LastJob.sEngItsCode = CString(szData);
+	//else
+	//{
+	//	m_sItsCode = WorkingInfo.LastJob.sEngItsCode = CString(_T("VS90"));
+	//}
 
 	//if (0 < ::GetPrivateProfileString(_T("Infomation"), _T("Current Model Up"), NULL, szData, sizeof(szData), sPath))//WorkingInfo.System.sPathEngCurrInfo))
 	//	WorkingInfo.LastJob.sModelUp = CString(szData);
@@ -1522,7 +1538,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	}
 
 
-	SetCurrentInfo();
+	//SetCurrentInfo();
 
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Last SerialUp"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.LastJob.sSerialUp = CString(szData);
@@ -9422,7 +9438,7 @@ BOOL CGvisR2R_LaserDoc::SetEngOffset(CfPoint &OfSt)
 
 void CGvisR2R_LaserDoc::SetCurrentInfoSignal(int nIdxSig, BOOL bOn)
 {
-	CString sData, sIdx, sPath = WorkingInfo.System.sPathEngCurrInfo;
+	CString sData, sIdx, sPath = WorkingInfo.System.sPathEngSignalInfo;
 
 	if (sPath.IsEmpty())
 		return;
@@ -9461,7 +9477,7 @@ void CGvisR2R_LaserDoc::SetCurrentInfoEngShotNum(int nSerial)
 BOOL CGvisR2R_LaserDoc::GetCurrentInfoSignal(int nIdxSig)
 {
 	TCHAR szData[200];
-	CString sData, sIdx, sPath = WorkingInfo.System.sPathMkCurrInfo;
+	CString sData, sIdx, sPath = WorkingInfo.System.sPathMkSignalInfo;
 
 	if (sPath.IsEmpty())
 		return FALSE;
@@ -9575,6 +9591,7 @@ void CGvisR2R_LaserDoc::GetMkMenu01()
 {
 	CString sPath = WorkingInfo.System.sPathMkMenu01;
 	TCHAR szData[512];
+	BOOL bUpdate = FALSE;
 
 	if (sPath.IsEmpty())
 		return;
@@ -9582,13 +9599,21 @@ void CGvisR2R_LaserDoc::GetMkMenu01()
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("Operator"), NULL, szData, sizeof(szData), sPath))
 		pDoc->WorkingInfo.LastJob.sSelUserName = pDoc->Menu01Status.Info.sOperator = CString(szData);
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("Model"), NULL, szData, sizeof(szData), sPath))
-		pDoc->WorkingInfo.LastJob.sModelUp = pDoc->Menu01Status.Info.sModel = CString(szData);
+		pDoc->Menu01Status.Info.sModel = CString(szData);
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("Lot"), NULL, szData, sizeof(szData), sPath))
 		pDoc->WorkingInfo.LastJob.sLotUp = pDoc->Menu01Status.Info.sLot = CString(szData);
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("LayerUp"), NULL, szData, sizeof(szData), sPath))
-		pDoc->WorkingInfo.LastJob.sLayerUp = pDoc->Menu01Status.Info.sLayerUp = CString(szData);
+		pDoc->Menu01Status.Info.sLayerUp = CString(szData);
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("LayerDn"), NULL, szData, sizeof(szData), sPath))
 		pDoc->WorkingInfo.LastJob.sLayerDn = pDoc->Menu01Status.Info.sLayerDn = CString(szData);
+
+	if(pDoc->WorkingInfo.LastJob.sModelUp != pDoc->Menu01Status.Info.sModel)
+		bUpdate = TRUE;
+	if(pDoc->WorkingInfo.LastJob.sLayerUp != pDoc->Menu01Status.Info.sLayerUp)
+		bUpdate = TRUE;
+
+	pDoc->WorkingInfo.LastJob.sModelUp = pDoc->Menu01Status.Info.sModel;
+	pDoc->WorkingInfo.LastJob.sLayerUp = pDoc->Menu01Status.Info.sLayerUp;
 
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("Total Shot"), NULL, szData, sizeof(szData), sPath))
 		pDoc->Menu01Status.Info.nTotShot = _ttoi(szData);
@@ -9684,7 +9709,14 @@ void CGvisR2R_LaserDoc::GetMkMenu01()
 		pDoc->Menu01Status.Data.dVerifyLen = _ttof(szData);
 		pDoc->WorkingInfo.LastJob.sVerifyLen.Format(_T("%.3f"), pDoc->Menu01Status.Data.dVerifyLen);
 	}
+	
+	if (bUpdate)
+	{
+		pView->m_bLoadMstInfo = TRUE;
 
+		if (pView->m_pDlgMenu01)
+			pView->m_pDlgMenu01->DispChangedModel();
+	}
 }
 
 void CGvisR2R_LaserDoc::SetMkMenu01(CString sMenu, CString sItem, CString sData)

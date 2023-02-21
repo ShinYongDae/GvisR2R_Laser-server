@@ -3183,6 +3183,9 @@ BOOL CDlgMenu03::DoReset()
 		{
 			pDoc->m_bDoneChgLot = FALSE;
 			pView->m_nNewLot = 0;
+			pDoc->SetEngraveLastShot(0); // m_nEngraveLastShot = 0;
+			pDoc->SetCurrentInfoEngShotNum(0);
+
 		}
 
 		if(!bInit)

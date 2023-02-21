@@ -768,6 +768,8 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 			SetLotLastShot();
 			StartLive();
 
+			pDoc->SetEngraveLastShot(pDoc->GetCurrentInfoEngShotNum());
+
 			if (pDoc->GetTestMode() == MODE_OUTER)
 			{
 				if (m_pDlgMenu01)
@@ -8171,6 +8173,14 @@ void CGvisR2R_LaserView::EngStop(BOOL bOn)
 
 BOOL CGvisR2R_LaserView::IsEngStop()
 {
+	if (m_sDispMain != _T("운전중") && m_bEngStop)
+		return TRUE;
+	else if (m_sDispMain == _T("운전중") && m_bEngStop)
+	{
+		m_bEngStop = FALSE;
+		return FALSE;
+	}
+
 	return m_bEngStop;
 }
 
@@ -15416,7 +15426,6 @@ void CGvisR2R_LaserView::InitAutoEng()
 	pDoc->m_bUploadPinImg = FALSE;
 	pDoc->BtnStatus.EngAuto._Init();
 	InitAutoEngSignal();
-	pDoc->SetEngraveLastShot(0); // m_nEngraveLastShot = 0;
 }
 
 // DoAuto
@@ -15707,6 +15716,9 @@ void CGvisR2R_LaserView::Eng1PtAlignPt0()
 			}
 			break;
 		case ENG_ST + (Mk1PtIdx::Align0_0) + 1:
+			if (!IsRun())
+				break;
+
 			if (m_bFailAlign[0][0])
 			{
 				Buzzer(TRUE, 0);
@@ -15728,6 +15740,9 @@ void CGvisR2R_LaserView::Eng1PtAlignPt0()
 						{
 							m_bDoMk[0] = FALSE;
 							m_bDoneMk[0] = TRUE;
+
+							EngStop(TRUE);
+							TowerLamp(RGB_YELLOW, TRUE);
 						}
 						else
 						{
@@ -15810,20 +15825,18 @@ void CGvisR2R_LaserView::Eng1PtDoMarking()
 		switch (m_nEngStAuto)
 		{
 		case ENG_ST + (Mk1PtIdx::DoMk) :				// Mk 마킹 시작
+			if (!IsRun())
+				break;
+
 			if (!pDoc->WorkingInfo.System.bNoMk)
 			{
-				//if (!SetMdxLotAndShotNum(pDoc->m_sLotNum, pDoc->m_nShotNum))
-				//if (!SetMdxLotAndShotNum(pDoc->m_sLotNum, nSerial))
-				//if (m_nGetItsCodeSerial == 0 || (m_nGetItsCodeSerial + 1) == nSerial)
+				if (!SetMdxLotAndShotNum(pDoc->m_sItsCode, nSerial))
 				{
-					if (!SetMdxLotAndShotNum(pDoc->m_sItsCode, nSerial))
-					{
-						EngStop(TRUE);
-						//MsgBox(_T("SetMdxLotAndShotNum - Failed."));
-						//TowerLamp(RGB_RED, TRUE);
-						//Buzzer(TRUE, 0);
-						break;
-					}
+					EngStop(TRUE);
+					//MsgBox(_T("SetMdxLotAndShotNum - Failed."));
+					//TowerLamp(RGB_RED, TRUE);
+					//Buzzer(TRUE, 0);
+					break;
 				}
 			}
 			Sleep(100);
@@ -15831,6 +15844,9 @@ void CGvisR2R_LaserView::Eng1PtDoMarking()
 			break;
 
 		case ENG_ST + (Mk1PtIdx::DoMk) + 1:
+			if (!IsRun())
+				break;
+
 			if (!pDoc->WorkingInfo.System.bNoMk)
 			{
 				if(m_nGetItsCodeSerial == 0 || (m_nGetItsCodeSerial + 1) == nSerial )

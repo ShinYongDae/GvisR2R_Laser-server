@@ -3066,11 +3066,16 @@ void CDlgMenu02::OnStnClickedStc19()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	Input_myStcData(16, IDC_STC_19);
 
-	// Shot Number 설정
+	//// Shot Number 설정
+	//myStcData[15].SetText(pDoc->m_sItsCode);	// IDC_STC_17	각인기 ITS Code
+	//myStcData[16].SetText();	// IDC_STC_19	리더기 Shot번호
 
 	CString sOrder, sShot, sData;
 	GetDlgItem(IDC_STC_17)->GetWindowText(sOrder);
 	GetDlgItem(IDC_STC_19)->GetWindowText(sShot);
+	pDoc->m_sShotNum = sShot;
+	pView->m_pDlgFrameHigh->SetEngraveLastShot(_ttoi(sShot)); // m_nEngraveLastShot = nSerial;
+	pView->SetCurrentInfoEngShotNum(_ttoi(sShot));
 
 	if (pView->m_pMdx2500->SetMdxOrderShotNum(sOrder, sShot, SET_SHOT))
 	{

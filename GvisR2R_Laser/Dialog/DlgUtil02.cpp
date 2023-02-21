@@ -199,24 +199,27 @@ void CDlgUtil02::DoConfirm()
 
 	m_sLotNum.MakeUpper();
 	pDoc->m_sLotNum = m_sLotNum;
+	pDoc->m_sProcessNum = m_sProcessNum;
+
+
+/*
 	pDoc->m_sLotNum.Delete(0, 1);
 
-	int nStrLength, nLength;
-	pDoc->m_sProcessNum = m_sProcessNum;
-	nStrLength = pDoc->m_sProcessNum.Find(_T("VS"), 0);
+	//int nStrLength, nLength;
+	//nStrLength = pDoc->m_sProcessNum.Find(_T("VS"), 0);
 
-	if (nStrLength == -1)
-		nStrLength = pDoc->m_sProcessNum.Find(_T("vs"), 0);
+	//if (nStrLength == -1)
+	//	nStrLength = pDoc->m_sProcessNum.Find(_T("vs"), 0);
 
-	if (nStrLength == -1)
-		pDoc->m_sProcessNum = _T("VS90");
-	else
-	{
-		pDoc->m_sProcessNum.Delete(0, nStrLength);
-		nLength = pDoc->m_sProcessNum.GetLength();
-		pDoc->m_sProcessNum.Delete(4, nLength - 4);
-	}
-
+	//if (nStrLength == -1)
+	//	pDoc->m_sProcessNum = _T("VS90");
+	//else
+	//{
+	//	pDoc->m_sProcessNum.Delete(0, nStrLength);
+	//	nLength = pDoc->m_sProcessNum.GetLength();
+	//	pDoc->m_sProcessNum.Delete(4, nLength - 4);
+	//}
+*/
 	pView->m_bLoadMstInfo = FALSE;
 
 	if ((pDoc->WorkingInfo.LastJob.sModelUp != pDoc->m_sModelUp) && !pDoc->m_sModelUp.IsEmpty())
