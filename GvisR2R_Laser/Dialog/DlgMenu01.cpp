@@ -311,6 +311,10 @@ BOOL CDlgMenu01::OnInitDialog()
 	GetDlgItem(IDC_CHK_MK_4)->ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_BTN_MK_ALL)->ShowWindow(SW_HIDE);
 
+	GetDlgItem(IDC_CHK_DEF_UP)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_CHK_DEF_DN)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_CHK_DEF_ALL)->ShowWindow(SW_HIDE);
+
 	InitCadImg();
 	GetCtrlPos();
 

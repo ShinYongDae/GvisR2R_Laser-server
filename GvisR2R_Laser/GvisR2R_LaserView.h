@@ -857,6 +857,7 @@ public:
 	BOOL IsLastJob(int nAoi); // 0 : AOI-Up , 1 : AOI-Dn , 2 : AOI-UpDn
 
 	void MonPlcAlm();
+	void MonMsgBox();
 	void MonDispMain();
 	void PlcAlm(BOOL bMon, BOOL bClr);
 	void FindAlarm();

@@ -4373,8 +4373,36 @@ CString CReelMap::GetRmapPath(int nRmap)
 	//	break;
 	//}
 
-	CString sPath = pView->GetMkMenu01(_T("DispDefImg"), _T("ReelmapPath"));
-	return sPath;
+	CString sSrcPath = pView->GetMkMenu01(_T("DispDefImg"), _T("ReelmapPath"));
+	CString sDstPath;
+	sDstPath.Format(_T("%s\\EngraveWork\\Reelmap.txt"), pDoc->WorkingInfo.System.sPathEng);
+
+	CFileFind finder;
+	CString strTemp;
+
+	if (finder.FindFile(sSrcPath))
+	{
+		if (!CopyFile((LPCTSTR)sSrcPath, (LPCTSTR)sDstPath, FALSE))
+		{
+			Sleep(30);
+			if (!CopyFile((LPCTSTR)sSrcPath, (LPCTSTR)sDstPath, FALSE))
+			{
+				strTemp.Format(_T("%s \r\n: Reelmap File Copy Fail"), sSrcPath);
+				pView->MsgBox(strTemp);
+				return _T("");
+			}
+		}
+	}
+	else
+	{
+		Sleep(30);
+		strTemp.Format(_T("%s \r\n: Reelmap File Not Exist"), sSrcPath);
+		//AfxMessageBox(strTemp);
+		pView->MsgBox(strTemp);
+		return _T("");
+	}
+
+	return sDstPath;
 }
 
 void CReelMap::UpdateProcessNum(CString sProcessNum, int nLayer)

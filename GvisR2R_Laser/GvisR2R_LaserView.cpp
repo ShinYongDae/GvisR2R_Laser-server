@@ -4092,6 +4092,7 @@ void CGvisR2R_LaserView::DoIO()
 	//DoInterlock();
 
 	MonPlcAlm();
+	MonMsgBox();
 	MonDispMain();
 
 	if (m_bCycleStop)
@@ -4101,7 +4102,24 @@ void CGvisR2R_LaserView::DoIO()
 		//TowerLamp(RGB_YELLOW, TRUE);
 		//Buzzer(TRUE);
 		//MyMsgBox(pDoc->m_sAlmMsg);
-		MsgBox(pDoc->m_sAlmMsg);
+
+		if (pDoc->m_sAlmMsg != pDoc->m_sIsAlmMsg)
+		{
+			pDoc->m_sIsAlmMsg = pDoc->m_sAlmMsg;
+			MsgBox(pDoc->m_sAlmMsg);
+			pDoc->m_sAlmMsg = _T("");
+			pDoc->m_sIsAlmMsg = _T("");
+			pDoc->m_sPrevAlmMsg = _T("");
+		}
+		else if (pDoc->m_sMsgBox != pDoc->m_sIsMsgBox)
+		{
+			pDoc->m_sIsMsgBox = pDoc->m_sMsgBox;
+			MsgBox(pDoc->m_sMsgBox, 0, pDoc->m_nTypeMsgBox);
+			pDoc->m_sMsgBox = _T("");
+			pDoc->m_sIsMsgBox = _T("");
+			pDoc->m_sPrevMsgBox = _T("");
+		}
+
 		pDoc->m_sAlmMsg = _T("");
 		pDoc->m_sPrevAlmMsg = _T("");
 	}
@@ -14037,6 +14055,18 @@ void CGvisR2R_LaserView::MonPlcAlm()
 		if (pDoc->m_sAlmMsg != pDoc->m_sPrevAlmMsg)
 		{
 			pDoc->m_sPrevAlmMsg = pDoc->m_sAlmMsg;
+			CycleStop();
+		}
+	}
+}
+
+void CGvisR2R_LaserView::MonMsgBox()
+{
+	if (!pDoc->m_sMsgBox.IsEmpty())
+	{
+		if (pDoc->m_sMsgBox != pDoc->m_sPrevMsgBox)
+		{
+			pDoc->m_sPrevMsgBox = pDoc->m_sMsgBox;
 			CycleStop();
 		}
 	}

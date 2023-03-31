@@ -150,11 +150,16 @@ typedef enum _stItemInx {
 }_ItemInx;
 
 typedef enum _stStatusInx {
-	_StErr = 0, _StReady, _StStop, _StRun, _StInitRun, _StSglSample, _StSglTest, _StDblSample, _StDblTest,
+	_StErr = 500, _StReady, _StStop, _StRun, _StInitRun, _StSglSample, _StSglTest, _StDblSample, _StDblTest,
 	_IsStErr, _IsStReady, _IsStStop, _IsStRun, _IsStInitRun, _IsStSglSample, _IsStSglTest, _IsStDblSample, _IsStDblTest,
 }_StatusInx;
 
 typedef enum _stAlarmInx {
-	_Alarm = 0, _IsAlarm,
+	_Alarm = 1000, _IsAlarm,
 }_AlarmInx;
+
+typedef enum _stMsgBoxInx {
+	_MsgBox = 1010, _IsMsgBox,
+}_MsgBoxInx;
+
 

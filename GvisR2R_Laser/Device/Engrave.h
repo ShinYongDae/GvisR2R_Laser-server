@@ -104,6 +104,7 @@ public:
 	void GetMkInfoLf(SOCKET_DATA SockData);
 	void GetMkInfoRt(SOCKET_DATA SockData);
 	void GetAlarmMsg(SOCKET_DATA SockData);
+	void GetMsgBox(SOCKET_DATA SockData);
 
 	// SetSysSignal
 	BOOL SetSysSignal();
@@ -573,6 +574,8 @@ public:
 	// Alarm
 	void SetAlarm(CString sMsg);
 	void IsSetAlarm(CString sMsg);
+	void SetMsgBox(CString sMsg);
+	void IsSetMsgBox(CString sMsg);
 
 	// On Running Auto
 	BOOL UpdateWorking();
