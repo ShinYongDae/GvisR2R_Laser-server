@@ -365,21 +365,30 @@ void CDlgMenu01::SelMap(int nSel)
 		switch(nSel)
 		{
 		case UP:
-			myBtn[12].SetCheck(TRUE);
-			myBtn[13].SetCheck(FALSE);
-			myBtn[14].SetCheck(FALSE);
+			if (myBtn[12].IsWindowVisible())
+				myBtn[12].SetCheck(TRUE);
+			if (myBtn[13].IsWindowVisible())
+				myBtn[13].SetCheck(FALSE);
+			if (myBtn[14].IsWindowVisible())
+				myBtn[14].SetCheck(FALSE);
 			pView->m_nSelRmap = RMAP_UP;
 			break;
 		case DN:
-			myBtn[12].SetCheck(FALSE);
-			myBtn[13].SetCheck(TRUE);
-			myBtn[14].SetCheck(FALSE);
+			if (myBtn[12].IsWindowVisible())
+				myBtn[12].SetCheck(FALSE);
+			if (myBtn[13].IsWindowVisible())
+				myBtn[13].SetCheck(TRUE);
+			if (myBtn[14].IsWindowVisible())
+				myBtn[14].SetCheck(FALSE);
 			pView->m_nSelRmap = RMAP_DN;
 			break;
 		case ALL:
-			myBtn[12].SetCheck(FALSE);
-			myBtn[13].SetCheck(FALSE);
-			myBtn[14].SetCheck(TRUE);
+			if (myBtn[12].IsWindowVisible())
+				myBtn[12].SetCheck(FALSE);
+			if (myBtn[13].IsWindowVisible())
+				myBtn[13].SetCheck(FALSE);
+			if (myBtn[14].IsWindowVisible())
+				myBtn[14].SetCheck(TRUE);
 			if(pDoc->WorkingInfo.LastJob.nMergingLayer==0)
 				pView->m_nSelRmap = RMAP_ALLUP;
 			else if(pDoc->WorkingInfo.LastJob.nMergingLayer==1)
@@ -391,10 +400,13 @@ void CDlgMenu01::SelMap(int nSel)
 	}
 	else
 	{
+		if (myBtn[12].IsWindowVisible())
 			myBtn[12].SetCheck(TRUE);
+		if (myBtn[13].IsWindowVisible())
 			myBtn[13].SetCheck(FALSE);
+		if (myBtn[14].IsWindowVisible())
 			myBtn[14].SetCheck(FALSE);
-			pView->m_nSelRmap = RMAP_UP;
+		pView->m_nSelRmap = RMAP_UP;
 	}
 
 	if (pDoc->GetTestMode() == MODE_OUTER)
@@ -448,9 +460,12 @@ void CDlgMenu01::OpenReelmap(int nSelRmap)
 
 		if (pDoc->GetTestMode() == MODE_OUTER)
 		{
-			myBtn[12].SetCheck(FALSE);	// IDC_CHK_DEF_UP
-			myBtn[13].SetCheck(FALSE);	// IDC_CHK_DEF_DN
-			myBtn[14].SetCheck(TRUE);	// IDC_CHK_DEF_ALL
+			if(myBtn[12].IsWindowVisible())
+				myBtn[12].SetCheck(FALSE);	// IDC_CHK_DEF_UP
+			if (myBtn[13].IsWindowVisible())
+				myBtn[13].SetCheck(FALSE);	// IDC_CHK_DEF_DN
+			if (myBtn[14].IsWindowVisible())
+				myBtn[14].SetCheck(TRUE);	// IDC_CHK_DEF_ALL
 			pDoc->m_pReelMap->Open();
 			pDoc->m_pReelMap->SetPathAtBuf();
 		}
@@ -2695,10 +2710,12 @@ void CDlgMenu01::DispStTime()
 	else
 		str.Format(_T("%04d-%02d-%02d, %02d:%02d:%02d"), nYear, nMonth, nDay, nHour, nMin, nSec);
 
-// 	sPrev = myStcData[21].GetText();
+ 	//sPrev = myStcData[21].GetText();
 	GetDlgItem(IDC_STC_LOT_START)->GetWindowText(sPrev);
+	str = pView->GetMkMenu01(_T("LotTime"), _T("Start"));
+
 	if(sPrev != str)
-		myStcData[21].SetText(str);
+		myStcData[21].SetText(sPrev);
 
 #ifdef USE_ENGRAVE
 	if (pView)
@@ -2791,11 +2808,14 @@ void CDlgMenu01::DispRunTime()
 		}
 	}
 
-// 	sPrev = myStcData[22].GetText();
-	GetDlgItem(IDC_STC_LOT_START)->GetWindowText(sPrev);
+ 	//sPrev = myStcData[22].GetText();
+	//GetDlgItem(IDC_STC_LOT_START)->GetWindowText(sPrev);
+	sPrev = pView->GetMkMenu01(_T("LotTime"), _T("Start"));
+
 	if(!sPrev.IsEmpty())
 	{
 		GetDlgItem(IDC_STC_LOT_RUN)->GetWindowText(sPrev);
+		str = pView->GetMkMenu01(_T("LotTime"), _T("Run"));
 		if (sPrev != str)
 		{
 			myStcData[22].SetText(str);
@@ -2837,8 +2857,9 @@ void CDlgMenu01::DispEdTime()
 	else
 		str.Format(_T("%04d-%02d-%02d, %02d:%02d:%02d"), nYear, nMonth, nDay, nHour, nMin, nSec);
 
-// 	sPrev = myStcData[23].GetText();
+ 	//sPrev = myStcData[23].GetText();
 	GetDlgItem(IDC_STC_LOT_END)->GetWindowText(sPrev);
+	str = pView->GetMkMenu01(_T("LotTime"), _T("End"));
 	if(sPrev != str)
 		myStcData[23].SetText(str);
 
@@ -4068,6 +4089,9 @@ void CDlgMenu01::OnChkLotEnd()
 void CDlgMenu01::OnChkDefUp() 
 {
 	// TODO: Add your control notification handler code here
+	if (!myBtn[12].IsWindowVisible())
+		return;
+
 	int nOn = myBtn[12].GetCheck();
 // 	int nOn = ((CButton*)GetDlgItem(IDC_CHK_DEF_UP))->GetCheck();
 	if(nOn)
@@ -4081,6 +4105,9 @@ void CDlgMenu01::OnChkDefUp()
 void CDlgMenu01::OnChkDefDn() 
 {
 	// TODO: Add your control notification handler code here
+	if (!myBtn[13].IsWindowVisible())
+		return;
+
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	if(!bDualTest)
 		return;
@@ -4098,6 +4125,9 @@ void CDlgMenu01::OnChkDefDn()
 void CDlgMenu01::OnChkDefAll() 
 {
 	// TODO: Add your control notification handler code here
+	if (!myBtn[14].IsWindowVisible())
+		return;
+
 	int nOn = myBtn[14].GetCheck();
 // 	int nOn = ((CButton*)GetDlgItem(IDC_CHK_DEF_ALL))->GetCheck();
 	if(nOn)
@@ -4422,12 +4452,12 @@ void CDlgMenu01::SetDualTest(BOOL bOn)
 		if(!myStcTitle[62].IsWindowVisible())
 			myStcTitle[62].ShowWindow(SW_SHOW);
 
-		if(!myBtn[12].IsWindowVisible())
-			myBtn[12].ShowWindow(SW_SHOW);
-		if(!myBtn[13].IsWindowVisible())
-			myBtn[13].ShowWindow(SW_SHOW);
-		if(!myBtn[14].IsWindowVisible())
-			myBtn[14].ShowWindow(SW_SHOW);
+		//if(!myBtn[12].IsWindowVisible())
+		//	myBtn[12].ShowWindow(SW_SHOW);
+		//if(!myBtn[13].IsWindowVisible())
+		//	myBtn[13].ShowWindow(SW_SHOW);
+		//if(!myBtn[14].IsWindowVisible())
+		//	myBtn[14].ShowWindow(SW_SHOW);
 
 		if(!myStcTitle[63].IsWindowEnabled())
 			myStcTitle[63].EnableWindow(TRUE);
@@ -5134,8 +5164,8 @@ void CDlgMenu01::EnableItsMode(BOOL bEnable)
 		pView->m_nSelRmap = RMAP_ITS;
 
 		myBtn[12].ShowWindow(SW_HIDE);	// IDC_CHK_DEF_UP
-		myBtn[13].SetCheck(SW_HIDE);	// IDC_CHK_DEF_DN
-		myBtn[14].SetCheck(SW_HIDE);	// IDC_CHK_DEF_ALL
+		myBtn[13].ShowWindow(SW_HIDE);	// IDC_CHK_DEF_DN
+		myBtn[14].ShowWindow(SW_HIDE);	// IDC_CHK_DEF_ALL
 
 		myStcTitle[49].SetText(_T("¿ÜÃþ")); // IDC_STC_WK_UP
 		myStcTitle[50].SetText(_T("³»Ãþ")); // IDC_STC_WK_DN
@@ -5147,8 +5177,8 @@ void CDlgMenu01::EnableItsMode(BOOL bEnable)
 		pView->m_nSelRmap = m_nSelRmapPrev;
 
 		myBtn[12].ShowWindow(SW_HIDE);	// IDC_CHK_DEF_UP
-		myBtn[13].SetCheck(SW_HIDE);	// IDC_CHK_DEF_DN
-		myBtn[14].SetCheck(SW_HIDE);	// IDC_CHK_DEF_ALL
+		myBtn[13].ShowWindow(SW_HIDE);	// IDC_CHK_DEF_DN
+		myBtn[14].ShowWindow(SW_HIDE);	// IDC_CHK_DEF_ALL
 
 		myStcTitle[49].SetText(_T("»ó¸é")); // IDC_STC_WK_UP
 		myStcTitle[50].SetText(_T("ÇÏ¸é")); // IDC_STC_WK_DN
