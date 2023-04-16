@@ -1318,6 +1318,7 @@ void CEngrave::GetSignalEngraveAutoSequence(SOCKET_DATA SockData)
 			{
 				pView->m_nStepTHREAD_DISP_DEF = 0;
 				pView->m_bTHREAD_DISP_DEF = TRUE;
+				//pView->UpdateLotTime();
 			}
 			break;
 		// Is

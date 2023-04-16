@@ -670,6 +670,8 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 		case 16:
 			m_nStepInitView++;
 			m_bLoadMstInfo = TRUE;
+			m_bTIM_START_UPDATE = TRUE;
+			SetTimer(TIM_START_UPDATE, 50, NULL);
 			break;
 		case 17:
 			m_nStepInitView++;
@@ -681,13 +683,19 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 			m_nStepInitView++;
 			break;
 		case 19:
+			if (m_bLoadMstInfo)
+			{
+				Sleep(100);
+				break;
+			}
+
 			m_nStepInitView++;
 			SetAlignPos();
 			break;
 		case 20:
 			m_nStepInitView++;
-			m_bTIM_START_UPDATE = TRUE;
-			SetTimer(TIM_START_UPDATE, 500, NULL);
+			//m_bTIM_START_UPDATE = TRUE;
+			//SetTimer(TIM_START_UPDATE, 50, NULL);
 			//m_bTIM_TCPIP_UPDATE = TRUE;
 			//SetTimer(TIM_TCPIP_UPDATE, 500, NULL);
 			break;
@@ -2217,6 +2225,8 @@ UINT CGvisR2R_LaserView::ThreadProc2(LPVOID lpContext)
 			if (pThread->m_bTHREAD_DISP_DEF)
 			{
 				pThread->DispDefImg();
+				pThread->UpdateLotTime();
+
 				Sleep(0);
 			}
 			else
@@ -15456,6 +15466,9 @@ void CGvisR2R_LaserView::InitAutoEng()
 	pDoc->m_bUploadPinImg = FALSE;
 	pDoc->BtnStatus.EngAuto._Init();
 	InitAutoEngSignal();
+
+	if (m_pDlgMenu01)
+		m_pDlgMenu01->ResetLotTime();
 }
 
 // DoAuto

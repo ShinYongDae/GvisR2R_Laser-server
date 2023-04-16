@@ -217,7 +217,6 @@ class CGvisR2R_LaserView : public CFormView
 	void CloseMyMsg();
 
 	void DispStsBar();
-	void UpdateLotTime();
 
 	void SetMainMc(BOOL bOn);
 	void ExitProgram();
@@ -401,6 +400,8 @@ public:
 	BOOL m_bTHREAD_RELOAD_RST_DN_INNER, m_bTHREAD_RELOAD_RST_ALLDN_INNER;
 	BOOL m_bTHREAD_RELOAD_RST_ITS, m_bTHREAD_UPDATE_RST_ITS;
 	// 	BOOL m_bTIM_MK_START;
+
+	void UpdateLotTime();
 
 	void UpdateRstUp();
 	void UpdateRstAllUp();

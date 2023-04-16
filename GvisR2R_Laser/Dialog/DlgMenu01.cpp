@@ -2809,8 +2809,8 @@ void CDlgMenu01::DispRunTime()
 	}
 
  	//sPrev = myStcData[22].GetText();
-	//GetDlgItem(IDC_STC_LOT_START)->GetWindowText(sPrev);
-	sPrev = pView->GetMkMenu01(_T("LotTime"), _T("Start"));
+	GetDlgItem(IDC_STC_LOT_START)->GetWindowText(sPrev);
+	//sPrev = pView->GetMkMenu01(_T("LotTime"), _T("Start"));
 
 	if(!sPrev.IsEmpty())
 	{
