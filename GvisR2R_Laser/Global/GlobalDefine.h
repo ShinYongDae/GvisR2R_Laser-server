@@ -632,7 +632,7 @@ struct stSystem
 	CString sPathVrsShareDn, sPathVrsBufDn;
 	CString sPathVsShareDn;
 
-	CString sPathEng, sPathEngCurrInfo, sPathEngOffset, sPathMkCurrInfo, sPathMkCurrInfoBuf;
+	CString sPathEng, sPathPunch, sPathEngCurrInfo, sPathEngOffset, sPathMkCurrInfo, sPathMkCurrInfoBuf;
 	CString sPathMkSignalInfo, sPathEngSignalInfo;
 	CString sPathMkMenu01, sPathMkMenu03, sPathMkInfo, sPathMonDispMain;
 
@@ -668,7 +668,7 @@ struct stSystem
 		sPathVrsShareDn = _T(""); sPathVrsBufDn = _T("");
 		sPathVsShareDn = _T("");
 
-		sPathEng = _T(""); sPathEngCurrInfo = _T(""); sPathEngOffset = _T(""); sPathMkCurrInfo = _T("");
+		sPathEng = _T(""); sPathPunch = _T(""); sPathEngCurrInfo = _T(""); sPathEngOffset = _T(""); sPathMkCurrInfo = _T("");
 		sPathMkSignalInfo = _T(""); sPathEngSignalInfo = _T("");
 		sPathMkCurrInfoBuf = _T(""); sPathMkMenu01 = _T(""); sPathMkMenu03 = _T("");  sPathMkInfo = _T(""); sPathMonDispMain = _T("");
 

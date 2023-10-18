@@ -4373,7 +4373,8 @@ CString CReelMap::GetRmapPath(int nRmap)
 	//	break;
 	//}
 
-	CString sSrcPath = pView->GetMkMenu01(_T("DispDefImg"), _T("ReelmapEngPath"));
+	//CString sSrcPath = pView->GetMkMenu01(_T("DispDefImg"), _T("ReelmapEngPath"));
+	CString sSrcPath = pDoc->WorkingInfo.System.sPathPunch;
 	CString sDstPath;
 	sDstPath.Format(_T("%s\\EngraveWork\\Reelmap.txt"), pDoc->WorkingInfo.System.sPathEng);
 

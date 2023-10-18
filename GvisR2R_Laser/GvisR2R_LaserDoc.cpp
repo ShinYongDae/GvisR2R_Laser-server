@@ -1064,6 +1064,14 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.System.sPathEng = CString(_T(""));
 	}
 
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("PunchingReelmapPath"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+		WorkingInfo.System.sPathPunch = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("PunchPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathPunch = CString(_T(""));
+	}
+
 	if (0 < ::GetPrivateProfileString(_T("System"), _T("EngraveCurrentInfoPath"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
 		WorkingInfo.System.sPathEngCurrInfo = CString(szData);
 	else
