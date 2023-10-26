@@ -8172,7 +8172,7 @@ void CGvisR2R_LaserDoc::SetCurrentInfo()
 
 	if (bDualTest)
 	{
-		sData = WorkingInfo.LastJob.sModelDn;
+		sData = WorkingInfo.LastJob.sModelUp;
 		::WritePrivateProfileString(_T("Infomation"), _T("Current Model Dn"), sData, sPath);
 		sData = WorkingInfo.LastJob.sLayerDn;
 		::WritePrivateProfileString(_T("Infomation"), _T("Current Layer Dn"), sData, sPath);

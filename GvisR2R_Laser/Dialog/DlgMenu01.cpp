@@ -3196,10 +3196,10 @@ void CDlgMenu01::UpdateRst() // Menu01 화면에서의 수율정보를 업데이트함.
 		DispStripRatioIts();
 	}
 	else
-		{
+	{
 		DispTotRatio();
 		DispStripRatio();
-		}
+	}
 
 	DispDef();
 }
@@ -5234,9 +5234,19 @@ void CDlgMenu01::DispTotRatioIts()
 
 	// 내층
 	if (pDoc->WorkingInfo.LastJob.bDualTestInner)
-		pDoc->m_pReelMapInnerAllUp->GetPcsNum(nGood, nBad);
+	{
+		if (pDoc->m_pReelMapInnerAllUp)
+			pDoc->m_pReelMapInnerAllUp->GetPcsNum(nGood, nBad);
+		else
+			return;
+	}
 	else
-		pDoc->m_pReelMapInnerUp->GetPcsNum(nGood, nBad);
+	{
+		if (pDoc->m_pReelMapInnerUp)
+			pDoc->m_pReelMapInnerUp->GetPcsNum(nGood, nBad);
+		else
+			return;
+	}
 
 	nTot = nGood + nBad;
 
@@ -5387,6 +5397,8 @@ void CDlgMenu01::DispStripRatioIts()
 	// 내층
 	if (pDoc->WorkingInfo.LastJob.bDualTestInner)
 	{
+		if (!pDoc->m_pReelMapInnerAllUp)
+			return;
 		nVal[1][0] = pDoc->m_pReelMapInnerAllUp->GetDefStrip(0);
 		nVal[1][1] = pDoc->m_pReelMapInnerAllUp->GetDefStrip(1);
 		nVal[1][2] = pDoc->m_pReelMapInnerAllUp->GetDefStrip(2);
@@ -5394,6 +5406,8 @@ void CDlgMenu01::DispStripRatioIts()
 	}
 	else
 	{
+		if (!pDoc->m_pReelMapInnerAllUp)
+			return;
 		nVal[1][0] = pDoc->m_pReelMapInnerUp->GetDefStrip(0);
 		nVal[1][1] = pDoc->m_pReelMapInnerUp->GetDefStrip(1);
 		nVal[1][2] = pDoc->m_pReelMapInnerUp->GetDefStrip(2);
@@ -5445,6 +5459,9 @@ void CDlgMenu01::DispStripRatioIts()
 	//pDoc->SetMkMenu01(_T("Yield Total"), _T("Dn"), str);
 
 	nSum = 0;
+
+	if (!pDoc->m_pReelMapIts)
+		return;
 
 	// 외층 + 내층
 	nMer[0] = pDoc->m_pReelMapIts->GetDefStrip(0);
