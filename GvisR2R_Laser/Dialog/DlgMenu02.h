@@ -18,7 +18,7 @@
 #define MAX_MENU02_LBL				(14)
 #define MAX_MENU02_STC				(23+14+2+7+7)
 #define MAX_MENU02_STC_DATA			(10+10+5+1+2+3)
-#define MAX_MENU02_BTN				(22+6+5+6+1+4+1)
+#define MAX_MENU02_BTN				(22+6+5+6+1+4+1+1)
 
 #define MAX_MENU02_STC_DUO			15
 #define MAX_MENU02_STC_DATA_DUO		17
@@ -35,6 +35,8 @@
 #define TIM_MDX_RESPONSE			209
 #define TIM_MDX_READY				210
 #define TIM_MDX_READY_CHECK			211
+
+#define TIM_MPE_OFFSET_INITPOS_MOVE			220
 
 #define WAIT_MARKING				50		// [mSec]
 
@@ -59,6 +61,7 @@ class CDlgMenu02 : public CDialog
 	BOOL m_bTIM_LIGHT_UP, m_bTIM_LIGHT_DN, m_bTIM_BUF_ENC;
 	BOOL m_bTIM_2D_READING, m_bTIM_TEST_2D_READING;
 	BOOL m_bTIM_MDX_READY, m_bTIM_MDX_READY_CHECK, m_bTIM_MDX_RESPONSE;
+	BOOL m_bTIM_MPE_OFFSET_INITPOS_MOVE;
 	double m_dStOffsetX, m_dStOffsetY;
 	double m_dCurPosX[2], m_dCurPosY[2];
 	int m_nSelectCam0Pos, m_nSelectCam1Pos;
@@ -260,6 +263,7 @@ public:
 	afx_msg void OnStnClickedStc49();
 	afx_msg void OnStnClickedStc52();
 	afx_msg void OnStnClickedStc55();
+	afx_msg void OnBnClickedBtnMoveInitOffset();
 };
 
 //{{AFX_INSERT_LOCATION}}

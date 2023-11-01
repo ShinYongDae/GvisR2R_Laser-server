@@ -759,6 +759,7 @@
 #define IDC_CHK_17                      1240
 #define IDC_STC_71                      1240
 #define IDC_STC_1148                    1240
+#define IDC_BTN_MOVE_INIT_OFFSET        1240
 #define IDC_STC_12_19                   1241
 #define IDC_STC_72                      1241
 #define IDC_STC_198                     1241

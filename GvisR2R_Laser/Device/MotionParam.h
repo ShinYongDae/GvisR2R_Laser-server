@@ -145,7 +145,7 @@ typedef struct stMotionMotion
 	CString sStBufPos, sBufHomeSpd, sBufHomeAcc, sEngraveStBufPos;
 	CString sMkFdLead, sAoiFdLead, sEngraveFdLead;
 	CString sFdMkAoiInitDist, sFdAoiAoiDistShot, sFdEngraveAoiInitDist;//, sBufStdPosDist;
-	CString sMkFdBarcodeOffset, sAoiFdBarcodeOffset, sEngraveFdBarcodeOffset;
+	CString sMkFdBarcodeOffset, sAoiFdBarcodeOffset, sEngraveFdBarcodeOffset, sOffsetInitPos;
 	CString sFdBarcodeOffsetVel, sFdBarcodeOffsetAcc;
 	CString sEngraveLaserAdjOffSetLimitAuto, sEngraveLaserAdjOffSetManual;	// Laser Offset보정용. [mm]
 	CString sEngraveLmtFdAdjOffSet;											// Feeding량 Offset보정용 초과값설정. [mm]
@@ -185,7 +185,7 @@ typedef struct stMotionMotion
 		sStBufPos = _T(""); sBufHomeSpd = _T(""); sBufHomeAcc = _T(""); sEngraveStBufPos = _T("");
 		sMkFdLead = _T(""); sAoiFdLead = _T(""); sEngraveFdLead = _T("");
 		sFdMkAoiInitDist = _T(""); sFdAoiAoiDistShot = _T(""); sFdEngraveAoiInitDist = _T("");//sBufStdPosDist="";
-		sMkFdBarcodeOffset = _T(""); sAoiFdBarcodeOffset = _T(""); sEngraveFdBarcodeOffset = _T("");
+		sMkFdBarcodeOffset = _T(""); sAoiFdBarcodeOffset = _T(""); sEngraveFdBarcodeOffset = _T(""); sOffsetInitPos = _T("");
 		sFdBarcodeOffsetVel = _T(""); sFdBarcodeOffsetAcc = _T("");
 		sEngraveLaserAdjOffSetLimitAuto = _T(""); sEngraveLaserAdjOffSetManual = _T("");	// Laser Offset보정용. [mm]
 		sEngraveLmtFdAdjOffSet = _T("");													// Feeding량 Offset보정용 초과값설정. [mm]

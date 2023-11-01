@@ -50,6 +50,8 @@ CDlgMenu02::CDlgMenu02(CWnd* pParent /*=NULL*/)
 	m_bTIM_MDX_READY = FALSE;
 	m_bTIM_MDX_READY_CHECK = FALSE;
 
+	m_bTIM_MPE_OFFSET_INITPOS_MOVE = FALSE;
+
 	m_dStOffsetX = 0.0; 
 	m_dStOffsetY = 0.0;
 
@@ -93,6 +95,8 @@ CDlgMenu02::~CDlgMenu02()
 	m_bTIM_MDX_RESPONSE = FALSE;
 	m_bTIM_MDX_READY = FALSE;
 	m_bTIM_MDX_READY_CHECK = FALSE;
+
+	m_bTIM_MPE_OFFSET_INITPOS_MOVE = FALSE;
 
 // 	if(m_pVision)
 // 	{
@@ -203,6 +207,7 @@ BEGIN_MESSAGE_MAP(CDlgMenu02, CDialog)
 	ON_STN_CLICKED(IDC_STC_49, &CDlgMenu02::OnStnClickedStc49)
 	ON_STN_CLICKED(IDC_STC_52, &CDlgMenu02::OnStnClickedStc52)
 	ON_STN_CLICKED(IDC_STC_55, &CDlgMenu02::OnStnClickedStc55)
+	ON_BN_CLICKED(IDC_BTN_MOVE_INIT_OFFSET, &CDlgMenu02::OnBnClickedBtnMoveInitOffset)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -412,6 +417,13 @@ BOOL CDlgMenu02::OnInitDialog()
 	//GetDlgItem(IDC_BTN_START_SAVE)->ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_BTN_ALIGN)->ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_BTN_ALIGN_MOVE)->ShowWindow(SW_HIDE);
+
+	GetDlgItem(IDC_BTN_OFFSET_ENGRAVE_CW)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_BTN_OFFSET_AOI_CW)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_BTN_OFFSET_MK_CW)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_BTN_OFFSET_ENGRAVE_CCW)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_BTN_OFFSET_AOI_CCW)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_BTN_OFFSET_MK_CCW)->ShowWindow(SW_HIDE);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -624,6 +636,10 @@ void CDlgMenu02::InitBtn()
 
 	myBtn[44].SubclassDlgItem(IDC_BTN_SHOT_REMAIN_CCW, this);
 	myBtn[44].SetHwnd(this->GetSafeHwnd(), IDC_BTN_SHOT_REMAIN_CCW);
+
+	myBtn[45].SubclassDlgItem(IDC_BTN_MOVE_INIT_OFFSET, this);
+	myBtn[45].SetHwnd(this->GetSafeHwnd(), IDC_BTN_MOVE_INIT_OFFSET);
+	myBtn[45].SetBtnType(BTN_TYPE_CHECK);
 
 	int i;
 	for(i=0; i<MAX_MENU02_BTN; i++)
@@ -1363,6 +1379,36 @@ void CDlgMenu02::OnTimer(UINT_PTR nIDEvent)//(UINT nIDEvent)
 				}
 			}
 			break;
+		case TIM_MPE_OFFSET_INITPOS_MOVE:
+			KillTimer(TIM_MPE_OFFSET_INITPOS_MOVE);
+			if (m_bTIM_MPE_OFFSET_INITPOS_MOVE)
+			{
+				if (pDoc->BtnStatus.SettingEng.OffsetInitPosMove)
+				{
+					SetTimer(TIM_MPE_OFFSET_INITPOS_MOVE, 100, NULL);
+				}
+				else
+				{
+					if (myBtn[45].GetCheck())
+						myBtn[45].SetCheck(FALSE);	// IDC_BTN_MOVE_INIT_OFFSET
+
+					m_bTIM_MPE_OFFSET_INITPOS_MOVE = FALSE;
+				}
+#ifdef USE_MPE
+				if (pDoc->m_pMpeSignal[3] & (0x01 << 15))
+				{
+					SetTimer(TIM_MPE_OFFSET_INITPOS_MOVE, 100, NULL);
+				}
+				else
+				{
+					if (myBtn[45].GetCheck())
+						myBtn[45].SetCheck(FALSE);	// IDC_BTN_MOVE_INIT_OFFSET
+
+					m_bTIM_MPE_OFFSET_INITPOS_MOVE = FALSE;
+				}
+#endif
+			}
+
 		}
 
 		m_bLockTimer = FALSE;
@@ -2692,8 +2738,9 @@ void CDlgMenu02::Disp()
 	str.Format(_T("%.1f"), _tstof(pDoc->WorkingInfo.Motion.sAoiFdBarcodeOffset));
 	myStcData[26].SetText(str);					// IDC_STC_38	AOI\rOffset
 
-	str.Format(_T("%.1f"), _tstof(pDoc->WorkingInfo.Motion.sMkFdBarcodeOffset));
-	myStcData[27].SetText(str);					// IDC_STC_191	Punching\rOffset
+	//str.Format(_T("%.1f"), _tstof(pDoc->WorkingInfo.Motion.sMkFdBarcodeOffset));
+	str.Format(_T("%.1f"), _tstof(pDoc->WorkingInfo.Motion.sOffsetInitPos));
+	myStcData[27].SetText(str);					// IDC_STC_191	시작위치\rOffset
 
 	str.Format(_T("%.1f"), _tstof(pDoc->WorkingInfo.Motion.sFdBarcodeOffsetVel));
 	myStcData[11].SetText(str);					// IDC_STC_007	속도
@@ -2939,10 +2986,16 @@ void CDlgMenu02::OnStnClickedStc191()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	Input_myStcData(27, IDC_STC_191);
 
-	CString sPath = PATH_WORKING_INFO;
+	//CString sPath = PATH_WORKING_INFO;
 	CString sData;
 	GetDlgItem(IDC_STC_191)->GetWindowText(sData);
-	pDoc->SetMkReaderDist(_tstoi(sData));
+	pDoc->SetOffsetInitPos(_tstof(sData));
+	//pDoc->SetMkReaderDist(_tstoi(sData));
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->Set2DOffsetInitPos();	//_stSigInx::_2DOffsetInitPos
+#endif
 }
 
 
@@ -3186,11 +3239,18 @@ void CDlgMenu02::OnBnClickedBtnLaserMarking()
 	BOOL bOn = myBtn[25].GetCheck();	// IDC_BTN_LASER_MARKING
 	if (bOn)
 	{
-		CString sData;
-		if(pView->m_pMdx2500->LaserMarking())
+		if (IDYES == pView->MsgBox(_T("2D 코드를 각인하시겠습니까?"), MB_YESNO))
 		{
-			//m_bTIM_MDX_RESPONSE = TRUE;
-			//SetTimer(TIM_MDX_RESPONSE, 100, NULL);
+			CString sData;
+			if (pView->m_pMdx2500->LaserMarking()) // Marking Start
+			{
+				//m_bTIM_MDX_RESPONSE = TRUE;
+				//SetTimer(TIM_MDX_RESPONSE, 100, NULL);
+			}
+			else
+			{
+				myBtn[25].SetCheck(FALSE);	// IDC_BTN_LASER_MARKING;
+			}
 		}
 		else
 		{
@@ -3201,7 +3261,7 @@ void CDlgMenu02::OnBnClickedBtnLaserMarking()
 	{
 		if(pView->m_pMdx2500->IsRunning())
 		{
-			if (pView->m_pMdx2500->LaserMarking(FALSE))
+			if (pView->m_pMdx2500->LaserMarking(FALSE)) // Marking Stop
 			{
 				//m_bTIM_MDX_RESPONSE = TRUE;
 				//SetTimer(TIM_MDX_RESPONSE, 100, NULL);
@@ -3215,7 +3275,7 @@ void CDlgMenu02::OnBnClickedBtnLaserMarking()
 		{
 			if (pView->m_pMdx2500->IsRunning())
 			{
-				if (pView->m_pMdx2500->LaserMarking(FALSE))
+				if (pView->m_pMdx2500->LaserMarking(FALSE)) // Marking Stop
 				{
 					//m_bTIM_MDX_RESPONSE = TRUE;
 					//SetTimer(TIM_MDX_RESPONSE, 100, NULL);
@@ -3681,4 +3741,35 @@ void CDlgMenu02::SetLed(int nIdx, BOOL bOn)
 		myLabel[nIdx].SetImageBk(LBL_IMG_DN);
 	else if(!bOn && myLabel[nIdx].GetImageBk() != LBL_IMG_UP)
 		myLabel[nIdx].SetImageBk(LBL_IMG_UP);
+}
+
+
+void CDlgMenu02::OnBnClickedBtnMoveInitOffset()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	BOOL bOn = myBtn[45].GetCheck();	// IDC_BTN_MOVE_INIT_OFFSET
+
+	if (bOn)
+	{
+		if (IDYES == pView->MsgBox(_T("초기 위치 Offset 값만큼 이송하시겠습니까?"), MB_YESNO))
+		{
+#ifdef USE_ENGRAVE
+			if (pView && pView->m_pEngrave)
+			{
+				pView->m_pEngrave->Set2DOffsetInitPosMove(TRUE);	//_stSigInx::_2DOffsetInitPosMove
+			}
+#endif
+
+			m_bTIM_MPE_OFFSET_INITPOS_MOVE = TRUE;
+			SetTimer(TIM_MPE_OFFSET_INITPOS_MOVE, 100, NULL);
+#ifdef USE_MPE
+			if (pView->m_pMpe)
+				pView->m_pMpe->Write(_T("MB44013F"), 1); // 각인부, 검사부, 마킹부 offset 이송 ON(PC가 On시키고, PLC가 확인하고 Off시킴)
+#endif
+		}
+		else
+		{
+			myBtn[45].SetCheck(FALSE);	// IDC_BTN_MOVE_INIT_OFFSET;
+		}
+	}
 }

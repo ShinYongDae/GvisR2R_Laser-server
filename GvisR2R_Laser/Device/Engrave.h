@@ -85,6 +85,7 @@ public:
 	void GetSignalUncoiler(SOCKET_DATA SockData);
 	void GetSignalEngraveAutoSequence(SOCKET_DATA SockData);
 	void GetSignalMyMsg(SOCKET_DATA SockData);
+	void GetSignal2dEng(SOCKET_DATA SockData);
 
 	// GetSysData
 	void GetSysData(SOCKET_DATA SockData);
@@ -587,6 +588,10 @@ public:
 
 	void SwMenu01UpdateWorking(BOOL bOn);
 	void IsSwMenu01UpdateWorking(BOOL bOn);
+
+	// SetteingEng
+	void Set2DOffsetInitPos();
+	void Set2DOffsetInitPosMove(BOOL bOn);
 
 protected:
 	afx_msg LRESULT wmAcceptReceived(WPARAM wParam, LPARAM lParam);

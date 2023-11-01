@@ -454,6 +454,8 @@ void CEngrave::GetSysSignal(SOCKET_DATA SockData)
 
 	GetSignalEngraveAutoSequence(SockData);
 	GetSignalMyMsg(SockData);
+
+	GetSignal2dEng(SockData);
 }
 
 void CEngrave::GetSignalDisp(SOCKET_DATA SockData)
@@ -8810,4 +8812,48 @@ void CEngrave::IsSwMenu01UpdateWorking(BOOL bOn)
 	SocketData.nMsgID = _SigInx::_IsUpdateWork;
 	SocketData.nData1 = bOn ? 1 : 0;
 	SendCommand(SocketData);
+}
+
+
+
+void CEngrave::Set2DOffsetInitPos()
+{
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _stSigInx::_2DOffsetInitPos;
+	SocketData.nData1 = 1;
+	SendCommand(SocketData);
+}
+
+void CEngrave::Set2DOffsetInitPosMove(BOOL bOn)
+{
+	if (!pDoc)
+		return;
+
+	pDoc->BtnStatus.SettingEng.OffsetInitPosMove = bOn;
+
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _stSigInx::_2DOffsetInitPosMove;
+	SocketData.nData1 = pDoc->BtnStatus.SettingEng.OffsetInitPosMove ? 1 : 0;
+	SendCommand(SocketData);
+}
+
+void CEngrave::GetSignal2dEng(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+	CString sVal;
+
+	if (nCmdCode == _SetSig)
+	{
+		switch (nMsgId)
+		{
+		case _SigInx::_2DOffsetInitPosMove:
+			pDoc->BtnStatus.SettingEng.OffsetInitPosMove = (SockData.nData1 > 0) ? TRUE : FALSE;
+			break;
+		}
+	}
 }

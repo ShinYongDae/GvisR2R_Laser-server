@@ -25,7 +25,8 @@ typedef enum _stSigInx {
 	_TempStop, _TempPause, _LotCut, _MkPosMv, _MkVerify, _ReelmapUp, _ReelmapDn, _ReelmapTot,
 	_RemainMode, _EndWork, _ReMk, _2Layer, _1LnMk, _2LnMk, _3LnMk, _4LnMk, _TotLnMk, _UpdateWork, _DispDefImg,
 	// Menu02
-	_2DEngLenMvCw, _2DEngLenMvCcw, _2DAoiLenMvCw, _2DAoiLenMvCcw, _2DMkLenMvCw, _2DMkLenMvCcw, _2DOneShotLenCw, _2DOneShotLenCcw,	
+	_2DEngLenMvCw, _2DEngLenMvCcw, _2DAoiLenMvCw, _2DAoiLenMvCcw, _2DMkLenMvCw, _2DMkLenMvCcw, _2DOneShotLenCw, _2DOneShotLenCcw,
+	_2DOffsetInitPos, _2DOffsetInitPosMove,
 	// Menu03
 	_Ready, _Run, _Reset, _Stop, _Auto, _OneCycle, _Manual, _MkTq, _AoiTq, _EngTq, _CcwModRe, _CcwModUn, _Core150Re, _Core150Un, 
 	_Relation, _JoinSelRe, _MvCwRe, _MvCcwRe, _PrdChuckRe, _DancerUpRe, _PasteUpLfRe, _PasteUpRtRe, _PasteVacRe, _PprChuckRe,

@@ -2363,6 +2363,16 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.Motion.sMkFdBarcodeOffset = CString(_T(""));
 	}
 
+
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("INIT_POSITION_OFFSET"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.Motion.sOffsetInitPos = CString(szData);
+	else
+	{
+		//AfxMessageBox(_T("각인부, 검사부, 마킹부 offset 이송 값이  설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.Motion.sOffsetInitPos = CString(_T("0.0"));
+	}
+
+
 	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("2DREADER_FEEDING_SERVO_VEL"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.Motion.sFdBarcodeOffsetVel = CString(szData);
 	else
@@ -9225,6 +9235,23 @@ void CGvisR2R_LaserDoc::SetMkReaderDist(double dLen)
 double CGvisR2R_LaserDoc::GetMkReaderDist()
 {
 	return (_tstof(WorkingInfo.Motion.sMkFdBarcodeOffset));
+}
+
+void CGvisR2R_LaserDoc::SetOffsetInitPos(double dLen)
+{
+	CString sData, sPath = PATH_WORKING_INFO;
+	sData.Format(_T("%.3f"), dLen);
+	WorkingInfo.Motion.sOffsetInitPos = sData;
+	::WritePrivateProfileString(_T("Motion"), _T("INIT_POSITION_OFFSET"), sData, sPath);
+#ifdef USE_MPE
+	long lData = (long)(_tstof(WorkingInfo.Motion.sOffsetInitPos) * 1000.0);
+	pView->m_pMpe->Write(_T("ML44040"), lData);	// 각인부, 검사부, 마킹부 offset 이송 값 (단위 mm * 1000)
+#endif
+}
+
+double CGvisR2R_LaserDoc::GetOffsetInitPos()
+{
+	return (_tstof(WorkingInfo.Motion.sOffsetInitPos));
 }
 
 void CGvisR2R_LaserDoc::Set2DReaderPosMoveVel(double dVel)
