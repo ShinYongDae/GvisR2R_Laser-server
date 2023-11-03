@@ -2364,7 +2364,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	}
 
 
-	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("INIT_POSITION_OFFSET"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Motion"), _T("INIT_POSITION_OFFSET"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.Motion.sOffsetInitPos = CString(szData);
 	else
 	{

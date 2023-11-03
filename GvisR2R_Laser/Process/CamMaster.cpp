@@ -146,8 +146,8 @@ BOOL CCamMaster::LoadMstInfo()
 		//InitOrderingMk();
 
 #ifdef TEST_MODE
-		WriteOrderingMk();
-		WriteOrderingMkMirror();
+		//WriteOrderingMk();
+		//WriteOrderingMkMirror();
 #endif
 
 	}

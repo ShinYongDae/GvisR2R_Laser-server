@@ -3239,7 +3239,7 @@ void CDlgMenu02::OnBnClickedBtnLaserMarking()
 	BOOL bOn = myBtn[25].GetCheck();	// IDC_BTN_LASER_MARKING
 	if (bOn)
 	{
-		if (IDYES == pView->MsgBox(_T("2D 코드를 각인하시겠습니까?"), 0, MB_YESNO))
+		if (IDYES == pView->MsgBox(_T("2D 코드를 각인하시겠습니까?"), MB_YESNO))
 		{
 			CString sData;
 			if (pView->m_pMdx2500->LaserMarking()) // Marking Start
@@ -3751,7 +3751,7 @@ void CDlgMenu02::OnBnClickedBtnMoveInitOffset()
 
 	if (bOn)
 	{
-		if (IDYES == pView->MsgBox(_T("초기 위치 Offset 값만큼 이송하시겠습니까?"), 0, MB_YESNO))
+		if (IDYES == pView->MsgBox(_T("초기 위치 Offset 값만큼 이송하시겠습니까?"), MB_YESNO))
 		{
 #ifdef USE_ENGRAVE
 			if (pView && pView->m_pEngrave)
