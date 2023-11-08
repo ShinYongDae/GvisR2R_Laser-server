@@ -1544,6 +1544,13 @@ void CEngrave::GetOpInfo(SOCKET_DATA SockData)
 				pDoc->WorkingInfo.LastJob.bUseEngraveUltrasonic = (SockData.nData1 > 0) ? TRUE : FALSE;
 			}
 			break;
+		case _SigInx::_Use380mm:
+			if (pDoc->WorkingInfo.LastJob.bUse380mm!= (SockData.nData1 > 0) ? TRUE : FALSE)
+			{
+				m_bGetOpInfo = TRUE;
+				pDoc->WorkingInfo.LastJob.bUse380mm = (SockData.nData1 > 0) ? TRUE : FALSE;
+			}
+			break;
 		case _SigInx::_TempPause:
 			if (pDoc->WorkingInfo.LastJob.bTempPause != (SockData.nData1 > 0) ? TRUE : FALSE)
 			{
@@ -4444,6 +4451,19 @@ void CEngrave::SetUltraSonicEngrave()
 
 	SocketData.nMsgID = _SigInx::_UltraSonicEngrave;
 	SocketData.nData1 = pDoc->WorkingInfo.LastJob.bUseEngraveUltrasonic ? 1 : 0;
+	SendCommand(SocketData);
+}
+
+void CEngrave::SetUse380mm()
+{
+	if (!pDoc)
+		return;
+
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_Use380mm;
+	SocketData.nData1 = pDoc->WorkingInfo.LastJob.bUse380mm ? 1 : 0;
 	SendCommand(SocketData);
 }
 

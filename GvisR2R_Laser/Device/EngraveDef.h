@@ -20,7 +20,7 @@ typedef enum _stSigInx {
 	// Dlg Info 
 	_DualTest, _SampleTest, _TestMode, _RecoilerCcw, _UncoilerCcw, _AlignMethode,
 	_DoorRecoiler, _DoorAoiUp, _DoorAoiDn, _DoorMk, _DoorEngrave, _DoorUncoiler, _SaftyMk, _CleannerAoiUp, _CleannerAoiDn, 
-	_UltraSonicAoiDn, _UltraSonicEngrave, _FixDef,
+	_UltraSonicAoiDn, _UltraSonicEngrave, _FixDef, _Use380mm,
 	// Menu01
 	_TempStop, _TempPause, _LotCut, _MkPosMv, _MkVerify, _ReelmapUp, _ReelmapDn, _ReelmapTot,
 	_RemainMode, _EndWork, _ReMk, _2Layer, _1LnMk, _2LnMk, _3LnMk, _4LnMk, _TotLnMk, _UpdateWork, _DispDefImg,

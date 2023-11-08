@@ -192,8 +192,8 @@ BOOL CDlgInfo::OnInitDialog()
 // 	GetDlgItem(IDC_STC_0020)->ShowWindow(SW_HIDE);
 // 	GetDlgItem(IDC_STC_0021)->ShowWindow(SW_HIDE);
 // 
- 	GetDlgItem(IDC_STC_0043)->ShowWindow(SW_HIDE);
- 	GetDlgItem(IDC_CHK_008)->ShowWindow(SW_HIDE);
+ 	//GetDlgItem(IDC_STC_0043)->ShowWindow(SW_HIDE);
+ 	//GetDlgItem(IDC_CHK_008)->ShowWindow(SW_HIDE);
  	GetDlgItem(IDC_STC_0044)->ShowWindow(SW_HIDE);
  	GetDlgItem(IDC_CHK_009)->ShowWindow(SW_HIDE);
 // 	GetDlgItem(IDC_STC_0046)->ShowWindow(SW_HIDE);
@@ -602,7 +602,12 @@ void CDlgInfo::Disp()
 	else
 		myBtn[7].SetCheck(FALSE);
 
-	if(pDoc->WorkingInfo.LastJob.bDispMkPcs)
+	//if(pDoc->WorkingInfo.LastJob.bDispMkPcs)
+	//	myBtn[8].SetCheck(TRUE);
+	//else
+	//	myBtn[8].SetCheck(FALSE);
+
+	if (pDoc->WorkingInfo.LastJob.bUse380mm)
 		myBtn[8].SetCheck(TRUE);
 	else
 		myBtn[8].SetCheck(FALSE);
@@ -1210,13 +1215,23 @@ void CDlgInfo::OnChk007()
 // }
 void CDlgInfo::OnChk008() 
 {
-	//if(myBtn[8].GetCheck())
-	//	pDoc->WorkingInfo.LastJob.bBufDrSen = TRUE;
-	//else
-	//	pDoc->WorkingInfo.LastJob.bBufDrSen = FALSE;
+	if (myBtn[8].GetCheck())
+		pDoc->WorkingInfo.LastJob.bUse380mm = TRUE;
+	else
+		pDoc->WorkingInfo.LastJob.bUse380mm = FALSE;
 
-	//CString sData = pDoc->WorkingInfo.LastJob.bBufDrSen ? _T("1") : _T("0");
-	//::WritePrivateProfileString(_T("Last Job"), _T("Use Buffer Door Sensor"), sData, PATH_WORKING_INFO);	
+	CString sData = pDoc->WorkingInfo.LastJob.bUse380mm ? _T("1") : _T("0");
+	::WritePrivateProfileString(_T("Last Job"), _T("Use 380mm Roll"), sData, PATH_WORKING_INFO);
+
+#ifdef USE_MPE
+	if (pView && pView->m_pMpe)
+		pView->m_pMpe->Write(_T("MB440177"), pDoc->WorkingInfo.LastJob.bUse380mm ? 1 : 0);	// EPC角赴歹(力前家->OFF/力前措->ON)
+#endif
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetUse380mm();	//_stSigInx::_Use380mm
+#endif
 
 }
 

@@ -161,6 +161,7 @@ public:
 	void SetCleannerAoiDn();
 	void SetUltraSonicAoiDn();
 	void SetUltraSonicEngrave();
+	void SetUse380mm();
 	void SetTotReelLen();
 	void SetOnePnlLen();
 	void SetTempPause();

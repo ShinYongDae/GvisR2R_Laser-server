@@ -1729,6 +1729,11 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	else
 		WorkingInfo.LastJob.bBufDrSen = TRUE;
 
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use 380mm Roll"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.bUse380mm = _ttoi(szData) ? TRUE : FALSE;
+	else
+		WorkingInfo.LastJob.bUse380mm = FALSE;
+
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use Display Marked Piece"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.LastJob.bDispMkPcs = _ttoi(szData) ? TRUE : FALSE;
 	else
@@ -3584,6 +3589,9 @@ void CGvisR2R_LaserDoc::SaveWorkingInfo()
 
 	sData.Format(_T("%d"), WorkingInfo.LastJob.bBufDrSen ? 1 : 0);
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Buffer Door Sensor"), sData, sPath);
+
+	sData.Format(_T("%d"), WorkingInfo.LastJob.bUse380mm ? 1 : 0);
+	::WritePrivateProfileString(_T("Last Job"), _T("Use 380mm Roll"), sData, sPath);
 
 	sData.Format(_T("%d"), WorkingInfo.LastJob.bDispMkPcs ? 1 : 0);
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Display Marked Piece"), sData, sPath);

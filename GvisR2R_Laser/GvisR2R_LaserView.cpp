@@ -653,12 +653,12 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 				if (m_pMotion->IsHomeDone())// && m_pMotion->IsHomeDone(MS_MKFD))
 				{
 					m_nStepInitView++;
-					Sleep(300);
 				}
 
 				sMsg.Format(_T("X0(%s) , Y0(%s)"), m_pMotion->IsHomeDone(MS_X0) ? _T("Done") : _T("Doing"),
 					m_pMotion->IsHomeDone(MS_Y0) ? _T("Done") : _T("Doing"));
 				DispMsg(sMsg, _T("Homming"), RGB_GREEN, 2000, TRUE);
+				Sleep(300);
 			}
 			else
 			{
@@ -13521,6 +13521,8 @@ void CGvisR2R_LaserView::InitPLC()
 	lData = (long)(_tstof(pDoc->WorkingInfo.LastJob.sUltraSonicCleannerStTim) * 100.0);
 	m_pMpe->Write(_T("MW05940"), lData);	// AOI_Dn (단위 [초] * 100) : 1 is 10 mSec.
 	m_pMpe->Write(_T("MW05942"), lData);	// AOI_Up (단위 [초] * 100) : 1 is 10 mSec.
+
+	m_pMpe->Write(_T("MB440177"), pDoc->WorkingInfo.LastJob.bUse380mm ? 1 : 0);	// EPC실린더(제품소->OFF/제품대->ON)
 #endif
 }
 
