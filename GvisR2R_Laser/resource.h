@@ -337,6 +337,8 @@
 #define IDC_STC_SIG00                   1127
 #define IDC_STC_DEF_LIGHT               1128
 #define IDC_STC_ALN                     1128
+#define IDC_STC_SIG9                    1128
+#define IDC_STC_SIG05                   1128
 #define IDC_STC_DEF_ENK                 1129
 #define IDC_STC_ALN_X                   1129
 #define IDC_STC_SIG02                   1129
@@ -346,6 +348,7 @@
 #define IDC_STC_SIG03                   1130
 #define IDC_STC_DEF_EPR                 1131
 #define IDC_STC_ALN_Y                   1131
+#define IDC_STC_SIG04                   1131
 #define IDC_STC_DEF_E_PROT              1132
 #define IDC_STC_ALIGN_Y                 1132
 #define IDC_STC_01                      1132

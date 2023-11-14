@@ -347,7 +347,9 @@ void CDlgFrameHigh::InitLabel()
 	myLabel[1].SubclassDlgItem(IDC_STC_SIG01, this);	// pDoc->m_pSliceIo[10] & (0x01<<0);		// Out - 검사부 검사 시작
 	myLabel[2].SubclassDlgItem(IDC_STC_SIG02, this);	// pDoc->m_pSliceIo[5] & (0x01<<1));		// In - 검사부 테이블 진공 완료
 	//myLabel[3].SubclassDlgItem(IDC_STC_SIG03, this);	// pDoc->m_pSliceIo[5] & (0x01<<0));		// In - 검사부 검사 완료
-	myLabel[3].SubclassDlgItem(IDC_STC_SIG03, this);	// pDoc->m_pSliceIo[2] & (0x01<<5));		// 내층 제품시 이어가기 상태 표시 MB440125
+	myLabel[3].SubclassDlgItem(IDC_STC_SIG03, this);	// 내층 제품시 이어가기 상태 표시 MB440125
+	myLabel[4].SubclassDlgItem(IDC_STC_SIG04, this);	// 내층 상태 표시
+	myLabel[5].SubclassDlgItem(IDC_STC_SIG05, this);	// 외층 상태 표시
 
 	for(int i=0; i<MAX_FRMHIGH_LABEL; i++)
 	{
@@ -473,6 +475,8 @@ void CDlgFrameHigh::OnTimer(UINT_PTR nIDEvent)//(UINT nIDEvent)
 	if(nIDEvent==TIM_SIG_AOI)
 	{
 		KillTimer(TIM_SIG_AOI);
+
+		DispTestMode();
 		DispSigAoi();
 		DispFdOffset();
 		ChkFdEnc();
@@ -561,15 +565,35 @@ void CDlgFrameHigh::DispSigAoi()
 	else if (!bOn && myLabel[2].GetImageBk() != LBL_IMG_UP)
 		myLabel[2].SetImageBk(LBL_IMG_UP);
 
+	CString sMsg;
+	sMsg.Format(_T("%d"), pDoc->m_nShotNum);
+	pView->DispStatusBar(sMsg, 5);
+}
+
+void CDlgFrameHigh::DispTestMode()
+{
+	//m_pPcr[0][nIdx]->m_sItsCode
+
+	BOOL bOn;
+
 	bOn = pView->IsDispContRun();									// 내층 제품시 이어가기 상태 표시 MB440125
 	if (bOn && myLabel[3].GetImageBk() != LBL_IMG_DN)
 		myLabel[3].SetImageBk(LBL_IMG_DN);
 	else if (!bOn && myLabel[3].GetImageBk() != LBL_IMG_UP)
 		myLabel[3].SetImageBk(LBL_IMG_UP);
 
-	CString sMsg;
-	sMsg.Format(_T("%d"), pDoc->m_nShotNum);
-	pView->DispStatusBar(sMsg, 5);
+	bOn = (pDoc->GetTestMode() == MODE_INNER) ? TRUE : FALSE; // 내층 검사 모드
+	if (bOn && myLabel[4].GetImageBk() != LBL_IMG_DN)
+		myLabel[4].SetImageBk(LBL_IMG_DN);
+	else if (!bOn && myLabel[4].GetImageBk() != LBL_IMG_UP)
+		myLabel[4].SetImageBk(LBL_IMG_UP);
+
+	bOn = (pDoc->GetTestMode() == MODE_OUTER) ? TRUE : FALSE; // 외층 검사 모드
+	if (bOn && myLabel[5].GetImageBk() != LBL_IMG_DN)
+		myLabel[5].SetImageBk(LBL_IMG_DN);
+	else if (!bOn && myLabel[5].GetImageBk() != LBL_IMG_UP)
+		myLabel[5].SetImageBk(LBL_IMG_UP);
+
 }
 
 BOOL CDlgFrameHigh::PreTranslateMessage(MSG* pMsg) 
@@ -601,6 +625,8 @@ BOOL CDlgFrameHigh::PreTranslateMessage(MSG* pMsg)
 		
 	return CDialog::PreTranslateMessage(pMsg);
 }
+
+
 
 void CDlgFrameHigh::SetMkLastShot(int nSerial)
 {

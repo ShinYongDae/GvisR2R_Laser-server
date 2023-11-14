@@ -166,8 +166,12 @@ BEGIN
     LTEXT           "P",IDC_STATIC,543,18,8,8
     LTEXT           "R",IDC_STATIC,560,18,8,8
     LTEXT           "L",IDC_STATIC,576,18,8,8
-    CTEXT           "",IDC_STC_SIG03,319,3,16,16
-    LTEXT           "이어가기",IDC_STATIC,312,18,34,8
+    CTEXT           "",IDC_STC_SIG03,299,4,16,16
+    LTEXT           "이어가기",IDC_STATIC,292,18,34,8
+    CTEXT           "",IDC_STC_SIG05,345,4,16,16
+    CTEXT           "",IDC_STC_SIG04,327,4,16,16
+    LTEXT           "내층",IDC_STATIC,326,18,17,8
+    LTEXT           "외층",IDC_STATIC,345,18,18,8
 END
 
 IDD_DLG_MENU_01 DIALOGEX 0, 0, 639, 462
