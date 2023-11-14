@@ -342,6 +342,8 @@
 #define IDC_STC_SIG02                   1129
 #define IDC_STC_DEF_E_NICK              1130
 #define IDC_STC_ALIGN_X                 1130
+#define IDC_STC_SIG8                    1130
+#define IDC_STC_SIG03                   1130
 #define IDC_STC_DEF_EPR                 1131
 #define IDC_STC_ALN_Y                   1131
 #define IDC_STC_DEF_E_PROT              1132

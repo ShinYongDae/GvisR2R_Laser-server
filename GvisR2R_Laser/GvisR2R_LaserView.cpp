@@ -13979,6 +13979,16 @@ void CGvisR2R_LaserView::MonDispMain()
 		DispMain(_T("단면검사"), RGB_GREEN);
 	}
 
+	if (sDisp == _T("내층검사") && m_sMonDisp != _T("내층검사"))
+	{
+		DispMain(_T("내층검사"), RGB_GREEN);
+	}
+
+	if (sDisp == _T("외층검사") && m_sMonDisp != _T("외층검사"))
+	{
+		DispMain(_T("외층검사"), RGB_GREEN);
+	}
+
 	if (sDisp == _T("정 지") && m_sMonDisp != _T("정 지"))
 	{
 		pView->DispStsBar(_T("정지-44"), 0);
@@ -15407,6 +15417,16 @@ BOOL CGvisR2R_LaserView::IsConnectedMk()
 	if (m_pEngrave)
 	{
 		return m_pEngrave->IsConnected();
+	}
+
+	return FALSE;
+}
+
+BOOL CGvisR2R_LaserView::IsDispContRun()
+{
+	if (m_pEngrave)
+	{
+		return m_pEngrave->IsDispContRun();
 	}
 
 	return FALSE;

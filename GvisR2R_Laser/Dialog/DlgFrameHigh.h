@@ -13,7 +13,7 @@
 #include "MyStatic.h"
 #include "../Global/MyData.h"
 
-#define MAX_FRMHIGH_LABEL	3
+#define MAX_FRMHIGH_LABEL	4
 #define MAX_FRMHIGH_STC		11
 
 #define TIM_SIG_AOI			50

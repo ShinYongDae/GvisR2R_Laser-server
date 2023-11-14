@@ -976,6 +976,7 @@ public:
 	BOOL IsConnectedMdx();
 	BOOL IsConnectedSr();
 	BOOL IsConnectedMk();
+	BOOL IsDispContRun();
 
 	BOOL IsPinPos0();
 

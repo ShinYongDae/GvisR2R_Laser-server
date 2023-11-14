@@ -10081,6 +10081,11 @@ void CGvisR2R_LaserDoc::GetMkInfo()
 	if (sPath.IsEmpty())
 		return;
 
+	if (0 < ::GetPrivateProfileString(_T("Signal"), _T("DispContRunI"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.bDispContRun = (_ttoi(szData) > 0) ? TRUE : FALSE;
+	else
+		WorkingInfo.LastJob.bDispContRun = FALSE;
+
 	if (0 < ::GetPrivateProfileString(_T("Signal"), _T("Use Dual AOI"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.LastJob.bDualTest = (_ttoi(szData) > 0) ? TRUE : FALSE;
 

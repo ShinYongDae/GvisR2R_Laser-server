@@ -160,6 +160,10 @@ void CDlgFrameHigh::LoadImg()
 			myLabel[i].LoadImage(ICO_LED_GRY_DlgFrameHigh, LBL_IMG_UP, CSize(28, 28), LBL_POS_CENTER);
 			myLabel[i].LoadImage(ICO_LED_RED_DlgFrameHigh, LBL_IMG_DN, CSize(28, 28), LBL_POS_CENTER);
 			break;
+		case 3:
+			myLabel[i].LoadImage(ICO_LED_GRY_DlgFrameHigh, LBL_IMG_UP, CSize(28, 28), LBL_POS_CENTER);
+			myLabel[i].LoadImage(ICO_LED_BLU_DlgFrameHigh, LBL_IMG_DN, CSize(28, 28), LBL_POS_CENTER);
+			break;
 		}
 	}
 }
@@ -343,6 +347,7 @@ void CDlgFrameHigh::InitLabel()
 	myLabel[1].SubclassDlgItem(IDC_STC_SIG01, this);	// pDoc->m_pSliceIo[10] & (0x01<<0);		// Out - 검사부 검사 시작
 	myLabel[2].SubclassDlgItem(IDC_STC_SIG02, this);	// pDoc->m_pSliceIo[5] & (0x01<<1));		// In - 검사부 테이블 진공 완료
 	//myLabel[3].SubclassDlgItem(IDC_STC_SIG03, this);	// pDoc->m_pSliceIo[5] & (0x01<<0));		// In - 검사부 검사 완료
+	myLabel[3].SubclassDlgItem(IDC_STC_SIG03, this);	// pDoc->m_pSliceIo[2] & (0x01<<5));		// 내층 제품시 이어가기 상태 표시 MB440125
 
 	for(int i=0; i<MAX_FRMHIGH_LABEL; i++)
 	{
@@ -555,6 +560,12 @@ void CDlgFrameHigh::DispSigAoi()
 		myLabel[2].SetImageBk(LBL_IMG_DN);
 	else if (!bOn && myLabel[2].GetImageBk() != LBL_IMG_UP)
 		myLabel[2].SetImageBk(LBL_IMG_UP);
+
+	bOn = pView->IsDispContRun();									// 내층 제품시 이어가기 상태 표시 MB440125
+	if (bOn && myLabel[3].GetImageBk() != LBL_IMG_DN)
+		myLabel[3].SetImageBk(LBL_IMG_DN);
+	else if (!bOn && myLabel[3].GetImageBk() != LBL_IMG_UP)
+		myLabel[3].SetImageBk(LBL_IMG_UP);
 
 	CString sMsg;
 	sMsg.Format(_T("%d"), pDoc->m_nShotNum);

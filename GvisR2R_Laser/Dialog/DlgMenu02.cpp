@@ -2134,6 +2134,9 @@ BOOL CDlgMenu02::OnePointAlign(CfPoint &ptPnt)
 	double dX, dY, dAgl, dScr;
 	GetPmRst0(dX, dY, dAgl, dScr);
 
+	if (dScr <  _tstof(pDoc->WorkingInfo.Vision[0].sStdScr))
+		return FALSE;
+
 	dTgtPinX = pView->m_pMotion->m_dPinPosX[0] + (dX - double(nCamSzX/2)) * dResX;
 	dTgtPinY = pView->m_pMotion->m_dPinPosY[0] + (dY - double(nCamSzY/2)) * dResY;
 	m_dMkFdOffsetX[0][0] = (double(nCamSzX / 2) - dX) * dResX;

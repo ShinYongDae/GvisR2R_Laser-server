@@ -408,6 +408,11 @@ BOOL CEngrave::IsConnected()
 	//return FALSE;
 }
 
+BOOL CEngrave::IsDispContRun()
+{
+	return pDoc->WorkingInfo.LastJob.bDispContRun;
+}
+
 void CEngrave::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
@@ -1549,6 +1554,13 @@ void CEngrave::GetOpInfo(SOCKET_DATA SockData)
 			{
 				m_bGetOpInfo = TRUE;
 				pDoc->WorkingInfo.LastJob.bUse380mm = (SockData.nData1 > 0) ? TRUE : FALSE;
+			}
+			break;
+		case _SigInx::_DispContRun:
+			if (pDoc->WorkingInfo.LastJob.bDispContRun != (SockData.nData1 > 0) ? TRUE : FALSE)
+			{
+				m_bGetOpInfo = TRUE;
+				pDoc->WorkingInfo.LastJob.bDispContRun = (SockData.nData1 > 0) ? TRUE : FALSE;
 			}
 			break;
 		case _SigInx::_TempPause:

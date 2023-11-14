@@ -46,6 +46,7 @@ public:
 	BOOL ReadComm(CString &sData);
 	SOCKET_DATA GetSocketData();
 	BOOL IsConnected();
+	BOOL IsDispContRun();
 
 	// Thread
 	CEvent      m_evtThread;
