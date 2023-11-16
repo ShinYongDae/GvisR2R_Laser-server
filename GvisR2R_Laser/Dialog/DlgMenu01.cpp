@@ -3632,6 +3632,8 @@ void CDlgMenu01::DispDef()
 		break;
 	}
 
+	if (!pReelMap)
+		return;
 
 	nNum = pReelMap->GetDefNum(DEF_OPEN);
 	//str.Format(_T("%d"), nNum);

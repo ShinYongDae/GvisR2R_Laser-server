@@ -164,6 +164,14 @@ void CDlgFrameHigh::LoadImg()
 			myLabel[i].LoadImage(ICO_LED_GRY_DlgFrameHigh, LBL_IMG_UP, CSize(28, 28), LBL_POS_CENTER);
 			myLabel[i].LoadImage(ICO_LED_BLU_DlgFrameHigh, LBL_IMG_DN, CSize(28, 28), LBL_POS_CENTER);
 			break;
+		case 4:
+			myLabel[i].LoadImage(ICO_LED_GRY_DlgFrameHigh, LBL_IMG_UP, CSize(28, 28), LBL_POS_CENTER);
+			myLabel[i].LoadImage(ICO_LED_BLU_DlgFrameHigh, LBL_IMG_DN, CSize(28, 28), LBL_POS_CENTER);
+			break;
+		case 5:
+			myLabel[i].LoadImage(ICO_LED_GRY_DlgFrameHigh, LBL_IMG_UP, CSize(28, 28), LBL_POS_CENTER);
+			myLabel[i].LoadImage(ICO_LED_BLU_DlgFrameHigh, LBL_IMG_DN, CSize(28, 28), LBL_POS_CENTER);
+			break;
 		}
 	}
 }
