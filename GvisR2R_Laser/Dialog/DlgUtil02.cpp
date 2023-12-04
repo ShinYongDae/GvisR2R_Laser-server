@@ -225,7 +225,7 @@ void CDlgUtil02::DoConfirm()
 	if ((pDoc->WorkingInfo.LastJob.sModelUp != pDoc->m_sModelUp) && !pDoc->m_sModelUp.IsEmpty())
 	{
 		pDoc->WorkingInfo.LastJob.sModelUp = pDoc->m_sModelUp;
-		pView->m_bLoadMstInfo = TRUE;
+		//pView->m_bLoadMstInfo = TRUE;
 	}
 	//if ((pDoc->WorkingInfo.LastJob.sModelDn != pDoc->m_sModelDn) && !pDoc->m_sModelDn.IsEmpty())
 	//{
@@ -235,22 +235,24 @@ void CDlgUtil02::DoConfirm()
 	if ((pDoc->WorkingInfo.LastJob.sLayerUp != pDoc->m_sLayerUp) && !pDoc->m_sLayerUp.IsEmpty())
 	{
 		pDoc->WorkingInfo.LastJob.sLayerUp = pDoc->m_sLayerUp;
+		pDoc->m_bLoadMstInfo[0] = TRUE;
 		pView->m_bLoadMstInfo = TRUE;
 	}
 	if ((pDoc->WorkingInfo.LastJob.sLayerDn != pDoc->m_sLayerDn) && !pDoc->m_sLayerDn.IsEmpty())
 	{
 		pDoc->WorkingInfo.LastJob.sLayerDn = pDoc->m_sLayerDn;
+		pDoc->m_bLoadMstInfo[1] = TRUE;
 		pView->m_bLoadMstInfo = TRUE;
 	}
 	if ((pDoc->WorkingInfo.LastJob.sLotUp != pDoc->m_sLotNum) && !pDoc->m_sLayerUp.IsEmpty())
 	{
 		pDoc->WorkingInfo.LastJob.sLotUp = pDoc->m_sLotNum;
-		pView->m_bLoadMstInfo = TRUE;
+		//pView->m_bLoadMstInfo = TRUE;
 	}
 	if ((pDoc->WorkingInfo.LastJob.sLotDn != pDoc->m_sLotNum) && !pDoc->m_sLayerDn.IsEmpty())
 	{
 		pDoc->WorkingInfo.LastJob.sLotDn = pDoc->m_sLotNum;
-		pView->m_bLoadMstInfo = TRUE;
+		//pView->m_bLoadMstInfo = TRUE;
 	}
 
 	//pDoc->SetModelInfoUp();

@@ -670,6 +670,8 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 		case 16:
 			m_nStepInitView++;
 			m_bLoadMstInfo = TRUE;
+			pDoc->m_bLoadMstInfo[0] = TRUE;
+			pDoc->m_bLoadMstInfo[1] = TRUE;
 			m_bTIM_START_UPDATE = TRUE;
 			SetTimer(TIM_START_UPDATE, 50, NULL);
 			break;
@@ -11252,27 +11254,29 @@ void CGvisR2R_LaserView::InitReelmapDn()
 	 // 			pDoc->LoadPcsImg();
 	 // 			pDoc->LoadCadImg();
 #else
-	 pDoc->GetCamPxlRes();
+	pDoc->GetCamPxlRes();
 
-	 if (IsLastJob(0)) // Up
-	 {
-		 pDoc->m_Master[0].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
-			 pDoc->WorkingInfo.LastJob.sModelUp,
-			 pDoc->WorkingInfo.LastJob.sLayerUp);
-		 pDoc->m_Master[0].LoadMstInfo();
+	if (IsLastJob(0) && pDoc->m_bLoadMstInfo[0]) // Up
+	{
+		pDoc->m_bLoadMstInfo[0] = FALSE;
+		pDoc->m_Master[0].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
+			pDoc->WorkingInfo.LastJob.sModelUp,
+			pDoc->WorkingInfo.LastJob.sLayerUp);
+		pDoc->m_Master[0].LoadMstInfo();
 		//pDoc->m_Master[0].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
-	 }
+	}
 
-	 if (IsLastJob(1)) // Dn
-	 {
-		 pDoc->m_Master[1].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
-			 pDoc->WorkingInfo.LastJob.sModelUp,
-			 //pDoc->WorkingInfo.LastJob.sModelDn,
-			 pDoc->WorkingInfo.LastJob.sLayerDn,
-			 pDoc->WorkingInfo.LastJob.sLayerUp);
-		 pDoc->m_Master[1].LoadMstInfo();
-		 //pDoc->m_Master[1].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotDn);
-	 }
+	if (IsLastJob(1) && pDoc->m_bLoadMstInfo[1]) // Dn
+	{
+		pDoc->m_bLoadMstInfo[1] = FALSE;
+		pDoc->m_Master[1].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
+			pDoc->WorkingInfo.LastJob.sModelUp,
+			//pDoc->WorkingInfo.LastJob.sModelDn,
+			pDoc->WorkingInfo.LastJob.sLayerDn,
+			pDoc->WorkingInfo.LastJob.sLayerUp);
+		pDoc->m_Master[1].LoadMstInfo();
+		//pDoc->m_Master[1].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotDn);
+	}
 
 #endif
 	 // Reelmap Á¤º¸ Loading.....

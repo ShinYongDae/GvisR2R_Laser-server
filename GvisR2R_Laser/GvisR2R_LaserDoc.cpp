@@ -47,6 +47,9 @@ CGvisR2R_LaserDoc::CGvisR2R_LaserDoc()
 	pDoc = this;
 	m_strUserNameList = _T("");
 
+	m_bLoadMstInfo[0] = FALSE;
+	m_bLoadMstInfo[1] = FALSE;
+
 	m_sItsCode = _T("");
 	m_sLotNum = _T(""); m_sProcessNum = _T("");
 	m_sModelUp = _T(""); m_sLayerUp = _T("");
@@ -9644,6 +9647,21 @@ void CGvisR2R_LaserDoc::GetMkMenu01()
 	if (sPath.IsEmpty())
 		return;
 
+	//CString sPath2 = WorkingInfo.System.sPathMkInfo;
+
+	//if (sPath.IsEmpty())
+	//{
+	//	WorkingInfo.LastJob.bDualTest = TRUE;
+	//}
+	//else
+	//{
+	//	if (0 < ::GetPrivateProfileString(_T("Signal"), _T("Use Dual AOI"), NULL, szData, sizeof(szData), sPath))
+	//		WorkingInfo.LastJob.bDualTest = (_ttoi(szData) > 0) ? TRUE : FALSE;
+	//	else
+	//		WorkingInfo.LastJob.bDualTest = TRUE;
+	//}
+
+
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("Operator"), NULL, szData, sizeof(szData), sPath))
 		pDoc->WorkingInfo.LastJob.sSelUserName = pDoc->Menu01Status.Info.sOperator = CString(szData);
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("Model"), NULL, szData, sizeof(szData), sPath))
@@ -9653,15 +9671,37 @@ void CGvisR2R_LaserDoc::GetMkMenu01()
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("LayerUp"), NULL, szData, sizeof(szData), sPath))
 		pDoc->Menu01Status.Info.sLayerUp = CString(szData);
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("LayerDn"), NULL, szData, sizeof(szData), sPath))
-		pDoc->WorkingInfo.LastJob.sLayerDn = pDoc->Menu01Status.Info.sLayerDn = CString(szData);
+		pDoc->WorkingInfo.LastJob.sLayerDn = CString(szData);
 
-	if(pDoc->WorkingInfo.LastJob.sModelUp != pDoc->Menu01Status.Info.sModel)
+	//if(pDoc->WorkingInfo.LastJob.sModelUp != pDoc->Menu01Status.Info.sModel)
+	//	bUpdate = TRUE;
+
+	//if (WorkingInfo.LastJob.bDualTest)
+	//{
+	//	if (pDoc->WorkingInfo.LastJob.sLayerDn != pDoc->Menu01Status.Info.sLayerDn)
+	//		bUpdate = TRUE;
+	//}
+	//else
+	//{
+	//	if (pDoc->WorkingInfo.LastJob.sLayerUp != pDoc->Menu01Status.Info.sLayerUp)
+	//		bUpdate = TRUE;
+	//}
+
+	if (pDoc->WorkingInfo.LastJob.sLayerUp != pDoc->Menu01Status.Info.sLayerUp)
+	{
 		bUpdate = TRUE;
-	if(pDoc->WorkingInfo.LastJob.sLayerUp != pDoc->Menu01Status.Info.sLayerUp)
+		m_bLoadMstInfo[0] = TRUE;
+	}
+
+	if (pDoc->WorkingInfo.LastJob.sLayerDn != pDoc->Menu01Status.Info.sLayerDn)
+	{
 		bUpdate = TRUE;
+		m_bLoadMstInfo[1] = TRUE;
+	}
 
 	pDoc->WorkingInfo.LastJob.sModelUp = pDoc->Menu01Status.Info.sModel;
 	pDoc->WorkingInfo.LastJob.sLayerUp = pDoc->Menu01Status.Info.sLayerUp;
+	pDoc->WorkingInfo.LastJob.sLayerDn = pDoc->Menu01Status.Info.sLayerDn;
 
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("Total Shot"), NULL, szData, sizeof(szData), sPath))
 		pDoc->Menu01Status.Info.nTotShot = _ttoi(szData);

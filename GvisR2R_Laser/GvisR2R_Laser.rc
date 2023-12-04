@@ -128,9 +128,9 @@ FONT 9, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
     LTEXT           "GvisR2R_Laser, 버전 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2023.11.15",IDC_STATIC,42,26,114,8
+    LTEXT           "Copyright (C) 2023.12.04",IDC_STATIC,42,26,114,8
     DEFPUSHBUTTON   "확인",IDOK,113,41,50,14,WS_GROUP
-    LTEXT           "작업자 정보입력화면",IDC_STATIC,7,39,104,8
+    LTEXT           "LoadMstInfo Msg Error Patch",IDC_STATIC,7,39,104,8
 END
 
 IDD_GVISR2R_LASER_FORM DIALOGEX 0, 0, 723, 645

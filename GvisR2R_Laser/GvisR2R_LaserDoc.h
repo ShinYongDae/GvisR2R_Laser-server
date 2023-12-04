@@ -33,6 +33,7 @@ public:
 	int m_nDelayShow;
 	BOOL m_bBufEmpty[2]; // [0]: Up, [1]: Dn
 	BOOL m_bBufEmptyF[2]; // [0]: Up, [1]: Dn
+	BOOL m_bLoadMstInfo[2]; // [0]: Up, [1]: Dn
 
 	// R2R Y Meander Adjusting....
 	BOOL m_bUseRTRYShiftAdjust;

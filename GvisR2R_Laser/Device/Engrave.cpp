@@ -1848,6 +1848,11 @@ void CEngrave::GetInfo(SOCKET_DATA SockData)
 				//pView->m_bLoadMstInfo = TRUE;
 			}
 			break;
+		case _ItemInx::_LoadMstInfo:
+			pView->m_bLoadMstInfo = TRUE;
+			pDoc->m_bLoadMstInfo[0] = TRUE;
+			pDoc->m_bLoadMstInfo[1] = TRUE;
+			break;
 		case _ItemInx::_TotReelLen:
 			if (pDoc->WorkingInfo.LastJob.sReelTotLen != CharToString(SockData.strData))
 			{
