@@ -550,7 +550,8 @@ void CEngrave::GetSignalMain(SOCKET_DATA SockData)
 		case _SigInx::_Stop:
 			pDoc->BtnStatus.Main.Stop = (SockData.nData1 > 0) ? TRUE : FALSE;
 			pDoc->BtnStatus.Main.Run = (SockData.nData1 > 0) ? FALSE : pDoc->BtnStatus.Main.Run;
-			pView->EngStop(pDoc->BtnStatus.Main.Stop);
+			pView->m_bRcvSig[_SigInx::_Stop] = TRUE;
+			//pView->EngStop(pDoc->BtnStatus.Main.Stop);
 			break;
 		case _SigInx::_Auto:
 			pDoc->Status.bAuto = pDoc->BtnStatus.Main.Auto = (SockData.nData1 > 0) ? TRUE : FALSE;
@@ -1292,8 +1293,10 @@ void CEngrave::GetSignalEngraveAutoSequence(SOCKET_DATA SockData)
 		{
 		case _SigInx::_EngAutoInit:
 			pDoc->BtnStatus.EngAuto.Init = (SockData.nData1 > 0) ? TRUE : FALSE;
-			if (pView->m_pDlgMenu03)
-				pView->m_pDlgMenu03->SwReset();
+			pView->m_bRcvSig[_SigInx::_EngAutoInit] = TRUE;
+			//pView->m_stRcvSig._EngAutoInit = TRUE;
+			//if (pView->m_pDlgMenu03)
+			//	pView->m_pDlgMenu03->SwReset();
 			break;
 		case _SigInx::_EngAutoSeqMkSt:
 			if(!pView->m_bEngSt)
@@ -1318,7 +1321,8 @@ void CEngrave::GetSignalEngraveAutoSequence(SOCKET_DATA SockData)
 			pDoc->BtnStatus.EngAuto.Read2dDone = (SockData.nData1 > 0) ? TRUE : FALSE;
 			break;
 		case _SigInx::_UpdateWork:
-			pView->GetMkMenu01();
+			pView->m_bRcvSig[_SigInx::_UpdateWork] = TRUE;
+			//pView->GetMkMenu01();
 			break;
 		case _SigInx::_DispDefImg:
 			if (!pView->m_bTHREAD_DISP_DEF)
@@ -1368,13 +1372,16 @@ void CEngrave::GetSignalMyMsg(SOCKET_DATA SockData)
 		switch (nMsgId)
 		{
 		case _SigInx::_MyMsgYes:
-			pView->SetMyMsgYes();
+			pView->m_bRcvSig[_SigInx::_MyMsgYes] = TRUE;
+			//pView->SetMyMsgYes();
 			break;
 		case _SigInx::_MyMsgNo:
-			pView->SetMyMsgNo();
+			pView->m_bRcvSig[_SigInx::_MyMsgNo] = TRUE;
+			//pView->SetMyMsgNo();
 			break;
 		case _SigInx::_MyMsgOk:
-			pView->SetMyMsgOk();
+			pView->m_bRcvSig[_SigInx::_MyMsgOk] = TRUE;
+			//pView->SetMyMsgOk();
 			break;
 			// Is
 		case _SigInx::_IsMyMsgYes:
@@ -1447,8 +1454,9 @@ void CEngrave::GetOpInfo(SOCKET_DATA SockData)
 			{
 				m_bGetOpInfo = TRUE;
 				//pDoc->SetTestMode((int)SockData.nData1); // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2
-				//pDoc->WorkingInfo.LastJob.nTestMode = (int)SockData.nData1; // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2
-				pDoc->SetCurrentInfoTestMode((int)SockData.nData1);
+				pDoc->WorkingInfo.LastJob.nTestMode = (int)SockData.nData1; // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2
+				pView->m_bRcvSig[_SigInx::_TestMode] = TRUE;
+				//pDoc->SetCurrentInfoTestMode((int)SockData.nData1);
 			}
 			break;
 		case _SigInx::_RecoilerCcw:
@@ -1781,12 +1789,12 @@ void CEngrave::GetInfo(SOCKET_DATA SockData)
 			{
 				m_bGetInfo = TRUE;
 				pDoc->WorkingInfo.LastJob.bTempPause = (SockData.nData1 > 0) ? TRUE : FALSE;
-
-				::WritePrivateProfileString(_T("Last Job"), _T("Use Temporary Pause"), pDoc->WorkingInfo.LastJob.bTempPause ? _T("1") : _T("0"), PATH_WORKING_INFO);
-#ifdef USE_MPE
-				if (pView && pView->m_pMpe)
-					pView->m_pMpe->Write(_T("MB440183"), pDoc->WorkingInfo.LastJob.bTempPause ? 1 : 0);
-#endif
+				pView->m_bRcvSig[_SigInx::_TempPause] = TRUE;
+//				::WritePrivateProfileString(_T("Last Job"), _T("Use Temporary Pause"), pDoc->WorkingInfo.LastJob.bTempPause ? _T("1") : _T("0"), PATH_WORKING_INFO);
+//#ifdef USE_MPE
+//				if (pView && pView->m_pMpe)
+//					pView->m_pMpe->Write(_T("MB440183"), pDoc->WorkingInfo.LastJob.bTempPause ? 1 : 0);
+//#endif
 			}
 			break;
 		}

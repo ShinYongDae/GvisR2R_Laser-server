@@ -335,6 +335,8 @@ public:
 
 	BOOL m_bStopFromThread, m_bBuzzerFromThread;
 
+	BOOL m_bRcvSig[_SigInx::_EndIdx];
+	stRcvSig m_stRcvSig;
 	CMpDevice* m_pMpe;
 	CPtAlign m_Align[2];	// [0] : LeftCam , [1] : RightCam
 #ifdef USE_VISION
@@ -823,6 +825,7 @@ public:
 	BOOL GetAoiDnVsStatus();
 	BOOL IsDoneDispMkInfo();
 	BOOL IsSetLotEnd();
+	void ChkRcvSig();
 
 	afx_msg LRESULT OnBufThreadDone(WPARAM wPara, LPARAM lPara);
 	int ChkSerial(); // 0: Continue, -: Previous, +:Discontinue

@@ -58,6 +58,13 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 	// TODO: 여기에 생성 코드를 추가합니다.
 	pView = this;
 
+	int i = 0;
+
+	for (i = 0; i < _SigInx::_EndIdx; i++)
+	{
+		m_bRcvSig[i] = FALSE;
+	}
+
 	m_bShift2Mk = FALSE;
 
 	m_bBufEmpty[0] = FALSE;
@@ -98,10 +105,10 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 
 	m_bInit = FALSE;
 	m_bDispMsg = FALSE;
-	for (int kk = 0; kk < 10; kk++)
+	for (i = 0; i < 10; i++)
 	{
-		m_bDispMsgDoAuto[kk] = FALSE;
-		m_nStepDispMsg[kk] = 0;
+		m_bDispMsgDoAuto[i] = FALSE;
+		m_nStepDispMsg[i] = 0;
 	}
 	m_sFixMsg[0] = _T("");
 	m_sFixMsg[1] = _T("");
@@ -135,10 +142,10 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 	m_bBtnWinker[1] = FALSE; // Reset
 	m_bBtnWinker[2] = FALSE; // Run
 	m_bBtnWinker[3] = FALSE; // Stop
-	for (int nI = 0; nI < 4; nI++)
+	for (i = 0; i < 4; i++)
 	{
-		m_nCntBtnWinker[nI] = 0;
-		m_nDlyWinker[nI] = 5;
+		m_nCntBtnWinker[i] = 0;
+		m_nDlyWinker[i] = 5;
 	}
 
 	m_bAoiFdWriteF[0] = FALSE;
@@ -220,7 +227,7 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 	for (int nAxis = 0; nAxis < MAX_AXIS; nAxis++)
 		m_dEnc[nAxis] = 0.0;
 
-	for (int i = 0; i < 10; i++)
+	for (i = 0; i < 10; i++)
 		m_sDispMsg[i] = _T("");
 
 	m_bNewModel = FALSE;
@@ -857,7 +864,7 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 
 		DispStsBar();
 		DoDispMain();
-		//		DispMyMsgBox();
+		//DispMyMsgBox();
 
 		if (m_bStopFromThread)
 		{
@@ -870,12 +877,12 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 			Buzzer(TRUE, 0);
 		}
 
-
 		//		SetMpeIO();
 
 		ChkEmg();
 		ChkSaftySen();
 		ChkDoor();
+		ChkRcvSig();
 
 		if (m_bTIM_DISP_STATUS)
 			SetTimer(TIM_DISP_STATUS, 100, NULL);
@@ -17145,4 +17152,50 @@ BOOL CGvisR2R_LaserView::SetSerialMkInfoInner(int nSerial, BOOL bDumy)
 	//if (!m_pDlgMenu06)
 	//	return FALSE;
 	//return m_pDlgMenu06->SetSerialMkInfo(nSerial, bDumy);
+}
+
+void CGvisR2R_LaserView::ChkRcvSig()
+{
+	int i = 0;
+	for (i = 0; i < _SigInx::_EndIdx; i++)
+	{
+		if (m_bRcvSig[i])
+		{
+			m_bRcvSig[i] = FALSE;
+			switch (i)
+			{
+			case _SigInx::_UpdateWork:
+				GetMkMenu01();
+				break;
+			case _SigInx::_Stop:
+				EngStop(pDoc->BtnStatus.Main.Stop);
+				break;
+			case _SigInx::_EngAutoInit:
+				if (m_pDlgMenu03)
+					m_pDlgMenu03->SwReset();
+				break;
+			case _SigInx::_MyMsgYes:
+				SetMyMsgYes();
+				break;
+			case _SigInx::_MyMsgNo:
+				SetMyMsgNo();
+				break;
+			case _SigInx::_MyMsgOk:
+				SetMyMsgOk();
+				break;
+			case _SigInx::_TestMode:
+				pDoc->SetCurrentInfoTestMode(pDoc->WorkingInfo.LastJob.nTestMode);
+				break;
+			case _SigInx::_TempPause:
+				::WritePrivateProfileString(_T("Last Job"), _T("Use Temporary Pause"), pDoc->WorkingInfo.LastJob.bTempPause ? _T("1") : _T("0"), PATH_WORKING_INFO);
+#ifdef USE_MPE
+				if (pView && pView->m_pMpe)
+					pView->m_pMpe->Write(_T("MB440183"), pDoc->WorkingInfo.LastJob.bTempPause ? 1 : 0);
+#endif
+				break;
+			default:
+				break;
+			}
+		}
+	}
 }
