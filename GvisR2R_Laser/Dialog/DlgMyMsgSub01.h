@@ -99,6 +99,7 @@ protected:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);// (UINT nIDEvent);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+public:
 };
 
 //{{AFX_INSERT_LOCATION}}

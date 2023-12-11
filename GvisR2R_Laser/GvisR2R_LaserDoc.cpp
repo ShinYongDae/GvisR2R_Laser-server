@@ -9671,7 +9671,7 @@ void CGvisR2R_LaserDoc::GetMkMenu01()
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("LayerUp"), NULL, szData, sizeof(szData), sPath))
 		pDoc->Menu01Status.Info.sLayerUp = CString(szData);
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("LayerDn"), NULL, szData, sizeof(szData), sPath))
-		pDoc->WorkingInfo.LastJob.sLayerDn = CString(szData);
+		pDoc->Menu01Status.Info.sLayerDn = CString(szData);
 
 	//if(pDoc->WorkingInfo.LastJob.sModelUp != pDoc->Menu01Status.Info.sModel)
 	//	bUpdate = TRUE;
@@ -9800,7 +9800,7 @@ void CGvisR2R_LaserDoc::GetMkMenu01()
 	
 	if (bUpdate)
 	{
-		pView->m_bLoadMstInfo = TRUE;
+		//pView->m_bLoadMstInfo = TRUE;
 
 		if (pView->m_pDlgMenu01)
 			pView->m_pDlgMenu01->DispChangedModel();

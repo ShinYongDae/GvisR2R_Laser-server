@@ -132,9 +132,19 @@ BOOL CDlgMyMsgSub02::CloseMsgDlg()
 			OnOK();
 			return TRUE;
 		}
+		//else
+		//{
+		//	if (pView)
+		//		pView->ChkRcvSig();
+		//}
 	}
-	else
-		return TRUE;
+	//else
+	//{
+	//	if (pView)
+	//		pView->ChkRcvSig();
+
+	//	return TRUE;
+	//}
 
 	return FALSE;
 }

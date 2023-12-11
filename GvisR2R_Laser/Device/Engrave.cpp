@@ -1372,16 +1372,16 @@ void CEngrave::GetSignalMyMsg(SOCKET_DATA SockData)
 		switch (nMsgId)
 		{
 		case _SigInx::_MyMsgYes:
-			pView->m_bRcvSig[_SigInx::_MyMsgYes] = TRUE;
-			//pView->SetMyMsgYes();
+			//pView->m_bRcvSig[_SigInx::_MyMsgYes] = TRUE;
+			pView->SetMyMsgYes();
 			break;
 		case _SigInx::_MyMsgNo:
-			pView->m_bRcvSig[_SigInx::_MyMsgNo] = TRUE;
-			//pView->SetMyMsgNo();
+			//pView->m_bRcvSig[_SigInx::_MyMsgNo] = TRUE;
+			pView->SetMyMsgNo();
 			break;
 		case _SigInx::_MyMsgOk:
-			pView->m_bRcvSig[_SigInx::_MyMsgOk] = TRUE;
-			//pView->SetMyMsgOk();
+			//pView->m_bRcvSig[_SigInx::_MyMsgOk] = TRUE;
+			pView->SetMyMsgOk();
 			break;
 			// Is
 		case _SigInx::_IsMyMsgYes:
@@ -1845,7 +1845,8 @@ void CEngrave::GetInfo(SOCKET_DATA SockData)
 			{
 				m_bGetInfo = TRUE;
 				pDoc->WorkingInfo.LastJob.sLayerUp = CharToString(SockData.strData);
-				//pView->m_bLoadMstInfo = TRUE;
+				if(!pDoc->WorkingInfo.LastJob.bDualTest)
+					pView->m_bLoadMstInfo = TRUE;
 			}
 			break;
 		case _ItemInx::_LayerDnName:
@@ -1853,7 +1854,8 @@ void CEngrave::GetInfo(SOCKET_DATA SockData)
 			{
 				m_bGetInfo = TRUE;
 				pDoc->WorkingInfo.LastJob.sLayerDn = CharToString(SockData.strData);
-				//pView->m_bLoadMstInfo = TRUE;
+				if(pDoc->WorkingInfo.LastJob.bDualTest)
+					pView->m_bLoadMstInfo = TRUE;
 			}
 			break;
 		case _ItemInx::_LoadMstInfo:

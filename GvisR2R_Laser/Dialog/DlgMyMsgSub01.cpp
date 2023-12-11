@@ -132,9 +132,18 @@ BOOL CDlgMyMsgSub01::CloseMsgDlg()
 			OnOK();
 			return TRUE;
 		}
+		//else
+		//{
+		//	if (pView)
+		//		pView->ChkRcvSig();
+		//}
 	}
-	else
-		return TRUE;
+	//else
+	//{
+	//	if(pView)
+	//		pView->ChkRcvSig();
+	//	return TRUE;
+	//}
 
 	return FALSE;
 }
@@ -398,3 +407,5 @@ BOOL CDlgMyMsgSub01::ThreadProc( LPVOID lpContext )
 
 	return 0;
 }
+
+
