@@ -9435,7 +9435,7 @@ void CGvisR2R_LaserDoc::WriteFdOffset(double dOffsetX, double dOffsetY)
 	strTitle.Format(_T("OFFSET"));
 
 	strMenu.Format(_T("ALIGN X"));
-	strData.Format(_T("%.3f"), dOffsetX);
+	strData.Format(_T("%.3f"), dOffsetX*1.75);
 	::WritePrivateProfileString(strTitle, strMenu, strData, strPath);
 
 	strMenu.Format(_T("ALIGN Y"));
@@ -9476,7 +9476,7 @@ BOOL CGvisR2R_LaserDoc::SetEngOffset(CfPoint &OfSt)
 	strTitle.Format(_T("OFFSET"));
 
 	strMenu.Format(_T("ALIGN X"));
-	strData.Format(_T("%.3f"), dOffX);
+	strData.Format(_T("%.3f"), dOffX*1.75);
 	::WritePrivateProfileString(strTitle, strMenu, strData, sPath);
 
 	strMenu.Format(_T("ALIGN Y"));
@@ -10121,7 +10121,7 @@ void CGvisR2R_LaserDoc::GetMkInfo()
 	if (sPath.IsEmpty())
 		return;
 
-	if (0 < ::GetPrivateProfileString(_T("Signal"), _T("DispContRunI"), NULL, szData, sizeof(szData), sPath))
+	if (0 < ::GetPrivateProfileString(_T("Signal"), _T("DispContRun"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.LastJob.bDispContRun = (_ttoi(szData) > 0) ? TRUE : FALSE;
 	else
 		WorkingInfo.LastJob.bDispContRun = FALSE;

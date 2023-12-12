@@ -115,6 +115,7 @@ void CDlgFrameHigh::OnShowWindow(BOOL bShow, UINT nStatus)
 void CDlgFrameHigh::AtDlgShow()
 {
 	LoadImg();
+	pDoc->GetMkInfo();
 	myStc[6].SetText(pDoc->WorkingInfo.LastJob.sEngraveLastShot);
 }
 

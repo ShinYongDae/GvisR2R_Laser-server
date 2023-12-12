@@ -334,6 +334,7 @@ public:
 	CGvisR2R_LaserDoc* GetDocument() const;
 
 	BOOL m_bStopFromThread, m_bBuzzerFromThread;
+	DWORD m_dwRead2dSt, m_dwRead2dEd;
 
 	BOOL m_bRcvSig[_SigInx::_EndIdx];
 	stRcvSig m_stRcvSig;

@@ -8202,6 +8202,7 @@ void CGvisR2R_LaserView::EngStop(BOOL bOn)
 	{
 		if (bOn)
 		{
+			DispMain(_T("정 지"), RGB_RED);
 			m_pEngrave->SwStop(TRUE);
 			Sleep(100);
 		}
@@ -15699,9 +15700,18 @@ void CGvisR2R_LaserView::Eng1PtReady()
 		switch (m_nEngStAuto)
 		{
 		case ENG_ST:	// PLC MK 신호 확인	
-			//if (IsRun())
+			if (IsRun())
 			{
-				m_nEngStAuto++;
+				if (pDoc->m_bUploadPinImg)
+				{
+					m_nEngStAuto++;
+				}
+				else
+				{
+					pView->MsgBox(_T("카메라 정렬이미지가 저장되지 않았습니다.\r\n핀위치를 저장하세요."), 0, MB_OK);
+					EngStop(TRUE);
+					TowerLamp(RGB_YELLOW, TRUE);					
+				}
 			}
 			break;
 		case ENG_ST + 1:
@@ -16118,6 +16128,7 @@ void CGvisR2R_LaserView::Eng2dRead()
 		case ENG_2D_ST + (Read2dIdx::DoRead) :			// 2D Reading 시작
 			if (!pDoc->WorkingInfo.System.bNoMk)
 				Set2dRead(TRUE);							// 2D Reading 시작
+			m_dwRead2dSt = GetTickCount();
 			m_nEng2dStAuto++;
 			break;
 		case ENG_2D_ST + (Read2dIdx::DoRead) + 1:
@@ -16125,13 +16136,35 @@ void CGvisR2R_LaserView::Eng2dRead()
 			m_nEng2dStAuto++;
 			break;
 		case ENG_2D_ST + (Read2dIdx::DoRead) + 2:
-			if (Is2dReadDone())
+			if (IsRun())
 			{
-				if (!pDoc->WorkingInfo.System.bNoMk)
-					Get2dCode(m_sGetItsCode, m_nGetItsCodeSerial);
+				if (Is2dReadDone())
+				{
+					if (!pDoc->WorkingInfo.System.bNoMk)
+						Get2dCode(m_sGetItsCode, m_nGetItsCodeSerial);
 
-				Sleep(300);
-				m_nEng2dStAuto = ENG_2D_ST + (Read2dIdx::DoneRead);	// 2D Reading 완료
+					Sleep(300);
+					m_nEng2dStAuto = ENG_2D_ST + (Read2dIdx::DoneRead);	// 2D Reading 완료
+				}
+				else
+				{
+					m_dwRead2dEd = GetTickCount();
+					if ((m_dwRead2dEd - m_dwRead2dSt) > 30000)
+					{
+						EngStop(TRUE);
+						TowerLamp(RGB_RED, TRUE);
+						Buzzer(TRUE, 0);
+						if (IDYES == MsgBox(_T("정지 - 2D바코드의 각인된 코드를 읽을 수 없습니다.\r\n운전을 누르시고, 다음 Shot으로 진행합니까?"), 0, MB_YESNO))
+						{
+							m_nEng2dStAuto = ENG_2D_ST + (Read2dIdx::DoneRead);	// 2D Reading 완료
+						}
+						else
+						{
+							// 운전을 누르면 다시 2D 코드를 읽기를 대기합니다.
+							m_dwRead2dSt = GetTickCount();
+						}
+					}
+				}
 			}
 			break;
 		case ENG_2D_ST + (Read2dIdx::DoneRead) :
