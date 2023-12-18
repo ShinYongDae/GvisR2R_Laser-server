@@ -46,6 +46,8 @@ CGvisR2R_LaserDoc::CGvisR2R_LaserDoc()
 	int i, k;
 	pDoc = this;
 	m_strUserNameList = _T("");
+	m_AlignOffset.x = 0.0;
+	m_AlignOffset.y = 0.0;
 
 	m_bLoadMstInfo[0] = FALSE;
 	m_bLoadMstInfo[1] = FALSE;
@@ -222,6 +224,7 @@ CGvisR2R_LaserDoc::CGvisR2R_LaserDoc()
 	m_bUseRTRYShiftAdjust = FALSE;
 	m_dRTRShiftVal = 0.0;
 	m_dShiftAdjustRatio = 0.0;
+	m_bUseAdjustLaser = FALSE;
 
 	m_nTestOrderNum = 0;
 	m_nTestShotNum = 0;
@@ -1025,6 +1028,13 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	}
 	else
 		m_dShiftAdjustRatio = 0.5;
+
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("USE_ADJUST_LASER"), NULL, szData, sizeof(szData), sPath))
+	{
+		m_bUseAdjustLaser = (BOOL)(_ttoi(szData) ? TRUE : FALSE);
+	}
+	else
+		m_bUseAdjustLaser = FALSE;
 
 
 	if (0 < ::GetPrivateProfileString(_T("System"), _T("Password"), NULL, szData, sizeof(szData), sPath))
@@ -9472,6 +9482,9 @@ BOOL CGvisR2R_LaserDoc::SetEngOffset(CfPoint &OfSt)
 		dOffX = OfSt.x - pView->m_pMotion->m_dPinPosX[0];
 	if (OfSt.y - pView->m_pMotion->m_dPinPosY[0] > -3.0 && OfSt.y - pView->m_pMotion->m_dPinPosY[0] < 3.0)
 		dOffY = OfSt.y - pView->m_pMotion->m_dPinPosY[0];
+
+	m_AlignOffset.x = dOffX;
+	m_AlignOffset.y = dOffY;
 
 	strTitle.Format(_T("OFFSET"));
 

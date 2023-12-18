@@ -56,6 +56,7 @@ public:
 	afx_msg void OnClose();
 	afx_msg void OnAppMinimize();
 	afx_msg void OnDatabaseConnection();
+	afx_msg void OnOption01();
 };
 
 

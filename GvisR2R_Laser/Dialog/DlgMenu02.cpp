@@ -3018,7 +3018,8 @@ void CDlgMenu02::OnBnClickedBtn2dReading()
 
 BOOL CDlgMenu02::Disp2dCode()
 {
-	CString sData;
+	CString sData, sMsg = _T("");
+	pView->DispStsBar(sMsg, 6);
 	if(pView->m_pSr1000w->Get2DCode(sData))
 	{
 		int nPos = sData.ReverseFind('-');
@@ -3030,6 +3031,7 @@ BOOL CDlgMenu02::Disp2dCode()
 
 			GetDlgItem(IDC_STC_32)->SetWindowText(pDoc->m_sOrderNum);
 			GetDlgItem(IDC_STC_34)->SetWindowText(pDoc->m_sShotNum);
+			pView->DispStsBar(sData, 6);
 		}
 		else
 		{
@@ -3045,7 +3047,8 @@ BOOL CDlgMenu02::Disp2dCode()
 
 BOOL CDlgMenu02::DispTest2dCode()
 {
-	CString sData;
+	CString sData, sMsg = _T("");
+	pView->DispStsBar(sMsg, 6);
 	if (pView->m_pSr1000w->Get2DCode(sData))
 	{
 		int nPos = sData.ReverseFind('-');
@@ -3057,6 +3060,7 @@ BOOL CDlgMenu02::DispTest2dCode()
 
 			GetDlgItem(IDC_STC_32)->SetWindowText(pDoc->m_sTestOrderNum);
 			GetDlgItem(IDC_STC_34)->SetWindowText(pDoc->m_sTestShotNum);
+			pView->DispStsBar(sData, 6);
 		}
 		else
 		{
@@ -3354,7 +3358,9 @@ void CDlgMenu02::OnBnClickedBtnLaserAdjustUp()
 		WaitResponse();
 
 		sData.Format(_T("%f"), pData[3]);
-		pDoc->WorkingInfo.LastJob.sEngravePosOffsetY = sData;
+		//pDoc->WorkingInfo.LastJob.sEngravePosOffsetY = sData;
+		pDoc->WorkingInfo.LastJob.sEngravePosOffsetY.Format(_T("%.3f"), pData[3]);
+
 		::WritePrivateProfileString(_T("Last Job"), _T("Engrave Offset Y"), sData, PATH_WORKING_INFO);
 	}
 
@@ -3391,7 +3397,9 @@ void CDlgMenu02::OnBnClickedBtnLaserAdjustRt()
 		WaitResponse();
 
 		sData.Format(_T("%f"), pData[2]);
-		pDoc->WorkingInfo.LastJob.sEngravePosOffsetX = sData;
+		//pDoc->WorkingInfo.LastJob.sEngravePosOffsetX = sData;
+		pDoc->WorkingInfo.LastJob.sEngravePosOffsetX.Format(_T("%.3f"), pData[2]);
+
 		::WritePrivateProfileString(_T("Last Job"), _T("Engrave Offset X"), sData, PATH_WORKING_INFO);
 	}
 
@@ -3428,7 +3436,9 @@ void CDlgMenu02::OnBnClickedBtnLaserAdjustDn()
 		WaitResponse();
 
 		sData.Format(_T("%f"), pData[3]);
-		pDoc->WorkingInfo.LastJob.sEngravePosOffsetY = sData;
+		//pDoc->WorkingInfo.LastJob.sEngravePosOffsetY = sData;
+		pDoc->WorkingInfo.LastJob.sEngravePosOffsetY.Format(_T("%.3f"), pData[3]);
+
 		::WritePrivateProfileString(_T("Last Job"), _T("Engrave Offset Y"), sData, PATH_WORKING_INFO);
 	}
 
@@ -3465,7 +3475,9 @@ void CDlgMenu02::OnBnClickedBtnLaserAdjustLf()
 		WaitResponse();
 
 		sData.Format(_T("%f"), pData[2]);
-		pDoc->WorkingInfo.LastJob.sEngravePosOffsetX = sData;
+		//pDoc->WorkingInfo.LastJob.sEngravePosOffsetX = sData;
+		pDoc->WorkingInfo.LastJob.sEngravePosOffsetX.Format(_T("%.3f"), pData[2]);
+
 		::WritePrivateProfileString(_T("Last Job"), _T("Engrave Offset X"), sData, PATH_WORKING_INFO);
 	}
 

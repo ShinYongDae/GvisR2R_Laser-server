@@ -245,6 +245,7 @@
     <ClInclude Include="Dialog\DlgMyMsgSub01.h" />
     <ClInclude Include="Dialog\DlgMyMsgSub02.h" />
     <ClInclude Include="Dialog\DlgMyPassword.h" />
+    <ClInclude Include="Dialog\DlgOption01.h" />
     <ClInclude Include="Dialog\DlgProgress.h" />
     <ClInclude Include="Dialog\DlgServer.h" />
     <ClInclude Include="Dialog\DlgUser.h" />
@@ -332,6 +333,7 @@
     <ClCompile Include="Dialog\DlgMyMsgSub01.cpp" />
     <ClCompile Include="Dialog\DlgMyMsgSub02.cpp" />
     <ClCompile Include="Dialog\DlgMyPassword.cpp" />
+    <ClCompile Include="Dialog\DlgOption01.cpp" />
     <ClCompile Include="Dialog\DlgProgress.cpp" />
     <ClCompile Include="Dialog\DlgServer.cpp" />
     <ClCompile Include="Dialog\DlgUser.cpp" />

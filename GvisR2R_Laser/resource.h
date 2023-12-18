@@ -91,6 +91,7 @@
 #define IDD_DLG_MENU_05                 331
 #define IDD_PROGRESS                    333
 #define IDD_DLG_UTIL_02                 334
+#define IDD_DLG_OPTION_01               336
 #define IDC_SVR_PORT                    374
 #define IDC_CLIENT_ID                   375
 #define IDC_TXT_MESSAGE                 376
@@ -1095,14 +1096,15 @@
 #define ID_APP_MINIMIZE                 32772
 #define ID_DATABASECONNECT              32773
 #define ID_DATABASE_CONNECTION          32774
+#define ID_OPTION01                     32775
 #define ID_INDICATOR_PROGRESS_PANE      61204
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        336
-#define _APS_NEXT_COMMAND_VALUE         32775
+#define _APS_NEXT_RESOURCE_VALUE        338
+#define _APS_NEXT_COMMAND_VALUE         32776
 #define _APS_NEXT_CONTROL_VALUE         1018
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

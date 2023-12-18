@@ -20,6 +20,7 @@
 
 #include "Process/DataFile.h"
 
+#include "Dialog/DlgOption01.h"
 #include "Dialog/DlgMyPassword.h"
 #include "Dialog/DlgMyMsgSub00.h"
 #include "Dialog/DlgMyMsgSub01.h"
@@ -1118,7 +1119,7 @@ void CGvisR2R_LaserView::DispStsBar(CString sMsg, int nIdx)
 void CGvisR2R_LaserView::DispStsBar()
 {
 	DispStsMainMsg(); // 0
-	//DispStsMainMsg(6); // 6
+	DispStsMainMsg(6); // 6
 	//DispStsMainMsg(5); // 5
 	//DispThreadTick(); // 5, 6
 	DispTime(); // 7
@@ -4704,7 +4705,7 @@ CString CGvisR2R_LaserView::GetTime()
 	int nMinute = Tim.GetMinute();
 	int nSec = Tim.GetSecond();
 
-	strVal.Format(_T("%04d-%02d-%02d, %02d:%02d:%02d"), nYear, nMonth, nDay, nHour, nMinute, nSec);
+	strVal.Format(_T("%04d-%02d-%02d,%02d:%02d:%02d"), nYear, nMonth, nDay, nHour, nMinute, nSec);
 	return strVal;
 }
 
@@ -4723,7 +4724,7 @@ CString CGvisR2R_LaserView::GetTime(stLotTime &LotTime)
 	LotTime.nMin = Tim.GetMinute();
 	LotTime.nSec = Tim.GetSecond();
 
-	strVal.Format(_T("%04d-%02d-%02d, %02d:%02d:%02d"), LotTime.nYear, LotTime.nMonth, LotTime.nDay,
+	strVal.Format(_T("%04d-%02d-%02d,%02d:%02d:%02d"), LotTime.nYear, LotTime.nMonth, LotTime.nDay,
 		LotTime.nHour, LotTime.nMin, LotTime.nSec);
 	return strVal;
 }
@@ -4744,7 +4745,7 @@ CString CGvisR2R_LaserView::GetTime(int &nHour, int &nMinute, int &nSec)
 	nMinute = Tim.GetMinute();
 	nSec = Tim.GetSecond();
 
-	strVal.Format(_T("%04d-%02d-%02d, %02d:%02d:%02d"), nYear, nMonth, nDay, nHour, nMinute, nSec);
+	strVal.Format(_T("%04d-%02d-%02d,%02d:%02d:%02d"), nYear, nMonth, nDay, nHour, nMinute, nSec);
 	return strVal;
 }
 
@@ -14997,12 +14998,15 @@ void CGvisR2R_LaserView::RestoreReelmap()
 
 void CGvisR2R_LaserView::AdjPinPos()
 {
+	double dOfsX, dOfsY;
 	if (m_pDlgMenu02)
 	{
-		if (m_pDlgMenu02->m_dMkFdOffsetY[0][0] > -2.0 &&
-			m_pDlgMenu02->m_dMkFdOffsetY[0][0] < 2.0)
+		dOfsX = m_pDlgMenu02->m_dMkFdOffsetX[0][0];
+		dOfsY = m_pDlgMenu02->m_dMkFdOffsetY[0][0];
+
+		if (dOfsY > -2.0 && dOfsY < 2.0)
 		{
-			double dOffsetY = -1.0*(m_pDlgMenu02->m_dMkFdOffsetY[0][0]);// +m_pDlgMenu02->m_dMkFdOffsetY[1][0]) / 2.0;
+			double dOffsetY = -1.0 * dOfsY;// +m_pDlgMenu02->m_dMkFdOffsetY[1][0]) / 2.0;
 			dOffsetY *= pDoc->m_dShiftAdjustRatio;
 
 			CfPoint ptPnt[2];
@@ -15886,7 +15890,10 @@ void CGvisR2R_LaserView::Eng1PtAlignPt0()
 				}
 			}
 			else
+			{
+				AdjLaserOffset(pDoc->m_AlignOffset);
 				m_nEngStAuto++; // DoMk
+			}
 
 			break;
 		case ENG_ST + (Mk1PtIdx::Align0_0) + 2:
@@ -16364,7 +16371,9 @@ BOOL CGvisR2R_LaserView::Get2dCode(CString &sLot, int &nSerial)
 	if (!m_pSr1000w)
 		return FALSE;
 
-	CString sData;
+	CString sData, sMsg = _T("");
+	DispStsBar(sMsg, 6);
+
 	if (m_pSr1000w->Get2DCode(sData))
 	{
 		int nPos = sData.ReverseFind('-');
@@ -16375,6 +16384,7 @@ BOOL CGvisR2R_LaserView::Get2dCode(CString &sLot, int &nSerial)
 			pDoc->m_nShotNum = _tstoi(pDoc->m_sShotNum);
 			sLot = pDoc->m_sOrderNum;
 			nSerial = pDoc->m_nShotNum;
+			DispStsBar(sData, 6);
 		}
 		else
 		{
@@ -17231,4 +17241,105 @@ void CGvisR2R_LaserView::ChkRcvSig()
 			}
 		}
 	}
+}
+
+void CGvisR2R_LaserView::AdjLaserOffset(CfPoint ptOffset)
+{
+	if (!m_pMdx2500)
+		return;
+
+	if (!pDoc->m_bUseAdjustLaser)
+		return;
+
+	double pData[5]; // X_org,Y_org,X_offset,Y_offset,Theta_offset
+
+	if ((ptOffset.x > 0.01 || ptOffset.x < -0.01) && (ptOffset.y > 0.01 || ptOffset.y < -0.01))
+	{
+		pData[0] = _tstof(pDoc->WorkingInfo.LastJob.sEngraveOrgX);															// X_org
+		pData[1] = _tstof(pDoc->WorkingInfo.LastJob.sEngraveOrgY);															// Y_org
+		pData[2] = _tstof(pDoc->WorkingInfo.LastJob.sEngravePosOffsetX) + ptOffset.x;										// X_offset
+		pData[3] = _tstof(pDoc->WorkingInfo.LastJob.sEngravePosOffsetY) + (ptOffset.y * pDoc->m_dShiftAdjustRatio);			// Y_offset
+		pData[4] = _tstof(pDoc->WorkingInfo.LastJob.sEngravePosTheta);														// Theta_offset
+
+		if (m_pMdx2500->SetLaserPos(pData))
+		{
+			//WaitResponse();
+			MSG message;
+
+			while (m_pMdx2500->IsRunning())
+			{
+				if (::PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
+				{
+					::TranslateMessage(&message);
+					::DispatchMessage(&message);
+				}
+				Sleep(10);
+			}
+
+			pDoc->WorkingInfo.LastJob.sEngravePosOffsetX.Format(_T("%.3f"), pData[2]);
+			pDoc->WorkingInfo.LastJob.sEngravePosOffsetY.Format(_T("%.3f"), pData[3]);
+		}
+
+	}
+	else if (ptOffset.x > 0.01 || ptOffset.x < -0.01)
+	{
+		pData[0] = _tstof(pDoc->WorkingInfo.LastJob.sEngraveOrgX);								// X_org
+		pData[1] = _tstof(pDoc->WorkingInfo.LastJob.sEngraveOrgY);								// Y_org
+		pData[2] = _tstof(pDoc->WorkingInfo.LastJob.sEngravePosOffsetX) + ptOffset.x;			// X_offset
+		pData[3] = _tstof(pDoc->WorkingInfo.LastJob.sEngravePosOffsetY);						// Y_offset
+		pData[4] = _tstof(pDoc->WorkingInfo.LastJob.sEngravePosTheta);							// Theta_offset
+
+		if (m_pMdx2500->SetLaserPos(pData))
+		{
+			//WaitResponse();
+			MSG message;
+
+			while (m_pMdx2500->IsRunning())
+			{
+				if (::PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
+				{
+					::TranslateMessage(&message);
+					::DispatchMessage(&message);
+				}
+				Sleep(10);
+			}
+
+			pDoc->WorkingInfo.LastJob.sEngravePosOffsetX.Format(_T("%.3f"), pData[2]);
+		}
+	}
+	else if (ptOffset.y > 0.01 || ptOffset.y < -0.01)
+	{
+		pData[0] = _tstof(pDoc->WorkingInfo.LastJob.sEngraveOrgX);															// X_org
+		pData[1] = _tstof(pDoc->WorkingInfo.LastJob.sEngraveOrgY);															// Y_org
+		pData[2] = _tstof(pDoc->WorkingInfo.LastJob.sEngravePosOffsetX);													// X_offset
+		pData[3] = _tstof(pDoc->WorkingInfo.LastJob.sEngravePosOffsetY) + (ptOffset.y * pDoc->m_dShiftAdjustRatio);			// Y_offset
+		pData[4] = _tstof(pDoc->WorkingInfo.LastJob.sEngravePosTheta);														// Theta_offset
+
+		if (m_pMdx2500->SetLaserPos(pData))
+		{
+			//WaitResponse();
+			MSG message;
+
+			while (m_pMdx2500->IsRunning())
+			{
+				if (::PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
+				{
+					::TranslateMessage(&message);
+					::DispatchMessage(&message);
+				}
+				Sleep(10);
+			}
+
+			pDoc->WorkingInfo.LastJob.sEngravePosOffsetY.Format(_T("%.3f"), pData[3]);
+		}
+	}
+	else
+		return;
+}
+
+void CGvisR2R_LaserView::Option01()
+{
+	ClrDispMsg();
+	CDlgOption01 Dlg;
+	Dlg.DoModal();
 }

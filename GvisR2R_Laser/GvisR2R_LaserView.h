@@ -412,7 +412,7 @@ public:
 	void UpdateRstAllDn();
 	void UpdateRstIts();
 
-
+	void AdjLaserOffset(CfPoint ptOffset);
 
 	BOOL m_bSwRun, m_bSwRunF;
 	BOOL m_bSwStop, m_bSwStopF;
@@ -547,6 +547,7 @@ public:
 
 	void DoIO();
 	void DispDefImg();
+	void Option01();
 
 	//void DoMark0();
 	//void DoMark1();

@@ -29,6 +29,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_DATABASE_CONNECTION, &CMainFrame::OnDatabaseConnection)
 	ON_WM_CLOSE()
 	ON_COMMAND(ID_APP_MINIMIZE, &CMainFrame::OnAppMinimize)
+	ON_COMMAND(ID_OPTION01, &CMainFrame::OnOption01)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -82,14 +83,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	int nScreenWidth = 1230;
 
 	// Panel 크기조절 
-	m_wndStatusBar.SetPaneInfo(0, ID_SEPARATOR, SBPS_NORMAL, nScreenWidth * 4 / 120);
+	m_wndStatusBar.SetPaneInfo(0, ID_SEPARATOR, SBPS_NORMAL, nScreenWidth * 2 / 120);
 	m_wndStatusBar.SetPaneInfo(1, ID_SEPARATOR, SBPS_NORMAL, nScreenWidth * 32 / 120);
 	m_wndStatusBar.SetPaneInfo(2, ID_SEPARATOR, SBPS_NORMAL, nScreenWidth * 5 / 120);
 	m_wndStatusBar.SetPaneInfo(3, ID_SEPARATOR, SBPS_NORMAL, nScreenWidth * 52 / 120);
 	m_wndStatusBar.SetPaneInfo(4, ID_SEPARATOR, SBPS_NORMAL, nScreenWidth * 5 / 120);
-	m_wndStatusBar.SetPaneInfo(5, ID_SEPARATOR, SBPS_NORMAL, nScreenWidth * 5 / 120);
-	m_wndStatusBar.SetPaneInfo(6, ID_SEPARATOR, SBPS_NORMAL, nScreenWidth * 5 / 120);
-	m_wndStatusBar.SetPaneInfo(7, ID_SEPARATOR, SBPS_NORMAL, nScreenWidth * 12 / 120);
+	m_wndStatusBar.SetPaneInfo(5, ID_SEPARATOR, SBPS_NORMAL, nScreenWidth * 3 / 120);
+	m_wndStatusBar.SetPaneInfo(6, ID_SEPARATOR, SBPS_NORMAL, nScreenWidth * 10 / 120);
+	m_wndStatusBar.SetPaneInfo(7, ID_SEPARATOR, SBPS_NORMAL, nScreenWidth * 11 / 120);
 
 	//CreateProgressBar(); // statusbar에 Progress bar control 생성
 	//m_Progress.SetPos(0);
@@ -310,4 +311,11 @@ void CMainFrame::OnAppMinimize()
 	GetWindowPlacement(&wndPlace);
 	wndPlace.showCmd |= SW_MINIMIZE;
 	SetWindowPlacement(&wndPlace);
+}
+
+
+void CMainFrame::OnOption01()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	pView->Option01();
 }

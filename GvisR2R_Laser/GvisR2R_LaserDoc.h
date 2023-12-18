@@ -29,7 +29,7 @@ protected: // serialization에서만 만들어집니다.
 
 // 특성입니다.
 public:
-
+	CfPoint m_AlignOffset; 
 	int m_nDelayShow;
 	BOOL m_bBufEmpty[2]; // [0]: Up, [1]: Dn
 	BOOL m_bBufEmptyF[2]; // [0]: Up, [1]: Dn
@@ -39,6 +39,7 @@ public:
 	BOOL m_bUseRTRYShiftAdjust;
 	double m_dRTRShiftVal;
 	double m_dShiftAdjustRatio;
+	BOOL m_bUseAdjustLaser;
 
 	CMyFile *m_pFile;
 	CMySpec *m_pSpecLocal;
