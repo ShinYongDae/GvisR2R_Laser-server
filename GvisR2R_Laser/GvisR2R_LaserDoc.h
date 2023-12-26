@@ -38,8 +38,9 @@ public:
 	// R2R Y Meander Adjusting....
 	BOOL m_bUseRTRYShiftAdjust;
 	double m_dRTRShiftVal;
+	BOOL m_bUseAdjustLaser, m_bUseSkipError2dCode;
 	double m_dShiftAdjustRatio;
-	BOOL m_bUseAdjustLaser;
+	int m_nSkipError2dCode;
 
 	CMyFile *m_pFile;
 	CMySpec *m_pSpecLocal;

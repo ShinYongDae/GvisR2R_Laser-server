@@ -469,6 +469,7 @@ public:
 	BOOL m_bEng2dSt, m_bEng2dStSw;
 	int m_nMkStAuto, m_nEngStAuto, m_nEng2dStAuto;
 	int m_nLotEndAuto, m_nLastProcAuto;
+	int m_nCntSkipError2dCode;
 	BOOL m_bLoadShare[2]; // [Up/Dn]
 	CString m_sNewLotUp, m_sNewLotDn;
 

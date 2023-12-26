@@ -100,6 +100,7 @@
 #define IDC_BTN_SEND                    498
 #define IDC_BTN_CLEAR                   533
 #define IDC_CHECK1                      563
+#define IDC_CHECK9                      564
 #define IDC_CHECK2                      590
 #define IDC_CHECK3                      607
 #define IDC_CHECK4                      618
@@ -1074,6 +1075,7 @@
 #define IDC_STC_SEP                     1734
 #define IDC_EDIT_11                     1827
 #define IDC_EDIT_21                     1828
+#define IDC_EDIT_12                     1828
 #define IDC_STC_CURR                    1834
 #define IDC_STC_MIN                     1835
 #define IDC_STC_MAX                     1836

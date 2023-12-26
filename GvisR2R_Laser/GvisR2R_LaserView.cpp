@@ -328,6 +328,7 @@ CGvisR2R_LaserView::CGvisR2R_LaserView()
 	m_bEng2dSt = FALSE;
 	m_bEng2dStSw = FALSE;
 	m_nEng2dStAuto = 0;
+	m_nCntSkipError2dCode = 0;
 
 	m_bLotEnd = FALSE;
 	m_nLotEndAuto = 0;
@@ -15498,6 +15499,7 @@ void CGvisR2R_LaserView::InitAutoEng()
 	m_bEng2dSt = FALSE;
 	m_bEng2dStSw = FALSE;
 	m_nEng2dStAuto = 0;
+	m_nCntSkipError2dCode = 0;
 
 	m_nGetItsCodeSerial = 0;
 	pDoc->m_nShotNum = 0;
@@ -15662,7 +15664,7 @@ void CGvisR2R_LaserView::DoAtuoGet2dReadStSignal()
 
 void CGvisR2R_LaserView::DoAuto2dReading()
 {
-	if (MODE_INNER == pDoc->WorkingInfo.LastJob.nTestMode || MODE_OUTER == pDoc->WorkingInfo.LastJob.nTestMode)
+	if (MODE_INNER == pDoc->WorkingInfo.LastJob.nTestMode)// || MODE_OUTER == pDoc->WorkingInfo.LastJob.nTestMode)
 	{
 		Eng2dRead();
 	}
@@ -16149,7 +16151,8 @@ void CGvisR2R_LaserView::Eng2dRead()
 				{
 					if (!pDoc->WorkingInfo.System.bNoMk)
 						Get2dCode(m_sGetItsCode, m_nGetItsCodeSerial);
-
+					if (pDoc->m_bUseSkipError2dCode)
+						m_nCntSkipError2dCode = 0;
 					Sleep(300);
 					m_nEng2dStAuto = ENG_2D_ST + (Read2dIdx::DoneRead);	// 2D Reading 완료
 				}
@@ -16158,17 +16161,29 @@ void CGvisR2R_LaserView::Eng2dRead()
 					m_dwRead2dEd = GetTickCount();
 					if ((m_dwRead2dEd - m_dwRead2dSt) > 30000)
 					{
-						EngStop(TRUE);
-						TowerLamp(RGB_RED, TRUE);
-						Buzzer(TRUE, 0);
-						if (IDYES == MsgBox(_T("정지 - 2D바코드의 각인된 코드를 읽을 수 없습니다.\r\n운전을 누르시고, 다음 Shot으로 진행합니까?"), 0, MB_YESNO))
+						if (pDoc->m_bUseSkipError2dCode && m_nCntSkipError2dCode < pDoc->m_nSkipError2dCode)
 						{
+							//m_sGetItsCode
+							m_nGetItsCodeSerial++;
+							pDoc->m_sShotNum.Format(_T("%03d"), m_nGetItsCodeSerial);
+							pDoc->m_nShotNum = m_nGetItsCodeSerial;
+							m_nCntSkipError2dCode++;
 							m_nEng2dStAuto = ENG_2D_ST + (Read2dIdx::DoneRead);	// 2D Reading 완료
 						}
 						else
 						{
-							// 운전을 누르면 다시 2D 코드를 읽기를 대기합니다.
-							m_dwRead2dSt = GetTickCount();
+							EngStop(TRUE);
+							TowerLamp(RGB_RED, TRUE);
+							Buzzer(TRUE, 0);
+							if (IDYES == MsgBox(_T("정지 - 2D바코드의 각인된 코드를 읽을 수 없습니다.\r\n운전을 누르시고, 다음 Shot으로 진행합니까?\r\n \"아니요\"를 누르시고 운전을 누르시면 2D코드를 다시 읽습니다."), 0, MB_YESNO))
+							{
+								m_nEng2dStAuto = ENG_2D_ST + (Read2dIdx::DoneRead);	// 2D Reading 완료
+							}
+							else
+							{
+								// 운전을 누르면 다시 2D 코드를 읽기를 시작합니다.
+								m_nEng2dStAuto = ENG_2D_ST + (Read2dIdx::DoRead); // 2D Reading 시작
+							}
 						}
 					}
 				}

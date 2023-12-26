@@ -225,6 +225,8 @@ CGvisR2R_LaserDoc::CGvisR2R_LaserDoc()
 	m_dRTRShiftVal = 0.0;
 	m_dShiftAdjustRatio = 0.0;
 	m_bUseAdjustLaser = FALSE;
+	m_bUseSkipError2dCode = FALSE;
+	m_nSkipError2dCode = 3; // Default
 
 	m_nTestOrderNum = 0;
 	m_nTestShotNum = 0;
@@ -1438,6 +1440,22 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 	else
 		m_nDelayShow = 500;
 
+
+	if (0 < ::GetPrivateProfileString(_T("Option"), _T("USE_SKIP_ERROR_2DCODE"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+	{
+		m_bUseSkipError2dCode = (BOOL)(_ttoi(szData) ? TRUE : FALSE);
+	}
+	else
+		m_bUseSkipError2dCode = FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Option"), _T("NUM_SKIP_ERROR_2DCODE"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+	{
+		m_nSkipError2dCode = _ttoi(szData);
+	}
+	else
+		m_nSkipError2dCode = 3;
+
+
 	// [Last Job]
 
 	//if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Engrave Its Code"), NULL, szData, sizeof(szData), sPath))//WorkingInfo.System.sPathEngCurrInfo))
@@ -1540,6 +1558,8 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 			WorkingInfo.LastJob.sLayerDn = CString(_T(""));
 		}
 	}
+
+
 
 	//if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("LotUp No"), NULL, szData, sizeof(szData), sPath))
 	//	WorkingInfo.LastJob.sLotUp = CString(szData);
