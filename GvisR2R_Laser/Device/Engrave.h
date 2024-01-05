@@ -47,6 +47,7 @@ public:
 	SOCKET_DATA GetSocketData();
 	BOOL IsConnected();
 	BOOL IsDispContRun();
+	BOOL IsDispLotEnd();
 
 	// Thread
 	CEvent      m_evtThread;
@@ -594,6 +595,15 @@ public:
 	// SetteingEng
 	void Set2DOffsetInitPos();
 	void Set2DOffsetInitPosMove(BOOL bOn);
+
+	void SetBuzzer(BOOL bOn, int nCh = 0);
+	void IsSetBuzzer();
+	void SetTowerLamp(COLORREF color, BOOL bOn, BOOL bWink = FALSE);
+	void IsSetTowerLamp();
+	void SetErrorRead2dCode(int nParam);
+	void IsSetErrorRead2dCode(int nParam);
+	void SetDispContRun(BOOL bOn);
+	void IsSetDispContRun();
 
 protected:
 	afx_msg LRESULT wmAcceptReceived(WPARAM wParam, LPARAM lParam);

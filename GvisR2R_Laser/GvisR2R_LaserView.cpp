@@ -886,6 +886,8 @@ void CGvisR2R_LaserView::OnTimer(UINT_PTR nIDEvent)
 		ChkDoor();
 		ChkRcvSig();
 
+		ChkErrorRead2dCode();
+
 		if (m_bTIM_DISP_STATUS)
 			SetTimer(TIM_DISP_STATUS, 100, NULL);
 	}
@@ -1946,56 +1948,61 @@ void CGvisR2R_LaserView::DispDatabaseConnection()
 
 void CGvisR2R_LaserView::TowerLamp(COLORREF color, BOOL bOn, BOOL bWink)
 {
-	if (bWink)
+	if (m_pEngrave)
 	{
-		if (color == RGB_RED)
-		{
-			m_bTowerWinker[0] = bOn;
-			if (bOn)
-			{
-				m_bTowerWinker[1] = FALSE;
-				m_bTowerWinker[2] = FALSE;
-			}
-		}
-		if (color == RGB_GREEN)
-		{
-			m_bTowerWinker[1] = bOn;
-			if (bOn)
-			{
-				m_bTowerWinker[0] = FALSE;
-				m_bTowerWinker[2] = FALSE;
-			}
-		}
-		if (color == RGB_YELLOW)
-		{
-			m_bTowerWinker[2] = bOn;
-			if (bOn)
-			{
-				m_bTowerWinker[1] = FALSE;
-				m_bTowerWinker[0] = FALSE;
-			}
-		}
-
-		if (!m_bTowerWinker[0] && !m_bTowerWinker[1] && !m_bTowerWinker[2])
-			m_bTimTowerWinker = FALSE;
-		else
-		{
-			if (!m_bTimTowerWinker)
-			{
-				m_bTimTowerWinker = TRUE;
-				SetTimer(TIM_TOWER_WINKER, 100, NULL);
-			}
-		}
+		m_pEngrave->SetTowerLamp(color, bOn, bWink);
 	}
-	else
-	{
-		m_bTimTowerWinker = FALSE;
 
-#ifdef USE_MPE
-		if (!pDoc->m_pMpeIo)
-			return;
-#endif
-	}
+//	if (bWink)
+//	{
+//		if (color == RGB_RED)
+//		{
+//			m_bTowerWinker[0] = bOn;
+//			if (bOn)
+//			{
+//				m_bTowerWinker[1] = FALSE;
+//				m_bTowerWinker[2] = FALSE;
+//			}
+//		}
+//		if (color == RGB_GREEN)
+//		{
+//			m_bTowerWinker[1] = bOn;
+//			if (bOn)
+//			{
+//				m_bTowerWinker[0] = FALSE;
+//				m_bTowerWinker[2] = FALSE;
+//			}
+//		}
+//		if (color == RGB_YELLOW)
+//		{
+//			m_bTowerWinker[2] = bOn;
+//			if (bOn)
+//			{
+//				m_bTowerWinker[1] = FALSE;
+//				m_bTowerWinker[0] = FALSE;
+//			}
+//		}
+//
+//		if (!m_bTowerWinker[0] && !m_bTowerWinker[1] && !m_bTowerWinker[2])
+//			m_bTimTowerWinker = FALSE;
+//		else
+//		{
+//			if (!m_bTimTowerWinker)
+//			{
+//				m_bTimTowerWinker = TRUE;
+//				SetTimer(TIM_TOWER_WINKER, 100, NULL);
+//			}
+//		}
+//	}
+//	else
+//	{
+//		m_bTimTowerWinker = FALSE;
+//
+//#ifdef USE_MPE
+//		if (!pDoc->m_pMpeIo)
+//			return;
+//#endif
+//	}
 }
 
 void CGvisR2R_LaserView::DispTowerWinker()
@@ -2015,6 +2022,11 @@ void CGvisR2R_LaserView::BuzzerFromThread(BOOL bOn, int nCh)
 
 void CGvisR2R_LaserView::Buzzer(BOOL bOn, int nCh)
 {
+	if (m_pEngrave)
+	{
+		m_pEngrave->SetBuzzer(bOn, nCh);
+	}
+
 	//	return; // PLC제어
 #ifdef USE_MPE
 	if (!m_pMpe)
@@ -3004,11 +3016,11 @@ BOOL CGvisR2R_LaserView::ChkYield() // 수율 양호 : TRUE , 수율 불량 : FALSE
 			pDoc->m_pReelMapAllDn->GetPcsNum(nGood, nBad);
 		else
 		{
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			sMsg.Format(_T("일시정지 - Failed ChkYield()."));
 			MsgBox(sMsg);
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 			return FALSE;
 		}
 	}
@@ -3018,11 +3030,11 @@ BOOL CGvisR2R_LaserView::ChkYield() // 수율 양호 : TRUE , 수율 불량 : FALSE
 			pDoc->m_pReelMapUp->GetPcsNum(nGood, nBad);
 		else
 		{
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			sMsg.Format(_T("일시정지 - Failed ChkYield()."));
 			MsgBox(sMsg);
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 			return FALSE;
 		}
 	}
@@ -3038,11 +3050,11 @@ BOOL CGvisR2R_LaserView::ChkYield() // 수율 양호 : TRUE , 수율 불량 : FALSE
 
 		if (dRatio < dTotLmt)
 		{
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			sMsg.Format(_T("일시정지 - 전체 수율 제한범위 : %.1f 미달 ( %.1f )"), dTotLmt, dRatio);
 			MsgBox(sMsg);
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 			return FALSE;
 		}
 	}
@@ -3070,11 +3082,11 @@ BOOL CGvisR2R_LaserView::ChkYield() // 수율 양호 : TRUE , 수율 불량 : FALSE
 
 				if (dRatio < dPrtLmt)
 				{
+					Buzzer(TRUE, 0);
+					TowerLamp(RGB_RED, TRUE);
 					Stop();
 					sMsg.Format(_T("일시정지 - 구간 수율 제한범위 : %.1f 미달 ( %.1f )"), dPrtLmt, dRatio);
 					MsgBox(sMsg);
-					TowerLamp(RGB_RED, TRUE);
-					Buzzer(TRUE, 0);
 					return FALSE;
 				}
 			}
@@ -3087,11 +3099,11 @@ BOOL CGvisR2R_LaserView::ChkYield() // 수율 양호 : TRUE , 수율 불량 : FALSE
 
 				if (dRatio < dPrtLmt)
 				{
+					Buzzer(TRUE, 0);
+					TowerLamp(RGB_RED, TRUE);
 					Stop();
 					sMsg.Format(_T("일시정지 - 구간 수율 제한범위 : %.1f 미달 ( %.1f )"), dPrtLmt, dRatio);
 					MsgBox(sMsg);
-					TowerLamp(RGB_RED, TRUE);
-					Buzzer(TRUE, 0);
 					return FALSE;
 				}
 			}
@@ -3110,11 +3122,11 @@ BOOL CGvisR2R_LaserView::ChkSaftySen() // 감지 : TRUE , 비감지 : FALSE
 			pDoc->Status.bSensSaftyMkF = TRUE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			//pView->DispStsBar(_T("정지-4"), 0);
 			DispMain(_T("정 지"), RGB_RED);			
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 			m_bTIM_SAFTY_STOP = TRUE;//MsgBox(_T("일시정지 - 마킹부 안전센서가 감지되었습니다."));
 			SetTimer(TIM_SAFTY_STOP, 100, NULL);
 		}
@@ -3180,12 +3192,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorAoiF[DOOR_FM_AOI_UP] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			//pView->DispStsBar(_T("정지-5"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 검사부 상 전면 중앙 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorAoi[DOOR_FL_AOI_UP] && !pDoc->Status.bDoorAoiF[DOOR_FL_AOI_UP])
@@ -3201,12 +3213,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorAoiF[DOOR_FL_AOI_UP] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			//pView->DispStsBar(_T("정지-6"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 검사부 상 전면 좌측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorAoi[DOOR_FR_AOI_UP] && !pDoc->Status.bDoorAoiF[DOOR_FR_AOI_UP])
@@ -3222,12 +3234,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorAoiF[DOOR_FR_AOI_UP] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			//pView->DispStsBar(_T("정지-7"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 검사부 상 전면 우측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorAoi[DOOR_BM_AOI_UP] && !pDoc->Status.bDoorAoiF[DOOR_BM_AOI_UP])
@@ -3243,12 +3255,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorAoiF[DOOR_BM_AOI_UP] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			//pView->DispStsBar(_T("정지-8"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 검사부 상 후면 중앙 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorAoi[DOOR_BL_AOI_UP] && !pDoc->Status.bDoorAoiF[DOOR_BL_AOI_UP])
@@ -3264,12 +3276,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorAoiF[DOOR_BL_AOI_UP] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			//pView->DispStsBar(_T("정지-9"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 검사부 상 후면 좌측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorAoi[DOOR_BR_AOI_UP] && !pDoc->Status.bDoorAoiF[DOOR_BR_AOI_UP])
@@ -3285,12 +3297,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorAoiF[DOOR_BR_AOI_UP] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			//pView->DispStsBar(_T("정지-10"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 검사부 상 후면 우측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 	}
 
@@ -3309,12 +3321,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorAoiF[DOOR_FM_AOI_DN] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			//pView->DispStsBar(_T("정지-5"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 검사부 하 전면 중앙 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorAoi[DOOR_FL_AOI_DN] && !pDoc->Status.bDoorAoiF[DOOR_FL_AOI_DN])
@@ -3330,12 +3342,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorAoiF[DOOR_FL_AOI_DN] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			//pView->DispStsBar(_T("정지-6"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 검사부 하 전면 좌측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorAoi[DOOR_FR_AOI_DN] && !pDoc->Status.bDoorAoiF[DOOR_FR_AOI_DN])
@@ -3351,12 +3363,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorAoiF[DOOR_FR_AOI_DN] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-7"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 검사부 하 전면 우측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorAoi[DOOR_BM_AOI_DN] && !pDoc->Status.bDoorAoiF[DOOR_BM_AOI_DN])
@@ -3372,12 +3384,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorAoiF[DOOR_BM_AOI_DN] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-8"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 검사부 하 후면 중앙 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorAoi[DOOR_BL_AOI_DN] && !pDoc->Status.bDoorAoiF[DOOR_BL_AOI_DN])
@@ -3393,12 +3405,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorAoiF[DOOR_BL_AOI_DN] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-9"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 검사부 하 후면 좌측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorAoi[DOOR_BR_AOI_DN] && !pDoc->Status.bDoorAoiF[DOOR_BR_AOI_DN])
@@ -3414,12 +3426,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorAoiF[DOOR_BR_AOI_DN] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-10"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 검사부 하 후면 우측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 	}
 
@@ -3438,12 +3450,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorMkF[DOOR_FL_MK] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-11"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 마킹부 전면 좌측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorMk[DOOR_FR_MK] && !pDoc->Status.bDoorMkF[DOOR_FR_MK])
@@ -3459,12 +3471,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorMkF[DOOR_FR_MK] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-12"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 마킹부 전면 우측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorMk[DOOR_BL_MK] && !pDoc->Status.bDoorMkF[DOOR_BL_MK])
@@ -3480,12 +3492,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorMkF[DOOR_BL_MK] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-13"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 마킹부 후면 좌측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorMk[DOOR_BR_MK] && !pDoc->Status.bDoorMkF[DOOR_BR_MK])
@@ -3501,12 +3513,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorMkF[DOOR_BR_MK] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-14"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 마킹부 후면 우측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 	}
 
@@ -3525,12 +3537,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorEngvF[DOOR_FL_ENGV] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-11"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 각인부 전면 좌측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorEngv[DOOR_FR_ENGV] && !pDoc->Status.bDoorEngvF[DOOR_FR_ENGV])
@@ -3546,12 +3558,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorEngvF[DOOR_FR_ENGV] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-12"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 각인부 전면 우측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorEngv[DOOR_BL_ENGV] && !pDoc->Status.bDoorEngvF[DOOR_BL_ENGV])
@@ -3567,12 +3579,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorEngvF[DOOR_BL_ENGV] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-13"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 각인부 후면 좌측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorEngv[DOOR_BR_ENGV] && !pDoc->Status.bDoorEngvF[DOOR_BR_ENGV])
@@ -3588,12 +3600,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorEngvF[DOOR_BR_ENGV] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-14"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 각인부 후면 우측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 	}
 
@@ -3612,12 +3624,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorUcF[DOOR_FL_UC] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-15"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 언코일러부 전면 좌측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorUc[DOOR_FR_UC] && !pDoc->Status.bDoorUcF[DOOR_FR_UC])
@@ -3633,12 +3645,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorUcF[DOOR_FR_UC] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-16"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 언코일러부 측면 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorUc[DOOR_BL_UC] && !pDoc->Status.bDoorUcF[DOOR_BL_UC])
@@ -3654,12 +3666,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorUcF[DOOR_BL_UC] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-17"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 언코일러부 후면 좌측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorUc[DOOR_BR_UC] && !pDoc->Status.bDoorUcF[DOOR_BR_UC])
@@ -3675,12 +3687,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorUcF[DOOR_BR_UC] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-18"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 언코일러부 후면 우측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 	}
 
@@ -3716,12 +3728,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorReF[DOOR_FR_RC] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-19"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 리코일러부 전면 우측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorRe[DOOR_S_RC] && !pDoc->Status.bDoorReF[DOOR_S_RC])
@@ -3737,12 +3749,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorReF[DOOR_S_RC] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-20"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 리코일러부 측면 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorRe[DOOR_BL_RC] && !pDoc->Status.bDoorReF[DOOR_BL_RC])
@@ -3758,12 +3770,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorReF[DOOR_BL_RC] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-21"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 리코일러부 후면 좌측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 
 		if (pDoc->Status.bDoorRe[DOOR_BR_RC] && !pDoc->Status.bDoorReF[DOOR_BR_RC])
@@ -3779,12 +3791,12 @@ unsigned long CGvisR2R_LaserView::ChkDoor() // 0: All Closed , Open Door Index :
 			pDoc->Status.bDoorReF[DOOR_BR_RC] = FALSE;
 			m_bSwStopNow = TRUE;
 			m_bSwRunF = FALSE;
+			Buzzer(TRUE, 0);
+			TowerLamp(RGB_RED, TRUE);
 			Stop();
 			pView->DispStsBar(_T("정지-22"), 0);
 			DispMain(_T("정 지"), RGB_RED);
 			MsgBox(_T("일시정지 - 리코일러부 후면 우측 도어 Open"));
-			TowerLamp(RGB_RED, TRUE);
-			Buzzer(TRUE, 0);
 		}
 	}
 
@@ -3799,12 +3811,12 @@ void CGvisR2R_LaserView::ChkEmg()
 		pDoc->Status.bEmgAoiF[EMG_F_AOI_UP] = TRUE;
 		m_bSwStopNow = TRUE;
 		m_bSwRunF = FALSE;
+		Buzzer(TRUE, 0);
+		TowerLamp(RGB_RED, TRUE);
 		Stop();
 		pView->DispStsBar(_T("정지-23"), 0);
 		DispMain(_T("정 지"), RGB_RED);
 		MsgBox(_T("비상정지 - 검사부 상 전면 스위치"));
-		TowerLamp(RGB_RED, TRUE);
-		Buzzer(TRUE, 0);
 	}
 	else if (!pDoc->Status.bEmgAoi[EMG_F_AOI_UP] && pDoc->Status.bEmgAoiF[EMG_F_AOI_UP])
 	{
@@ -3821,12 +3833,12 @@ void CGvisR2R_LaserView::ChkEmg()
 		pDoc->Status.bEmgAoiF[EMG_B_AOI_UP] = TRUE;
 		m_bSwStopNow = TRUE;
 		m_bSwRunF = FALSE;
+		Buzzer(TRUE, 0);
+		TowerLamp(RGB_RED, TRUE);
 		Stop();
 		pView->DispStsBar(_T("정지-24"), 0);
 		DispMain(_T("정 지"), RGB_RED);
 		MsgBox(_T("비상정지 - 검사부 상 후면 스위치"));
-		TowerLamp(RGB_RED, TRUE);
-		Buzzer(TRUE, 0);
 	}
 	else if (!pDoc->Status.bEmgAoi[EMG_B_AOI_UP] && pDoc->Status.bEmgAoiF[EMG_B_AOI_UP])
 	{
@@ -3843,12 +3855,12 @@ void CGvisR2R_LaserView::ChkEmg()
 		pDoc->Status.bEmgAoiF[EMG_F_AOI_DN] = TRUE;
 		m_bSwStopNow = TRUE;
 		m_bSwRunF = FALSE;
+		Buzzer(TRUE, 0);
+		TowerLamp(RGB_RED, TRUE);
 		Stop();
 		pView->DispStsBar(_T("정지-23"), 0);
 		DispMain(_T("정 지"), RGB_RED);
 		MsgBox(_T("비상정지 - 검사부 하 전면 스위치"));
-		TowerLamp(RGB_RED, TRUE);
-		Buzzer(TRUE, 0);
 	}
 	else if (!pDoc->Status.bEmgAoi[EMG_F_AOI_DN] && pDoc->Status.bEmgAoiF[EMG_F_AOI_DN])
 	{
@@ -3865,12 +3877,12 @@ void CGvisR2R_LaserView::ChkEmg()
 		pDoc->Status.bEmgAoiF[EMG_B_AOI_DN] = TRUE;
 		m_bSwStopNow = TRUE;
 		m_bSwRunF = FALSE;
+		Buzzer(TRUE, 0);
+		TowerLamp(RGB_RED, TRUE);
 		Stop();
 		pView->DispStsBar(_T("정지-24"), 0);
 		DispMain(_T("정 지"), RGB_RED);
 		MsgBox(_T("비상정지 - 검사부 하 후면 스위치"));
-		TowerLamp(RGB_RED, TRUE);
-		Buzzer(TRUE, 0);
 	}
 	else if (!pDoc->Status.bEmgAoi[EMG_B_AOI_DN] && pDoc->Status.bEmgAoiF[EMG_B_AOI_DN])
 	{
@@ -3887,12 +3899,12 @@ void CGvisR2R_LaserView::ChkEmg()
 		pDoc->Status.bEmgMkF[EMG_M_MK] = TRUE;
 		m_bSwStopNow = TRUE;
 		m_bSwRunF = FALSE;
+		Buzzer(TRUE, 0);
+		TowerLamp(RGB_RED, TRUE);
 		Stop();
 		pView->DispStsBar(_T("정지-25"), 0);
 		DispMain(_T("정 지"), RGB_RED);
 		MsgBox(_T("비상정지 - 마킹부 메인 스위치"));
-		TowerLamp(RGB_RED, TRUE);
-		Buzzer(TRUE, 0);
 	}
 	else if (!pDoc->Status.bEmgMk[EMG_M_MK] && pDoc->Status.bEmgMkF[EMG_M_MK])
 	{
@@ -3909,12 +3921,12 @@ void CGvisR2R_LaserView::ChkEmg()
 		pDoc->Status.bEmgMkF[EMG_B_MK] = TRUE;
 		m_bSwStopNow = TRUE;
 		m_bSwRunF = FALSE;
+		Buzzer(TRUE, 0);
+		TowerLamp(RGB_RED, TRUE);
 		Stop();
 		pView->DispStsBar(_T("정지-26"), 0);
 		DispMain(_T("정 지"), RGB_RED);
 		MsgBox(_T("비상정지 - 마킹부 스위치"));
-		TowerLamp(RGB_RED, TRUE);
-		Buzzer(TRUE, 0);
 	}
 	else if (!pDoc->Status.bEmgMk[EMG_B_MK] && pDoc->Status.bEmgMkF[EMG_B_MK])
 	{
@@ -3931,12 +3943,12 @@ void CGvisR2R_LaserView::ChkEmg()
 		pDoc->Status.bEmgUcF = TRUE;
 		m_bSwStopNow = TRUE;
 		m_bSwRunF = FALSE;
+		Buzzer(TRUE, 0);
+		TowerLamp(RGB_RED, TRUE);
 		Stop();
 		pView->DispStsBar(_T("정지-27"), 0);
 		DispMain(_T("정 지"), RGB_RED);
 		MsgBox(_T("비상정지 - 언코일러부 스위치"));
-		TowerLamp(RGB_RED, TRUE);
-		Buzzer(TRUE, 0);
 	}
 	else if (!pDoc->Status.bEmgUc && pDoc->Status.bEmgUcF)
 	{
@@ -3953,12 +3965,12 @@ void CGvisR2R_LaserView::ChkEmg()
 		pDoc->Status.bEmgRcF = TRUE;
 		m_bSwStopNow = TRUE;
 		m_bSwRunF = FALSE;
+		Buzzer(TRUE, 0);
+		TowerLamp(RGB_RED, TRUE);
 		Stop();
 		pView->DispStsBar(_T("정지-28"), 0);
 		DispMain(_T("정 지"), RGB_RED);
 		MsgBox(_T("비상정지 - 리코일러부 스위치"));
-		TowerLamp(RGB_RED, TRUE);
-		Buzzer(TRUE, 0);
 	}
 	else if (!pDoc->Status.bEmgRc && pDoc->Status.bEmgRcF)
 	{
@@ -3974,12 +3986,12 @@ void CGvisR2R_LaserView::ChkEmg()
 		pDoc->Status.bEmgEngvF[0] = TRUE;
 		m_bSwStopNow = TRUE;
 		m_bSwRunF = FALSE;
+		Buzzer(TRUE, 0);
+		TowerLamp(RGB_RED, TRUE);
 		Stop();
 		pView->DispStsBar(_T("정지-29"), 0);
 		DispMain(_T("정 지"), RGB_RED);
 		MsgBox(_T("비상정지 - 각인부 모니터"));
-		TowerLamp(RGB_RED, TRUE);
-		Buzzer(TRUE, 0);
 	}
 	else if (!pDoc->Status.bEmgEngv[0] && pDoc->Status.bEmgEngvF[0])
 	{
@@ -3994,12 +4006,12 @@ void CGvisR2R_LaserView::ChkEmg()
 		pDoc->Status.bEmgEngvF[1] = TRUE;
 		m_bSwStopNow = TRUE;
 		m_bSwRunF = FALSE;
+		Buzzer(TRUE, 0);
+		TowerLamp(RGB_RED, TRUE);
 		Stop();
 		pView->DispStsBar(_T("정지-30"), 0);
 		DispMain(_T("정 지"), RGB_RED);
 		MsgBox(_T("비상정지 - 각인부 스위치"));
-		TowerLamp(RGB_RED, TRUE);
-		Buzzer(TRUE, 0);
 	}
 	else if (!pDoc->Status.bEmgEngv[1] && pDoc->Status.bEmgEngvF[1])
 	{
@@ -14874,11 +14886,11 @@ BOOL CGvisR2R_LaserView::ChkLightErr()
 
 	if (bError)
 	{
-		Stop();
-		TowerLamp(RGB_RED, TRUE);
 		Buzzer(TRUE, 0);
-		// 		m_bSwStopNow = TRUE;
-		// 		m_bSwRunF = FALSE;
+		TowerLamp(RGB_RED, TRUE);
+		Stop();
+		//m_bSwStopNow = TRUE;
+		//m_bSwRunF = FALSE;
 		pView->DispStsBar(_T("정지-45"), 0);
 		DispMain(_T("정 지"), RGB_RED);
 		//MsgBox(_T("노광불량 정지 - 기판을 확인하세요.\r\n계속진행하려면 운전스위치를 누르세요.");
@@ -15449,6 +15461,16 @@ BOOL CGvisR2R_LaserView::IsDispContRun()
 	return FALSE;
 }
 
+BOOL CGvisR2R_LaserView::IsDispLotEnd()
+{
+	if (m_pEngrave)
+	{
+		return m_pEngrave->IsDispLotEnd();
+	}
+
+	return FALSE;
+}
+
 
 void CGvisR2R_LaserView::OnClose()
 {
@@ -15714,9 +15736,10 @@ void CGvisR2R_LaserView::Eng1PtReady()
 				}
 				else
 				{
+					Buzzer(TRUE, 0);
+					TowerLamp(RGB_YELLOW, TRUE);					
 					pView->MsgBox(_T("카메라 정렬이미지가 저장되지 않았습니다.\r\n핀위치를 저장하세요."), 0, MB_OK);
 					EngStop(TRUE);
-					TowerLamp(RGB_YELLOW, TRUE);					
 				}
 			}
 			break;
@@ -15814,6 +15837,7 @@ void CGvisR2R_LaserView::Eng1PtAlignPt0()
 			if (m_bFailAlign[0][0])
 			{
 				Buzzer(TRUE, 0);
+				TowerLamp(RGB_YELLOW, TRUE);
 				//if(IDNO == DoMyMsgBox(_T("카메라의 원점 정렬을 다시하시겠습니까?"), MB_YESNO))
 				if (IDNO == MsgBox(_T("카메라의 원점 정렬을 다시하시겠습니까?"), 0, MB_YESNO))
 				{
@@ -15833,8 +15857,8 @@ void CGvisR2R_LaserView::Eng1PtAlignPt0()
 							m_bDoMk[0] = FALSE;
 							m_bDoneMk[0] = TRUE;
 
+							//TowerLamp(RGB_YELLOW, TRUE);
 							EngStop(TRUE);
-							TowerLamp(RGB_YELLOW, TRUE);
 						}
 						else
 						{
@@ -15854,7 +15878,7 @@ void CGvisR2R_LaserView::Eng1PtAlignPt0()
 																	 //m_nEngStAuto = MK_ST + (Mk1PtIdx::Move0Cam0); // TwoPointAlign0(0) 으로 진행. - 카메라 재정렬
 																	 //m_nEngStAuto = MK_ST + (Mk1PtIdx::Move0Cam1); // TwoPointAlign1(0) 으로 진행. - 카메라 재정렬
 						EngStop(TRUE);
-						TowerLamp(RGB_YELLOW, TRUE);
+						//TowerLamp(RGB_YELLOW, TRUE);
 					}
 				}
 				else
@@ -15868,8 +15892,8 @@ void CGvisR2R_LaserView::Eng1PtAlignPt0()
 					m_nEngStAuto = ENG_ST + (Mk1PtIdx::Move0Cam0); // OnePointAlign0(0) 으로 진행. - 카메라 재정렬
 																 //m_nEngStAuto = MK_ST + (Mk1PtIdx::Move0Cam0); // TwoPointAlign0(0) 으로 진행. - 카메라 재정렬
 																 //m_nEngStAuto = MK_ST + (Mk1PtIdx::Move0Cam1); // TwoPointAlign1(0) 으로 진행. - 카메라 재정렬
+					//TowerLamp(RGB_YELLOW, TRUE);
 					EngStop(TRUE);
-					TowerLamp(RGB_YELLOW, TRUE);
 				}
 			}
 
@@ -15927,9 +15951,10 @@ void CGvisR2R_LaserView::Eng1PtDoMarking()
 			{
 				if (!SetMdxLotAndShotNum(pDoc->m_sItsCode, nSerial))
 				{
+					Buzzer(TRUE, 0);
+					TowerLamp(RGB_RED, TRUE);
 					EngStop(TRUE);
 					//MsgBox(_T("SetMdxLotAndShotNum - Failed."));
-					//TowerLamp(RGB_RED, TRUE);
 					//Buzzer(TRUE, 0);
 					break;
 				}
@@ -15948,10 +15973,10 @@ void CGvisR2R_LaserView::Eng1PtDoMarking()
 					SetMk(TRUE);	// Mk 마킹 시작
 				else if ((m_nGetItsCodeSerial + 1) > nSerial)
 				{
+					Buzzer(TRUE, 0);
+					TowerLamp(RGB_RED, TRUE);
 					EngStop(TRUE);
 					MsgBox(_T("정지 - 2D바코드의 각인된 시리얼이 각인할 시리얼보다 큽니다."));
-					TowerLamp(RGB_RED, TRUE);
-					Buzzer(TRUE, 0);
 					break;
 				}
 			}
@@ -16172,9 +16197,10 @@ void CGvisR2R_LaserView::Eng2dRead()
 						}
 						else
 						{
-							EngStop(TRUE);
-							TowerLamp(RGB_RED, TRUE);
+							// nParam = _PcId::_Engrave
 							Buzzer(TRUE, 0);
+							TowerLamp(RGB_RED, TRUE);
+							EngStop(TRUE);
 							if (IDYES == MsgBox(_T("정지 - 2D바코드의 각인된 코드를 읽을 수 없습니다.\r\n운전을 누르시고, 다음 Shot으로 진행합니까?\r\n \"아니요\"를 누르시고 운전을 누르시면 2D코드를 다시 읽습니다."), 0, MB_YESNO))
 							{
 								m_nEng2dStAuto = ENG_2D_ST + (Read2dIdx::DoneRead);	// 2D Reading 완료
@@ -17357,4 +17383,27 @@ void CGvisR2R_LaserView::Option01()
 	ClrDispMsg();
 	CDlgOption01 Dlg;
 	Dlg.DoModal();
+}
+
+
+void CGvisR2R_LaserView::ChkErrorRead2dCode()
+{
+	if (IsAuto())
+	{
+		if (MODE_INNER == pDoc->WorkingInfo.LastJob.nTestMode || MODE_OUTER == pDoc->WorkingInfo.LastJob.nTestMode)
+		{
+			if (pDoc->GetSignalAoiUp())
+			{
+				if (m_pEngrave)
+					m_pEngrave->SetErrorRead2dCode(_PcId::_AoiUp);
+				pDoc->SetSignalAoiUp();
+			}
+			else if (pDoc->GetSignalAoiDn())
+			{
+				if (m_pEngrave)
+					m_pEngrave->SetErrorRead2dCode(_PcId::_AoiDn);
+				pDoc->SetSignalAoiDn();
+			}
+		}
+	}
 }

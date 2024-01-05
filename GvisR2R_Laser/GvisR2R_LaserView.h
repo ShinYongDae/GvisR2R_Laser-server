@@ -829,6 +829,7 @@ public:
 	BOOL IsDoneDispMkInfo();
 	BOOL IsSetLotEnd();
 	void ChkRcvSig();
+	void ChkErrorRead2dCode();
 
 	afx_msg LRESULT OnBufThreadDone(WPARAM wPara, LPARAM lPara);
 	int ChkSerial(); // 0: Continue, -: Previous, +:Discontinue
@@ -983,6 +984,7 @@ public:
 	BOOL IsConnectedSr();
 	BOOL IsConnectedMk();
 	BOOL IsDispContRun();
+	BOOL IsDispLotEnd();
 
 	BOOL IsPinPos0();
 

@@ -45,6 +45,11 @@ public:
 	BOOL SetLaserPos(double* pData); // CString pData[5] : A,B,C,D,E
 	int WriteComm(CString sMsg, DWORD dwTimeout = INFINITE);
 
+	BOOL StartLaserMarking();
+	BOOL WaitForResponse(DWORD dwTimeOut=5000, DWORD dwTimeLate=0);
+	BOOL IsOK();
+	BOOL WaitUntilLaserReady();
+
 	// Thread
 	CEvent      m_evtThread;
 	CWinThread *m_pThread;

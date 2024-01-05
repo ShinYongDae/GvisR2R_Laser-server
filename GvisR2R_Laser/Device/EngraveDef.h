@@ -10,7 +10,7 @@ typedef struct stRcvSig
 	// Dlg Info 
 	BOOL _DualTest, _SampleTest, _TestMode, _RecoilerCcw, _UncoilerCcw, _AlignMethode,
 		_DoorRecoiler, _DoorAoiUp, _DoorAoiDn, _DoorMk, _DoorEngrave, _DoorUncoiler, _SaftyMk, _CleannerAoiUp, _CleannerAoiDn,
-		_UltraSonicAoiDn, _UltraSonicEngrave, _FixDef, _Use380mm, _DispContRun;
+		_UltraSonicAoiDn, _UltraSonicEngrave, _FixDef, _Use380mm, _DispContRun, _DispLotEnd;
 	// Menu01
 	BOOL _TempStop, _TempPause, _LotCut, _MkPosMv, _MkVerify, _ReelmapUp, _ReelmapDn, _ReelmapTot,
 		_RemainMode, _EndWork, _ReMk, _2Layer, _1LnMk, _2LnMk, _3LnMk, _4LnMk, _TotLnMk, _UpdateWork, _DispDefImg;
@@ -90,7 +90,7 @@ typedef struct stRcvSig
 		// Dlg Info 
 		_DualTest = FALSE; _SampleTest = FALSE; _TestMode = FALSE; _RecoilerCcw = FALSE; _UncoilerCcw = FALSE; _AlignMethode = FALSE;
 		_DoorRecoiler = FALSE; _DoorAoiUp = FALSE; _DoorAoiDn = FALSE; _DoorMk = FALSE; _DoorEngrave = FALSE; _DoorUncoiler = FALSE; _SaftyMk = FALSE; _CleannerAoiUp = FALSE; _CleannerAoiDn = FALSE;
-		_UltraSonicAoiDn = FALSE; _UltraSonicEngrave = FALSE; _FixDef = FALSE; _Use380mm = FALSE; _DispContRun = FALSE;
+		_UltraSonicAoiDn = FALSE; _UltraSonicEngrave = FALSE; _FixDef = FALSE; _Use380mm = FALSE; _DispContRun = FALSE; _DispLotEnd = FALSE;
 		// Menu01
 		_TempStop = FALSE; _TempPause = FALSE; _LotCut = FALSE; _MkPosMv = FALSE; _MkVerify = FALSE; _ReelmapUp = FALSE; _ReelmapDn = FALSE; _ReelmapTot = FALSE;
 		_RemainMode = FALSE; _EndWork = FALSE; _ReMk = FALSE; _2Layer = FALSE; _1LnMk = FALSE; _2LnMk = FALSE; _3LnMk = FALSE; _4LnMk = FALSE; _TotLnMk = FALSE; _UpdateWork = FALSE; _DispDefImg = FALSE;
@@ -182,7 +182,7 @@ typedef enum _stSigInx {
 	// Dlg Info 
 	_DualTest, _SampleTest, _TestMode, _RecoilerCcw, _UncoilerCcw, _AlignMethode,
 	_DoorRecoiler, _DoorAoiUp, _DoorAoiDn, _DoorMk, _DoorEngrave, _DoorUncoiler, _SaftyMk, _CleannerAoiUp, _CleannerAoiDn, 
-	_UltraSonicAoiDn, _UltraSonicEngrave, _FixDef, _Use380mm, _DispContRun,
+	_UltraSonicAoiDn, _UltraSonicEngrave, _FixDef, _Use380mm, _DispContRun, _DispLotEnd,
 	// Menu01
 	_TempStop, _TempPause, _LotCut, _MkPosMv, _MkVerify, _ReelmapUp, _ReelmapDn, _ReelmapTot,
 	_RemainMode, _EndWork, _ReMk, _2Layer, _1LnMk, _2LnMk, _3LnMk, _4LnMk, _TotLnMk, _UpdateWork, _DispDefImg,
@@ -214,6 +214,8 @@ typedef enum _stSigInx {
 	_EngAutoInit, _EngAutoSeqMkSt, _EngAutoSeqOnMkIng, _EngAutoSeqMkDone, _EngAutoSeq2dReadSt, _EngAutoSeqOnReading2d, _EngAutoSeq2dReadDone, _EngAutoSeqFdDone,
 	// DlgMyMsg
 	_MyMsgYes, _MyMsgNo, _MyMsgCancel, _MyMsgOk,
+	// PLC
+	_Buzzer, _TowerLamp, _ErrorRead2dCode,
 	// Is Normal
 	_IsIdle, _IsBusy, _IsConnect,
 	// Is Display
@@ -252,6 +254,8 @@ typedef enum _stSigInx {
 	_IsEngAutoInit, _IsEngAutoSeqMkSt, _IsEngAutoSeqOnMkIng, _IsEngAutoSeqMkDone, _IsEngAutoSeq2dReadSt, _IsEngAutoSeqOnReading2d, _IsEngAutoSeq2dReadDone,
 	// Is DlgMyMsg
 	_IsMyMsgYes, _IsMyMsgNo, _IsMyMsgCancel, _IsMyMsgOk,
+	// Is PLC
+	_IsBuzzer, _IsTowerLamp, _IsErrorRead2dCode, _IsDispContRun,
 	// EndIdx
 	_EndIdx
 }_SigInx;

@@ -101,6 +101,8 @@
 #define IDC_BTN_CLEAR                   533
 #define IDC_CHECK1                      563
 #define IDC_CHECK9                      564
+#define IDC_CHECK10                     565
+#define IDC_CHECK11                     566
 #define IDC_CHECK2                      590
 #define IDC_CHECK3                      607
 #define IDC_CHECK4                      618

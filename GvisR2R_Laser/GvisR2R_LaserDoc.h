@@ -414,6 +414,11 @@ public:
 	void SetEngItsCode(CString sItsCode);
 	BOOL SetEngOffset(CfPoint &OfSt);
 
+	BOOL GetSignalAoiUp();
+	BOOL GetSignalAoiDn();
+	void SetSignalAoiUp();
+	void SetSignalAoiDn();
+
 	CString GetCurrentInfoBufUp();
 	CString GetCurrentInfoBufDn();
 

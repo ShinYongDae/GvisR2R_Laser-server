@@ -31,4 +31,6 @@ public:
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnClose();
 	afx_msg void OnBnClickedCheck9();
+	afx_msg void OnBnClickedCheck10();
+	afx_msg void OnBnClickedCheck11();
 };

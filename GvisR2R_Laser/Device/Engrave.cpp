@@ -413,6 +413,11 @@ BOOL CEngrave::IsDispContRun()
 	return pDoc->WorkingInfo.LastJob.bDispContRun;
 }
 
+BOOL CEngrave::IsDispLotEnd()
+{
+	return pDoc->WorkingInfo.LastJob.bDispLotEnd;
+}
+
 void CEngrave::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
@@ -1569,6 +1574,13 @@ void CEngrave::GetOpInfo(SOCKET_DATA SockData)
 			{
 				m_bGetOpInfo = TRUE;
 				pDoc->WorkingInfo.LastJob.bDispContRun = (SockData.nData1 > 0) ? TRUE : FALSE;
+			}
+			break;
+		case _SigInx::_DispLotEnd:
+			if (pDoc->WorkingInfo.LastJob.bDispLotEnd != (SockData.nData1 > 0) ? TRUE : FALSE)
+			{
+				m_bGetOpInfo = TRUE;
+				pDoc->WorkingInfo.LastJob.bDispLotEnd = (SockData.nData1 > 0) ? TRUE : FALSE;
 			}
 			break;
 		case _SigInx::_TempPause:
@@ -8903,4 +8915,100 @@ void CEngrave::GetSignal2dEng(SOCKET_DATA SockData)
 			break;
 		}
 	}
+}
+
+
+void CEngrave::SetBuzzer(BOOL bOn, int nCh)
+{
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_Buzzer;
+	SocketData.nData1 = bOn ? 1 : 0;
+	SocketData.nData2 = nCh;
+	SendCommand(SocketData);
+}
+
+void CEngrave::IsSetBuzzer()
+{
+	return;
+
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_IsBuzzer;
+	SocketData.nData1 = 1;
+	SendCommand(SocketData);
+}
+
+
+void CEngrave::SetTowerLamp(COLORREF color, BOOL bOn, BOOL bWink)
+{
+	return;
+
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_TowerLamp;
+	SocketData.nData1 = (int)color;
+	SocketData.nData2 = bOn ? 1 : 0;
+	SocketData.nData3 = bWink ? 1 : 0;
+	SendCommand(SocketData);
+}
+
+void CEngrave::IsSetTowerLamp()
+{
+	return;
+
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_IsTowerLamp;
+	SocketData.nData1 = 1;
+	SendCommand(SocketData);
+}
+
+
+void CEngrave::SetErrorRead2dCode(int nParam)
+{
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_ErrorRead2dCode;
+	SocketData.nData1 = nParam;
+	SendCommand(SocketData);
+}
+
+void CEngrave::IsSetErrorRead2dCode(int nParam)
+{
+	return;
+
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_IsErrorRead2dCode;
+	SocketData.nData1 = nParam;
+	SendCommand(SocketData);
+}
+
+void CEngrave::SetDispContRun(BOOL bOn)
+{
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_DispContRun;
+	SocketData.nData1 = bOn ? 1 : 0;
+	SendCommand(SocketData);
+}
+
+void CEngrave::IsSetDispContRun()
+{
+	return;
+
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_IsDispContRun;
+	SocketData.nData1 = 1;
+	SendCommand(SocketData);
 }

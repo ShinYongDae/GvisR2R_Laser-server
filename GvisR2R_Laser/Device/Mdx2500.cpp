@@ -153,7 +153,7 @@ BOOL CMdx2500::CheckResponse(int nCmd, CString sResponse)
 		}
 		else
 		{
-			pView->MsgBox(_T("Error-Mdx response"));
+			//pView->MsgBox(_T("Error-Mdx response"));
 			//AfxMessageBox(_T("Error-Mdx response"));
 			m_strResponse = sResponse;
 			m_bWaitForResponse = FALSE;
@@ -604,4 +604,95 @@ void CMdx2500::Close()
 BOOL CMdx2500::IsConnected()
 {
 	return m_pClient->IsConnected();
+}
+
+BOOL CMdx2500::StartLaserMarking()
+{
+	if (WaitUntilLaserReady())
+	{
+		// Start Marking Request												: (1) 2D 코드를 인쇄하기
+		if (LaserMarking(TRUE)) // TRUE: Marking Start , FALSE: Marking Stop
+		{
+			if (WaitForResponse(60000, 100))
+			{
+				// Marking Complete 2											: (2) 인쇄가 완료된 것을 확인
+				if (WaitUntilLaserReady())
+				{
+
+				}
+
+				// 2DC Read Request												: (3) 2D 코드를 판독
+
+				// 2DC Read Complete											: (4) 2D 코드의 판독이 완료된 것을 확인
+
+				// 2DC Read Grade Status										: (5) 2D 코드의 판정결과를 읽기
+			}
+		}
+	}
+
+	return FALSE;
+}
+
+BOOL CMdx2500::WaitUntilLaserReady()
+{
+	MSG message;
+	DWORD dwTimeOut = 10000;
+	DWORD dwStartTick = GetTickCount();
+	DWORD dwTick;
+	while (1)
+	{
+		dwTick = GetTickCount() - dwStartTick;
+		if (dwTick > dwTimeOut)
+		{
+			pView->MsgBox(_T("Error - WaitUntilLaserReady[ID_MDX2500] is time over 10seconds."));
+			return FALSE;
+		}
+
+		if (IsLaserReady())
+		{
+			if (WaitForResponse())
+			{
+				if (IsOK())
+				{
+					return TRUE;
+				}
+			}
+		}
+	}
+
+	return FALSE;
+}
+
+BOOL CMdx2500::IsOK()
+{
+	int nPos;
+	if (nPos = m_strResponse.Find(_T("OK")) > 0)
+		return TRUE;
+
+	return FALSE;
+}
+
+BOOL CMdx2500::WaitForResponse(DWORD dwTimeOut, DWORD dwTimeLate)
+{
+	MSG message;
+	DWORD dwStartTick = GetTickCount();
+	DWORD dwTick;
+	while (IsRunning()) // m_bWaitForResponse = TRUE;
+	{
+		dwTick = GetTickCount() - dwStartTick;
+		if (dwTick > dwTimeOut)
+		{
+			pView->MsgBox(_T("Error - WaitForResponse[ID_MDX2500] is time over."));
+			return FALSE;
+		}
+		if (::PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
+		{
+			::TranslateMessage(&message);
+			::DispatchMessage(&message);
+		}
+		Sleep(30);
+	}
+	Sleep(dwTimeLate);
+
+	return TRUE;
 }

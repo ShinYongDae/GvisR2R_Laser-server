@@ -50,6 +50,8 @@ BEGIN_MESSAGE_MAP(CDlgOption01, CDialog)
 	ON_WM_SHOWWINDOW()
 	ON_WM_CLOSE()
 	ON_BN_CLICKED(IDC_CHECK9, &CDlgOption01::OnBnClickedCheck9)
+	ON_BN_CLICKED(IDC_CHECK10, &CDlgOption01::OnBnClickedCheck10)
+	ON_BN_CLICKED(IDC_CHECK11, &CDlgOption01::OnBnClickedCheck11)
 END_MESSAGE_MAP()
 
 
@@ -95,6 +97,9 @@ void CDlgOption01::AtDlgShow()
 	sData.Format(_T("%d"), pDoc->m_nSkipError2dCode);
 	GetDlgItem(IDC_EDIT_12)->SetWindowText(sData);
 	GetDlgItem(IDC_EDIT_12)->EnableWindow(pDoc->m_bUseSkipError2dCode);
+
+	((CButton*)GetDlgItem(IDC_CHECK10))->SetCheck(pView->IsDispLotEnd());
+	((CButton*)GetDlgItem(IDC_CHECK11))->SetCheck(pView->IsDispContRun());
 }
 
 void CDlgOption01::AtDlgHide()
@@ -138,6 +143,27 @@ void CDlgOption01::OnBnClickedCheck9()
 }
 
 
+void CDlgOption01::OnBnClickedCheck10()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	BOOL bOn = ((CButton*)GetDlgItem(IDC_CHECK10))->GetCheck();
+}
+
+void CDlgOption01::OnBnClickedCheck11()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	BOOL bOn = ((CButton*)GetDlgItem(IDC_CHECK11))->GetCheck();
+	//if (bOn)
+	//{
+	//	//pDoc->SetCurrentInfoSignal(_SigInx::_DispContRun, TRUE);
+	//}
+	//else
+	//{
+	//	//pDoc->SetCurrentInfoSignal(_SigInx::_DispContRun, FALSE);
+	//}
+}
+
+
 
 
 void CDlgOption01::OnClose()
@@ -155,6 +181,7 @@ void CDlgOption01::OnClose()
 
 	CDialog::OnClose();
 }
+
 
 
 

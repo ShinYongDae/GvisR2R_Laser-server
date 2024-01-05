@@ -633,7 +633,7 @@ struct stSystem
 	CString sPathVsShareDn;
 
 	CString sPathEng, sPathPunch, sPathEngCurrInfo, sPathEngOffset, sPathMkCurrInfo, sPathMkCurrInfoBuf;
-	CString sPathMkSignalInfo, sPathEngSignalInfo;
+	CString sPathMkSignalInfo, sPathEngSignalInfo, sPathSignalAoiUp, sPathSignalAoiDn;
 	CString sPathMkMenu01, sPathMkMenu03, sPathMkInfo, sPathMonDispMain;
 
 	CString sPathOldFile, sPathItsFile;
@@ -669,7 +669,7 @@ struct stSystem
 		sPathVsShareDn = _T("");
 
 		sPathEng = _T(""); sPathPunch = _T(""); sPathEngCurrInfo = _T(""); sPathEngOffset = _T(""); sPathMkCurrInfo = _T("");
-		sPathMkSignalInfo = _T(""); sPathEngSignalInfo = _T("");
+		sPathMkSignalInfo = _T(""); sPathEngSignalInfo = _T(""); sPathSignalAoiUp = _T(""); sPathSignalAoiDn = _T("");
 		sPathMkCurrInfoBuf = _T(""); sPathMkMenu01 = _T(""); sPathMkMenu03 = _T("");  sPathMkInfo = _T(""); sPathMonDispMain = _T("");
 
 		sPathOldFile = _T("");
@@ -737,7 +737,7 @@ struct stLastJob
 	BOOL bUseAoiUpCleanRoler, bUseAoiDnCleanRoler;
 	BOOL bUseEngraveUltrasonic, bUseAoiDnUltrasonic;
 	BOOL bVelEngraveUltrasonic, bVelAoiDnUltrasonic;
-	BOOL bDispContRun;
+	BOOL bDispContRun, bDispLotEnd;
 
 	stLastJob()
 	{
@@ -790,7 +790,7 @@ struct stLastJob
 
 		bUseAoiUpCleanRoler = FALSE; bUseAoiDnCleanRoler = FALSE;
 		sEngItsCode = _T("");
-		bDispContRun = FALSE;
+		bDispContRun = FALSE; bDispLotEnd = FALSE;
 
 	}
 };

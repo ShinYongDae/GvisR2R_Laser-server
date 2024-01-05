@@ -1091,7 +1091,7 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.System.sPathEngCurrInfo = CString(szData);
 	else
 	{
-		AfxMessageBox(_T("EngraveCurrentInfoPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		//AfxMessageBox(_T("EngraveCurrentInfoPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
 		WorkingInfo.System.sPathEngCurrInfo = CString(_T("C:\\EngraveWork\\CurrentInfo.ini"));
 	}
 
@@ -1099,8 +1099,24 @@ BOOL CGvisR2R_LaserDoc::LoadWorkingInfo()
 		WorkingInfo.System.sPathEngSignalInfo = CString(szData);
 	else
 	{
-		AfxMessageBox(_T("EngraveSignalInfoPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
-		WorkingInfo.System.sPathEngSignalInfo = CString(_T("C:\\EngraveWork\\CurrentInfo.ini"));
+		//AfxMessageBox(_T("EngraveSignalInfoPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathEngSignalInfo = CString(_T("C:\\EngraveWork\\SignalInfo.ini"));
+	}
+
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("SignalAoiUpPath"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+		WorkingInfo.System.sPathSignalAoiUp = CString(szData);
+	else
+	{
+		//AfxMessageBox(_T("SignalAoiUpPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathSignalAoiUp = CString(_T("C:\\EngraveWork\\SignalAoiUp.ini"));
+	}
+
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("SignalAoiDnPath"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
+		WorkingInfo.System.sPathSignalAoiDn = CString(szData);
+	else
+	{
+		//AfxMessageBox(_T("SignalAoiDnPath가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathSignalAoiDn = CString(_T("C:\\EngraveWork\\SignalAoiDn.ini"));
 	}
 
 	if (0 < ::GetPrivateProfileString(_T("System"), _T("PunchingCurrentInfoPath"), NULL, szData, sizeof(szData), WorkingInfo.System.sPathEngCurrInfo))
@@ -10159,6 +10175,11 @@ void CGvisR2R_LaserDoc::GetMkInfo()
 	else
 		WorkingInfo.LastJob.bDispContRun = FALSE;
 
+	if (0 < ::GetPrivateProfileString(_T("Signal"), _T("DispLotEnd"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.bDispLotEnd = (_ttoi(szData) > 0) ? TRUE : FALSE;
+	else
+		WorkingInfo.LastJob.bDispLotEnd = FALSE;
+
 	if (0 < ::GetPrivateProfileString(_T("Signal"), _T("Use Dual AOI"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.LastJob.bDualTest = (_ttoi(szData) > 0) ? TRUE : FALSE;
 
@@ -12541,4 +12562,55 @@ int CGvisR2R_LaserDoc::GetItsDefCode(int nDefCode)
 		return m_nSapp3Code[SAPP3_SPACE_EXTRA_PROTRUSION];
 
 	return 0;
+}
+
+
+BOOL CGvisR2R_LaserDoc::GetSignalAoiUp()
+{
+	CString sData, sIdx, sPath = WorkingInfo.System.sPathSignalAoiUp;
+	TCHAR szData[200];
+
+	if (sPath.IsEmpty())
+		return FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Signal"), _T("ErrorRead2dCode"), NULL, szData, sizeof(szData), sPath))
+		return _ttoi(szData) ? TRUE : FALSE;
+
+	return FALSE;
+}
+
+void CGvisR2R_LaserDoc::SetSignalAoiUp()
+{
+	CString sData, sIdx, sPath = WorkingInfo.System.sPathSignalAoiUp;
+
+	if (sPath.IsEmpty())
+		return;
+
+	sData.Format(_T("%d"), 0);
+	::WritePrivateProfileString(_T("Signal"), _T("ErrorRead2dCode"), sData, sPath);
+}
+
+BOOL CGvisR2R_LaserDoc::GetSignalAoiDn()
+{
+	CString sData, sIdx, sPath = WorkingInfo.System.sPathSignalAoiDn;
+	TCHAR szData[200];
+
+	if (sPath.IsEmpty())
+		return FALSE;
+
+	if (0 < ::GetPrivateProfileString(_T("Signal"), _T("ErrorRead2dCode"), NULL, szData, sizeof(szData), sPath))
+		return _ttoi(szData) ? TRUE : FALSE;
+
+	return FALSE;
+}
+
+void CGvisR2R_LaserDoc::SetSignalAoiDn()
+{
+	CString sData, sIdx, sPath = WorkingInfo.System.sPathSignalAoiDn;
+
+	if (sPath.IsEmpty())
+		return;
+
+	sData.Format(_T("%d"), 0);
+	::WritePrivateProfileString(_T("Signal"), _T("ErrorRead2dCode"), sData, sPath);
 }
