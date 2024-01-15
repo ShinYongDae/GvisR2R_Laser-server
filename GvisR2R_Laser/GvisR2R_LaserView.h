@@ -413,6 +413,7 @@ public:
 	void UpdateRstIts();
 
 	void AdjLaserOffset(CfPoint ptOffset);
+	CString ShowKeypad1();
 
 	BOOL m_bSwRun, m_bSwRunF;
 	BOOL m_bSwStop, m_bSwStopF;

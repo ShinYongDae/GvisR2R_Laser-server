@@ -26,9 +26,11 @@
 #include "Dialog/DlgMyMsgSub01.h"
 #include "Dialog/DlgMyMsgSub02.h"
 #include "Dialog/DlgProgress.h"
+#include "Dialog/DlgKeyNum1.h"
 
 #include "Device/MDX2500DEF.h"
 #include "Device/SR1000WDEF.h"
+
 
 extern CMainFrame* pFrm;
 extern CGvisR2R_LaserDoc* pDoc;
@@ -16203,6 +16205,7 @@ void CGvisR2R_LaserView::Eng2dRead()
 							EngStop(TRUE);
 							if (IDYES == MsgBox(_T("정지 - 2D바코드의 각인된 코드를 읽을 수 없습니다.\r\n운전을 누르시고, 다음 Shot으로 진행합니까?\r\n \"아니요\"를 누르시고 운전을 누르시면 2D코드를 다시 읽습니다."), 0, MB_YESNO))
 							{
+								m_nGetItsCodeSerial = _ttoi(ShowKeypad1());
 								m_nEng2dStAuto = ENG_2D_ST + (Read2dIdx::DoneRead);	// 2D Reading 완료
 							}
 							else
@@ -16252,6 +16255,19 @@ void CGvisR2R_LaserView::Eng2dRead()
 			break;
 		}
 	}
+}
+
+CString CGvisR2R_LaserView::ShowKeypad1()
+{
+	BOOL bAdj = TRUE;
+	CString strData, strPrev;
+
+	CRect rect(0, 0, 0, 0);
+	CDlgKeyNum1 *pDlg = new CDlgKeyNum1(&strData, _T(""), this);
+	pDlg->DoModal();
+	delete pDlg;
+
+	return strData;
 }
 
 

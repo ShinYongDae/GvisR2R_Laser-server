@@ -673,7 +673,8 @@ int CSocketComm::WriteComm(CString sMsg, DWORD dwTimeout)
 		buffer[nLen] = 0;
 	}
 
-	return WriteComm((BYTE*)buffer, strlen(buffer), dwTimeout);
+	return WriteComm((BYTE*)buffer, nLen+1, dwTimeout);
+	//return WriteComm((BYTE*)buffer, strlen(buffer), dwTimeout);
 }
 
 int CSocketComm::WriteComm(const LPBYTE lpBuffer, DWORD dwCount, DWORD dwTimeout)
