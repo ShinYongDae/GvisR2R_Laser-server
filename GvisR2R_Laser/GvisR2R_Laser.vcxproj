@@ -233,6 +233,7 @@
     <ClInclude Include="Dialog\DlgFrameHigh.h" />
     <ClInclude Include="Dialog\DlgInfo.h" />
     <ClInclude Include="Dialog\DlgKeyNum.h" />
+    <ClInclude Include="Dialog\DlgKeyNum1.h" />
     <ClInclude Include="Dialog\DlgMenu01.h" />
     <ClInclude Include="Dialog\DlgMenu02.h" />
     <ClInclude Include="Dialog\DlgMenu03.h" />
@@ -321,6 +322,7 @@
     <ClCompile Include="Dialog\DlgFrameHigh.cpp" />
     <ClCompile Include="Dialog\DlgInfo.cpp" />
     <ClCompile Include="Dialog\DlgKeyNum.cpp" />
+    <ClCompile Include="Dialog\DlgKeyNum1.cpp" />
     <ClCompile Include="Dialog\DlgMenu01.cpp" />
     <ClCompile Include="Dialog\DlgMenu02.cpp" />
     <ClCompile Include="Dialog\DlgMenu03.cpp" />

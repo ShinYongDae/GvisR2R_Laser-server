@@ -92,6 +92,7 @@
 #define IDD_PROGRESS                    333
 #define IDD_DLG_UTIL_02                 334
 #define IDD_DLG_OPTION_01               336
+#define IDD_DLG_KEY_NUM1                338
 #define IDC_SVR_PORT                    374
 #define IDC_CLIENT_ID                   375
 #define IDC_TXT_MESSAGE                 376
@@ -641,6 +642,7 @@
 #define IDC_CHK_42                      1203
 #define IDC_STC_28                      1203
 #define IDC_STC_226                     1203
+#define IDC_STC_MSG                     1203
 #define IDC_CHK_006                     1204
 #define IDC_STC_02_                     1204
 #define IDC_STC_29                      1204
@@ -1107,7 +1109,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        338
+#define _APS_NEXT_RESOURCE_VALUE        340
 #define _APS_NEXT_COMMAND_VALUE         32776
 #define _APS_NEXT_CONTROL_VALUE         1018
 #define _APS_NEXT_SYMED_VALUE           310

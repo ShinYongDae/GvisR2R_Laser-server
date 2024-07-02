@@ -324,6 +324,9 @@
     <ClInclude Include="Dialog\DlgOption01.h">
       <Filter>Dialog</Filter>
     </ClInclude>
+    <ClInclude Include="Dialog\DlgKeyNum1.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GvisR2R_Laser.cpp">
@@ -555,6 +558,9 @@
       <Filter>Dialog</Filter>
     </ClCompile>
     <ClCompile Include="Dialog\DlgOption01.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgKeyNum1.cpp">
       <Filter>Dialog</Filter>
     </ClCompile>
   </ItemGroup>
