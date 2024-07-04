@@ -85,7 +85,7 @@ typedef struct tagSocketData {
 #define ID_MDX2500		1	// Device is server.
 #define ID_PUNCH		2
 // Server
-#define ID_ENGRAVE		2
+#define ID_ENGRAVE		3
 
 #define WM_UPDATE_CONNECTION	(WM_USER+0x1234)
 
