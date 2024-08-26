@@ -10,7 +10,7 @@
 #endif // _MSC_VER > 1000
 
 
-#define TEST_MODE		1
+//#define TEST_MODE		1
 #ifndef MAX_STRIP
 	#define MAX_STRIP				4
 #endif
@@ -537,7 +537,7 @@ enum SliceDO_4{ DO_INK_MK=0 };
 #endif
 
 #ifndef ID_ENGRAVE
-#define ID_ENGRAVE		3
+#define ID_ENGRAVE		2
 #endif
 
 typedef struct 
