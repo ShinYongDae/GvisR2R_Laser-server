@@ -1638,7 +1638,7 @@ void CDlgMenu02::SetPinPos(int nCam, CfPoint ptPnt)
 	if(pDoc->m_pSpecLocal)
 		pDoc->m_pSpecLocal->SavePinPos(nCam, ptPnt);
 
-	CString sData, sPath=PATH_WORKING_INFO;
+	CString sData;
 	sData.Format(_T("%.3f"), ptPnt.x);
 	pDoc->WorkingInfo.Motion.sPinPosX[nCam] = sData;
 	
@@ -1862,7 +1862,7 @@ void CDlgMenu02::OnChkMkOffsetEd()
 		dMkOffsetX += m_dStOffsetX-dCurPosX;
 		dMkOffsetY += m_dStOffsetY-dCurPosY;
 
-		CString sData, sPath=PATH_WORKING_INFO;
+		CString sData;
 
 		sData.Format(_T("%.3f"), dMkOffsetX);
 		pDoc->WorkingInfo.Vision[0].sMkOffsetX = sData;
@@ -2811,7 +2811,6 @@ void CDlgMenu02::OnStnClickedStc5()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	Input_myStcData(10, IDC_STC_5);
 
-	CString sPath = PATH_WORKING_INFO;
 	CString sData;
 	GetDlgItem(IDC_STC_5)->GetWindowText(sData);
 	pDoc->SetEngraveReaderDist(_tstoi(sData));
@@ -2878,18 +2877,24 @@ void CDlgMenu02::OnStnClickedStc45()
 	CString sData;
 	GetDlgItem(IDC_STC_45)->GetWindowText(sData);
 	pView->SetEngraveFdPitch(_tstof(sData));
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetEngLeadPitch();
+#endif
 }
 
 void CDlgMenu02::OnStnClickedStc180()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	Input_myStcData(21, IDC_STC_180);	// Push Off
 
-	CString sPath = PATH_WORKING_INFO;
-	CString sData;
-	GetDlgItem(IDC_STC_180)->GetWindowText(sData);
-	pDoc->WorkingInfo.Motion.sEngraveFdVacOff = sData;
-	::WritePrivateProfileString(_T("Motion"), _T("ENGRAVE_FEEDING_VACUUM_OFF"), sData, sPath);
+	//Input_myStcData(21, IDC_STC_180);	// Push Off
+
+	//CString sPath = PATH_WORKING_INFO;
+	//CString sData;
+	//GetDlgItem(IDC_STC_180)->GetWindowText(sData);
+	//pDoc->WorkingInfo.Motion.sEngraveFdVacOff = sData;
+	//::WritePrivateProfileString(_T("Motion"), _T("ENGRAVE_FEEDING_VACUUM_OFF"), sData, sPath);
 }
 
 void CDlgMenu02::OnStnClickedStc184()
@@ -2900,6 +2905,11 @@ void CDlgMenu02::OnStnClickedStc184()
 	CString sData;
 	GetDlgItem(IDC_STC_184)->GetWindowText(sData);
 	pDoc->SetMarkingToq(_tstoi(sData));
+
+#ifdef USE_ENGRAVE
+	if (pView && pView->m_pEngrave)
+		pView->m_pEngrave->SetEngTqVal();
+#endif
 
 //#ifdef USE_ENGRAVE
 //	if (pView && pView->m_pEngrave)
@@ -2963,12 +2973,9 @@ void CDlgMenu02::OnBnClickedBtnBuffInitSave1()
 void CDlgMenu02::OnBnClickedBtnBuffInitMove1()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	pView->DispMsg(_T("Moving"), _T("Searching Buffer Initial Position..."), RGB_GREEN, 2000, TRUE);
-	if (pView->m_pMpe)
-		pView->m_pMpe->Write(_T("MB44015A"), 1);	// 마킹부 버퍼 초기위치 이동(PC가 ON, PLC가 OFF)
-
-	if (pView->m_pDlgMenu03)
-		pView->m_pDlgMenu03->ChkBufInitDone();
+	//pView->DispMsg(_T("Moving"), _T("Searching Buffer Initial Position..."), RGB_GREEN, 2000, TRUE);
+	//if (pView->m_pMpe)
+	//	pView->m_pMpe->Write(_T("MB44015A"), 1);	// 마킹부 버퍼 초기위치 이동(PC가 ON, PLC가 OFF)
 }
 
 
@@ -3788,3 +3795,4 @@ void CDlgMenu02::OnBnClickedBtnMoveInitOffset()
 		}
 	}
 }
+

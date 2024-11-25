@@ -75,9 +75,9 @@ BEGIN_MESSAGE_MAP(CDlgFrameHigh, CDialog)
 	ON_BN_CLICKED(IDC_CHK_MENU_01, OnChkMenu01)
 	ON_WM_PAINT()
 	ON_BN_CLICKED(IDC_CHK_MENU_02, OnChkMenu02)
-	ON_BN_CLICKED(IDC_CHK_MENU_03, OnChkMenu03)
-	ON_BN_CLICKED(IDC_CHK_MENU_04, OnChkMenu04)
-	ON_BN_CLICKED(IDC_CHK_MENU_05, OnChkMenu05)
+	//ON_BN_CLICKED(IDC_CHK_MENU_03, OnChkMenu03)
+	//ON_BN_CLICKED(IDC_CHK_MENU_04, OnChkMenu04)
+	//ON_BN_CLICKED(IDC_CHK_MENU_05, OnChkMenu05)
 	ON_WM_TIMER()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -135,17 +135,17 @@ void CDlgFrameHigh::LoadImg()
 	myChkMenu02.LoadBkImage(IMG_BTN_UP_DlgFrameHigh, BTN_IMG_UP);
 	myChkMenu02.LoadBkImage(IMG_BTN_DN_DlgFrameHigh, BTN_IMG_DN);
 
- 	myChkMenu03.LoadImage(ICO_CHK_DlgFrameHigh, BTN_IMG_DN, CSize(30,30));
-	myChkMenu03.LoadBkImage(IMG_BTN_UP_DlgFrameHigh, BTN_IMG_UP);
-	myChkMenu03.LoadBkImage(IMG_BTN_DN_DlgFrameHigh, BTN_IMG_DN);
+ 	//myChkMenu03.LoadImage(ICO_CHK_DlgFrameHigh, BTN_IMG_DN, CSize(30,30));
+	//myChkMenu03.LoadBkImage(IMG_BTN_UP_DlgFrameHigh, BTN_IMG_UP);
+	//myChkMenu03.LoadBkImage(IMG_BTN_DN_DlgFrameHigh, BTN_IMG_DN);
 
-	myChkMenu04.LoadImage(ICO_CHK_DlgFrameHigh, BTN_IMG_DN, CSize(30,30));
-	myChkMenu04.LoadBkImage(IMG_BTN_UP_DlgFrameHigh, BTN_IMG_UP);
-	myChkMenu04.LoadBkImage(IMG_BTN_DN_DlgFrameHigh, BTN_IMG_DN);
+	//myChkMenu04.LoadImage(ICO_CHK_DlgFrameHigh, BTN_IMG_DN, CSize(30,30));
+	//myChkMenu04.LoadBkImage(IMG_BTN_UP_DlgFrameHigh, BTN_IMG_UP);
+	//myChkMenu04.LoadBkImage(IMG_BTN_DN_DlgFrameHigh, BTN_IMG_DN);
 
-	myChkMenu05.LoadImage(ICO_CHK_DlgFrameHigh, BTN_IMG_DN, CSize(30,30));
-	myChkMenu05.LoadBkImage(IMG_BTN_UP_DlgFrameHigh, BTN_IMG_UP);
-	myChkMenu05.LoadBkImage(IMG_BTN_DN_DlgFrameHigh, BTN_IMG_DN);
+	//myChkMenu05.LoadImage(ICO_CHK_DlgFrameHigh, BTN_IMG_DN, CSize(30,30));
+	//myChkMenu05.LoadBkImage(IMG_BTN_UP_DlgFrameHigh, BTN_IMG_UP);
+	//myChkMenu05.LoadBkImage(IMG_BTN_DN_DlgFrameHigh, BTN_IMG_DN);
 
 	int i;
 	for (i = 0; i < MAX_FRMHIGH_LABEL; i++)
@@ -181,9 +181,9 @@ void CDlgFrameHigh::DelImg()
 {
 	myChkMenu01.DelImgList();
  	myChkMenu02.DelImgList();
- 	myChkMenu03.DelImgList();
-	myChkMenu04.DelImgList();
- 	myChkMenu05.DelImgList();
+ //	myChkMenu03.DelImgList();
+	//myChkMenu04.DelImgList();
+ //	myChkMenu05.DelImgList();
 
 	int i;
 	for (i = 0; i < MAX_FRMHIGH_LABEL; i++)
@@ -194,21 +194,21 @@ void CDlgFrameHigh::SetChk(int nID)
 {
 	myChkMenu01.SetCheck(FALSE);
 	myChkMenu02.SetCheck(FALSE);
-	myChkMenu03.SetCheck(FALSE);
-	myChkMenu04.SetCheck(FALSE);
-	myChkMenu05.SetCheck(FALSE);
+	//myChkMenu03.SetCheck(FALSE);
+	//myChkMenu04.SetCheck(FALSE);
+	//myChkMenu05.SetCheck(FALSE);
 
 	myChkMenu01.SetImage(BTN_IMG_UP);
 	myChkMenu02.SetImage(BTN_IMG_UP);
-	myChkMenu03.SetImage(BTN_IMG_UP);
-	myChkMenu04.SetImage(BTN_IMG_UP);
-	myChkMenu05.SetImage(BTN_IMG_UP);
+	//myChkMenu03.SetImage(BTN_IMG_UP);
+	//myChkMenu04.SetImage(BTN_IMG_UP);
+	//myChkMenu05.SetImage(BTN_IMG_UP);
 
 	myChkMenu01.SetTextColor(RGB_BLACK);
 	myChkMenu02.SetTextColor(RGB_BLACK);
-	myChkMenu03.SetTextColor(RGB_BLACK);
-	myChkMenu04.SetTextColor(RGB_BLACK);
-	myChkMenu05.SetTextColor(RGB_BLACK);
+	//myChkMenu03.SetTextColor(RGB_BLACK);
+	//myChkMenu04.SetTextColor(RGB_BLACK);
+	//myChkMenu05.SetTextColor(RGB_BLACK);
 
 	switch(nID)
 	{
@@ -222,21 +222,21 @@ void CDlgFrameHigh::SetChk(int nID)
 		myChkMenu02.SetCheck(TRUE);
 		myChkMenu02.SetTextColor(RGB_NAVY);
 		break;
-	case IDC_CHK_MENU_03:
-		myChkMenu03.SetImage(BTN_IMG_DN);
-		myChkMenu03.SetCheck(TRUE);
-		myChkMenu03.SetTextColor(RGB_NAVY);
-		break;
-	case IDC_CHK_MENU_04:
-		myChkMenu04.SetImage(BTN_IMG_DN);
-		myChkMenu04.SetCheck(TRUE);
-		myChkMenu04.SetTextColor(RGB_NAVY);
-		break;
-	case IDC_CHK_MENU_05:
-		myChkMenu05.SetImage(BTN_IMG_DN);
-		myChkMenu05.SetCheck(TRUE);
-		myChkMenu05.SetTextColor(RGB_NAVY);
-		break;
+	//case IDC_CHK_MENU_03:
+	//	myChkMenu03.SetImage(BTN_IMG_DN);
+	//	myChkMenu03.SetCheck(TRUE);
+	//	myChkMenu03.SetTextColor(RGB_NAVY);
+	//	break;
+	//case IDC_CHK_MENU_04:
+	//	myChkMenu04.SetImage(BTN_IMG_DN);
+	//	myChkMenu04.SetCheck(TRUE);
+	//	myChkMenu04.SetTextColor(RGB_NAVY);
+	//	break;
+	//case IDC_CHK_MENU_05:
+	//	myChkMenu05.SetImage(BTN_IMG_DN);
+	//	myChkMenu05.SetCheck(TRUE);
+	//	myChkMenu05.SetTextColor(RGB_NAVY);
+	//	break;
 	}
 }
 
@@ -256,6 +256,8 @@ BOOL CDlgFrameHigh::OnInitDialog()
 	m_bTIM_SIG_AOI = TRUE;
 	SetTimer(TIM_SIG_AOI, 100, NULL);
 
+	GetDlgItem(IDC_CHK_MENU_03)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_CHK_MENU_04)->ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_CHK_MENU_05)->ShowWindow(SW_HIDE);
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -334,20 +336,20 @@ void CDlgFrameHigh::InitBtn()
 	myChkMenu02.SubclassDlgItem(IDC_CHK_MENU_02, this);
 	myChkMenu02.SetHwnd(this->GetSafeHwnd(), IDC_CHK_MENU_02);
 
-	myChkMenu03.SetFont(_T("굴림체"),16,TRUE);
-	myChkMenu03.SetTextColor(RGB_BLACK);
-	myChkMenu03.SubclassDlgItem(IDC_CHK_MENU_03, this);
-	myChkMenu03.SetHwnd(this->GetSafeHwnd(), IDC_CHK_MENU_03);
+	//myChkMenu03.SetFont(_T("굴림체"),16,TRUE);
+	//myChkMenu03.SetTextColor(RGB_BLACK);
+	//myChkMenu03.SubclassDlgItem(IDC_CHK_MENU_03, this);
+	//myChkMenu03.SetHwnd(this->GetSafeHwnd(), IDC_CHK_MENU_03);
 
-	myChkMenu04.SetFont(_T("굴림체"),16,TRUE);
-	myChkMenu04.SetTextColor(RGB_BLACK);
-	myChkMenu04.SubclassDlgItem(IDC_CHK_MENU_04, this);
-	myChkMenu04.SetHwnd(this->GetSafeHwnd(), IDC_CHK_MENU_04);
+	//myChkMenu04.SetFont(_T("굴림체"),16,TRUE);
+	//myChkMenu04.SetTextColor(RGB_BLACK);
+	//myChkMenu04.SubclassDlgItem(IDC_CHK_MENU_04, this);
+	//myChkMenu04.SetHwnd(this->GetSafeHwnd(), IDC_CHK_MENU_04);
 
-	myChkMenu05.SetFont(_T("굴림체"),16,TRUE);
-	myChkMenu05.SetTextColor(RGB_BLACK);
-	myChkMenu05.SubclassDlgItem(IDC_CHK_MENU_05, this);
-	myChkMenu05.SetHwnd(this->GetSafeHwnd(), IDC_CHK_MENU_05);
+	//myChkMenu05.SetFont(_T("굴림체"),16,TRUE);
+	//myChkMenu05.SetTextColor(RGB_BLACK);
+	//myChkMenu05.SubclassDlgItem(IDC_CHK_MENU_05, this);
+	//myChkMenu05.SetHwnd(this->GetSafeHwnd(), IDC_CHK_MENU_05);
 }
 
 void CDlgFrameHigh::InitLabel()
@@ -418,65 +420,65 @@ void CDlgFrameHigh::ChkMenu02()
 	pView->ShowDlg(IDD_DLG_MENU_02);		
 }
 
-void CDlgFrameHigh::OnChkMenu03() 
-{
-	// TODO: Add your control notification handler code here
-	if(myChkMenu03.GetCheck())
-	{
-		SetChk(IDC_CHK_MENU_03);
-		return;
-	}
-	ChkMenu03();	
-}
-
-void CDlgFrameHigh::ChkMenu03() 
-{
-	// TODO: Add your control notification handler code here
-	SetChk(IDC_CHK_MENU_03);
-	pView->ShowDlg(IDD_DLG_MENU_03);		
-}
-
-void CDlgFrameHigh::OnChkMenu04() 
-{
-	// TODO: Add your control notification handler code here
-	int nRtn = pView->MyPassword(_T("\r\n           비밀번호를 입력하세요..."));
-	if(nRtn)
-	{
-		if(myChkMenu04.GetCheck())
-		{
-			SetChk(IDC_CHK_MENU_04);
-			return;
-		}
-		ChkMenu04();
-	}
-	else
-		myChkMenu04.SetCheck(FALSE);
-}
-
-void CDlgFrameHigh::ChkMenu04() 
-{
-	// TODO: Add your control notification handler code here
-	SetChk(IDC_CHK_MENU_04);
-	pView->ShowDlg(IDD_DLG_MENU_04);		
-}
-
-void CDlgFrameHigh::OnChkMenu05() 
-{
-	// TODO: Add your control notification handler code here
-	if(myChkMenu05.GetCheck())
-	{
-		SetChk(IDC_CHK_MENU_05);
-		return;
-	}
-	ChkMenu05();		
-}
-
-void CDlgFrameHigh::ChkMenu05() 
-{
-	// TODO: Add your control notification handler code here
-	SetChk(IDC_CHK_MENU_05);
-	pView->ShowDlg(IDD_DLG_MENU_05);		
-}
+//void CDlgFrameHigh::OnChkMenu03() 
+//{
+//	// TODO: Add your control notification handler code here
+//	if(myChkMenu03.GetCheck())
+//	{
+//		SetChk(IDC_CHK_MENU_03);
+//		return;
+//	}
+//	ChkMenu03();	
+//}
+//
+//void CDlgFrameHigh::ChkMenu03() 
+//{
+//	// TODO: Add your control notification handler code here
+//	SetChk(IDC_CHK_MENU_03);
+//	pView->ShowDlg(IDD_DLG_MENU_03);		
+//}
+//
+//void CDlgFrameHigh::OnChkMenu04() 
+//{
+//	// TODO: Add your control notification handler code here
+//	int nRtn = pView->MyPassword(_T("\r\n           비밀번호를 입력하세요..."));
+//	if(nRtn)
+//	{
+//		if(myChkMenu04.GetCheck())
+//		{
+//			SetChk(IDC_CHK_MENU_04);
+//			return;
+//		}
+//		ChkMenu04();
+//	}
+//	else
+//		myChkMenu04.SetCheck(FALSE);
+//}
+//
+//void CDlgFrameHigh::ChkMenu04() 
+//{
+//	// TODO: Add your control notification handler code here
+//	SetChk(IDC_CHK_MENU_04);
+//	pView->ShowDlg(IDD_DLG_MENU_04);		
+//}
+//
+//void CDlgFrameHigh::OnChkMenu05() 
+//{
+//	// TODO: Add your control notification handler code here
+//	if(myChkMenu05.GetCheck())
+//	{
+//		SetChk(IDC_CHK_MENU_05);
+//		return;
+//	}
+//	ChkMenu05();		
+//}
+//
+//void CDlgFrameHigh::ChkMenu05() 
+//{
+//	// TODO: Add your control notification handler code here
+//	SetChk(IDC_CHK_MENU_05);
+//	pView->ShowDlg(IDD_DLG_MENU_05);		
+//}
 
 void CDlgFrameHigh::OnTimer(UINT_PTR nIDEvent)//(UINT nIDEvent)
 {
@@ -498,19 +500,6 @@ void CDlgFrameHigh::OnTimer(UINT_PTR nIDEvent)//(UINT nIDEvent)
 
 void CDlgFrameHigh::ChkFdEnc()
 {
-// 	double dLimit = (double)MAX_ENC_CNT / 2.0;
-// 	double dCurPosMkFd = (double)pDoc->m_pMpeData[0][0];	// 마킹부 Feeding 엔코더 값(단위 mm )
-// 	if(dCurPosMkFd > dLimit || dCurPosMkFd < - dLimit)
-// 	{
-// 		if(pView->m_pMotion)
-// 			pView->m_pMotion->SetOriginPos(AXIS_MKFD);
-// 	}
-// 
-// 	if(pView->m_dEnc[AXIS_AOIFD] > dLimit || pView->m_dEnc[AXIS_AOIFD] < - dLimit)
-// 	{
-// 		if(pView->m_pMotion)
-// 			pView->m_pMotion->SetOriginPos(AXIS_AOIFD);
-// 	}
 }
 
 void CDlgFrameHigh::DispFdOffset()
@@ -551,9 +540,6 @@ void CDlgFrameHigh::DispFdOffset()
 
 void CDlgFrameHigh::DispSigAoi()
 {
-	if(!pView->m_pDlgMenu03)
-		return;
-
 	BOOL bOn;
 
 	bOn	= pView->IsConnectedMk();									// In - 마킹부 TCP/IP 연결
@@ -581,8 +567,6 @@ void CDlgFrameHigh::DispSigAoi()
 
 void CDlgFrameHigh::DispTestMode()
 {
-	//m_pPcr[0][nIdx]->m_sItsCode
-
 	BOOL bOn;
 
 	bOn = pView->IsDispContRun();									// 내층 제품시 이어가기 상태 표시 MB440125
@@ -634,8 +618,6 @@ BOOL CDlgFrameHigh::PreTranslateMessage(MSG* pMsg)
 		
 	return CDialog::PreTranslateMessage(pMsg);
 }
-
-
 
 void CDlgFrameHigh::SetMkLastShot(int nSerial)
 {

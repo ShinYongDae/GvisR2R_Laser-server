@@ -120,7 +120,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>netapi32.lib;glut32.lib;glu32.lib;opengl32.lib;MVSDKmd.lib;VideoRender.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>netapi32.lib;glu32.lib;opengl32.lib;MVSDKmd.lib;VideoRender.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Midl>
@@ -236,9 +236,6 @@
     <ClInclude Include="Dialog\DlgKeyNum1.h" />
     <ClInclude Include="Dialog\DlgMenu01.h" />
     <ClInclude Include="Dialog\DlgMenu02.h" />
-    <ClInclude Include="Dialog\DlgMenu03.h" />
-    <ClInclude Include="Dialog\DlgMenu04.h" />
-    <ClInclude Include="Dialog\DlgMenu05.h" />
     <ClInclude Include="Dialog\DlgMsgBox.h" />
     <ClInclude Include="Dialog\DlgMyKeypad.h" />
     <ClInclude Include="Dialog\DlgMyMsg.h" />
@@ -325,9 +322,6 @@
     <ClCompile Include="Dialog\DlgKeyNum1.cpp" />
     <ClCompile Include="Dialog\DlgMenu01.cpp" />
     <ClCompile Include="Dialog\DlgMenu02.cpp" />
-    <ClCompile Include="Dialog\DlgMenu03.cpp" />
-    <ClCompile Include="Dialog\DlgMenu04.cpp" />
-    <ClCompile Include="Dialog\DlgMenu05.cpp" />
     <ClCompile Include="Dialog\DlgMsgBox.cpp" />
     <ClCompile Include="Dialog\DlgMyKeypad.cpp" />
     <ClCompile Include="Dialog\DlgMyMsg.cpp" />

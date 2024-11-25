@@ -11,6 +11,7 @@
 
 
 //#define TEST_MODE		1
+
 #ifndef MAX_STRIP
 	#define MAX_STRIP				4
 #endif
@@ -23,7 +24,6 @@
 #ifdef TEST_MODE
 	#define TEST_SHOT				2
 	#define PATH_REELMAP			_T("C:\\R2RSet\\Test\\ReelMap.txt")
-//#define PATH_REELMAP			_T("C:\\R2RSet\\Test\\ReelMapData.txt")
 	#define PATH_REELMAP_UP			PATH_REELMAP	//_T("C:\\R2RSet\\Test\\ReelMapDataUp.txt")
 	#define PATH_REELMAP_DN			PATH_REELMAP	//_T("C:\\R2RSet\\Test\\ReelMapDataDn.txt")
 	#define PATH_REELMAP_ALL_UP		PATH_REELMAP	//_T("C:\\R2RSet\\Test\\ReelMapDataAllUp.txt")
@@ -299,31 +299,31 @@ typedef enum {KOREAN=0, ENGLISH=1, JAPANESE=2} LANG;
 #define IMG_JOG_LF_DlgMenu02			_T("C:\\R2RSet\\Pic\\DlgMenu02\\arrow_lf_blue.BMP")
 #define IMG_JOG_RT_DlgMenu02			_T("C:\\R2RSet\\Pic\\DlgMenu02\\arrow_rt_blue.BMP")
 
-#define IMG_CIR_BLU_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_BLU_OFF.bmp")
-#define IMG_CIR_BLU_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_BLU_ON.bmp")
-#define IMG_CIR_BLUE_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_BLUE_OFF.bmp")
-#define IMG_CIR_BLUE_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_BLUE_ON.bmp")
-#define IMG_CIR_DGN_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_DGN_OFF.bmp")
-#define IMG_CIR_DGN_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_DGN_ON.bmp")
-#define IMG_CIR_GRN_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_GRN_OFF.bmp")
-#define IMG_CIR_GRN_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_GRN_ON.bmp")
-#define IMG_CIR_GRY_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_GRY_OFF.bmp")
-#define IMG_CIR_GRY_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_GRY_ON.bmp")
-#define IMG_CIR_ORG_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_ORG_OFF.bmp")
-#define IMG_CIR_ORG_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_ORG_ON.bmp")
-#define IMG_CIR_PNK_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_PNK_OFF.bmp")
-#define IMG_CIR_PNK_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_PNK_ON.bmp")
-#define IMG_CIR_RED_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_RED_OFF.bmp")
-#define IMG_CIR_RED_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_RED_ON.bmp")
-#define IMG_CIR_YLO_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_YLO_OFF.bmp")
-#define IMG_CIR_YLO_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_YLO_ON.bmp")
+//#define IMG_CIR_BLU_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_BLU_OFF.bmp")
+//#define IMG_CIR_BLU_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_BLU_ON.bmp")
+//#define IMG_CIR_BLUE_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_BLUE_OFF.bmp")
+//#define IMG_CIR_BLUE_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_BLUE_ON.bmp")
+//#define IMG_CIR_DGN_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_DGN_OFF.bmp")
+//#define IMG_CIR_DGN_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_DGN_ON.bmp")
+//#define IMG_CIR_GRN_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_GRN_OFF.bmp")
+//#define IMG_CIR_GRN_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_GRN_ON.bmp")
+//#define IMG_CIR_GRY_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_GRY_OFF.bmp")
+//#define IMG_CIR_GRY_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_GRY_ON.bmp")
+//#define IMG_CIR_ORG_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_ORG_OFF.bmp")
+//#define IMG_CIR_ORG_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_ORG_ON.bmp")
+//#define IMG_CIR_PNK_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_PNK_OFF.bmp")
+//#define IMG_CIR_PNK_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_PNK_ON.bmp")
+//#define IMG_CIR_RED_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_RED_OFF.bmp")
+//#define IMG_CIR_RED_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_RED_ON.bmp")
+//#define IMG_CIR_YLO_OFF_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_YLO_OFF.bmp")
+//#define IMG_CIR_YLO_ON_DlgMenu03		_T("C:\\R2RSet\\Pic\\DlgMenu03\\BTN_CIR_YLO_ON.bmp")
 
-#define IMG_BTN_DN_DlgMenu04			_T("C:\\R2RSet\\Pic\\DlgMenu04\\Btn_Bk_Dn.bmp")
-#define IMG_BTN_UP_DlgMenu04			_T("C:\\R2RSet\\Pic\\DlgMenu04\\Btn_Bk_Up.bmp")
-#define IMG_JOG_UP_DlgMenu04			_T("C:\\R2RSet\\Pic\\DlgMenu04\\arrow_up_blue.bmp")
-#define IMG_JOG_DN_DlgMenu04			_T("C:\\R2RSet\\Pic\\DlgMenu04\\arrow_dn_blue.bmp")
-#define IMG_CIR_GRN_OFF_DlgMenu04		_T("C:\\R2RSet\\Pic\\DlgMenu04\\BTN_CIR_GRN_OFF.bmp")
-#define IMG_CIR_GRN_ON_DlgMenu04		_T("C:\\R2RSet\\Pic\\DlgMenu04\\BTN_CIR_GRN_ON.bmp")
+//#define IMG_BTN_DN_DlgMenu04			_T("C:\\R2RSet\\Pic\\DlgMenu04\\Btn_Bk_Dn.bmp")
+//#define IMG_BTN_UP_DlgMenu04			_T("C:\\R2RSet\\Pic\\DlgMenu04\\Btn_Bk_Up.bmp")
+//#define IMG_JOG_UP_DlgMenu04			_T("C:\\R2RSet\\Pic\\DlgMenu04\\arrow_up_blue.bmp")
+//#define IMG_JOG_DN_DlgMenu04			_T("C:\\R2RSet\\Pic\\DlgMenu04\\arrow_dn_blue.bmp")
+//#define IMG_CIR_GRN_OFF_DlgMenu04		_T("C:\\R2RSet\\Pic\\DlgMenu04\\BTN_CIR_GRN_OFF.bmp")
+//#define IMG_CIR_GRN_ON_DlgMenu04		_T("C:\\R2RSet\\Pic\\DlgMenu04\\BTN_CIR_GRN_ON.bmp")
 
 #define IMG_BTN_DN_DlgMyPassword		_T("C:\\R2RSet\\Pic\\DlgMyPassword\\Btn_Bk_Dn.bmp")
 #define IMG_BTN_UP_DlgMyPassword		_T("C:\\R2RSet\\Pic\\DlgMyPassword\\Btn_Bk_Up.bmp")
@@ -1596,11 +1596,11 @@ struct stBtnUncoiler
 
 struct stBtnEngAuto
 {
-	BOOL Init, MkSt, OnMking, MkDone, Read2dSt, OnRead2d, Read2dDone, FdDone;
-	BOOL InitF, MkStF, OnMkingF, MkDoneF, Read2dStF, OnRead2dF, Read2dDoneF, FdDoneF;
+	BOOL Init, MkSt, OnMking, MkDone, Read2dSt, OnRead2d, Read2dDone, FdDone, GetCurrentInfoSignal, GetMonDispMainSignal;
+	BOOL InitF, MkStF, OnMkingF, MkDoneF, Read2dStF, OnRead2dF, Read2dDoneF, FdDoneF, GetCurrentInfoSignalF, GetMonDispMainSignalF;
 
-	BOOL IsInit, IsMkSt, IsOnMking, IsMkDone, IsRead2dSt, IsOnRead2d, IsRead2dDone, IsFdDone;
-	BOOL IsInitF, IsMkStF, IsOnMkingF, IsMkDoneF, IsRead2dStF, IsOnRead2dF, IsRead2dDoneF, IsFdDoneF;
+	BOOL IsInit, IsMkSt, IsOnMking, IsMkDone, IsRead2dSt, IsOnRead2d, IsRead2dDone, IsFdDone, IsGetCurrentInfoSignal, IsGetMonDispMainSignal;
+	BOOL IsInitF, IsMkStF, IsOnMkingF, IsMkDoneF, IsRead2dStF, IsOnRead2dF, IsRead2dDoneF, IsFdDoneF, IsGetCurrentInfoSignalF, IsGetMonDispMainSignalF;
 
 	stBtnEngAuto()
 	{
@@ -1609,11 +1609,11 @@ struct stBtnEngAuto
 
 	void _Init()
 	{
-		Init = FALSE; MkSt = FALSE; OnMking = FALSE; MkDone = FALSE; Read2dSt = FALSE; OnRead2d = FALSE; Read2dDone = FALSE; FdDone = FALSE;
-		InitF = FALSE; MkStF = FALSE; OnMkingF = FALSE; MkDoneF = FALSE; Read2dStF = FALSE; OnRead2dF = FALSE; Read2dDoneF = FALSE; FdDoneF = FALSE;
+		Init = FALSE; MkSt = FALSE; OnMking = FALSE; MkDone = FALSE; Read2dSt = FALSE; OnRead2d = FALSE; Read2dDone = FALSE; FdDone = FALSE; GetCurrentInfoSignal = FALSE; GetMonDispMainSignal = FALSE;
+		InitF = FALSE; MkStF = FALSE; OnMkingF = FALSE; MkDoneF = FALSE; Read2dStF = FALSE; OnRead2dF = FALSE; Read2dDoneF = FALSE; FdDoneF = FALSE; GetCurrentInfoSignalF = FALSE; GetMonDispMainSignalF = FALSE;
 
-		IsInit = FALSE; IsMkSt = FALSE; IsOnMking = FALSE; IsMkDone = FALSE; IsRead2dSt = FALSE; IsOnRead2d = FALSE; IsRead2dDone = FALSE; IsFdDone = FALSE;
-		IsInitF = FALSE; IsMkStF = FALSE; IsOnMkingF = FALSE; IsMkDoneF = FALSE; IsRead2dStF = FALSE; IsOnRead2dF = FALSE; IsRead2dDoneF = FALSE; IsFdDoneF = FALSE;
+		IsInit = FALSE; IsMkSt = FALSE; IsOnMking = FALSE; IsMkDone = FALSE; IsRead2dSt = FALSE; IsOnRead2d = FALSE; IsRead2dDone = FALSE; IsFdDone = FALSE; IsGetCurrentInfoSignal = FALSE; IsGetMonDispMainSignal = FALSE;
+		IsInitF = FALSE; IsMkStF = FALSE; IsOnMkingF = FALSE; IsMkDoneF = FALSE; IsRead2dStF = FALSE; IsOnRead2dF = FALSE; IsRead2dDoneF = FALSE; IsFdDoneF = FALSE; IsGetCurrentInfoSignalF = FALSE; IsGetMonDispMainSignalF = FALSE;
 	}
 };
 

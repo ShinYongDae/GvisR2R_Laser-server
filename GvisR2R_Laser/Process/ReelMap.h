@@ -153,6 +153,7 @@ public:
 
 	BOOL Write(int nSerial, int nLayer, CString sPath);
 	void SetPathAtBuf();
+	CString CopyRmapFromPunch(int nRmap);
 	CString GetRmapPath(int nRmap);
 	CString GetYieldPath(int nRmap);
 

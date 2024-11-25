@@ -18,7 +18,7 @@ typedef struct stRcvSig
 	BOOL _2DEngLenMvCw, _2DEngLenMvCcw, _2DAoiLenMvCw, _2DAoiLenMvCcw, _2DMkLenMvCw, _2DMkLenMvCcw, _2DOneShotLenCw, _2DOneShotLenCcw,
 		_2DOffsetInitPos, _2DOffsetInitPosMove;
 	// Menu03
-	BOOL _Ready, _Run, _Reset, _Stop, _Auto, _OneCycle, _Manual, _MkTq, _AoiTq, _EngTq, _CcwModRe, _CcwModUn, _Core150Re, _Core150Un,
+	BOOL _Ready, _Run, _Reset, _Stop, _Auto, _OneCycle, _Manual, _MkTq, _AoiTq, _EngTq, _CcwModRe, _CcwModUn, //_Core150Re, _Core150Un,
 		_Relation, _JoinSelRe, _MvCwRe, _MvCcwRe, _PrdChuckRe, _DancerUpRe, _PasteUpLfRe, _PasteUpRtRe, _PasteVacRe, _PprChuckRe,
 		_PprCwRe, _PprCcwRe, _DoRe, _PrdPprRe,
 		_JoinSelMk, _MvCwMk, _MvCcwMk, _FdVacMk, _PushUpMk, _TblBlwMk, _TblVacMk, _FdClampMk, _TensClampMk, _OnePnlMk, _LsrMk,
@@ -80,6 +80,8 @@ typedef struct stRcvSig
 	BOOL _IsEngAutoInit, _IsEngAutoSeqMkSt, _IsEngAutoSeqOnMkIng, _IsEngAutoSeqMkDone, _IsEngAutoSeq2dReadSt, _IsEngAutoSeqOnReading2d, _IsEngAutoSeq2dReadDone;
 	// Is DlgMyMsg
 	BOOL _IsMyMsgYes, _IsMyMsgNo, _IsMyMsgCancel, _IsMyMsgOk;
+	// Is GetCurrentInfoSignal
+	BOOL _IsGetCurrentInfoSignal, _IsGetMonDispMainSignal;
 
 	stRcvSig()
 	{
@@ -98,7 +100,7 @@ typedef struct stRcvSig
 		_2DEngLenMvCw = FALSE; _2DEngLenMvCcw = FALSE; _2DAoiLenMvCw = FALSE; _2DAoiLenMvCcw = FALSE; _2DMkLenMvCw = FALSE; _2DMkLenMvCcw = FALSE; _2DOneShotLenCw = FALSE; _2DOneShotLenCcw = FALSE;
 		_2DOffsetInitPos = FALSE; _2DOffsetInitPosMove = FALSE;
 		// Menu03
-		_Ready = FALSE; _Run = FALSE; _Reset = FALSE; _Stop = FALSE; _Auto = FALSE; _OneCycle = FALSE; _Manual = FALSE; _MkTq = FALSE; _AoiTq = FALSE; _EngTq = FALSE; _CcwModRe = FALSE; _CcwModUn = FALSE; _Core150Re = FALSE; _Core150Un = FALSE;
+		_Ready = FALSE; _Run = FALSE; _Reset = FALSE; _Stop = FALSE; _Auto = FALSE; _OneCycle = FALSE; _Manual = FALSE; _MkTq = FALSE; _AoiTq = FALSE; _EngTq = FALSE; _CcwModRe = FALSE; _CcwModUn = FALSE; //_Core150Re = FALSE; _Core150Un = FALSE;
 		_Relation = FALSE; _JoinSelRe = FALSE; _MvCwRe = FALSE; _MvCcwRe = FALSE; _PrdChuckRe = FALSE; _DancerUpRe = FALSE; _PasteUpLfRe = FALSE; _PasteUpRtRe = FALSE; _PasteVacRe = FALSE; _PprChuckRe = FALSE;
 		_PprCwRe = FALSE; _PprCcwRe = FALSE; _DoRe = FALSE; _PrdPprRe = FALSE;
 		_JoinSelMk = FALSE; _MvCwMk = FALSE; _MvCcwMk = FALSE; _FdVacMk = FALSE; _PushUpMk = FALSE; _TblBlwMk = FALSE; _TblVacMk = FALSE; _FdClampMk = FALSE; _TensClampMk = FALSE; _OnePnlMk = FALSE; _LsrMk = FALSE;
@@ -160,6 +162,8 @@ typedef struct stRcvSig
 		_IsEngAutoInit = FALSE; _IsEngAutoSeqMkSt = FALSE; _IsEngAutoSeqOnMkIng = FALSE; _IsEngAutoSeqMkDone = FALSE; _IsEngAutoSeq2dReadSt = FALSE; _IsEngAutoSeqOnReading2d = FALSE; _IsEngAutoSeq2dReadDone = FALSE;
 		// Is DlgMyMsg
 		_IsMyMsgYes = FALSE; _IsMyMsgNo = FALSE; _IsMyMsgCancel = FALSE; _IsMyMsgOk = FALSE;
+		// Is GetCurrentInfoSignal
+		_IsGetCurrentInfoSignal = FALSE; _IsGetMonDispMainSignal = FALSE;
 	}
 
 }RcvSig;
@@ -190,12 +194,12 @@ typedef enum _stSigInx {
 	_2DEngLenMvCw, _2DEngLenMvCcw, _2DAoiLenMvCw, _2DAoiLenMvCcw, _2DMkLenMvCw, _2DMkLenMvCcw, _2DOneShotLenCw, _2DOneShotLenCcw,
 	_2DOffsetInitPos, _2DOffsetInitPosMove,
 	// Menu03
-	_Ready, _Run, _Reset, _Stop, _Auto, _OneCycle, _Manual, _MkTq, _AoiTq, _EngTq, _CcwModRe, _CcwModUn, _Core150Re, _Core150Un, 
+	_Ready, _Run, _Reset, _Stop, _Auto, _OneCycle, _Manual, _MkTq, _AoiTq, _EngTq, _CcwModRe, _CcwModUn, _Core150Re, _Core150Un,
 	_Relation, _JoinSelRe, _MvCwRe, _MvCcwRe, _PrdChuckRe, _DancerUpRe, _PasteUpLfRe, _PasteUpRtRe, _PasteVacRe, _PprChuckRe,
 	_PprCwRe, _PprCcwRe, _DoRe, _PrdPprRe,
 	_JoinSelMk, _MvCwMk, _MvCcwMk, _FdVacMk, _PushUpMk, _TblBlwMk, _TblVacMk, _FdClampMk, _TensClampMk, _OnePnlMk, _LsrMk,
 	_DancerUpMk, _TqVacMk,
-	_JoinSelAoiDn, _MvCwAoiDn, _MvCcwAoiDn, _FdVacAoiDn, _PushUpAoiDn, _TblBlwAoiDn, _TblVacAoiDn, _FdClampAoiDn, _TensClampAoiDn, 
+	_JoinSelAoiDn, _MvCwAoiDn, _MvCcwAoiDn, _FdVacAoiDn, _PushUpAoiDn, _TblBlwAoiDn, _TblVacAoiDn, _FdClampAoiDn, _TensClampAoiDn,
 	_OnePnlAoiDn, _LsrAoiDn, _ClrRollAoiDn, _VelClrSonicAoiDn,
 	_TestAoiDn, _ResetAoiDn, _LotEndAoiDn,
 	_JoinSelAoiUp, _MvCwAoiUp, _MvCcwAoiUp, _FdVacAoiUp, _PushUpAoiUp, _TblBlwAoiUp, _TblVacAoiUp, _FdClampAoiUp, _TensClampAoiUp,
@@ -216,6 +220,8 @@ typedef enum _stSigInx {
 	_MyMsgYes, _MyMsgNo, _MyMsgCancel, _MyMsgOk,
 	// PLC
 	_Buzzer, _TowerLamp, _ErrorRead2dCode,
+	// GetCurrentInfoSignal
+	_GetCurrentInfoSignal, _GetMonDispMainSignal,
 	// Is Normal
 	_IsIdle, _IsBusy, _IsConnect,
 	// Is Display
@@ -256,6 +262,8 @@ typedef enum _stSigInx {
 	_IsMyMsgYes, _IsMyMsgNo, _IsMyMsgCancel, _IsMyMsgOk,
 	// Is PLC
 	_IsBuzzer, _IsTowerLamp, _IsErrorRead2dCode, _IsDispContRun,
+	// Is GetCurrentInfoSignal
+	_IsGetCurrentInfoSignal, _IsGetMonDispMainSignal,
 	// EndIdx
 	_EndIdx
 }_SigInx;
@@ -273,18 +281,18 @@ typedef enum _stItemInx {
 	// Menu01
 	_OpName, _ModelUpName, _ModelDnName, _LotUpName, _LotDnName, _LayerUpName, _LayerDnName, _LoadMstInfo, _OrderNum, _ShotNum, _TotReelLen, _TotOpRto, _LotOpRto,
 	_TotVel, _PartVel, _TempStopLen, _LotCutLen, _LotCutPosLen, _MkDoneLen, _AoiDnDoneLen, _AoiUpDoneLen, _LotSerial, //_MkNumLf, _MkNumRt,	
-	_DefNumUp, _DefNumDn, _DefNumTot, _DefRtoUp, _DefRtoDn, _DefRtoTot, _GoodNumTot, _GoodNumUp, _GoodNumDn, _GoodRtoUp, 
-	_GoodRtoDn, _GoodRtoTot, _TestNumUp, _TestNumDn, _TestNumTot, _MkVerfyLen, _LotStTime, _LotEdTime, _LotRunTime, 	
-	_1LnGoodRtoUp, _1LnGoodRtoDn, _1LnGoodRtoTot, _2LnGoodRtoUp, _2LnGoodRtoDn, _2LnGoodRtoTot, _3LnGoodRtoUp, _3LnGoodRtoDn, 
-	_3LnGoodRtoTot, _4LnGoodRtoUp, _4LnGoodRtoDn, _4LnGoodRtoTot, _AllLnGoodRtoUp, _AllLnGoodRtoDn, _AllLnGoodRtoTot, 	
-	_DefNumOpen, _DefNumShort, _DefNumUshort, _DefNumLnW, _DefExtr, _DefNumProt, _DefNumEnick, _DefNumUdd1, _DefNumPhole, 
-	_DefNumPad, _DefNumHopen, _DefNumHmiss, _DefNumHpos, _DefNumHdef, _DefNumEprot, _DefNumNrw, _DefNumLight, _DefNumNick, 
+	_DefNumUp, _DefNumDn, _DefNumTot, _DefRtoUp, _DefRtoDn, _DefRtoTot, _GoodNumTot, _GoodNumUp, _GoodNumDn, _GoodRtoUp,
+	_GoodRtoDn, _GoodRtoTot, _TestNumUp, _TestNumDn, _TestNumTot, _MkVerfyLen, _LotStTime, _LotEdTime, _LotRunTime,
+	_1LnGoodRtoUp, _1LnGoodRtoDn, _1LnGoodRtoTot, _2LnGoodRtoUp, _2LnGoodRtoDn, _2LnGoodRtoTot, _3LnGoodRtoUp, _3LnGoodRtoDn,
+	_3LnGoodRtoTot, _4LnGoodRtoUp, _4LnGoodRtoDn, _4LnGoodRtoTot, _AllLnGoodRtoUp, _AllLnGoodRtoDn, _AllLnGoodRtoTot,
+	_DefNumOpen, _DefNumShort, _DefNumUshort, _DefNumLnW, _DefExtr, _DefNumProt, _DefNumEnick, _DefNumUdd1, _DefNumPhole,
+	_DefNumPad, _DefNumHopen, _DefNumHmiss, _DefNumHpos, _DefNumHdef, _DefNumEprot, _DefNumNrw, _DefNumLight, _DefNumNick,
 	_DefNumPoi, _DefNumVhOpen, _DefNumVhMiss, _DefNumVhPos, _DefNumVhd, _DefNumEspace, _DefNumWide,
 	// Menu02
 	_2DEngLen, _2DAoiLen, _2DMkLen, _2DMoveVel, _2DMoveAcc, _2DOneShotLen, _EngLeadPitch, _EngPushOffLen, _EngTqVal, _EngAoiLen,
 	_EngFdDiffMax, _EngFdDiffRng, _EngFdDiffNum, _EngBuffInitPos, _EngBuffCurrPos, _EngItsCode,
 	// Menu04
-	_FdVel, _FdAcc, _OnePnlLen, _OnePnlVel, _OnePnlAcc, _AoiLeadPitch, _MkLeadPitch, _FdDiffMax, _FdDiffRng, _FdDiffNum, 
+	_FdVel, _FdAcc, _OnePnlLen, _OnePnlVel, _OnePnlAcc, _AoiLeadPitch, _MkLeadPitch, _FdDiffMax, _FdDiffRng, _FdDiffNum,
 	_AoiPushOffLen, _MkPushOffLen, _AoiTqVal, _MkTqVal, _AoiBuffShotNum, _AoiMkLen, _MkBuffInitPos, _MkBuffCurrPos,
 	_MkNumLf, _MkNumRt, _MkMaxNumLf, _MkMaxNumRt,
 	_MkInitPosLf, _MkInitVelLf, _MkInitAccLf, _MkFnlPosLf, _MkFnlVelLf, _MkFnlAccLf, _MkFnlTqLf,

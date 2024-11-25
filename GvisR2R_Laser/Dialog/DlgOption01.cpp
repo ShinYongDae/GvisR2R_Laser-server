@@ -62,17 +62,17 @@ void CDlgOption01::OnShowWindow(BOOL bShow, UINT nStatus)
 	CDialog::OnShowWindow(bShow, nStatus);
 
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
-	if (!m_pRect)
-	{
-		m_pRect = new CRect;
+	//if (!m_pRect)
+	//{
+	//	m_pRect = new CRect;
 
-		this->GetClientRect(m_pRect);
-		m_pRect->top = 375;
-		m_pRect->bottom += 375 + GetSystemMetrics(SM_CYSIZE);
-		m_pRect->left = 3;
-		m_pRect->right += 3;
-		this->MoveWindow(m_pRect, TRUE);
-	}
+	//	this->GetClientRect(m_pRect);
+	//	m_pRect->top = 375;
+	//	m_pRect->bottom += 375 + GetSystemMetrics(SM_CYSIZE);
+	//	m_pRect->left = 3;
+	//	m_pRect->right += 3;
+	//	this->MoveWindow(m_pRect, TRUE);
+	//}
 
 	if (bShow)
 	{

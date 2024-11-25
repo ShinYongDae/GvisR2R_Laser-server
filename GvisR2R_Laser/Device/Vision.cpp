@@ -3611,7 +3611,7 @@ double CVision::CalcCameraPixelSize()
 #endif
 
 	// 6. Save Cam Resolution
-	CString sItem, sData, sPath=PATH_WORKING_INFO;
+	CString sItem, sData, sPath= pDoc->WorkingInfo.System.sPathEngCurrInfo;
 
 	sItem.Format(_T("Vision%d"), m_nIdx);
 	sData.Format(_T("%f"), dPixelSizeX);

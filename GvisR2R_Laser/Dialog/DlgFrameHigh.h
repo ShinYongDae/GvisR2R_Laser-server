@@ -26,7 +26,7 @@ class CDlgFrameHigh : public CDialog
 	CRect* m_pRect;
 	CMyPic myPic;
 	CMyLabel myLabel[MAX_FRMHIGH_LABEL];
-	CMyBtn myChkMenu01, myChkMenu02, myChkMenu03, myChkMenu04, myChkMenu05;
+	CMyBtn myChkMenu01, myChkMenu02;// , myChkMenu03, myChkMenu04, myChkMenu05;
 	CMyStatic myStc[MAX_FRMHIGH_STC];
 
 	BOOL m_bTIM_SIG_AOI;
@@ -56,9 +56,9 @@ public:
 	BOOL Create();
 	void ChkMenu01();
 	void ChkMenu02();
-	void ChkMenu03();
-	void ChkMenu04();
-	void ChkMenu05();
+	//void ChkMenu03();
+	//void ChkMenu04();
+	//void ChkMenu05();
 
 	void SetMkLastShot(int nSerial);
 	void SetAoiLastShot(int nAoi, int nSerial);
@@ -95,9 +95,9 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnPaint();
 	afx_msg void OnChkMenu02();
-	afx_msg void OnChkMenu03();
-	afx_msg void OnChkMenu04();
-	afx_msg void OnChkMenu05();
+	//afx_msg void OnChkMenu03();
+	//afx_msg void OnChkMenu04();
+	//afx_msg void OnChkMenu05();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);// (UINT nIDEvent);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

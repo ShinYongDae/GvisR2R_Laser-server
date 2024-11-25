@@ -225,12 +225,6 @@
     <ClInclude Include="Dialog\DlgMenu02.h">
       <Filter>Dialog</Filter>
     </ClInclude>
-    <ClInclude Include="Dialog\DlgMenu03.h">
-      <Filter>Dialog</Filter>
-    </ClInclude>
-    <ClInclude Include="Dialog\DlgMenu04.h">
-      <Filter>Dialog</Filter>
-    </ClInclude>
     <ClInclude Include="Dialog\DlgClient.h">
       <Filter>Dialog</Filter>
     </ClInclude>
@@ -238,9 +232,6 @@
       <Filter>Device</Filter>
     </ClInclude>
     <ClInclude Include="Dialog\DlgKeyNum.h">
-      <Filter>Dialog</Filter>
-    </ClInclude>
-    <ClInclude Include="Dialog\DlgMenu05.h">
       <Filter>Dialog</Filter>
     </ClInclude>
     <ClInclude Include="Dialog\DlgProgress.h">
@@ -485,12 +476,6 @@
     <ClCompile Include="Dialog\DlgMenu02.cpp">
       <Filter>Dialog</Filter>
     </ClCompile>
-    <ClCompile Include="Dialog\DlgMenu03.cpp">
-      <Filter>Dialog</Filter>
-    </ClCompile>
-    <ClCompile Include="Dialog\DlgMenu04.cpp">
-      <Filter>Dialog</Filter>
-    </ClCompile>
     <ClCompile Include="Dialog\DlgClient.cpp">
       <Filter>Dialog</Filter>
     </ClCompile>
@@ -498,9 +483,6 @@
       <Filter>Device</Filter>
     </ClCompile>
     <ClCompile Include="Dialog\DlgKeyNum.cpp">
-      <Filter>Dialog</Filter>
-    </ClCompile>
-    <ClCompile Include="Dialog\DlgMenu05.cpp">
       <Filter>Dialog</Filter>
     </ClCompile>
     <ClCompile Include="Dialog\DlgProgress.cpp">

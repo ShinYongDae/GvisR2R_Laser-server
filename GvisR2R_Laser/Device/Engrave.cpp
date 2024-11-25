@@ -466,6 +466,7 @@ void CEngrave::GetSysSignal(SOCKET_DATA SockData)
 	GetSignalMyMsg(SockData);
 
 	GetSignal2dEng(SockData);
+	GetCurrentInfoSignal(SockData);
 }
 
 void CEngrave::GetSignalDisp(SOCKET_DATA SockData)
@@ -1299,9 +1300,6 @@ void CEngrave::GetSignalEngraveAutoSequence(SOCKET_DATA SockData)
 		case _SigInx::_EngAutoInit:
 			pDoc->BtnStatus.EngAuto.Init = (SockData.nData1 > 0) ? TRUE : FALSE;
 			pView->m_bRcvSig[_SigInx::_EngAutoInit] = TRUE;
-			//pView->m_stRcvSig._EngAutoInit = TRUE;
-			//if (pView->m_pDlgMenu03)
-			//	pView->m_pDlgMenu03->SwReset();
 			break;
 		case _SigInx::_EngAutoSeqMkSt:
 			if(!pView->m_bEngSt)
@@ -1397,6 +1395,37 @@ void CEngrave::GetSignalMyMsg(SOCKET_DATA SockData)
 			break;
 		case _SigInx::_IsMyMsgOk:
 			pDoc->BtnStatus.Msg.IsOk = (SockData.nData1 > 0) ? TRUE : FALSE;
+			break;
+		}
+	}
+}
+
+void CEngrave::GetCurrentInfoSignal(SOCKET_DATA SockData)
+{
+	int nCmdCode = SockData.nCmdCode;
+	int nMsgId = SockData.nMsgID;
+	CString sVal;
+
+	if (nCmdCode == _SetSig)
+	{
+		switch (nMsgId)
+		{
+		case _SigInx::_GetCurrentInfoSignal:
+			pDoc->BtnStatus.EngAuto.GetCurrentInfoSignal = (SockData.nData1 > 0) ? TRUE : FALSE;
+			pView->m_bRcvSig[_SigInx::_GetCurrentInfoSignal] = TRUE;
+			break;
+		case _SigInx::_GetMonDispMainSignal:
+			pDoc->BtnStatus.EngAuto.GetMonDispMainSignal = (SockData.nData1 > 0) ? TRUE : FALSE;
+			pView->m_bRcvSig[_SigInx::_GetMonDispMainSignal] = TRUE;
+			break;
+			// Is
+		case _SigInx::_IsGetCurrentInfoSignal:
+			pDoc->BtnStatus.EngAuto.IsGetCurrentInfoSignal = (SockData.nData1 > 0) ? TRUE : FALSE;
+			pView->m_bTIM_CHK_RCV_CURR_INFO_SIG = FALSE;
+			break;
+		case _SigInx::_IsGetMonDispMainSignal:
+			pDoc->BtnStatus.EngAuto.IsGetMonDispMainSignal = (SockData.nData1 > 0) ? TRUE : FALSE;
+			pView->m_bTIM_CHK_RCV_MON_DISP_MAIN_SIG = FALSE;
 			break;
 		}
 	}
@@ -3813,13 +3842,15 @@ void CEngrave::SetStripRatio()
 	}
 
 	// < 스트립 별 수율 >
-	pDoc->m_pReelMapUp->GetPcsNum(nGood, nBad);
+	if (pDoc->m_pReelMapUp)
+		pDoc->m_pReelMapUp->GetPcsNum(nGood, nBad);
 	nTot = nGood + nBad;
 	nStTot = nTot / 4;
 
 	// 상면
 	nSum = 0;
-	nVal[0][0] = pDoc->m_pReelMapUp->GetDefStrip(0);
+	if (pDoc->m_pReelMapUp)
+		nVal[0][0] = pDoc->m_pReelMapUp->GetDefStrip(0);
 	nSum += nVal[0][0];
 	if (nTot > 0)
 		dRatio = ((double)(nStTot - nVal[0][0]) / (double)nStTot) * 100.0;
@@ -3830,7 +3861,8 @@ void CEngrave::SetStripRatio()
 	SocketData.fData1 = dRatio;
 	SendCommand(SocketData);
 
-	nVal[0][1] = pDoc->m_pReelMapUp->GetDefStrip(1);
+	if (pDoc->m_pReelMapUp)
+		nVal[0][1] = pDoc->m_pReelMapUp->GetDefStrip(1);
 	nSum += nVal[0][1];
 	if (nTot > 0)
 		dRatio = ((double)(nStTot - nVal[0][1]) / (double)nStTot) * 100.0;
@@ -3841,7 +3873,8 @@ void CEngrave::SetStripRatio()
 	SocketData.fData1 = dRatio;
 	SendCommand(SocketData);
 
-	nVal[0][2] = pDoc->m_pReelMapUp->GetDefStrip(2);
+	if (pDoc->m_pReelMapUp)
+		nVal[0][2] = pDoc->m_pReelMapUp->GetDefStrip(2);
 	nSum += nVal[0][2];
 	if (nTot > 0)
 		dRatio = ((double)(nStTot - nVal[0][2]) / (double)nStTot) * 100.0;
@@ -3852,7 +3885,8 @@ void CEngrave::SetStripRatio()
 	SocketData.fData1 = dRatio;
 	SendCommand(SocketData);
 
-	nVal[0][3] = pDoc->m_pReelMapUp->GetDefStrip(3);
+	if (pDoc->m_pReelMapUp)
+		nVal[0][3] = pDoc->m_pReelMapUp->GetDefStrip(3);
 	nSum += nVal[0][3];
 	if (nTot > 0)
 		dRatio = ((double)(nStTot - nVal[0][3]) / (double)nStTot) * 100.0;
@@ -3877,7 +3911,8 @@ void CEngrave::SetStripRatio()
 	{
 		// 하면
 		nSum = 0;
-		nVal[1][0] = pDoc->m_pReelMapDn->GetDefStrip(0);
+		if (pDoc->m_pReelMapDn)
+			nVal[1][0] = pDoc->m_pReelMapDn->GetDefStrip(0);
 		nSum += nVal[1][0];
 		if (nTot > 0)
 			dRatio = ((double)(nStTot - nVal[1][0]) / (double)nStTot) * 100.0;
@@ -3888,7 +3923,8 @@ void CEngrave::SetStripRatio()
 		SocketData.fData1 = dRatio;
 		SendCommand(SocketData);
 
-		nVal[1][1] = pDoc->m_pReelMapDn->GetDefStrip(1);
+		if (pDoc->m_pReelMapDn)
+			nVal[1][1] = pDoc->m_pReelMapDn->GetDefStrip(1);
 		nSum += nVal[1][1];
 		if (nTot > 0)
 			dRatio = ((double)(nStTot - nVal[1][1]) / (double)nStTot) * 100.0;
@@ -3899,7 +3935,8 @@ void CEngrave::SetStripRatio()
 		SocketData.fData1 = dRatio;
 		SendCommand(SocketData);
 
-		nVal[1][2] = pDoc->m_pReelMapDn->GetDefStrip(2);
+		if (pDoc->m_pReelMapDn)
+			nVal[1][2] = pDoc->m_pReelMapDn->GetDefStrip(2);
 		nSum += nVal[1][2];
 		if (nTot > 0)
 			dRatio = ((double)(nStTot - nVal[1][2]) / (double)nStTot) * 100.0;
@@ -3910,7 +3947,8 @@ void CEngrave::SetStripRatio()
 		SocketData.fData1 = dRatio;
 		SendCommand(SocketData);
 
-		nVal[1][3] = pDoc->m_pReelMapDn->GetDefStrip(3);
+		if (pDoc->m_pReelMapDn)
+			nVal[1][3] = pDoc->m_pReelMapDn->GetDefStrip(3);
 		nSum += nVal[1][3];
 		if (nTot > 0)
 			dRatio = ((double)(nStTot - nVal[1][3]) / (double)nStTot) * 100.0;
@@ -3932,7 +3970,8 @@ void CEngrave::SetStripRatio()
 
 		// 상면 + 하면
 		nSum = 0;
-		nMer[0] = pDoc->m_pReelMapAllUp->GetDefStrip(0);
+		if (pDoc->m_pReelMapAllUp)
+			nMer[0] = pDoc->m_pReelMapAllUp->GetDefStrip(0);
 		nSum += nMer[0];
 		if (nTot > 0)
 			dRatio = ((double)(nStTot - nMer[0]) / (double)nStTot) * 100.0;
@@ -3943,7 +3982,8 @@ void CEngrave::SetStripRatio()
 		SocketData.fData1 = dRatio;
 		SendCommand(SocketData);
 
-		nMer[1] = pDoc->m_pReelMapAllUp->GetDefStrip(1);
+		if (pDoc->m_pReelMapAllUp)
+			nMer[1] = pDoc->m_pReelMapAllUp->GetDefStrip(1);
 		nSum += nMer[1];
 		if (nTot > 0)
 			dRatio = ((double)(nStTot - nMer[1]) / (double)nStTot) * 100.0;
@@ -3954,7 +3994,8 @@ void CEngrave::SetStripRatio()
 		SocketData.fData1 = dRatio;
 		SendCommand(SocketData);
 
-		nMer[2] = pDoc->m_pReelMapAllUp->GetDefStrip(2);
+		if (pDoc->m_pReelMapAllUp)
+			nMer[2] = pDoc->m_pReelMapAllUp->GetDefStrip(2);
 		nSum += nMer[2];
 		if (nTot > 0)
 			dRatio = ((double)(nStTot - nMer[2]) / (double)nStTot) * 100.0;
@@ -3965,7 +4006,8 @@ void CEngrave::SetStripRatio()
 		SocketData.fData1 = dRatio;
 		SendCommand(SocketData);
 
-		nMer[3] = pDoc->m_pReelMapAllUp->GetDefStrip(3);
+		if (pDoc->m_pReelMapAllUp)
+			nMer[3] = pDoc->m_pReelMapAllUp->GetDefStrip(3);
 		nSum += nMer[3];
 		if (nTot > 0)
 			dRatio = ((double)(nStTot - nMer[3]) / (double)nStTot) * 100.0;
@@ -5002,8 +5044,8 @@ void CEngrave::SetDefNumUp()
 	SocketData.nCmdCode = _SetData;
 	int nGood = 0, nBad = 0, nTot = 0;
 
-
-	pDoc->m_pReelMapUp->GetPcsNum(nGood, nBad); // 상면
+	if (pDoc->m_pReelMapUp)
+		pDoc->m_pReelMapUp->GetPcsNum(nGood, nBad); // 상면
 	nTot = nGood + nBad;
 
 	SocketData.nMsgID = _stItemInx::_DefNumUp;
@@ -5021,7 +5063,8 @@ void CEngrave::SetDefRtoUp()
 	int nGood = 0, nBad = 0, nTot = 0;
 	double dRatio = 0.0;
 
-	pDoc->m_pReelMapUp->GetPcsNum(nGood, nBad); // 상면
+	if (pDoc->m_pReelMapUp)
+		pDoc->m_pReelMapUp->GetPcsNum(nGood, nBad); // 상면
 
 	if (nTot > 0)
 		dRatio = ((double)nBad / (double)nTot) * 100.0;
@@ -5042,7 +5085,8 @@ void CEngrave::SetGoodNumUp()
 	SocketData.nCmdCode = _SetData;
 	int nGood = 0, nBad = 0;
 
-	pDoc->m_pReelMapUp->GetPcsNum(nGood, nBad); // 상면
+	if (pDoc->m_pReelMapUp)
+		pDoc->m_pReelMapUp->GetPcsNum(nGood, nBad); // 상면
 
 	SocketData.nMsgID = _stItemInx::_GoodNumUp;
 	SocketData.nData1 = nGood;
@@ -5059,7 +5103,8 @@ void CEngrave::SetGoodRtoUp()
 	int nGood = 0, nBad = 0, nTot = 0;
 	double dRatio = 0.0;
 
-	pDoc->m_pReelMapUp->GetPcsNum(nGood, nBad); // 상면
+	if (pDoc->m_pReelMapUp)
+		pDoc->m_pReelMapUp->GetPcsNum(nGood, nBad); // 상면
 
 	if (nTot > 0)
 		dRatio = ((double)nGood / (double)nTot) * 100.0;
@@ -5080,7 +5125,8 @@ void CEngrave::SetTestNumUp()
 	SocketData.nCmdCode = _SetData;
 	int nGood = 0, nBad = 0, nTot = 0;
 
-	pDoc->m_pReelMapUp->GetPcsNum(nGood, nBad); // 상면
+	if (pDoc->m_pReelMapUp)
+		pDoc->m_pReelMapUp->GetPcsNum(nGood, nBad); // 상면
 	nTot = nGood + nBad;
 
 	SocketData.nMsgID = _stItemInx::_TestNumUp;
@@ -5100,7 +5146,8 @@ void CEngrave::SetDefNumDn()
 
 	if (bDualTest)
 	{
-		pDoc->m_pReelMapDn->GetPcsNum(nGood, nBad); // 하면
+		if (pDoc->m_pReelMapDn)
+			pDoc->m_pReelMapDn->GetPcsNum(nGood, nBad); // 하면
 		nTot = nGood + nBad;
 
 		SocketData.nMsgID = _stItemInx::_DefNumDn;
@@ -5122,7 +5169,8 @@ void CEngrave::SetDefRtoDn()
 
 	if (bDualTest)
 	{
-		pDoc->m_pReelMapDn->GetPcsNum(nGood, nBad); // 하면
+		if (pDoc->m_pReelMapDn)
+			pDoc->m_pReelMapDn->GetPcsNum(nGood, nBad); // 하면
 		nTot = nGood + nBad;
 
 		if (nTot > 0)
@@ -5148,7 +5196,8 @@ void CEngrave::SetGoodNumDn()
 
 	if (bDualTest)
 	{
-		pDoc->m_pReelMapDn->GetPcsNum(nGood, nBad); // 하면
+		if (pDoc->m_pReelMapDn)
+			pDoc->m_pReelMapDn->GetPcsNum(nGood, nBad); // 하면
 
 		SocketData.nMsgID = _stItemInx::_GoodNumDn;
 		SocketData.nData1 = nGood;
@@ -5169,7 +5218,8 @@ void CEngrave::SetGoodRtoDn()
 
 	if (bDualTest)
 	{
-		pDoc->m_pReelMapDn->GetPcsNum(nGood, nBad); // 하면
+		if (pDoc->m_pReelMapDn)
+			pDoc->m_pReelMapDn->GetPcsNum(nGood, nBad); // 하면
 		nTot = nGood + nBad;
 
 		if (nTot > 0)
@@ -5195,7 +5245,8 @@ void CEngrave::SetTestNumDn()
 
 	if (bDualTest)
 	{
-		pDoc->m_pReelMapDn->GetPcsNum(nGood, nBad); // 하면
+		if (pDoc->m_pReelMapDn)
+			pDoc->m_pReelMapDn->GetPcsNum(nGood, nBad); // 하면
 		nTot = nGood + nBad;
 
 		SocketData.nMsgID = _stItemInx::_TestNumDn;
@@ -5216,7 +5267,8 @@ void CEngrave::SetDefNumTot()
 
 	if (bDualTest)
 	{
-		pDoc->m_pReelMapAllDn->GetPcsNum(nGood, nBad); // 전체
+		if (pDoc->m_pReelMapAllDn)
+			pDoc->m_pReelMapAllDn->GetPcsNum(nGood, nBad); // 전체
 		nTot = nGood + nBad;
 
 		SocketData.nMsgID = _stItemInx::_DefNumTot;
@@ -5238,7 +5290,8 @@ void CEngrave::SetDefRtoTot()
 
 	if (bDualTest)
 	{
-		pDoc->m_pReelMapAllDn->GetPcsNum(nGood, nBad); // 전체
+		if (pDoc->m_pReelMapAllDn)
+			pDoc->m_pReelMapAllDn->GetPcsNum(nGood, nBad); // 전체
 		nTot = nGood + nBad;
 
 		if (nTot > 0)
@@ -5264,7 +5317,8 @@ void CEngrave::SetGoodNumTot()
 
 	if (bDualTest)
 	{
-		pDoc->m_pReelMapAllDn->GetPcsNum(nGood, nBad); // 전체
+		if (pDoc->m_pReelMapAllDn)
+			pDoc->m_pReelMapAllDn->GetPcsNum(nGood, nBad); // 전체
 
 		SocketData.nMsgID = _stItemInx::_GoodNumTot;
 		SocketData.nData1 = nGood;
@@ -5285,7 +5339,8 @@ void CEngrave::SetGoodRtoTot()
 
 	if (bDualTest)
 	{
-		pDoc->m_pReelMapAllDn->GetPcsNum(nGood, nBad); // 전체
+		if (pDoc->m_pReelMapAllDn)
+			pDoc->m_pReelMapAllDn->GetPcsNum(nGood, nBad); // 전체
 		nTot = nGood + nBad;
 
 		if (nTot > 0)
@@ -5311,7 +5366,8 @@ void CEngrave::SetTestNumTot()
 
 	if (bDualTest)
 	{
-		pDoc->m_pReelMapAllDn->GetPcsNum(nGood, nBad); // 전체
+		if (pDoc->m_pReelMapAllDn)
+			pDoc->m_pReelMapAllDn->GetPcsNum(nGood, nBad); // 전체
 		nTot = nGood + nBad;
 
 		SocketData.nMsgID = _stItemInx::_TestNumTot;
@@ -8610,6 +8666,60 @@ void CEngrave::IsSetMyMsgOk()
 	SendCommand(SocketData);
 }
 
+
+// CurrentInfoSignal
+void CEngrave::SetCurrentInfoSignal()
+{
+	if (!pDoc)
+		return;
+
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_GetCurrentInfoSignal;
+	SocketData.nData1 = 1;
+	SendCommand(SocketData);
+}
+
+void CEngrave::IsSetCurrentInfoSignal()
+{
+	if (!pDoc)
+		return;
+
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_IsGetCurrentInfoSignal;
+	SocketData.nData1 = 1;
+	SendCommand(SocketData);
+}
+
+// MonDispMain
+void CEngrave::SetMonDispMainSignal()
+{
+	if (!pDoc)
+		return;
+
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_GetMonDispMainSignal;
+	SocketData.nData1 = 1;
+	SendCommand(SocketData);
+}
+
+void CEngrave::IsSetMonDispMainSignal()
+{
+	if (!pDoc)
+		return;
+
+	SOCKET_DATA SocketData;
+	SocketData.nCmdCode = _SetSig;
+
+	SocketData.nMsgID = _SigInx::_IsGetMonDispMainSignal;
+	SocketData.nData1 = 1;
+	SendCommand(SocketData);
+}
 
 // Disp
 void CEngrave::SetDispReady(BOOL bOn)

@@ -15,6 +15,11 @@
 #define new DEBUG_NEW
 #endif
 
+// 디버그창에 메모리 릭위치 출력 정의  
+#ifdef _DEBUG
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
 
 // CGvisR2R_LaserApp
 

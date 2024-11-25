@@ -32,6 +32,7 @@
 
 // 디버그창에 메모리 릭위치 출력 정의  
 //#ifdef _DEBUG
+//#define _CRTDBG_MAP_ALLOC
 //#include <crtdbg.h>
 //#endif
 
@@ -93,9 +94,6 @@ bool SockAddrIn::CreateFrom(LPCTSTR sAddr, LPCTSTR sService, int nFamily /*=AF_I
 	sin_family = nFamily;
 	return !IsNull();
 }
-
-
-
 
 
 

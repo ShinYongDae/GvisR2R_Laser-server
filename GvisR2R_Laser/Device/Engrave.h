@@ -88,6 +88,7 @@ public:
 	void GetSignalEngraveAutoSequence(SOCKET_DATA SockData);
 	void GetSignalMyMsg(SOCKET_DATA SockData);
 	void GetSignal2dEng(SOCKET_DATA SockData);
+	void GetCurrentInfoSignal(SOCKET_DATA SockData);
 
 	// GetSysData
 	void GetSysData(SOCKET_DATA SockData);
@@ -556,6 +557,14 @@ public:
 	void IsSetMyMsgYes();
 	void IsSetMyMsgNo();
 	void IsSetMyMsgOk();
+
+	// CurrentInfoSigna
+	void SetCurrentInfoSignal();
+	void IsSetCurrentInfoSignal();
+
+	// MonDispMain
+	void SetMonDispMainSignal();
+	void IsSetMonDispMainSignal();
 
 	// Engrave Auto Sequence
 	void SwEngAutoInit(BOOL bOn); // 각인부 초기화(Reset)
